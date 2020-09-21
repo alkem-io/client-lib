@@ -14,13 +14,12 @@ const main = async () => {
 
 
   // Load in users 
-  const userMutationFile = "./src/queries/create-user";
-  const userVariablesDir = './src/queries/user-variables';
-  await ctClient.submitMutations(userMutationFile, userVariablesDir, 'user');
-
-  console.log(`Loading data complete!`);
+  const multipleMutationsFile = "./src/test/multiple-mutations.json";
+  const result = await ctClient.submitMultipleMutations(multipleMutationsFile);
+  if (result) {
+    console.log(`Loading data complete!`);
+  }
   
 }
 
- 
 main().catch((error) => console.error(error))
