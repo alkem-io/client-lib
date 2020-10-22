@@ -4,7 +4,7 @@ const main = async () => {
 
   //const endpoint = 'http://dev.cherrytwist.org/graphql'
   const endpoint = 'http://localhost:4000/graphql'
-  const ctClient = new CherrytwistClient(endpoint);
+  const ctClient = new CherrytwistClient(endpoint, null);
 
   // Test can connect to the server
   const serverAvailable = await ctClient.testConnection();
@@ -17,7 +17,7 @@ const main = async () => {
   const multipleMutationsFile = "./src/test/multiple-mutations.json";
   const result = await ctClient.submitMultipleMutations(multipleMutationsFile);
   if (result) {
-    console.log(`Loading data complete!`);
+    ctClient.logger.info(`Loading data complete!`);
   }
   
 }
