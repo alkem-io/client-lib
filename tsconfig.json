@@ -2,6 +2,7 @@
     "compilerOptions": {
       "target": "es2018",
       "module": "commonjs",
+      "declaration": true,
       "lib": ["es2018", "esnext.asynciterable"],
       "sourceMap": true,
       "outDir": "./dist",
