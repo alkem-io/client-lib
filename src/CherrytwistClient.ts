@@ -69,7 +69,9 @@ export class CherrytwistClient {
     const data = await this.client.request(query);
     var ecoverseName = data.name;
     if (!ecoverseName) {
-      this.logger.error(`Unable to connect to ecoverse at location: ${this.config.server}`);
+      this.logger.error(
+        `Unable to connect to ecoverse at location: ${this.config.server}`
+      );
       return false;
     }
     this.logger.info(`Connected to ecoverse: ${ecoverseName}`);
@@ -86,6 +88,20 @@ export class CherrytwistClient {
     // Set the auth header
     this.client.setHeader("Authorization", `Bearer ${adminUserToken}`);
     this.logger.info(`Bearer token:  ${adminUserToken}`);
+  }
+
+  // Load in mutations file
+  async createGroups(groupNames: string[]) {
+    this.logger.info(
+      `===================================================================`
+    );
+
+    this.logger.info(`To create ${groupNames.length} ecoverse groups`);
+    // Iterate over the rows
+    for (let i = 0; i < groupNames.length; i++) {
+      const groupName = groupNames[i];
+      await this.createEcoverseGroup(groupName);
+    }
   }
 
   async createOpportunity(challengeID: number, opportunityJson: any) {
@@ -812,8 +828,8 @@ export class CherrytwistClient {
     actorGroupID: number,
     actorName: string,
     value: string,
-    impact: string,  
-    description = ''
+    impact: string,
+    description = ""
   ): Promise<any> {
     // create the variable for the group mutation
     const createActorVariable = gql`
@@ -841,8 +857,8 @@ export class CherrytwistClient {
     actorID: number,
     actorName: string,
     value: string,
-    impact = '',  
-    description = '',  
+    impact = "",
+    description = ""
   ): Promise<any> {
     // create the variable for the group mutation
     const updateActorVariable = gql`
@@ -958,8 +974,4 @@ export class CherrytwistClient {
     }
     return true;
   }
-
-  
 }
-
-
