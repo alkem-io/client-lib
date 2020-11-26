@@ -1,10 +1,10 @@
-import { GraphQLClient, gql } from "graphql-request";
-import fs from "fs";
-import { EnvironmentConfig } from "./util/EnvironmentFactory";
-import { Mutations } from "./mutations/Mutations";
-import { EcoverseInfo } from "./util/EcoverseInfo";
-const winston = require("winston");
-require("dotenv").config();
+import { GraphQLClient, gql } from 'graphql-request';
+import fs from 'fs';
+import { EnvironmentConfig } from './util/EnvironmentFactory';
+import { Mutations } from './mutations/Mutations';
+import { EcoverseInfo } from './util/EcoverseInfo';
+const winston = require('winston');
+require('dotenv').config();
 
 export class CherrytwistClient {
   // The graphql end point for the ecoverse instance
@@ -34,24 +34,24 @@ export class CherrytwistClient {
     );
     this.logger = winston.createLogger({
       transports: [
-        new winston.transports.Console({ level: "info", format: logFormat }),
+        new winston.transports.Console({ level: 'info', format: logFormat }),
         new winston.transports.File({
-          filename: "population-info.log",
-          level: "warn",
+          filename: 'population-info.log',
+          level: 'warn',
         }),
         new winston.transports.File({
-          filename: "population-warnings.log",
-          level: "warn",
+          filename: 'population-warnings.log',
+          level: 'warn',
         }),
       ],
     });
 
     this.profiler = winston.createLogger({
       transports: [
-        new winston.transports.Console({ level: "info", format: logFormat }),
+        new winston.transports.Console({ level: 'info', format: logFormat }),
         new winston.transports.File({
-          filename: "profile-info.log",
-          level: "silly",
+          filename: 'profile-info.log',
+          level: 'silly',
         }),
       ],
     });
@@ -86,7 +86,7 @@ export class CherrytwistClient {
       );
     this.logger.info(`Loaded admin user token ok`);
     // Set the auth header
-    this.client.setHeader("Authorization", `Bearer ${adminUserToken}`);
+    this.client.setHeader('Authorization', `Bearer ${adminUserToken}`);
     this.logger.info(`Bearer token:  ${adminUserToken}`);
   }
 
@@ -157,8 +157,8 @@ export class CherrytwistClient {
     // Create actor groups
     const stakeholderAG = await this.createActorGroup(
       opportunityID,
-      "stakeholders",
-      "test"
+      'stakeholders',
+      'test'
     );
     const stakeholders = opportunityJson.stakeholders;
     for (let i = 0; i < stakeholders.length; i++) {
@@ -173,8 +173,8 @@ export class CherrytwistClient {
     }
     const keyUsersAG = await this.createActorGroup(
       opportunityID,
-      "key_users",
-      "test"
+      'key_users',
+      'test'
     );
     const keyUsers = opportunityJson.key_users;
     for (let i = 0; i < keyUsers.length; i++) {
@@ -189,15 +189,15 @@ export class CherrytwistClient {
     }
     const collaboratorsAG = await this.createActorGroup(
       opportunityID,
-      "collaborations",
-      "test"
+      'collaborations',
+      'test'
     );
 
     // Create the aspects
     const solutionDetails = opportunityJson.solution_details;
 
-    var jp = require("jsonpath");
-    var solutionsRoot = jp.query(opportunityJson, "$.solution_details");
+    var jp = require('jsonpath');
+    var solutionsRoot = jp.query(opportunityJson, '$.solution_details');
     var solutions = solutionsRoot[0];
     const solutionAspectNames = Object.keys(solutions);
     for (let i = 0; i < solutionAspectNames.length; i++) {
@@ -218,10 +218,10 @@ export class CherrytwistClient {
       const relation = outgoingRelations[i];
       const response = await this.createRelation(
         opportunityID,
-        "outgoing",
+        'outgoing',
         relation.reason,
-        "peer",
-        "group",
+        'peer',
+        'group',
         relation.team_name
       );
     }
@@ -231,7 +231,7 @@ export class CherrytwistClient {
       const relation = incomingRelations[i];
       const response = await this.createRelation(
         opportunityID,
-        "incoming",
+        'incoming',
         relation.reason,
         relation.role,
         relation.organization,
@@ -245,20 +245,20 @@ export class CherrytwistClient {
   }
 
   escapeStrings(input: string): string {
-    if (!input) return "";
+    if (!input) return '';
     return input
-      .replace(/[\\]/g, "\\\\")
-      .replace(/[\/]/g, "\\/")
-      .replace(/[\b]/g, "\\b")
-      .replace(/[\f]/g, "\\f")
-      .replace(/[\n]/g, "\\n")
-      .replace(/[\r]/g, "\\r")
-      .replace(/[\t]/g, "\\t")
+      .replace(/[\\]/g, '\\\\')
+      .replace(/[\/]/g, '\\/')
+      .replace(/[\b]/g, '\\b')
+      .replace(/[\f]/g, '\\f')
+      .replace(/[\n]/g, '\\n')
+      .replace(/[\r]/g, '\\r')
+      .replace(/[\t]/g, '\\t')
       .replace(/[\"]/g, '\\"')
       .replace(/\\'/g, "\\'")
       .replace(
         /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
-        ""
+        ''
       ); // last line to filter out emojis
   }
 
@@ -267,7 +267,7 @@ export class CherrytwistClient {
     opportunityJson: any,
     teamJson: any
   ) {
-    let demoRef = "";
+    let demoRef = '';
     if (teamJson.demoUrl && teamJson.demoUrl.length > 0) {
       demoRef = `{
           "name": "demo",
@@ -275,7 +275,7 @@ export class CherrytwistClient {
           "description": "make it understandable"
         },`;
     }
-    let posterRef = "";
+    let posterRef = '';
     if (teamJson.flagUrl && teamJson.flagUrl.length > 0) {
       posterRef = `{
           "name": "poster",
@@ -351,8 +351,8 @@ export class CherrytwistClient {
     // Create actor groups
     const stakeholderAG = await this.createActorGroup(
       opportunityID,
-      "stakeholders",
-      "test"
+      'stakeholders',
+      'test'
     );
 
     if (
@@ -391,8 +391,8 @@ export class CherrytwistClient {
 
     const keyUsersAG = await this.createActorGroup(
       opportunityID,
-      "key_users",
-      "test"
+      'key_users',
+      'test'
     );
     const keyUsers = opportunityJson.key_users;
     if (
@@ -429,10 +429,10 @@ export class CherrytwistClient {
       );
     }
 
-    const aspectsToSkip = ["problem", "solution", "url_github", "url_demo"];
+    const aspectsToSkip = ['problem', 'solution', 'url_github', 'url_demo'];
     // Create the aspects
-    var jp = require("jsonpath");
-    var solutionsRoot = jp.query(opportunityJson, "$.solution_details");
+    var jp = require('jsonpath');
+    var solutionsRoot = jp.query(opportunityJson, '$.solution_details');
     var solutions = solutionsRoot[0];
     const solutionAspectNames = Object.keys(solutions);
     if (solutionAspectNames) {
@@ -441,7 +441,7 @@ export class CherrytwistClient {
         if (!name) continue;
         if (aspectsToSkip.includes(name)) continue;
         var solution = solutions[name];
-        let framing: string = "";
+        let framing: string = '';
         if (solution.question) {
           framing = solution.question;
           if (solution.question.length > 255) {
@@ -449,7 +449,7 @@ export class CherrytwistClient {
             this.logger.warn(`Truncating framing in aspect: ${name}`);
           }
         }
-        name = name.replace(/_/g, " ");
+        name = name.replace(/_/g, ' ');
         if (solution && framing.length > 0) {
           const aspectResponse = await this.createAspect(
             opportunityID,
@@ -469,7 +469,7 @@ export class CherrytwistClient {
     if (teamRelations) {
       for (let i = 0; i < teamRelations.length; i++) {
         const teamRelation = teamRelations[i];
-        let description = "";
+        let description = '';
         if (teamRelation.reason) {
           description = teamRelation.reason;
         }
@@ -484,10 +484,10 @@ export class CherrytwistClient {
 
         await this.createRelation(
           opportunityID,
-          "outgoing",
+          'outgoing',
           this.escapeStrings(description),
-          "team",
-          "group",
+          'team',
+          'group',
           teamRelation.team.name
         );
       }
@@ -497,7 +497,7 @@ export class CherrytwistClient {
     if (ecosystemRelations) {
       for (let i = 0; i < ecosystemRelations.length; i++) {
         const ecosystemJoin = ecosystemRelations[i];
-        let description = "";
+        let description = '';
         if (ecosystemJoin.reason) {
           description = ecosystemJoin.reason;
         }
@@ -511,10 +511,10 @@ export class CherrytwistClient {
         //description = description.replace('\\xF0\\x9F\\x98', '');
         await this.createRelation(
           opportunityID,
-          "incoming",
+          'incoming',
           this.escapeStrings(description),
           ecosystemJoin.user.organisation,
-          "user",
+          'user',
           ecosystemJoin.user.name
         );
       }
@@ -559,8 +559,8 @@ export class CherrytwistClient {
     avatarURI: string
   ): Promise<Boolean> {
     const userVariable = gql`{"ID": "${userEmail}"}`;
-    let profileID = "";
-    let profileDesc = "";
+    let profileID = '';
+    let profileDesc = '';
     try {
       const getUserResponse = await this.client.request(
         this.mutations.userQueryStr,
@@ -584,7 +584,7 @@ export class CherrytwistClient {
     description: string,
     avatarURI: string
   ): Promise<Boolean> {
-    let profileDesc = "";
+    let profileDesc = '';
     try {
       // hacky: if an empty string is passed in then do not update the description field
       let descToUse = description;
@@ -649,7 +649,7 @@ export class CherrytwistClient {
   }
 
   convertCsvToJson(tagsCsv: string): string {
-    var tagsArr = tagsCsv.split(",");
+    var tagsArr = tagsCsv.split(',');
     const tagsJSON = JSON.stringify(tagsArr);
     return tagsJSON;
   }
@@ -667,7 +667,7 @@ export class CherrytwistClient {
         this.mutations.addUserToGroupMutationStr,
         addUserToGroupVariable
       );
-      this.logger.info("added user to group");
+      this.logger.info('added user to group');
     } catch (e) {
       this.logger.error(`Unable to add user to group ${groupID}: ${e}`);
     }
@@ -829,7 +829,7 @@ export class CherrytwistClient {
     actorName: string,
     value: string,
     impact: string,
-    description = ""
+    description = ''
   ): Promise<any> {
     // create the variable for the group mutation
     const createActorVariable = gql`
@@ -857,8 +857,8 @@ export class CherrytwistClient {
     actorID: number,
     actorName: string,
     value: string,
-    impact = "",
-    description = ""
+    impact = '',
+    description = ''
   ): Promise<any> {
     // create the variable for the group mutation
     const updateActorVariable = gql`
@@ -959,9 +959,9 @@ export class CherrytwistClient {
       );
       if (logoUri) {
         await this.addReference(
-          "logo",
+          'logo',
           logoUri,
-          "Logo for the ecoverse host",
+          'Logo for the ecoverse host',
           hostProfileID
         );
       }

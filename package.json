@@ -13,6 +13,7 @@
     "build": "tsc --project tsconfig.prod.json",
     "populate": "ts-node-dev src/populate.ts",
     "test-connection": "ts-node-dev src/test-connection.ts",
+    "format": "prettier --write src/**/*.ts{,x}",
     "prepare": "npm run build"
   },
   "repository": {
@@ -24,14 +25,15 @@
   },
   "homepage": "https://github.com/cherrytwist/Client.Lib#readme",
   "devDependencies": {
+    "@types/node": "^14.6.0",
+    "@types/supertest": "^2.0.8",
+    "prettier": "^2.2.0",
     "rimraf": "^3.0.2",
     "supertest": "^4.0.2",
     "ts-node-dev": "^1.0.0-pre.60",
     "typescript": "^4.0.2"
   },
   "dependencies": {
-    "@types/node": "^14.6.0",
-    "@types/supertest": "^2.0.8",
     "adal-node": "^0.2.1",
     "dotenv": "^8.2.0",
     "generate-password": "^1.5.1",

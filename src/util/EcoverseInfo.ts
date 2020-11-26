@@ -1,5 +1,5 @@
-import { gql } from "graphql-request";
-import { CherrytwistClient } from "src/CherrytwistClient";
+import { gql } from 'graphql-request';
+import { CherrytwistClient } from 'src/CherrytwistClient';
 
 export class EcoverseInfo {
   // Array of challenges info objects
@@ -25,17 +25,20 @@ export class EcoverseInfo {
     const challengeNameLC = challengeName.toLowerCase();
 
     const challengeInfo = this.challengesInfoArray.find(
-      (challenge) =>
-        challenge.name.toLowerCase() === challengeName.toLowerCase()
+      challenge => challenge.name.toLowerCase() === challengeName.toLowerCase()
     );
     if (!challengeInfo) {
       // No match found
-      throw new Error(`Not able to identify specified challenge: ${challengeName}`);
+      throw new Error(
+        `Not able to identify specified challenge: ${challengeName}`
+      );
     }
     return challengeInfo;
   }
 
-  async getChallengesInfo(ctClient: CherrytwistClient): Promise<ChallengeInfo[]> {
+  async getChallengesInfo(
+    ctClient: CherrytwistClient
+  ): Promise<ChallengeInfo[]> {
     ////////////////////////////////////////////////////////
     //
     const challengesInfoArray: ChallengeInfo[] = [];
@@ -53,12 +56,16 @@ export class EcoverseInfo {
       }
     `;
 
-    ctClient.logger.info(`Loading challenges from server: ${ctClient.config.server}`);
-    const ecoverseIdentifiersData = await ctClient.client.request(challengesQuery);
+    ctClient.logger.info(
+      `Loading challenges from server: ${ctClient.config.server}`
+    );
+    const ecoverseIdentifiersData = await ctClient.client.request(
+      challengesQuery
+    );
     var ecoverseName = ecoverseIdentifiersData.name;
     if (!ecoverseName) {
       ctClient.logger.error(`Unable to execute challenges query`);
-      throw new Error("Unable to execute challenges query");
+      throw new Error('Unable to execute challenges query');
     }
     try {
       const challengesCount = ecoverseIdentifiersData.challenges.length;
@@ -73,7 +80,7 @@ export class EcoverseInfo {
         var challengeGroups = challenge.groups;
         for (var j = 0; j < challengeGroups.length; j++) {
           const group = challengeGroups[j];
-          if (group.name === "members") {
+          if (group.name === 'members') {
             const groupID = group.id;
             //this.logger.info(`...located members group id: ${groupID} `);
             challengeInfo.membersGroupID = groupID;
@@ -89,7 +96,7 @@ export class EcoverseInfo {
       ctClient.logger.error(
         `Could not convert information from challenges query: ${e} `
       );
-      throw new Error("Unable to parse challenges");
+      throw new Error('Unable to parse challenges');
     }
     ctClient.logger.info(
       `==================== end ChallengesInfo ====================== `
@@ -117,12 +124,14 @@ export class EcoverseInfo {
       }
     `;
 
-    ctClient.logger.info(`Loading groups from server: ${ctClient.config.server}`);
+    ctClient.logger.info(
+      `Loading groups from server: ${ctClient.config.server}`
+    );
     const groupsData = await ctClient.client.request(groupsQuery);
     var ecoverseName = groupsData.name;
     if (!ecoverseName) {
       ctClient.logger.error(`Unable to execute groups query`);
-      throw new Error("Unable to execute groups query");
+      throw new Error('Unable to execute groups query');
     }
     try {
       const groupsCount = groupsData.groups.length;
@@ -142,7 +151,7 @@ export class EcoverseInfo {
       ctClient.logger.error(
         `Could not convert information from groups query: ${e} `
       );
-      throw new Error("Unable to parse groups");
+      throw new Error('Unable to parse groups');
     }
     ctClient.logger.info(
       `==================== end GroupsInfo ====================== `
@@ -153,10 +162,10 @@ export class EcoverseInfo {
 }
 
 export class ChallengeInfo {
-  ecoverseID: string = "";
-  challengeID = "";
-  name: string = "";
-  membersGroupID = "";
+  ecoverseID: string = '';
+  challengeID = '';
+  name: string = '';
+  membersGroupID = '';
 
   constructor(challengeName: string) {
     this.name = challengeName;

@@ -1,35 +1,37 @@
-import fs from "fs";
+import fs from 'fs';
 
 export class Mutations {
   // Add mutations
-  addUserToGroupMutationFile = "./src/mutations/add/add-user-to-group";
-  addUserToChallengeMutationFile = "./src/mutations/add/add-user-to-challenge";
-  addTagToTagsetFile = "./src/mutations/add/add-tag-to-tagset";
-  addChallengeLeadFile = "./src/mutations/add/add-challenge-lead";
-  
+  addUserToGroupMutationFile = './src/mutations/add/add-user-to-group';
+  addUserToChallengeMutationFile = './src/mutations/add/add-user-to-challenge';
+  addTagToTagsetFile = './src/mutations/add/add-tag-to-tagset';
+  addChallengeLeadFile = './src/mutations/add/add-challenge-lead';
+
   // Create mutations
-  createGroupOnEcoverseMutationFile = "./src/mutations/create/create-group-on-ecoverse";
-  createChallengeMutationFile = "./src/mutations/create/create-challenge";
-  createRelationMutationFile = "./src/mutations/create/create-relation";
-  createOrganisationMutationFile = "./src/mutations/create/create-organisation";
-  createTagsetOnProfileFile = "./src/mutations/create/create-tagset-on-profile";
-  createReferenceOnProfileFile = "./src/mutations/create/create-reference-on-profile";
-  createUserMutationFile = "./src/mutations/create/create-user";
-  createOpportunityMutationFile = "./src/mutations/create/create-opportunity";
-  createActorGroupMutationFile = "./src/mutations/create/create-actor-group";
-  createActorMutationFile = "./src/mutations/create/create-actor";
-  createAspectMutationFile = "./src/mutations/create/create-aspect";
-  
+  createGroupOnEcoverseMutationFile =
+    './src/mutations/create/create-group-on-ecoverse';
+  createChallengeMutationFile = './src/mutations/create/create-challenge';
+  createRelationMutationFile = './src/mutations/create/create-relation';
+  createOrganisationMutationFile = './src/mutations/create/create-organisation';
+  createTagsetOnProfileFile = './src/mutations/create/create-tagset-on-profile';
+  createReferenceOnProfileFile =
+    './src/mutations/create/create-reference-on-profile';
+  createUserMutationFile = './src/mutations/create/create-user';
+  createOpportunityMutationFile = './src/mutations/create/create-opportunity';
+  createActorGroupMutationFile = './src/mutations/create/create-actor-group';
+  createActorMutationFile = './src/mutations/create/create-actor';
+  createAspectMutationFile = './src/mutations/create/create-aspect';
+
   // Update mutations
-  updateActorMutationFile = "./src/mutations/update/update-actor";
-  replaceTagsOnTagsetFile = "./src/mutations/update/replace-tags-on-tagset";
-  updateEcoverseMutationFile = "./src/mutations/update/update-ecoverse";
-  updateOrganisationMutationFile = "./src/mutations/update/update-organisation";
-  updateProfileFile = "./src/mutations/update/update-profile";
+  updateActorMutationFile = './src/mutations/update/update-actor';
+  replaceTagsOnTagsetFile = './src/mutations/update/replace-tags-on-tagset';
+  updateEcoverseMutationFile = './src/mutations/update/update-ecoverse';
+  updateOrganisationMutationFile = './src/mutations/update/update-organisation';
+  updateProfileFile = './src/mutations/update/update-profile';
 
   // Queries
-  userQueryFile = "./src/mutations/queries/user";
-  
+  userQueryFile = './src/mutations/queries/user';
+
   // Load in + store some of the mutations / queries
   createChallengeMutationStr: string;
   createUserMutationStr: string;

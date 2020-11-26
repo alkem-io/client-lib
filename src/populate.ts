@@ -1,6 +1,6 @@
-import fs from "fs";
-import { CherrytwistClient } from "./CherrytwistClient";
-import { EnvironmentFactory } from "./util/EnvironmentFactory";
+import fs from 'fs';
+import { CherrytwistClient } from './CherrytwistClient';
+import { EnvironmentFactory } from './util/EnvironmentFactory';
 
 const main = async () => {
   const config = EnvironmentFactory.getEnvironmentConfig();
@@ -11,11 +11,11 @@ const main = async () => {
   ctClient.loadAdminToken();
 
   // Update the context and set the host
-  const ecoverseContextVariable = "./src/data/cherrytwist-ecoverse.json";
+  const ecoverseContextVariable = './src/data/cherrytwist-ecoverse.json';
   await ctClient.updateEcoverseContext(ecoverseContextVariable);
   await ctClient.updateHostOrganisation(
-    "Cherrytwist Sample Ecoverse",
-    "https://cherrytwist.org/wp-content/uploads/2020/10/cherrytwist-2.png"
+    'Cherrytwist Sample Ecoverse',
+    'https://cherrytwist.org/wp-content/uploads/2020/10/cherrytwist-2.png'
   );
 
   await createGroups(ctClient);
@@ -27,11 +27,11 @@ const main = async () => {
 // Load in mutations file
 async function createGroups(ctClient: CherrytwistClient) {
   const groupNames = [
-    "Team Leads",
-    "Team Members",
-    "Jedis",
-    "Stakeholders",
-    "Challenge Leads",
+    'Team Leads',
+    'Team Members',
+    'Jedis',
+    'Stakeholders',
+    'Challenge Leads',
   ];
   await ctClient.createGroups(groupNames);
 }

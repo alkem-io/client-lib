@@ -35,11 +35,9 @@ let fromUserId = 1;
 let toUserId = 2;
 
 let uniqueId = (Date.now() + Math.random()).toString();
-let uniqueTextId = Math.random()
-  .toString(36)
-  .slice(-6);
+let uniqueTextId = Math.random().toString(36).slice(-6);
 
-let ID = function() {
+let ID = function () {
   return '_' + Math.random().toString(36);
 };
 
