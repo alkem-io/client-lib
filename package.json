@@ -13,7 +13,7 @@
     "build": "tsc --project tsconfig.prod.json",
     "populate": "ts-node-dev src/populate.ts",
     "test-connection": "ts-node-dev src/test-connection.ts",
-    "format": "prettier --write src/**/*.ts{,x}",
+    "format": "prettier --write src/**/*.{graphql,ts}",
     "prepare": "npm run build"
   },
   "repository": {
