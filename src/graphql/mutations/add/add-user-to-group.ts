@@ -1,4 +1,4 @@
-import { gql } from 'graphql-request';
+import { gql } from '@apollo/client';
 
 export const addUserToGroup = gql`
   mutation addUserToGroup($userID: Float!, $groupID: Float!) {

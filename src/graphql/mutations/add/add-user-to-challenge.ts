@@ -1,4 +1,4 @@
-import { gql } from 'graphql-request';
+import { gql } from '@apollo/client';
 
 export const addUserToChallenge = gql`
   mutation addUserToChallenge($userID: Float!, $challengeID: Float!) {

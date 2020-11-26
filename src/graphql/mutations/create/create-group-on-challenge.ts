@@ -1,4 +1,4 @@
-import { gql } from 'graphql-request';
+import { gql } from '@apollo/client';
 
 export const createGroupOnChallenge = gql`
   mutation createGroupOnChallenge($groupName: String!, $challengeID: Float!) {
