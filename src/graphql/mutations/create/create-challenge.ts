@@ -1,6 +1,6 @@
 import { gql } from 'graphql-request';
 
-export const CreateChallenge = gql`
+export const CreateChallengeMutation = gql`
   mutation CreateChallenge($challengeData: ChallengeInput!) {
     createChallenge(challengeData: $challengeData) {
       name

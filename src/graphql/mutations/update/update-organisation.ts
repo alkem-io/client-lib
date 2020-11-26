@@ -1,6 +1,6 @@
 import { gql } from 'graphql-request';
 
-export const updateOrganisation = gql`
+export const updateOrganisationMutation = gql`
   mutation updateOrganisation(
     $orgID: Float!
     $organisationData: OrganisationInput!

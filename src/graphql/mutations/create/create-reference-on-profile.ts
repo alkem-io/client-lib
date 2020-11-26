@@ -1,6 +1,6 @@
 import { gql } from 'graphql-request';
 
-export const createReferenceOnProfile = gql`
+export const createReferenceOnProfileMutation = gql`
   mutation createReferenceOnProfile(
     $referenceInput: ReferenceInput!
     $profileID: Float!

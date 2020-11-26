@@ -1,6 +1,6 @@
 import { gql } from 'graphql-request';
 
-export const CreateUser = gql`
+export const CreateUserMutation = gql`
   mutation CreateUser($userData: UserInput!) {
     createUserProfile(userData: $userData) {
       name

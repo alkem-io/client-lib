@@ -1,6 +1,6 @@
 import { gql } from 'graphql-request';
 
-export const createGroupOnEcoverse = gql`
+export const createGroupOnEcoverseMutation = gql`
   mutation createGroupOnEcoverse($groupName: String!) {
     createGroupOnEcoverse(groupName: $groupName) {
       id

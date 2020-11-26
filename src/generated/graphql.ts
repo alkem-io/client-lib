@@ -984,14 +984,12 @@ export type CreateGroupOnOrganisationMutation = { __typename?: 'Mutation' } & {
   >;
 };
 
-export type CreateOpportunityOnChallengeMutationVariables = Exact<{
+export type CreateOpportunityMutationMutationVariables = Exact<{
   opportunityData: OpportunityInput;
   challengeID: Scalars['Float'];
 }>;
 
-export type CreateOpportunityOnChallengeMutation = {
-  __typename?: 'Mutation';
-} & {
+export type CreateOpportunityMutationMutation = { __typename?: 'Mutation' } & {
   createOpportunityOnChallenge: { __typename?: 'Opportunity' } & Pick<
     Opportunity,
     'name' | 'id'

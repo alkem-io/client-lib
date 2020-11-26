@@ -1,6 +1,6 @@
 import { gql } from 'graphql-request';
 
-export const updateEcoverse = gql`
+export const updateEcoverseMutation = gql`
   mutation updateEcoverse($ecoverseData: EcoverseInput!) {
     updateEcoverse(ecoverseData: $ecoverseData) {
       name

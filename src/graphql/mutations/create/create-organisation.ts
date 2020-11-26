@@ -1,6 +1,6 @@
 import { gql } from 'graphql-request';
 
-export const CreateOrganisation = gql`
+export const CreateOrganisationMutation = gql`
   mutation CreateOrganisation($organisationData: OrganisationInput!) {
     createOrganisation(organisationData: $organisationData) {
       name

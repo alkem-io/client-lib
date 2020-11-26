@@ -1,7 +1,7 @@
 import { gql } from 'graphql-request';
 
-export const CreateRelation = gql`
-  mutation CreateRelation(
+export const createRelationMutation = gql`
+  mutation createRelation(
     $relationData: RelationInput!
     $opportunityID: Float!
   ) {

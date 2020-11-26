@@ -1,6 +1,6 @@
 import { gql } from 'graphql-request';
 
-export const user = gql`
+export const userQuery = gql`
   query user($ID: String!) {
     user(ID: $ID) {
       name

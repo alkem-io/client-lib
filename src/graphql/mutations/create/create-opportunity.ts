@@ -1,7 +1,7 @@
 import { gql } from 'graphql-request';
 
-export const createOpportunityOnChallenge = gql`
-  mutation createOpportunityOnChallenge(
+export const createOpportunityMutation = gql`
+  mutation createOpportunityMutation(
     $opportunityData: OpportunityInput!
     $challengeID: Float!
   ) {

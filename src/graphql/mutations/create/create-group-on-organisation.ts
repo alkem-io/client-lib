@@ -1,6 +1,6 @@
 import { gql } from 'graphql-request';
 
-export const createGroupOnOrganisation = gql`
+export const createGroupOnOrganisationMutation = gql`
   mutation createGroupOnOrganisation(
     $groupName: String!
     $organisationID: Float!

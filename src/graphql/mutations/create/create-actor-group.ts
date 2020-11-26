@@ -1,7 +1,7 @@
 import { gql } from 'graphql-request';
 
-export const CreateActorGroup = gql`
-  mutation CreateActorGroup(
+export const createActorGroupMutation = gql`
+  mutation createActorGroup(
     $actorGroupData: ActorGroupInput!
     $opportunityID: Float!
   ) {
