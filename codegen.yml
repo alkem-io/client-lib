@@ -6,6 +6,8 @@ generates:
     plugins:
       - "typescript"
       - "typescript-operations"
+      - "typescript-graphql-request"
     config:
       avoidOptionals: true
       maybeValue: T | undefined
+      rawRequest: true

@@ -3,10 +3,13 @@ import { CherrytwistClient } from './CherrytwistClient';
 // import { EnvironmentFactory } from './util/EnvironmentFactory';
 
 const main = async () => {
-  // //const config = EnvironmentFactory.getEnvironmentConfig();
-  // const ctClient = new CherrytwistClient(config);
-  // ctClient.logger.info(`Cherrytwist server: ${config}`);
-  // await ctClient.testConnection();
+  // TODO [ATS]
+  //const config = EnvironmentFactory.getEnvironmentConfig();
+  const ctClient = new CherrytwistClient({
+    graphqlEndpoint: 'http://localhost:4000/graphql',
+  });
+  ctClient.logger.info(`Cherrytwist server: http://localhost:4000/graphql`);
+  await ctClient.testConnection();
 };
 
 try {

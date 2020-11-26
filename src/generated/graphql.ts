@@ -1,3 +1,8 @@
+import { GraphQLClient } from 'graphql-request';
+import { print } from 'graphql';
+import { GraphQLError } from 'graphql-request/dist/types';
+import { Headers } from 'graphql-request/dist/types.dom';
+import gql from 'graphql-tag';
 export type Maybe<T> = T | undefined;
 export type Exact<T extends { [key: string]: unknown }> = {
   [K in keyof T]: T[K];
@@ -1114,3 +1119,616 @@ export type UserQuery = { __typename?: 'Query' } & {
       >;
     };
 };
+
+export const AddChallengeLeadDocument = gql`
+  mutation addChallengeLead($challengeID: Float!, $organisationID: Float!) {
+    addChallengeLead(organisationID: $organisationID, challengeID: $challengeID)
+  }
+`;
+export const AddTagToTagsetDocument = gql`
+  mutation addTagToTagset($tag: String!, $tagsetID: Float!) {
+    addTagToTagset(tag: $tag, tagsetID: $tagsetID) {
+      id
+    }
+  }
+`;
+export const AddUserToChallengeDocument = gql`
+  mutation addUserToChallenge($userID: Float!, $challengeID: Float!) {
+    addUserToChallenge(challengeID: $challengeID, userID: $userID) {
+      name
+      id
+      members {
+        id
+        name
+      }
+    }
+  }
+`;
+export const AddUserToGroupDocument = gql`
+  mutation addUserToGroup($userID: Float!, $groupID: Float!) {
+    addUserToGroup(userID: $userID, groupID: $groupID)
+  }
+`;
+export const CreateActorGroupDocument = gql`
+  mutation createActorGroup(
+    $actorGroupData: ActorGroupInput!
+    $opportunityID: Float!
+  ) {
+    createActorGroup(
+      actorGroupData: $actorGroupData
+      opportunityID: $opportunityID
+    ) {
+      name
+      id
+    }
+  }
+`;
+export const CreateActorDocument = gql`
+  mutation createActor($actorData: ActorInput!, $actorGroupID: Float!) {
+    createActor(actorData: $actorData, actorGroupID: $actorGroupID) {
+      id
+      name
+      description
+      value
+      impact
+    }
+  }
+`;
+export const CreateAspectDocument = gql`
+  mutation createAspect($aspectData: AspectInput!, $opportunityID: Float!) {
+    createAspect(aspectData: $aspectData, opportunityID: $opportunityID) {
+      title
+      framing
+      explanation
+    }
+  }
+`;
+export const CreateChallengeDocument = gql`
+  mutation CreateChallenge($challengeData: ChallengeInput!) {
+    createChallenge(challengeData: $challengeData) {
+      name
+      id
+      tagset {
+        tags
+        id
+        name
+      }
+      groups {
+        id
+        name
+      }
+    }
+  }
+`;
+export const CreateGroupOnChallengeDocument = gql`
+  mutation createGroupOnChallenge($groupName: String!, $challengeID: Float!) {
+    createGroupOnChallenge(groupName: $groupName, challengeID: $challengeID) {
+      name
+      id
+    }
+  }
+`;
+export const CreateGroupOnEcoverseDocument = gql`
+  mutation createGroupOnEcoverse($groupName: String!) {
+    createGroupOnEcoverse(groupName: $groupName) {
+      id
+      name
+      profile {
+        tagsets {
+          name
+          id
+        }
+      }
+    }
+  }
+`;
+export const CreateGroupOnOrganisationDocument = gql`
+  mutation createGroupOnOrganisation(
+    $groupName: String!
+    $organisationID: Float!
+  ) {
+    createGroupOnOrganisation(groupName: $groupName, orgID: $organisationID) {
+      id
+      name
+    }
+  }
+`;
+export const CreateOpportunityMutationDocument = gql`
+  mutation createOpportunityMutation(
+    $opportunityData: OpportunityInput!
+    $challengeID: Float!
+  ) {
+    createOpportunityOnChallenge(
+      opportunityData: $opportunityData
+      challengeID: $challengeID
+    ) {
+      name
+      id
+    }
+  }
+`;
+export const CreateOrganisationDocument = gql`
+  mutation CreateOrganisation($organisationData: OrganisationInput!) {
+    createOrganisation(organisationData: $organisationData) {
+      name
+      id
+      profile {
+        id
+      }
+    }
+  }
+`;
+export const CreateReferenceOnProfileDocument = gql`
+  mutation createReferenceOnProfile(
+    $referenceInput: ReferenceInput!
+    $profileID: Float!
+  ) {
+    createReferenceOnProfile(
+      referenceInput: $referenceInput
+      profileID: $profileID
+    ) {
+      name
+      uri
+      description
+    }
+  }
+`;
+export const CreateRelationDocument = gql`
+  mutation createRelation(
+    $relationData: RelationInput!
+    $opportunityID: Float!
+  ) {
+    createRelation(relationData: $relationData, opportunityID: $opportunityID) {
+      type
+    }
+  }
+`;
+export const CreateTagsetOnProfileDocument = gql`
+  mutation createTagsetOnProfile($tagsetName: String!, $profileID: Float!) {
+    createTagsetOnProfile(tagsetName: $tagsetName, profileID: $profileID) {
+      id
+      tags
+    }
+  }
+`;
+export const CreateUserDocument = gql`
+  mutation CreateUser($userData: UserInput!) {
+    createUserProfile(userData: $userData) {
+      name
+      id
+      profile {
+        id
+      }
+    }
+  }
+`;
+export const ReplaceTagsOnTagsetDocument = gql`
+  mutation replaceTagsOnTagset($tags: [String!]!, $tagsetID: Float!) {
+    replaceTagsOnTagset(tags: $tags, tagsetID: $tagsetID) {
+      name
+      tags
+    }
+  }
+`;
+export const UpdateActorDocument = gql`
+  mutation updateActor($actorData: ActorInput!, $ID: Float!) {
+    updateActor(actorData: $actorData, ID: $ID) {
+      name
+    }
+  }
+`;
+export const UpdateEcoverseDocument = gql`
+  mutation updateEcoverse($ecoverseData: EcoverseInput!) {
+    updateEcoverse(ecoverseData: $ecoverseData) {
+      name
+      context {
+        tagline
+      }
+    }
+  }
+`;
+export const UpdateOrganisationDocument = gql`
+  mutation updateOrganisation(
+    $orgID: Float!
+    $organisationData: OrganisationInput!
+  ) {
+    updateOrganisation(orgID: $orgID, organisationData: $organisationData) {
+      name
+      id
+    }
+  }
+`;
+export const UpdateProfileDocument = gql`
+  mutation updateProfile($profileData: ProfileInput!, $ID: Float!) {
+    updateProfile(profileData: $profileData, ID: $ID)
+  }
+`;
+export const UserDocument = gql`
+  query user($ID: String!) {
+    user(ID: $ID) {
+      name
+      id
+      profile {
+        id
+        avatar
+      }
+    }
+  }
+`;
+
+export type SdkFunctionWrapper = <T>(action: () => Promise<T>) => Promise<T>;
+
+const defaultWrapper: SdkFunctionWrapper = sdkFunction => sdkFunction();
+export function getSdk(
+  client: GraphQLClient,
+  withWrapper: SdkFunctionWrapper = defaultWrapper
+) {
+  return {
+    addChallengeLead(
+      variables: AddChallengeLeadMutationVariables
+    ): Promise<{
+      data?: AddChallengeLeadMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<AddChallengeLeadMutation>(
+          print(AddChallengeLeadDocument),
+          variables
+        )
+      );
+    },
+    addTagToTagset(
+      variables: AddTagToTagsetMutationVariables
+    ): Promise<{
+      data?: AddTagToTagsetMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<AddTagToTagsetMutation>(
+          print(AddTagToTagsetDocument),
+          variables
+        )
+      );
+    },
+    addUserToChallenge(
+      variables: AddUserToChallengeMutationVariables
+    ): Promise<{
+      data?: AddUserToChallengeMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<AddUserToChallengeMutation>(
+          print(AddUserToChallengeDocument),
+          variables
+        )
+      );
+    },
+    addUserToGroup(
+      variables: AddUserToGroupMutationVariables
+    ): Promise<{
+      data?: AddUserToGroupMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<AddUserToGroupMutation>(
+          print(AddUserToGroupDocument),
+          variables
+        )
+      );
+    },
+    createActorGroup(
+      variables: CreateActorGroupMutationVariables
+    ): Promise<{
+      data?: CreateActorGroupMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<CreateActorGroupMutation>(
+          print(CreateActorGroupDocument),
+          variables
+        )
+      );
+    },
+    createActor(
+      variables: CreateActorMutationVariables
+    ): Promise<{
+      data?: CreateActorMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<CreateActorMutation>(
+          print(CreateActorDocument),
+          variables
+        )
+      );
+    },
+    createAspect(
+      variables: CreateAspectMutationVariables
+    ): Promise<{
+      data?: CreateAspectMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<CreateAspectMutation>(
+          print(CreateAspectDocument),
+          variables
+        )
+      );
+    },
+    CreateChallenge(
+      variables: CreateChallengeMutationVariables
+    ): Promise<{
+      data?: CreateChallengeMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<CreateChallengeMutation>(
+          print(CreateChallengeDocument),
+          variables
+        )
+      );
+    },
+    createGroupOnChallenge(
+      variables: CreateGroupOnChallengeMutationVariables
+    ): Promise<{
+      data?: CreateGroupOnChallengeMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<CreateGroupOnChallengeMutation>(
+          print(CreateGroupOnChallengeDocument),
+          variables
+        )
+      );
+    },
+    createGroupOnEcoverse(
+      variables: CreateGroupOnEcoverseMutationVariables
+    ): Promise<{
+      data?: CreateGroupOnEcoverseMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<CreateGroupOnEcoverseMutation>(
+          print(CreateGroupOnEcoverseDocument),
+          variables
+        )
+      );
+    },
+    createGroupOnOrganisation(
+      variables: CreateGroupOnOrganisationMutationVariables
+    ): Promise<{
+      data?: CreateGroupOnOrganisationMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<CreateGroupOnOrganisationMutation>(
+          print(CreateGroupOnOrganisationDocument),
+          variables
+        )
+      );
+    },
+    createOpportunityMutation(
+      variables: CreateOpportunityMutationMutationVariables
+    ): Promise<{
+      data?: CreateOpportunityMutationMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<CreateOpportunityMutationMutation>(
+          print(CreateOpportunityMutationDocument),
+          variables
+        )
+      );
+    },
+    CreateOrganisation(
+      variables: CreateOrganisationMutationVariables
+    ): Promise<{
+      data?: CreateOrganisationMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<CreateOrganisationMutation>(
+          print(CreateOrganisationDocument),
+          variables
+        )
+      );
+    },
+    createReferenceOnProfile(
+      variables: CreateReferenceOnProfileMutationVariables
+    ): Promise<{
+      data?: CreateReferenceOnProfileMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<CreateReferenceOnProfileMutation>(
+          print(CreateReferenceOnProfileDocument),
+          variables
+        )
+      );
+    },
+    createRelation(
+      variables: CreateRelationMutationVariables
+    ): Promise<{
+      data?: CreateRelationMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<CreateRelationMutation>(
+          print(CreateRelationDocument),
+          variables
+        )
+      );
+    },
+    createTagsetOnProfile(
+      variables: CreateTagsetOnProfileMutationVariables
+    ): Promise<{
+      data?: CreateTagsetOnProfileMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<CreateTagsetOnProfileMutation>(
+          print(CreateTagsetOnProfileDocument),
+          variables
+        )
+      );
+    },
+    CreateUser(
+      variables: CreateUserMutationVariables
+    ): Promise<{
+      data?: CreateUserMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<CreateUserMutation>(
+          print(CreateUserDocument),
+          variables
+        )
+      );
+    },
+    replaceTagsOnTagset(
+      variables: ReplaceTagsOnTagsetMutationVariables
+    ): Promise<{
+      data?: ReplaceTagsOnTagsetMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<ReplaceTagsOnTagsetMutation>(
+          print(ReplaceTagsOnTagsetDocument),
+          variables
+        )
+      );
+    },
+    updateActor(
+      variables: UpdateActorMutationVariables
+    ): Promise<{
+      data?: UpdateActorMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<UpdateActorMutation>(
+          print(UpdateActorDocument),
+          variables
+        )
+      );
+    },
+    updateEcoverse(
+      variables: UpdateEcoverseMutationVariables
+    ): Promise<{
+      data?: UpdateEcoverseMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<UpdateEcoverseMutation>(
+          print(UpdateEcoverseDocument),
+          variables
+        )
+      );
+    },
+    updateOrganisation(
+      variables: UpdateOrganisationMutationVariables
+    ): Promise<{
+      data?: UpdateOrganisationMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<UpdateOrganisationMutation>(
+          print(UpdateOrganisationDocument),
+          variables
+        )
+      );
+    },
+    updateProfile(
+      variables: UpdateProfileMutationVariables
+    ): Promise<{
+      data?: UpdateProfileMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<UpdateProfileMutation>(
+          print(UpdateProfileDocument),
+          variables
+        )
+      );
+    },
+    user(
+      variables: UserQueryVariables
+    ): Promise<{
+      data?: UserQuery | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<UserQuery>(print(UserDocument), variables)
+      );
+    },
+  };
+}
+export type Sdk = ReturnType<typeof getSdk>;
