@@ -1,4 +1,4 @@
-mutation createOpportunityMutation(
+mutation createOpportunity(
   $opportunityData: OpportunityInput!
   $challengeID: Float!
 ) {

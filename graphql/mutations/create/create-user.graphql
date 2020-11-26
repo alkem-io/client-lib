@@ -1,4 +1,4 @@
-mutation CreateUser($userData: UserInput!) {
+mutation createUser($userData: UserInput!) {
   createUserProfile(userData: $userData) {
     name
     id

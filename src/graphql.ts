@@ -989,12 +989,12 @@ export type CreateGroupOnOrganisationMutation = { __typename?: 'Mutation' } & {
   >;
 };
 
-export type CreateOpportunityMutationMutationVariables = Exact<{
+export type CreateOpportunityMutationVariables = Exact<{
   opportunityData: OpportunityInput;
   challengeID: Scalars['Float'];
 }>;
 
-export type CreateOpportunityMutationMutation = { __typename?: 'Mutation' } & {
+export type CreateOpportunityMutation = { __typename?: 'Mutation' } & {
   createOpportunityOnChallenge: { __typename?: 'Opportunity' } & Pick<
     Opportunity,
     'name' | 'id'
@@ -1108,6 +1108,10 @@ export type UpdateProfileMutation = { __typename?: 'Mutation' } & Pick<
   'updateProfile'
 >;
 
+export type EcoverseNameQueryVariables = Exact<{ [key: string]: never }>;
+
+export type EcoverseNameQuery = { __typename?: 'Query' } & Pick<Query, 'name'>;
+
 export type UserQueryVariables = Exact<{
   ID: Scalars['String'];
 }>;
@@ -1184,7 +1188,7 @@ export const CreateAspectDocument = gql`
   }
 `;
 export const CreateChallengeDocument = gql`
-  mutation CreateChallenge($challengeData: ChallengeInput!) {
+  mutation createChallenge($challengeData: ChallengeInput!) {
     createChallenge(challengeData: $challengeData) {
       name
       id
@@ -1233,8 +1237,8 @@ export const CreateGroupOnOrganisationDocument = gql`
     }
   }
 `;
-export const CreateOpportunityMutationDocument = gql`
-  mutation createOpportunityMutation(
+export const CreateOpportunityDocument = gql`
+  mutation createOpportunity(
     $opportunityData: OpportunityInput!
     $challengeID: Float!
   ) {
@@ -1248,7 +1252,7 @@ export const CreateOpportunityMutationDocument = gql`
   }
 `;
 export const CreateOrganisationDocument = gql`
-  mutation CreateOrganisation($organisationData: OrganisationInput!) {
+  mutation createOrganisation($organisationData: OrganisationInput!) {
     createOrganisation(organisationData: $organisationData) {
       name
       id
@@ -1292,7 +1296,7 @@ export const CreateTagsetOnProfileDocument = gql`
   }
 `;
 export const CreateUserDocument = gql`
-  mutation CreateUser($userData: UserInput!) {
+  mutation createUser($userData: UserInput!) {
     createUserProfile(userData: $userData) {
       name
       id
@@ -1341,6 +1345,11 @@ export const UpdateOrganisationDocument = gql`
 export const UpdateProfileDocument = gql`
   mutation updateProfile($profileData: ProfileInput!, $ID: Float!) {
     updateProfile(profileData: $profileData, ID: $ID)
+  }
+`;
+export const EcoverseNameDocument = gql`
+  query ecoverseName {
+    name
   }
 `;
 export const UserDocument = gql`
@@ -1476,7 +1485,7 @@ export function getSdk(
         )
       );
     },
-    CreateChallenge(
+    createChallenge(
       variables: CreateChallengeMutationVariables
     ): Promise<{
       data?: CreateChallengeMutation | undefined;
@@ -1540,23 +1549,23 @@ export function getSdk(
         )
       );
     },
-    createOpportunityMutation(
-      variables: CreateOpportunityMutationMutationVariables
+    createOpportunity(
+      variables: CreateOpportunityMutationVariables
     ): Promise<{
-      data?: CreateOpportunityMutationMutation | undefined;
+      data?: CreateOpportunityMutation | undefined;
       extensions?: any;
       headers: Headers;
       status: number;
       errors?: GraphQLError[] | undefined;
     }> {
       return withWrapper(() =>
-        client.rawRequest<CreateOpportunityMutationMutation>(
-          print(CreateOpportunityMutationDocument),
+        client.rawRequest<CreateOpportunityMutation>(
+          print(CreateOpportunityDocument),
           variables
         )
       );
     },
-    CreateOrganisation(
+    createOrganisation(
       variables: CreateOrganisationMutationVariables
     ): Promise<{
       data?: CreateOrganisationMutation | undefined;
@@ -1620,7 +1629,7 @@ export function getSdk(
         )
       );
     },
-    CreateUser(
+    createUser(
       variables: CreateUserMutationVariables
     ): Promise<{
       data?: CreateUserMutation | undefined;
@@ -1712,6 +1721,22 @@ export function getSdk(
       return withWrapper(() =>
         client.rawRequest<UpdateProfileMutation>(
           print(UpdateProfileDocument),
+          variables
+        )
+      );
+    },
+    ecoverseName(
+      variables?: EcoverseNameQueryVariables
+    ): Promise<{
+      data?: EcoverseNameQuery | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<EcoverseNameQuery>(
+          print(EcoverseNameDocument),
           variables
         )
       );
