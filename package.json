@@ -14,7 +14,8 @@
     "populate": "ts-node-dev src/populate.ts",
     "test-connection": "ts-node-dev src/test-connection.ts",
     "format": "prettier --write src/**/*.{graphql,ts}",
-    "codegen": "graphql-codegen --config codegen.yml"
+    "codegen": "graphql-codegen --config codegen.yml",
+    "postcodegen": "prettier --write src/generated/*.ts"
   },
   "repository": {
     "type": "git",
