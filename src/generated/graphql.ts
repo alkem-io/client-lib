@@ -1,7 +1,11 @@
 export type Maybe<T> = T | undefined;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K];
+};
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> &
+  { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> &
+  { [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -357,46 +361,37 @@ export type Query = {
   search: Array<SearchResultEntry>;
 };
 
-
 export type QueryOpportunityArgs = {
   ID: Scalars['Float'];
 };
-
 
 export type QueryProjectArgs = {
   ID: Scalars['Float'];
 };
 
-
 export type QueryUserArgs = {
   ID: Scalars['String'];
 };
-
 
 export type QueryUsersByIdArgs = {
   IDs: Array<Scalars['String']>;
 };
 
-
 export type QueryGroupsWithTagArgs = {
   tag: Scalars['String'];
 };
-
 
 export type QueryGroupArgs = {
   ID: Scalars['Float'];
 };
 
-
 export type QueryChallengeArgs = {
   ID: Scalars['Float'];
 };
 
-
 export type QueryOrganisationArgs = {
   ID: Scalars['Float'];
 };
-
 
 export type QuerySearchArgs = {
   searchData: SearchInput;
@@ -513,271 +508,223 @@ export type Mutation = {
   createUserAccount: Scalars['Boolean'];
 };
 
-
 export type MutationUpdateUserArgs = {
   userData: UserInput;
   userID: Scalars['Float'];
 };
 
-
 export type MutationRemoveReferenceArgs = {
   ID: Scalars['Float'];
 };
-
 
 export type MutationReplaceTagsOnTagsetArgs = {
   tags: Array<Scalars['String']>;
   tagsetID: Scalars['Float'];
 };
 
-
 export type MutationAddTagToTagsetArgs = {
   tag: Scalars['String'];
   tagsetID: Scalars['Float'];
 };
-
 
 export type MutationCreateTagsetOnProfileArgs = {
   tagsetName: Scalars['String'];
   profileID: Scalars['Float'];
 };
 
-
 export type MutationCreateReferenceOnProfileArgs = {
   referenceInput: ReferenceInput;
   profileID: Scalars['Float'];
 };
-
 
 export type MutationUpdateProfileArgs = {
   profileData: ProfileInput;
   ID: Scalars['Float'];
 };
 
-
 export type MutationAddUserToGroupArgs = {
   groupID: Scalars['Float'];
   userID: Scalars['Float'];
 };
-
 
 export type MutationRemoveUserFromGroupArgs = {
   groupID: Scalars['Float'];
   userID: Scalars['Float'];
 };
 
-
 export type MutationAssignGroupFocalPointArgs = {
   groupID: Scalars['Float'];
   userID: Scalars['Float'];
 };
 
-
 export type MutationRemoveGroupFocalPointArgs = {
   groupID: Scalars['Float'];
 };
-
 
 export type MutationCreateGroupOnChallengeArgs = {
   groupName: Scalars['String'];
   challengeID: Scalars['Float'];
 };
 
-
 export type MutationCreateOpportunityOnChallengeArgs = {
   opportunityData: OpportunityInput;
   challengeID: Scalars['Float'];
 };
-
 
 export type MutationUpdateChallengeArgs = {
   challengeData: ChallengeInput;
   challengeID: Scalars['Float'];
 };
 
-
 export type MutationRemoveChallengeArgs = {
   ID: Scalars['Float'];
 };
-
 
 export type MutationAddUserToChallengeArgs = {
   challengeID: Scalars['Float'];
   userID: Scalars['Float'];
 };
 
-
 export type MutationAddChallengeLeadArgs = {
   challengeID: Scalars['Float'];
   organisationID: Scalars['Float'];
 };
-
 
 export type MutationRemoveChallengeLeadArgs = {
   challengeID: Scalars['Float'];
   organisationID: Scalars['Float'];
 };
 
-
 export type MutationCreateReferenceOnContextArgs = {
   referenceInput: ReferenceInput;
   contextID: Scalars['Float'];
 };
-
 
 export type MutationUpdateOpportunityArgs = {
   opportunityData: OpportunityInput;
   ID: Scalars['Float'];
 };
 
-
 export type MutationRemoveOpportunityArgs = {
   ID: Scalars['Float'];
 };
-
 
 export type MutationCreateProjectArgs = {
   projectData: ProjectInput;
   opportunityID: Scalars['Float'];
 };
 
-
 export type MutationCreateAspectArgs = {
   aspectData: AspectInput;
   opportunityID: Scalars['Float'];
 };
-
 
 export type MutationCreateActorGroupArgs = {
   actorGroupData: ActorGroupInput;
   opportunityID: Scalars['Float'];
 };
 
-
 export type MutationCreateRelationArgs = {
   relationData: RelationInput;
   opportunityID: Scalars['Float'];
 };
-
 
 export type MutationCreateGroupOnOpportunityArgs = {
   groupName: Scalars['String'];
   opportunityID: Scalars['Float'];
 };
 
-
 export type MutationAddUserToOpportunityArgs = {
   opportunityID: Scalars['Float'];
   userID: Scalars['Float'];
 };
 
-
 export type MutationRemoveAspectArgs = {
   ID: Scalars['Float'];
 };
-
 
 export type MutationUpdateAspectArgs = {
   aspectData: AspectInput;
   ID: Scalars['Float'];
 };
 
-
 export type MutationRemoveActorArgs = {
   ID: Scalars['Float'];
 };
-
 
 export type MutationUpdateActorArgs = {
   actorData: ActorInput;
   ID: Scalars['Float'];
 };
 
-
 export type MutationCreateActorArgs = {
   actorData: ActorInput;
   actorGroupID: Scalars['Float'];
 };
 
-
 export type MutationRemoveActorGroupArgs = {
   ID: Scalars['Float'];
 };
-
 
 export type MutationRemoveRelationArgs = {
   ID: Scalars['Float'];
 };
 
-
 export type MutationRemoveProjectArgs = {
   ID: Scalars['Float'];
 };
-
 
 export type MutationUpdateProjectArgs = {
   projectData: ProjectInput;
   ID: Scalars['Float'];
 };
 
-
 export type MutationCreateAspectOnProjectArgs = {
   aspectData: AspectInput;
   projectID: Scalars['Float'];
 };
-
 
 export type MutationCreateGroupOnOrganisationArgs = {
   groupName: Scalars['String'];
   orgID: Scalars['Float'];
 };
 
-
 export type MutationUpdateOrganisationArgs = {
   organisationData: OrganisationInput;
   orgID: Scalars['Float'];
 };
 
-
 export type MutationCreateGroupOnEcoverseArgs = {
   groupName: Scalars['String'];
 };
-
 
 export type MutationUpdateEcoverseArgs = {
   ecoverseData: EcoverseInput;
 };
 
-
 export type MutationCreateUserArgs = {
   userData: UserInput;
 };
-
 
 export type MutationCreateTemplateArgs = {
   templateData: TemplateInput;
 };
 
-
 export type MutationCreateUserProfileArgs = {
   userData: UserInput;
 };
-
 
 export type MutationRemoveUserArgs = {
   userID: Scalars['Float'];
 };
 
-
 export type MutationCreateChallengeArgs = {
   challengeData: ChallengeInput;
 };
 
-
 export type MutationCreateOrganisationArgs = {
   organisationData: OrganisationInput;
 };
-
 
 export type MutationCreateUserAccountArgs = {
   password: Scalars['String'];
@@ -900,338 +847,272 @@ export type AddChallengeLeadMutationVariables = Exact<{
   organisationID: Scalars['Float'];
 }>;
 
-
-export type AddChallengeLeadMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'addChallengeLead'>
-);
+export type AddChallengeLeadMutation = { __typename?: 'Mutation' } & Pick<
+  Mutation,
+  'addChallengeLead'
+>;
 
 export type AddTagToTagsetMutationVariables = Exact<{
   tag: Scalars['String'];
   tagsetID: Scalars['Float'];
 }>;
 
-
-export type AddTagToTagsetMutation = (
-  { __typename?: 'Mutation' }
-  & { addTagToTagset: (
-    { __typename?: 'Tagset' }
-    & Pick<Tagset, 'id'>
-  ) }
-);
+export type AddTagToTagsetMutation = { __typename?: 'Mutation' } & {
+  addTagToTagset: { __typename?: 'Tagset' } & Pick<Tagset, 'id'>;
+};
 
 export type AddUserToChallengeMutationVariables = Exact<{
   userID: Scalars['Float'];
   challengeID: Scalars['Float'];
 }>;
 
-
-export type AddUserToChallengeMutation = (
-  { __typename?: 'Mutation' }
-  & { addUserToChallenge: (
-    { __typename?: 'UserGroup' }
-    & Pick<UserGroup, 'name' | 'id'>
-    & { members: Maybe<Array<(
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'name'>
-    )>> }
-  ) }
-);
+export type AddUserToChallengeMutation = { __typename?: 'Mutation' } & {
+  addUserToChallenge: { __typename?: 'UserGroup' } & Pick<
+    UserGroup,
+    'name' | 'id'
+  > & {
+      members: Maybe<
+        Array<{ __typename?: 'User' } & Pick<User, 'id' | 'name'>>
+      >;
+    };
+};
 
 export type AddUserToGroupMutationVariables = Exact<{
   userID: Scalars['Float'];
   groupID: Scalars['Float'];
 }>;
 
-
-export type AddUserToGroupMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'addUserToGroup'>
-);
+export type AddUserToGroupMutation = { __typename?: 'Mutation' } & Pick<
+  Mutation,
+  'addUserToGroup'
+>;
 
 export type CreateActorGroupMutationVariables = Exact<{
   actorGroupData: ActorGroupInput;
   opportunityID: Scalars['Float'];
 }>;
 
-
-export type CreateActorGroupMutation = (
-  { __typename?: 'Mutation' }
-  & { createActorGroup: (
-    { __typename?: 'ActorGroup' }
-    & Pick<ActorGroup, 'name' | 'id'>
-  ) }
-);
+export type CreateActorGroupMutation = { __typename?: 'Mutation' } & {
+  createActorGroup: { __typename?: 'ActorGroup' } & Pick<
+    ActorGroup,
+    'name' | 'id'
+  >;
+};
 
 export type CreateActorMutationVariables = Exact<{
   actorData: ActorInput;
   actorGroupID: Scalars['Float'];
 }>;
 
-
-export type CreateActorMutation = (
-  { __typename?: 'Mutation' }
-  & { createActor: (
-    { __typename?: 'Actor' }
-    & Pick<Actor, 'id' | 'name' | 'description' | 'value' | 'impact'>
-  ) }
-);
+export type CreateActorMutation = { __typename?: 'Mutation' } & {
+  createActor: { __typename?: 'Actor' } & Pick<
+    Actor,
+    'id' | 'name' | 'description' | 'value' | 'impact'
+  >;
+};
 
 export type CreateAspectMutationVariables = Exact<{
   aspectData: AspectInput;
   opportunityID: Scalars['Float'];
 }>;
 
-
-export type CreateAspectMutation = (
-  { __typename?: 'Mutation' }
-  & { createAspect: (
-    { __typename?: 'Aspect' }
-    & Pick<Aspect, 'title' | 'framing' | 'explanation'>
-  ) }
-);
+export type CreateAspectMutation = { __typename?: 'Mutation' } & {
+  createAspect: { __typename?: 'Aspect' } & Pick<
+    Aspect,
+    'title' | 'framing' | 'explanation'
+  >;
+};
 
 export type CreateChallengeMutationVariables = Exact<{
   challengeData: ChallengeInput;
 }>;
 
-
-export type CreateChallengeMutation = (
-  { __typename?: 'Mutation' }
-  & { createChallenge: (
-    { __typename?: 'Challenge' }
-    & Pick<Challenge, 'name' | 'id'>
-    & { tagset: Maybe<(
-      { __typename?: 'Tagset' }
-      & Pick<Tagset, 'tags' | 'id' | 'name'>
-    )>, groups: Maybe<Array<(
-      { __typename?: 'UserGroup' }
-      & Pick<UserGroup, 'id' | 'name'>
-    )>> }
-  ) }
-);
+export type CreateChallengeMutation = { __typename?: 'Mutation' } & {
+  createChallenge: { __typename?: 'Challenge' } & Pick<
+    Challenge,
+    'name' | 'id'
+  > & {
+      tagset: Maybe<
+        { __typename?: 'Tagset' } & Pick<Tagset, 'tags' | 'id' | 'name'>
+      >;
+      groups: Maybe<
+        Array<{ __typename?: 'UserGroup' } & Pick<UserGroup, 'id' | 'name'>>
+      >;
+    };
+};
 
 export type CreateGroupOnChallengeMutationVariables = Exact<{
   groupName: Scalars['String'];
   challengeID: Scalars['Float'];
 }>;
 
-
-export type CreateGroupOnChallengeMutation = (
-  { __typename?: 'Mutation' }
-  & { createGroupOnChallenge: (
-    { __typename?: 'UserGroup' }
-    & Pick<UserGroup, 'name' | 'id'>
-  ) }
-);
+export type CreateGroupOnChallengeMutation = { __typename?: 'Mutation' } & {
+  createGroupOnChallenge: { __typename?: 'UserGroup' } & Pick<
+    UserGroup,
+    'name' | 'id'
+  >;
+};
 
 export type CreateGroupOnEcoverseMutationVariables = Exact<{
   groupName: Scalars['String'];
 }>;
 
-
-export type CreateGroupOnEcoverseMutation = (
-  { __typename?: 'Mutation' }
-  & { createGroupOnEcoverse: (
-    { __typename?: 'UserGroup' }
-    & Pick<UserGroup, 'id' | 'name'>
-    & { profile: Maybe<(
-      { __typename?: 'Profile' }
-      & { tagsets: Maybe<Array<(
-        { __typename?: 'Tagset' }
-        & Pick<Tagset, 'name' | 'id'>
-      )>> }
-    )> }
-  ) }
-);
+export type CreateGroupOnEcoverseMutation = { __typename?: 'Mutation' } & {
+  createGroupOnEcoverse: { __typename?: 'UserGroup' } & Pick<
+    UserGroup,
+    'id' | 'name'
+  > & {
+      profile: Maybe<
+        { __typename?: 'Profile' } & {
+          tagsets: Maybe<
+            Array<{ __typename?: 'Tagset' } & Pick<Tagset, 'name' | 'id'>>
+          >;
+        }
+      >;
+    };
+};
 
 export type CreateGroupOnOrganisationMutationVariables = Exact<{
   groupName: Scalars['String'];
   organisationID: Scalars['Float'];
 }>;
 
-
-export type CreateGroupOnOrganisationMutation = (
-  { __typename?: 'Mutation' }
-  & { createGroupOnOrganisation: (
-    { __typename?: 'UserGroup' }
-    & Pick<UserGroup, 'id' | 'name'>
-  ) }
-);
+export type CreateGroupOnOrganisationMutation = { __typename?: 'Mutation' } & {
+  createGroupOnOrganisation: { __typename?: 'UserGroup' } & Pick<
+    UserGroup,
+    'id' | 'name'
+  >;
+};
 
 export type CreateOpportunityOnChallengeMutationVariables = Exact<{
   opportunityData: OpportunityInput;
   challengeID: Scalars['Float'];
 }>;
 
-
-export type CreateOpportunityOnChallengeMutation = (
-  { __typename?: 'Mutation' }
-  & { createOpportunityOnChallenge: (
-    { __typename?: 'Opportunity' }
-    & Pick<Opportunity, 'name' | 'id'>
-  ) }
-);
+export type CreateOpportunityOnChallengeMutation = {
+  __typename?: 'Mutation';
+} & {
+  createOpportunityOnChallenge: { __typename?: 'Opportunity' } & Pick<
+    Opportunity,
+    'name' | 'id'
+  >;
+};
 
 export type CreateOrganisationMutationVariables = Exact<{
   organisationData: OrganisationInput;
 }>;
 
-
-export type CreateOrganisationMutation = (
-  { __typename?: 'Mutation' }
-  & { createOrganisation: (
-    { __typename?: 'Organisation' }
-    & Pick<Organisation, 'name' | 'id'>
-    & { profile: (
-      { __typename?: 'Profile' }
-      & Pick<Profile, 'id'>
-    ) }
-  ) }
-);
+export type CreateOrganisationMutation = { __typename?: 'Mutation' } & {
+  createOrganisation: { __typename?: 'Organisation' } & Pick<
+    Organisation,
+    'name' | 'id'
+  > & { profile: { __typename?: 'Profile' } & Pick<Profile, 'id'> };
+};
 
 export type CreateReferenceOnProfileMutationVariables = Exact<{
   referenceInput: ReferenceInput;
   profileID: Scalars['Float'];
 }>;
 
-
-export type CreateReferenceOnProfileMutation = (
-  { __typename?: 'Mutation' }
-  & { createReferenceOnProfile: (
-    { __typename?: 'Reference' }
-    & Pick<Reference, 'name' | 'uri' | 'description'>
-  ) }
-);
+export type CreateReferenceOnProfileMutation = { __typename?: 'Mutation' } & {
+  createReferenceOnProfile: { __typename?: 'Reference' } & Pick<
+    Reference,
+    'name' | 'uri' | 'description'
+  >;
+};
 
 export type CreateRelationMutationVariables = Exact<{
   relationData: RelationInput;
   opportunityID: Scalars['Float'];
 }>;
 
-
-export type CreateRelationMutation = (
-  { __typename?: 'Mutation' }
-  & { createRelation: (
-    { __typename?: 'Relation' }
-    & Pick<Relation, 'type'>
-  ) }
-);
+export type CreateRelationMutation = { __typename?: 'Mutation' } & {
+  createRelation: { __typename?: 'Relation' } & Pick<Relation, 'type'>;
+};
 
 export type CreateTagsetOnProfileMutationVariables = Exact<{
   tagsetName: Scalars['String'];
   profileID: Scalars['Float'];
 }>;
 
-
-export type CreateTagsetOnProfileMutation = (
-  { __typename?: 'Mutation' }
-  & { createTagsetOnProfile: (
-    { __typename?: 'Tagset' }
-    & Pick<Tagset, 'id' | 'tags'>
-  ) }
-);
+export type CreateTagsetOnProfileMutation = { __typename?: 'Mutation' } & {
+  createTagsetOnProfile: { __typename?: 'Tagset' } & Pick<
+    Tagset,
+    'id' | 'tags'
+  >;
+};
 
 export type CreateUserMutationVariables = Exact<{
   userData: UserInput;
 }>;
 
-
-export type CreateUserMutation = (
-  { __typename?: 'Mutation' }
-  & { createUserProfile: (
-    { __typename?: 'User' }
-    & Pick<User, 'name' | 'id'>
-    & { profile: Maybe<(
-      { __typename?: 'Profile' }
-      & Pick<Profile, 'id'>
-    )> }
-  ) }
-);
+export type CreateUserMutation = { __typename?: 'Mutation' } & {
+  createUserProfile: { __typename?: 'User' } & Pick<User, 'name' | 'id'> & {
+      profile: Maybe<{ __typename?: 'Profile' } & Pick<Profile, 'id'>>;
+    };
+};
 
 export type ReplaceTagsOnTagsetMutationVariables = Exact<{
   tags: Array<Scalars['String']>;
   tagsetID: Scalars['Float'];
 }>;
 
-
-export type ReplaceTagsOnTagsetMutation = (
-  { __typename?: 'Mutation' }
-  & { replaceTagsOnTagset: (
-    { __typename?: 'Tagset' }
-    & Pick<Tagset, 'name' | 'tags'>
-  ) }
-);
+export type ReplaceTagsOnTagsetMutation = { __typename?: 'Mutation' } & {
+  replaceTagsOnTagset: { __typename?: 'Tagset' } & Pick<
+    Tagset,
+    'name' | 'tags'
+  >;
+};
 
 export type UpdateActorMutationVariables = Exact<{
   actorData: ActorInput;
   ID: Scalars['Float'];
 }>;
 
-
-export type UpdateActorMutation = (
-  { __typename?: 'Mutation' }
-  & { updateActor: (
-    { __typename?: 'Actor' }
-    & Pick<Actor, 'name'>
-  ) }
-);
+export type UpdateActorMutation = { __typename?: 'Mutation' } & {
+  updateActor: { __typename?: 'Actor' } & Pick<Actor, 'name'>;
+};
 
 export type UpdateEcoverseMutationVariables = Exact<{
   ecoverseData: EcoverseInput;
 }>;
 
-
-export type UpdateEcoverseMutation = (
-  { __typename?: 'Mutation' }
-  & { updateEcoverse: (
-    { __typename?: 'Ecoverse' }
-    & Pick<Ecoverse, 'name'>
-    & { context: Maybe<(
-      { __typename?: 'Context' }
-      & Pick<Context, 'tagline'>
-    )> }
-  ) }
-);
+export type UpdateEcoverseMutation = { __typename?: 'Mutation' } & {
+  updateEcoverse: { __typename?: 'Ecoverse' } & Pick<Ecoverse, 'name'> & {
+      context: Maybe<{ __typename?: 'Context' } & Pick<Context, 'tagline'>>;
+    };
+};
 
 export type UpdateOrganisationMutationVariables = Exact<{
   orgID: Scalars['Float'];
   organisationData: OrganisationInput;
 }>;
 
-
-export type UpdateOrganisationMutation = (
-  { __typename?: 'Mutation' }
-  & { updateOrganisation: (
-    { __typename?: 'Organisation' }
-    & Pick<Organisation, 'name' | 'id'>
-  ) }
-);
+export type UpdateOrganisationMutation = { __typename?: 'Mutation' } & {
+  updateOrganisation: { __typename?: 'Organisation' } & Pick<
+    Organisation,
+    'name' | 'id'
+  >;
+};
 
 export type UpdateProfileMutationVariables = Exact<{
   profileData: ProfileInput;
   ID: Scalars['Float'];
 }>;
 
-
-export type UpdateProfileMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'updateProfile'>
-);
+export type UpdateProfileMutation = { __typename?: 'Mutation' } & Pick<
+  Mutation,
+  'updateProfile'
+>;
 
 export type UserQueryVariables = Exact<{
   ID: Scalars['String'];
 }>;
 
-
-export type UserQuery = (
-  { __typename?: 'Query' }
-  & { user: (
-    { __typename?: 'User' }
-    & Pick<User, 'name' | 'id'>
-    & { profile: Maybe<(
-      { __typename?: 'Profile' }
-      & Pick<Profile, 'id' | 'avatar'>
-    )> }
-  ) }
-);
+export type UserQuery = { __typename?: 'Query' } & {
+  user: { __typename?: 'User' } & Pick<User, 'name' | 'id'> & {
+      profile: Maybe<
+        { __typename?: 'Profile' } & Pick<Profile, 'id' | 'avatar'>
+      >;
+    };
+};

@@ -1,16 +1,16 @@
 import { gql } from 'graphql-request';
 
-export const CreateActorGroup=gql`
-mutation CreateActorGroup(
-  $actorGroupData: ActorGroupInput!
-  $opportunityID: Float!
-) {
-  createActorGroup(
-    actorGroupData: $actorGroupData
-    opportunityID: $opportunityID
+export const CreateActorGroup = gql`
+  mutation CreateActorGroup(
+    $actorGroupData: ActorGroupInput!
+    $opportunityID: Float!
   ) {
-    name
-    id
+    createActorGroup(
+      actorGroupData: $actorGroupData
+      opportunityID: $opportunityID
+    ) {
+      name
+      id
+    }
   }
-}
-`
+`;
