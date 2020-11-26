@@ -4,12 +4,9 @@ mutation createGroupOnOrganisation(
 ) {
   createGroupOnOrganisation(
     groupName: $groupName
-    organisationID: $organisationID
+    orgID: $organisationID
   ) {
-    name
     id
-    groups {
-      name
-    }
+    name
   }
 }
