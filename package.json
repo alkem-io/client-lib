@@ -13,9 +13,9 @@
     "build": "tsc --project tsconfig.prod.json",
     "populate": "ts-node-dev src/populate.ts",
     "test-connection": "ts-node-dev src/test-connection.ts",
-    "format": "prettier --write src/**/*.{graphql,ts}",
+    "format": "prettier --write 'src/**/*.ts' 'graphql/**/*.graphql'",
     "codegen": "graphql-codegen --config codegen.yml",
-    "postcodegen": "prettier --write src/generated/*.ts"
+    "postcodegen": "prettier --write src/graphql.ts"
   },
   "repository": {
     "type": "git",
