@@ -5,10 +5,22 @@
     "version": "0.2.0",
     "configurations": [
       {
-        "name": "Test - Sample Data",
+        "name": "Populate",
         "request": "launch",
         "runtimeArgs": [
-            "run", "data-load-samples"
+            "run", "populate"
+        ],
+        "runtimeExecutable": "npm",
+        "skipFiles": [
+            "<node_internals>/**"
+        ],
+        "type": "pwa-node"
+    }, 
+    {
+        "name": "Test Connection",
+        "request": "launch",
+        "runtimeArgs": [
+            "run", "test-connection"
         ],
         "runtimeExecutable": "npm",
         "skipFiles": [

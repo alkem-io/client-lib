@@ -1,21 +1,24 @@
 {
   "name": "cherrytwist-lib",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Library for interacting with a Cherrytwist server instance",
+  "author": "Cherrytwist Foundation",
+  "private": false,
+  "license": "EUPL",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "data-load-samples": "ts-node-dev src/test/submit-sample-data.ts",
     "prebuild": "rimraf ./dist",
     "build": "tsc --project tsconfig.prod.json",
+    "populate": "ts-node-dev src/populate.ts",
+    "test-connection": "ts-node-dev src/test-connection.ts",
     "prepare": "npm run build"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cherrytwist/Client.Lib.git"
   },
-  "author": "Neil Smyth",
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/cherrytwist/Client.Lib/issues"
   },
@@ -29,8 +32,11 @@
   "dependencies": {
     "@types/node": "^14.6.0",
     "@types/supertest": "^2.0.8",
+    "adal-node": "^0.2.1",
+    "dotenv": "^8.2.0",
+    "generate-password": "^1.5.1",
     "graphql": "^15.3.0",
-    "graphql-request": "^3.1.0",
+    "graphql-request": "^3.3.0",
     "jsonpath": "^1.0.2",
     "winston": "^3.3.3"
   },
