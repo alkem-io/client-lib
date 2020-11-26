@@ -1,7 +1,5 @@
 import { GraphQLClient, gql } from 'graphql-request';
-import fs from 'fs';
 import { EnvironmentConfig } from './util/EnvironmentFactory';
-import { Mutations } from './mutations/Mutations';
 import { EcoverseInfo } from './util/EcoverseInfo';
 const winston = require('winston');
 require('dotenv').config();
@@ -16,15 +14,12 @@ export class CherrytwistClient {
   logger;
   profiler;
 
-  mutations: Mutations;
-
   // State / info of the ecoverse working with
   ecoverseInfo: EcoverseInfo;
 
   // Create the ecoverse with enough defaults set/ members populated
   constructor(environmentConfig: EnvironmentConfig) {
     this.config = environmentConfig;
-    this.mutations = new Mutations();
     this.ecoverseInfo = new EcoverseInfo();
 
     // Set up the logging
@@ -78,17 +73,17 @@ export class CherrytwistClient {
     return true;
   }
 
-  loadAdminToken() {
-    const adminUserToken = fs.readFileSync(this.config.admin_token).toString();
-    if (adminUserToken.length == 0)
-      throw new Error(
-        `Unable to load in admin user token from ${this.config.admin_token}`
-      );
-    this.logger.info(`Loaded admin user token ok`);
-    // Set the auth header
-    this.client.setHeader('Authorization', `Bearer ${adminUserToken}`);
-    this.logger.info(`Bearer token:  ${adminUserToken}`);
-  }
+  // loadAdminToken() {
+  //   const adminUserToken = fs.readFileSync(this.config.admin_token).toString();
+  //   if (adminUserToken.length == 0)
+  //     throw new Error(
+  //       `Unable to load in admin user token from ${this.config.admin_token}`
+  //     );
+  //   this.logger.info(`Loaded admin user token ok`);
+  //   // Set the auth header
+  //   this.client.setHeader('Authorization', `Bearer ${adminUserToken}`);
+  //   this.logger.info(`Bearer token:  ${adminUserToken}`);
+  // }
 
   // Load in mutations file
   async createGroups(groupNames: string[]) {
