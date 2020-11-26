@@ -1,4 +1,4 @@
-import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
+import { GraphQLClient, gql } from 'graphql-request';
 import { EnvironmentConfig } from './util/EnvironmentFactory';
 import { EcoverseInfo } from './util/EcoverseInfo';
 import { ClientConfig } from './config/ClientConfig';
@@ -7,7 +7,7 @@ require('dotenv').config();
 
 export class CherrytwistClient {
   // The generic GraphQL client
-  client: ApolloClient<any>;
+  client: GraphQLClient;
 
   logger;
   profiler;
@@ -17,10 +17,7 @@ export class CherrytwistClient {
 
   // Create the ecoverse with enough defaults set/ members populated
   constructor(config: ClientConfig) {
-    this.client = new ApolloClient({
-      uri: config.graphqlEndpoint, // TODO [ATS]: Configure using links
-      cache: new InMemoryCache(),
-    });
+    this.client = new GraphQLClient(config.graphqlEndpoint);
 
     this.ecoverseInfo = new EcoverseInfo();
 
@@ -61,17 +58,15 @@ export class CherrytwistClient {
         name
       }
     `;
-    const data = await this.client.query({
-      query,
-    });
-    // var ecoverseName = data.ecoverseName.name;
-    // if (!ecoverseName) {
-    //   this.logger.error(
-    //     `Unable to connect to ecoverse at location: ${this.config.server}`
-    //   );
-    //   return false;
-    // }
-    // this.logger.info(`Connected to ecoverse: ${ecoverseName}`);
+    const data = await this.client.request(query);
+    var ecoverseName = data.ecoverseName.name;
+    if (!ecoverseName) {
+      this.logger.error(
+        `Unable to connect to ecoverse at location: ${this.config.server}`
+      );
+      return false;
+    }
+    this.logger.info(`Connected to ecoverse: ${ecoverseName}`);
     return true;
   }
 
@@ -657,7 +652,7 @@ export class CherrytwistClient {
   //             {
   //               "userID": ${userID},
   //               "groupID": ${groupID}
-                  
+
   //             }`;
   //   try {
   //     success = await this.client.request(
@@ -682,7 +677,7 @@ export class CherrytwistClient {
   //   const addUserToChallengeVariable = gql`
   //             {
   //               "userID": ${userID},
-  //               "challengeID": ${challengeInfo.challengeID}      
+  //               "challengeID": ${challengeInfo.challengeID}
   //             }`;
 
   //   const groupResponse = await this.client.request(
@@ -706,7 +701,7 @@ export class CherrytwistClient {
   //   const variable = gql`
   //             {
   //               "organisationID": ${organisationID},
-  //               "challengeID": ${challengeInfo.challengeID}                     
+  //               "challengeID": ${challengeInfo.challengeID}
   //             }`;
 
   //   const challengeResponse = await this.client.request(
@@ -894,7 +889,7 @@ export class CherrytwistClient {
   //                   {
   //                     "title": "${title}",
   //                     "framing": "${framing}",
-  //                     "explanation": "${explanation}"                    
+  //                     "explanation": "${explanation}"
   //                   }
   //         }`;
 
@@ -945,7 +940,7 @@ export class CherrytwistClient {
   //     const variableUpdateName = gql`
   //         {
   //           "orgID": ${hostID},
-  //           "organisationData": 
+  //           "organisationData":
   //           {
   //             "name": "${name}"
   //           }

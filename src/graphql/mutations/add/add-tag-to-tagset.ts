@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from 'graphql-request';
 
 export const addTagToTagset = gql`
   mutation addTagToTagset($tag: String!, $tagsetID: Float!) {

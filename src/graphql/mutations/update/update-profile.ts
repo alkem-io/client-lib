@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from 'graphql-request';
 
 export const updateProfile = gql`
   mutation updateProfile($profileData: ProfileInput!, $ID: Float!) {

@@ -1,18 +1,15 @@
-import { gql } from '@apollo/client';
+import { gql } from 'graphql-request';
 import { CherrytwistClient } from 'src/CherrytwistClient';
 
 export class EcoverseInfo {
   // Array of challenges info objects
   // challengesInfoArray: ChallengeInfo[];
-
   // // Array of challenges info objects
   // groupsIdsMap;
-
   // constructor() {
   //   this.challengesInfoArray = [];
   //   this.groupsIdsMap = new Map();
   // }
-
   // //
   // async initialise(ctClient: CherrytwistClient): Promise<boolean> {
   //   // Get the challengesInfo and store into a dictionary
@@ -20,10 +17,8 @@ export class EcoverseInfo {
   //   this.groupsIdsMap = await this.getGroupsInfo(ctClient);
   //   return true;
   // }
-
   // lookupChallengeID(challengeName: string): ChallengeInfo | undefined {
   //   const challengeNameLC = challengeName.toLowerCase();
-
   //   const challengeInfo = this.challengesInfoArray.find(
   //     challenge => challenge.name.toLowerCase() === challengeName.toLowerCase()
   //   );
@@ -35,7 +30,6 @@ export class EcoverseInfo {
   //   }
   //   return challengeInfo;
   // }
-
   // async getChallengesInfo(
   //   ctClient: CherrytwistClient
   // ): Promise<ChallengeInfo[]> {
@@ -55,7 +49,6 @@ export class EcoverseInfo {
   //       }
   //     }
   //   `;
-
   //   ctClient.logger.info(
   //     `Loading challenges from server: ${ctClient.config.server}`
   //   );
@@ -75,7 +68,6 @@ export class EcoverseInfo {
   //       const challengeName: string = challenge.name;
   //       const challengeInfo = new ChallengeInfo(challengeName);
   //       challengeInfo.challengeID = challenge.id;
-
   //       // Save the members group ID
   //       var challengeGroups = challenge.groups;
   //       for (var j = 0; j < challengeGroups.length; j++) {
@@ -87,7 +79,6 @@ export class EcoverseInfo {
   //         }
   //       }
   //       challengesInfoArray.push(challengeInfo);
-
   //       ctClient.logger.info(
   //         `...challenge name: ${challengeName} ==> ${challengeInfo.ecoverseID} `
   //       );
@@ -104,11 +95,9 @@ export class EcoverseInfo {
   //   ctClient.logger.info(` `);
   //   return challengesInfoArray;
   // }
-
   // async getGroupsInfo(ctClient: CherrytwistClient): Promise<Map<any, any>> {
   //   ////////////////////////////////////////////////////////
   //   //
-
   //   const groupsMap = new Map();
   //   const groupsQuery = gql`
   //     {
@@ -123,7 +112,6 @@ export class EcoverseInfo {
   //       }
   //     }
   //   `;
-
   //   ctClient.logger.info(
   //     `Loading groups from server: ${ctClient.config.server}`
   //   );
@@ -140,7 +128,6 @@ export class EcoverseInfo {
   //       const groupData = groupsData.groups[i];
   //       groupsMap.set(groupData.name, groupData.id);
   //       const groupName: string = groupData.name;
-
   //       ctClient.logger.info(
   //         `...group name: ${groupData.name} ==> ${groupData.id} `
   //       );

@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from 'graphql-request';
 
 export const createTagsetOnProfile = gql`
   mutation createTagsetOnProfile($tagsetName: String!, $profileID: Float!) {

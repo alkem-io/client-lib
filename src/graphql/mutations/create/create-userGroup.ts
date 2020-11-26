@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from 'graphql-request';
 
 export const CreateUserGroup = gql`
   mutation CreateUserGroup($userGroupData: UserGroupInput!) {
