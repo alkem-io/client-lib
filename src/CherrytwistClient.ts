@@ -26,7 +26,7 @@ export class CherrytwistClient {
         authorization: 'Bearer'
       },
     });
-    this.client = getSdk(client, authenticationWrapper);
+    this.client = getSdk(client);
 
     this.errorHandler = handleErrors();
   }
