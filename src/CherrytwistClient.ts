@@ -1,17 +1,13 @@
 import { GraphQLClient } from 'graphql-request';
 import { ClientConfig } from './config/ClientConfig';
 import {
-  Context,
   ContextInput,
   getSdk,
-  Opportunity,
+
   OpportunityInput,
-  Sdk,
+  Sdk
 } from './graphql';
-import { Logger } from 'winston';
 import { ErrorHandler, handleErrors } from './util/handleErrors';
-import { group } from 'console';
-import { authenticationWrapper } from './authenticationWrapper';
 
 export class CherrytwistClient {
   private config: ClientConfig;
