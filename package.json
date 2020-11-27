@@ -9,13 +9,15 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "data-load-samples": "ts-node-dev src/test/submit-sample-data.ts",
-    "prebuild": "rimraf ./dist",
+    "prebuild": "npm run clean",
+    "clean": "rimraf ./dist",
     "build": "tsc --project tsconfig.prod.json",
     "populate": "ts-node-dev src/populate.ts",
     "test-connection": "ts-node-dev src/test-connection.ts",
     "format": "prettier --write 'src/**/*.ts' 'graphql/**/*.graphql'",
     "codegen": "graphql-codegen --config codegen.yml",
-    "postcodegen": "prettier --write src/graphql.ts"
+    "postcodegen": "prettier --write src/graphql.ts",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
