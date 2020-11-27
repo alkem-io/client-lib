@@ -3,7 +3,15 @@ mutation updateOrganisation(
   $organisationData: OrganisationInput!
 ) {
   updateOrganisation(orgID: $orgID, organisationData: $organisationData) {
-    name
     id
+    name
+    profile {
+      id
+      references {
+        id
+        name
+        uri
+      }
+    }
   }
 }

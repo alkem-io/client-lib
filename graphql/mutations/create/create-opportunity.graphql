@@ -6,7 +6,8 @@ mutation createOpportunity(
     opportunityData: $opportunityData
     challengeID: $challengeID
   ) {
-    name
     id
+    name
+    textID
   }
 }

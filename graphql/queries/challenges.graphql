@@ -1,0 +1,6 @@
+query challenges {
+  challenges {
+    id
+    name
+  }
+}
