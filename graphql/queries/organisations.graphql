@@ -1,0 +1,11 @@
+query organisations {
+  organisations {
+    name
+    id
+    profile {
+      id
+      avatar
+      description
+    }
+  }
+}

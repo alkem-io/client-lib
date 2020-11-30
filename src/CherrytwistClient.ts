@@ -1,12 +1,12 @@
 import { GraphQLClient } from 'graphql-request';
 import { ClientConfig } from './config/ClientConfig';
+import { getSdk, Sdk } from './graphql';
 import {
+  ChallengeInput,
   ContextInput,
-  getSdk,
-
   OpportunityInput,
-  Sdk
-} from './graphql';
+  UserInput,
+} from './types/cherrytwist-schema';
 import { ErrorHandler, handleErrors } from './util/handleErrors';
 
 export class CherrytwistClient {
@@ -19,7 +19,7 @@ export class CherrytwistClient {
 
     const client = new GraphQLClient(config.graphqlEndpoint, {
       headers: {
-        authorization: 'Bearer'
+        authorization: 'Bearer',
       },
     });
     this.client = getSdk(client);
@@ -51,7 +51,7 @@ export class CherrytwistClient {
     const {
       data: challengesData,
       errors: challengesErrors,
-    } = await this.client.challenges();
+    } = await this.client.challengesBase();
 
     this.errorHandler(challengesErrors);
 
@@ -383,5 +383,77 @@ export class CherrytwistClient {
 
     this.errorHandler(errors);
     return data?.updateOrganisation;
+  }
+
+  public async createOrganisation(name: string) {
+    const { data, errors } = await this.client.createOrganisation({
+      organisationData: {
+        name,
+      },
+    });
+
+    this.errorHandler(errors);
+
+    return data?.createOrganisation;
+  }
+
+  public async organisations() {
+    const { data, errors } = await this.client.organisations();
+
+    this.errorHandler(errors);
+
+    return data?.organisations;
+  }
+
+  public async createChallenge(challenge: ChallengeInput) {
+    const { data, errors } = await this.client.createChallenge({
+      challengeData: challenge,
+    });
+
+    this.errorHandler(errors);
+
+    return data?.createChallenge;
+  }
+
+  public async challenges() {
+    const { data, errors } = await this.client.challenges();
+
+    this.errorHandler(errors);
+
+    return data?.challenges;
+  }
+
+  public async updateChallenge(id: string, challenge: ChallengeInput) {
+    const { data, errors } = await this.client.updateChallenge({
+      challengeID: Number(id),
+      challengeData: challenge,
+    });
+
+    this.errorHandler(errors);
+
+    return data?.updateChallenge;
+  }
+
+  public async createUser(user: UserInput) {
+    const { data, errors } = await this.client.createUser({
+      userData: user,
+    });
+
+    this.errorHandler(errors);
+
+    return data?.createUserProfile;
+  }
+
+  public async groups() {
+    const { data, errors } = await this.client.groups();
+
+    this.errorHandler(errors);
+
+    return data?.groups;
+  }
+
+  public async groupByName(name: string) {
+    const groups = await this.groups();
+    return groups?.find(x => x.name === name);
   }
 }

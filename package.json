@@ -16,7 +16,7 @@
     "test-connection": "ts-node-dev src/test-connection.ts",
     "format": "prettier --write 'src/**/*.ts' 'graphql/**/*.graphql'",
     "codegen": "graphql-codegen --config codegen.yml",
-    "postcodegen": "prettier --write src/graphql.ts",
+    "postcodegen": "prettier --write src/graphql*.ts src/types/*.ts ",
     "prepublishOnly": "npm run build"
   },
   "repository": {
@@ -28,7 +28,9 @@
   },
   "homepage": "https://github.com/cherrytwist/Client.Lib#readme",
   "devDependencies": {
+    "@graphql-codegen/add": "^2.0.2",
     "@graphql-codegen/cli": "1.19.3",
+    "@graphql-codegen/import-types-preset": "^1.18.1",
     "@graphql-codegen/typed-document-node": "^1.18.1",
     "@graphql-codegen/typescript": "1.18.1",
     "@graphql-codegen/typescript-graphql-request": "^2.0.3",
