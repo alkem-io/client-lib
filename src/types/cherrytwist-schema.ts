@@ -1,7 +1,11 @@
 export type Maybe<T> = T | undefined;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K];
+};
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> &
+  { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> &
+  { [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -336,46 +340,37 @@ export type Query = {
   search: Array<SearchResultEntry>;
 };
 
-
 export type QueryOpportunityArgs = {
   ID: Scalars['Float'];
 };
-
 
 export type QueryProjectArgs = {
   ID: Scalars['Float'];
 };
 
-
 export type QueryUserArgs = {
   ID: Scalars['String'];
 };
-
 
 export type QueryUsersByIdArgs = {
   IDs: Array<Scalars['String']>;
 };
 
-
 export type QueryGroupsWithTagArgs = {
   tag: Scalars['String'];
 };
-
 
 export type QueryGroupArgs = {
   ID: Scalars['Float'];
 };
 
-
 export type QueryChallengeArgs = {
   ID: Scalars['Float'];
 };
 
-
 export type QueryOrganisationArgs = {
   ID: Scalars['Float'];
 };
-
 
 export type QuerySearchArgs = {
   searchData: SearchInput;
@@ -493,277 +488,228 @@ export type Mutation = {
   createUserAccount: Scalars['Boolean'];
 };
 
-
 export type MutationUpdateUserArgs = {
   userData: UserInput;
   userID: Scalars['Float'];
 };
 
-
 export type MutationRemoveReferenceArgs = {
   ID: Scalars['Float'];
 };
-
 
 export type MutationReplaceTagsOnTagsetArgs = {
   tags: Array<Scalars['String']>;
   tagsetID: Scalars['Float'];
 };
 
-
 export type MutationAddTagToTagsetArgs = {
   tag: Scalars['String'];
   tagsetID: Scalars['Float'];
 };
-
 
 export type MutationCreateTagsetOnProfileArgs = {
   tagsetName: Scalars['String'];
   profileID: Scalars['Float'];
 };
 
-
 export type MutationCreateReferenceOnProfileArgs = {
   referenceInput: ReferenceInput;
   profileID: Scalars['Float'];
 };
-
 
 export type MutationUpdateProfileArgs = {
   profileData: ProfileInput;
   ID: Scalars['Float'];
 };
 
-
 export type MutationAddUserToGroupArgs = {
   groupID: Scalars['Float'];
   userID: Scalars['Float'];
 };
-
 
 export type MutationRemoveUserFromGroupArgs = {
   groupID: Scalars['Float'];
   userID: Scalars['Float'];
 };
 
-
 export type MutationAssignGroupFocalPointArgs = {
   groupID: Scalars['Float'];
   userID: Scalars['Float'];
 };
 
-
 export type MutationRemoveGroupFocalPointArgs = {
   groupID: Scalars['Float'];
 };
-
 
 export type MutationCreateGroupOnChallengeArgs = {
   groupName: Scalars['String'];
   challengeID: Scalars['Float'];
 };
 
-
 export type MutationCreateOpportunityOnChallengeArgs = {
   opportunityData: OpportunityInput;
   challengeID: Scalars['Float'];
 };
-
 
 export type MutationUpdateChallengeArgs = {
   challengeData: ChallengeInput;
   challengeID: Scalars['Float'];
 };
 
-
 export type MutationRemoveChallengeArgs = {
   ID: Scalars['Float'];
 };
-
 
 export type MutationAddUserToChallengeArgs = {
   challengeID: Scalars['Float'];
   userID: Scalars['Float'];
 };
 
-
 export type MutationAddUserToOpportunityArgs = {
   opportunityID: Scalars['Float'];
   userID: Scalars['Float'];
 };
-
 
 export type MutationAddChallengeLeadArgs = {
   challengeID: Scalars['Float'];
   organisationID: Scalars['Float'];
 };
 
-
 export type MutationRemoveChallengeLeadArgs = {
   challengeID: Scalars['Float'];
   organisationID: Scalars['Float'];
 };
-
 
 export type MutationCreateReferenceOnContextArgs = {
   referenceInput: ReferenceInput;
   contextID: Scalars['Float'];
 };
 
-
 export type MutationUpdateOpportunityArgs = {
   opportunityData: OpportunityInput;
   ID: Scalars['Float'];
 };
 
-
 export type MutationRemoveOpportunityArgs = {
   ID: Scalars['Float'];
 };
-
 
 export type MutationCreateProjectArgs = {
   projectData: ProjectInput;
   opportunityID: Scalars['Float'];
 };
 
-
 export type MutationCreateAspectArgs = {
   aspectData: AspectInput;
   opportunityID: Scalars['Float'];
 };
-
 
 export type MutationCreateActorGroupArgs = {
   actorGroupData: ActorGroupInput;
   opportunityID: Scalars['Float'];
 };
 
-
 export type MutationCreateRelationArgs = {
   relationData: RelationInput;
   opportunityID: Scalars['Float'];
 };
-
 
 export type MutationCreateGroupOnOpportunityArgs = {
   groupName: Scalars['String'];
   opportunityID: Scalars['Float'];
 };
 
-
 export type MutationRemoveAspectArgs = {
   ID: Scalars['Float'];
 };
-
 
 export type MutationUpdateAspectArgs = {
   aspectData: AspectInput;
   ID: Scalars['Float'];
 };
 
-
 export type MutationRemoveActorArgs = {
   ID: Scalars['Float'];
 };
-
 
 export type MutationUpdateActorArgs = {
   actorData: ActorInput;
   ID: Scalars['Float'];
 };
 
-
 export type MutationCreateActorArgs = {
   actorData: ActorInput;
   actorGroupID: Scalars['Float'];
 };
 
-
 export type MutationRemoveActorGroupArgs = {
   ID: Scalars['Float'];
 };
-
 
 export type MutationRemoveRelationArgs = {
   ID: Scalars['Float'];
 };
 
-
 export type MutationRemoveProjectArgs = {
   ID: Scalars['Float'];
 };
-
 
 export type MutationUpdateProjectArgs = {
   projectData: ProjectInput;
   ID: Scalars['Float'];
 };
 
-
 export type MutationCreateAspectOnProjectArgs = {
   aspectData: AspectInput;
   projectID: Scalars['Float'];
 };
-
 
 export type MutationCreateGroupOnOrganisationArgs = {
   groupName: Scalars['String'];
   orgID: Scalars['Float'];
 };
 
-
 export type MutationUpdateOrganisationArgs = {
   organisationData: OrganisationInput;
   orgID: Scalars['Float'];
 };
 
-
 export type MutationCreateGroupOnEcoverseArgs = {
   groupName: Scalars['String'];
 };
-
 
 export type MutationUpdateEcoverseArgs = {
   ecoverseData: EcoverseInput;
 };
 
-
 export type MutationCreateUserArgs = {
   userData: UserInput;
 };
-
 
 export type MutationCreateTemplateArgs = {
   templateData: TemplateInput;
 };
 
-
 export type MutationCreateUserProfileArgs = {
   userData: UserInput;
 };
 
-
 export type MutationRemoveUserArgs = {
   userID: Scalars['Float'];
 };
-
 
 export type MutationUpdateUserAccountPasswordArgs = {
   newPassword: Scalars['String'];
   userID: Scalars['Float'];
 };
 
-
 export type MutationCreateChallengeArgs = {
   challengeData: ChallengeInput;
 };
 
-
 export type MutationCreateOrganisationArgs = {
   organisationData: OrganisationInput;
 };
-
 
 export type MutationCreateUserAccountArgs = {
   password: Scalars['String'];

@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 export const escapeStrings = (input: string): string => {
   if (!input) return '';
   return input

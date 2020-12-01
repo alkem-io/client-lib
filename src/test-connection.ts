@@ -1,4 +1,3 @@
-import fs from 'fs';
 import { CherrytwistClient } from './CherrytwistClient';
 // import { EnvironmentFactory } from './util/EnvironmentFactory';
 

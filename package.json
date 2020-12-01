@@ -11,7 +11,7 @@
     "build": "tsc --project tsconfig.prod.json",
     "prebuild": "npm run clean",
     "clean": "rimraf ./dist",
-    "format": "prettier --write 'src/**/*.ts' 'graphql/**/*.graphql'",
+    "format": "prettier --write \"src/**/*.ts\" \"graphql/**/*.graphql\"",
     "codegen": "graphql-codegen --config codegen.yml",
     "data-load-samples": "ts-node-dev src/test/submit-sample-data.ts",
     "lint": "tsc --noEmit && eslint src/**/*.ts{,x}",

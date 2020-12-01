@@ -27,21 +27,16 @@ export class CherrytwistClient {
     this.errorHandler = handleErrors();
   }
 
-  public async testConnection(): Promise<Boolean> {
+  public async testConnection(): Promise<boolean> {
     try {
-      const {
-        data,
-        errors,
-        status,
-        extensions,
-      } = await this.client.ecoverseName();
+      const { data, errors } = await this.client.ecoverseName();
 
-      var ecoverseName = data?.name;
+      const ecoverseName = data?.name;
 
       if (errors) {
         return false;
       }
-      return true;
+      return !!ecoverseName;
     } catch (ex) {
       return false;
     }
@@ -103,7 +98,7 @@ export class CherrytwistClient {
     userEmail: string,
     description: string,
     avatarURI: string
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     const { data, errors } = await this.client.user({
       ID: userEmail,
     });
@@ -143,7 +138,7 @@ export class CherrytwistClient {
     profileID: string,
     tagsetName: string,
     tags: string[]
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     if (tags) {
       const { data, errors } = await this.client.createTagsetOnProfile({
         profileID: Number(profileID),
@@ -155,10 +150,7 @@ export class CherrytwistClient {
       const newTagsetId = Number(data?.createTagsetOnProfile.id);
       if (!data) return false;
 
-      const {
-        data: replaceData,
-        errors: replaceErrors,
-      } = await this.client.replaceTagsOnTagset({
+      const { errors: replaceErrors } = await this.client.replaceTagsOnTagset({
         tagsetID: newTagsetId,
         tags,
       });
@@ -168,7 +160,7 @@ export class CherrytwistClient {
     return true;
   }
 
-  async addUserToGroup(userID: string, groupID: string): Promise<Boolean> {
+  async addUserToGroup(userID: string, groupID: string): Promise<boolean> {
     const uID = Number(userID);
     const gID = Number(groupID);
 
@@ -204,6 +196,8 @@ export class CherrytwistClient {
       challengeID: Number(challenge.id),
       organisationID: Number(organisationID),
     });
+
+    this.errorHandler(errors);
 
     return !!data?.addChallengeLead;
   }

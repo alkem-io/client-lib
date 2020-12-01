@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import request from 'supertest';
 
 const baseUrlDev = 'https://dev.cherrytwist.org/graphql';
@@ -15,29 +16,29 @@ let userPhone = '';
 let userEmail = '';
 
 // Specify the number of Users to be created
-let numberOfUsers = 2;
+const numberOfUsers = 2;
 
 // Specify the number of Challenges to be created
-let numberOfChallenges = 1;
+const numberOfChallenges = 1;
 
 // Specify the number of Groups to be created on Ecoverse
-let numberOfGroupsOnEcoverse = 1;
+const numberOfGroupsOnEcoverse = 1;
 
 // Specify the Ecoverse Group Id to which you want to add Users
-let ecoverseGroupId = 2;
+const ecoverseGroupId = 2;
 
 // Specify the Challenge Id to which you want to add Users
-let challangeId = 1;
+const challangeId = 1;
 
 // Specify the range of Users from - to which to be added on a Challenge or a Group
 // Utilized in functions: 'addUsersToEcoverseGroups()' and 'addUsersToChallengePopulation()'
-let fromUserId = 1;
-let toUserId = 2;
+const fromUserId = 1;
+const toUserId = 2;
 
-let uniqueId = (Date.now() + Math.random()).toString();
-let uniqueTextId = Math.random().toString(36).slice(-6);
+const uniqueId = (Date.now() + Math.random()).toString();
+const uniqueTextId = Math.random().toString(36).slice(-6);
 
-let ID = function () {
+const ID = function () {
   return '_' + Math.random().toString(36);
 };
 
@@ -144,7 +145,7 @@ export const createGroupOnChallengeMutation = async (
     query: `mutation createGroupOnChallenge($groupName: String!, $challengeID: Float!) {
         createGroupOnChallenge(groupName: $groupName, challengeID: $challengeID) {
           name,
-          id    
+          id
         }
       }`,
     variables: {
@@ -235,7 +236,7 @@ const createChallenges = async () => {
 const createPerformanceTestData = async () => {
   // Create Challanges
   for (let i = 1; i <= numberOfChallenges; i++) {
-    let responseChallengeId = await createChallenges();
+    const responseChallengeId = await createChallenges();
     // console.log(`Challenge with Id: ${responseChallengeId} is created`);
 
     // Create Groups on Challenges
@@ -243,7 +244,7 @@ const createPerformanceTestData = async () => {
       responseChallengeId.toString() !== 'undefined' ||
       responseChallengeId.toString() !== null
     ) {
-      let responseGroupOnChallenge = await createGroupOnChallengeMutation(
+      const responseGroupOnChallenge = await createGroupOnChallengeMutation(
         groupName,
         responseChallengeId
       );
@@ -256,7 +257,7 @@ const createPerformanceTestData = async () => {
       // Create Users
       if (responseGroupOnChallenge.status.toString() == '200') {
         for (let i = 1; i <= numberOfUsers; i++) {
-          let responseCreateUserId = await createUsersInGroupInChallenge();
+          const responseCreateUserId = await createUsersInGroupInChallenge();
 
           // Add Users to the Challenge Group
           const responseAddUsertoGroup = await addUserToGroupMutation(
