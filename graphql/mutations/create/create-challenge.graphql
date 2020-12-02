@@ -1,0 +1,5 @@
+mutation createChallenge($challengeData: ChallengeInput!) {
+  createChallenge(challengeData: $challengeData) {
+    ...ChallengeDetails
+  }
+}

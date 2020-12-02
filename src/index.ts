@@ -1,3 +1,2 @@
-import { CherrytwistClient } from "./CherrytwistClient";
-
 export * from './CherrytwistClient';
+export * from './types/cherrytwist-schema';

@@ -1,0 +1,9 @@
+mutation createUser($userData: UserInput!) {
+  createUserProfile(userData: $userData) {
+    name
+    id
+    profile {
+      id
+    }
+  }
+}

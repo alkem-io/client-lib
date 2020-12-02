@@ -1,0 +1,23 @@
+overwrite: true
+schema: "http://localhost:4000/graphql"
+documents: "graphql/**/*.graphql"
+generates:
+  src/types/cherrytwist-schema.ts:
+    plugins:
+      - typescript
+    config:
+      skipTypename: true
+      maybeValue: T | undefined
+  src/graphql.ts:
+    preset: import-types
+    presetConfig:
+      typesPath: ./types/cherrytwist-schema
+      importTypesNamespace: SchemaTypes
+    plugins:
+      - typescript-operations
+      - typescript-graphql-request
+    config:
+      maybeValue: T | undefined
+      rawRequest: true
+      preResolveTypes: true
+      skipTypename: true

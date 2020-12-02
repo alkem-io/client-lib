@@ -1,0 +1,9 @@
+query hostInfo {
+  host {
+    id
+    name
+    profile {
+      id
+    }
+  }
+}

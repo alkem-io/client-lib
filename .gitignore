@@ -1,6 +1,7 @@
 node_modules
 build
-npm-debug.log
+*.log
 .env
 .DS_Store
 dist
+secrets/*.json

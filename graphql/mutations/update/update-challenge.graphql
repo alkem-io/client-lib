@@ -1,0 +1,8 @@
+mutation updateChallenge(
+  $challengeID: Float!
+  $challengeData: ChallengeInput!
+) {
+  updateChallenge(challengeID: $challengeID, challengeData: $challengeData) {
+    ...ChallengeDetails
+  }
+}

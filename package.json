@@ -1,35 +1,63 @@
 {
   "name": "cherrytwist-lib",
-  "version": "0.2.2",
+  "version": "0.4.0",
   "description": "Library for interacting with a Cherrytwist server instance",
+  "author": "Cherrytwist Foundation",
+  "private": false,
+  "license": "EUPL-1.2",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "build": "tsc --project tsconfig.prod.json",
+    "prebuild": "npm run clean",
+    "clean": "rimraf ./dist",
+    "format": "prettier --write \"src/**/*.ts\" \"graphql/**/*.graphql\"",
+    "codegen": "graphql-codegen --config codegen.yml",
     "data-load-samples": "ts-node-dev src/test/submit-sample-data.ts",
-    "build": "tsc",
-    "prepare": "npm run build"
+    "lint": "tsc --noEmit && eslint src/**/*.ts{,x}",
+    "lint:fix": "tsc --noEmit && eslint src/**/*.ts{,x} --fix",
+    "populate": "ts-node-dev src/populate.ts",
+    "test-connection": "ts-node-dev src/test-connection.ts",
+    "postcodegen": "prettier --write src/graphql*.ts src/types/*.ts ",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cherrytwist/Client.Lib.git"
   },
-  "author": "Neil Smyth",
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/cherrytwist/Client.Lib/issues"
   },
   "homepage": "https://github.com/cherrytwist/Client.Lib#readme",
   "devDependencies": {
-    "ts-node-dev": "^1.0.0-pre.60"
+    "@graphql-codegen/add": "^2.0.2",
+    "@graphql-codegen/cli": "1.19.3",
+    "@graphql-codegen/import-types-preset": "^1.18.1",
+    "@graphql-codegen/typed-document-node": "^1.18.1",
+    "@graphql-codegen/typescript": "1.18.1",
+    "@graphql-codegen/typescript-graphql-request": "^2.0.3",
+    "@graphql-codegen/typescript-operations": "1.17.12",
+    "@types/node": "^14.14.10",
+    "@types/supertest": "^2.0.8",
+    "@typescript-eslint/eslint-plugin": "^4.9.0",
+    "@typescript-eslint/parser": "^4.9.0",
+    "eslint": "^7.14.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "prettier": "^2.2.1",
+    "rimraf": "^3.0.2",
+    "supertest": "^4.0.2",
+    "ts-node-dev": "^1.0.0",
+    "typescript": "^4.1.2"
   },
   "dependencies": {
-    "@types/node": "^14.6.0",
-    "@types/supertest": "^2.0.8",
-    "graphql": "^15.3.0",
-    "graphql-request": "^3.1.0",
+    "adal-node": "^0.2.1",
+    "graphql": "^15.4.0",
+    "graphql-request": "^3.3.0",
     "jsonpath": "^1.0.2",
-    "typescript": "^4.0.2",
-    "winston": "^3.3.3",
-    "supertest": "^4.0.2"
-  }
+    "winston": "^3.3.3"
+  },
+  "files": [
+    "dist/**/*"
+  ]
 }

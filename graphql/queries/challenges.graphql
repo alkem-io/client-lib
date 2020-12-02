@@ -1,0 +1,12 @@
+query challengesBase {
+  challenges {
+    id
+    name
+  }
+}
+
+query challenges {
+  challenges {
+    ...ChallengeDetails
+  }
+}

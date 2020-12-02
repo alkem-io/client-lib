@@ -1,0 +1,13 @@
+fragment ChallengeDetails on Challenge {
+  id
+  name
+  tagset {
+    tags
+    id
+    name
+  }
+  groups {
+    id
+    name
+  }
+}
