@@ -299,6 +299,23 @@ export type UserQuery = {
   };
 };
 
+export type UsersQueryVariables = SchemaTypes.Exact<{ [key: string]: never }>;
+
+export type UsersQuery = {
+  users: Array<{
+    id: string;
+    name: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    profile?: SchemaTypes.Maybe<{
+      id: string;
+      avatar?: SchemaTypes.Maybe<string>;
+      description?: SchemaTypes.Maybe<string>;
+    }>;
+  }>;
+};
+
 export const ChallengeDetailsFragmentDoc = gql`
   fragment ChallengeDetails on Challenge {
     id
@@ -611,6 +628,22 @@ export const UserDocument = gql`
       profile {
         id
         avatar
+      }
+    }
+  }
+`;
+export const UsersDocument = gql`
+  query users {
+    users {
+      id
+      name
+      firstName
+      lastName
+      email
+      profile {
+        id
+        avatar
+        description
       }
     }
   }
@@ -1090,6 +1123,19 @@ export function getSdk(
     }> {
       return withWrapper(() =>
         client.rawRequest<UserQuery>(print(UserDocument), variables)
+      );
+    },
+    users(
+      variables?: UsersQueryVariables
+    ): Promise<{
+      data?: UsersQuery | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<UsersQuery>(print(UsersDocument), variables)
       );
     },
   };

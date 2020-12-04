@@ -96,8 +96,8 @@ export class CherrytwistClient {
 
   public async updateUserProfile(
     userEmail: string,
-    description: string,
-    avatarURI: string
+    description?: string,
+    avatarURI?: string
   ): Promise<boolean> {
     const { data, errors } = await this.client.user({
       ID: userEmail,
@@ -449,5 +449,13 @@ export class CherrytwistClient {
   public async groupByName(name: string) {
     const groups = await this.groups();
     return groups?.find(x => x.name === name);
+  }
+
+  public async users() {
+    const { data, errors } = await this.client.users();
+
+    this.errorHandler(errors);
+
+    return data?.users;
   }
 }

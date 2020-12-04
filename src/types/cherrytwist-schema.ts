@@ -698,11 +698,6 @@ export type MutationRemoveUserArgs = {
   userID: Scalars['Float'];
 };
 
-export type MutationUpdateUserAccountPasswordArgs = {
-  newPassword: Scalars['String'];
-  userID: Scalars['Float'];
-};
-
 export type MutationCreateChallengeArgs = {
   challengeData: ChallengeInput;
 };
@@ -754,7 +749,6 @@ export type OpportunityInput = {
   textID?: Maybe<Scalars['String']>;
   state?: Maybe<Scalars['String']>;
   context?: Maybe<ContextInput>;
-  tagset?: Maybe<Array<Scalars['String']>>;
 };
 
 export type ContextInput = {
