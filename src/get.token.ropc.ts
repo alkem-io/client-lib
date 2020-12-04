@@ -1,6 +1,6 @@
-import { AuthorizationClient } from './authentication/authorization.client';
-import * as dotenv from 'dotenv';
+import { AuthenticationClient } from './authentication/authentication.client';
 import { IToken } from './contracts/token';
+import * as dotenv from 'dotenv';
 
 const main = async () => {
 
@@ -15,9 +15,17 @@ const main = async () => {
     password: process.env.AUTH_AAD_USER_PASSWORD ?? '',
   }
 
-  const authClient = new AuthorizationClient(() => authConfig);
-  const token = await authClient.authenticateROPC();
-  console.log(token);
+  const authClient = new AuthenticationClient(() => authConfig);
+  const res = await authClient.authenticateROPC();
+  const token = res as IToken;
+
+  if(token)
+    console.log(token.access_token);
+  else
+  {
+    console.log(res);
+  }
+
 };
 
 try {

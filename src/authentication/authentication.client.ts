@@ -7,7 +7,7 @@ import { HttpClient } from '../util/http.client';
 
 
 
-export class AuthorizationClient extends HttpClient {
+export class AuthenticationClient extends HttpClient {
 
   authConfig : IAuthConfig;
 
