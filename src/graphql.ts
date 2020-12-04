@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as SchemaTypes from './types/cherrytwist-schema';
 
 import { GraphQLClient } from 'graphql-request';
@@ -285,7 +286,7 @@ export type OrganisationsQuery = {
 };
 
 export type UserQueryVariables = SchemaTypes.Exact<{
-  ID: SchemaTypes.Scalars['String'];
+  email: SchemaTypes.Scalars['String'];
 }>;
 
 export type UserQuery = {
@@ -621,8 +622,8 @@ export const OrganisationsDocument = gql`
   }
 `;
 export const UserDocument = gql`
-  query user($ID: String!) {
-    user(ID: $ID) {
+  query user($email: String!) {
+    user(ID: $email) {
       name
       id
       profile {

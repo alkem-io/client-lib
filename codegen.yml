@@ -14,6 +14,8 @@ generates:
       typesPath: ./types/cherrytwist-schema
       importTypesNamespace: SchemaTypes
     plugins:
+      - add:
+          content: '/* eslint-disable @typescript-eslint/no-explicit-any */'
       - typescript-operations
       - typescript-graphql-request
     config:

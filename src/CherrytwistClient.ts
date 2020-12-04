@@ -60,6 +60,7 @@ export class CherrytwistClient {
     return challenge;
   }
 
+  // TODO [ATS]: Change ChallengeId to be string;
   public async createOpportunity(
     challengeID: number,
     opportunity: OpportunityInput
@@ -100,7 +101,7 @@ export class CherrytwistClient {
     avatarURI?: string
   ): Promise<boolean> {
     const { data, errors } = await this.client.user({
-      ID: userEmail,
+      email: userEmail,
     });
 
     const profileID = data?.user.profile?.id;
@@ -186,6 +187,14 @@ export class CherrytwistClient {
 
     this.errorHandler(errors);
     return data?.addUserToChallenge;
+  }
+
+  async addUserToChallengeByEmail(email: string, challengeName: string) {
+    const user = await this.user(email);
+
+    if (!user) throw new Error(`User ${email} not found!`);
+
+    return await this.addUserToChallenge(challengeName, user.id);
   }
 
   async addChallengeLead(challengeName: string, organisationID: string) {
@@ -449,6 +458,16 @@ export class CherrytwistClient {
   public async groupByName(name: string) {
     const groups = await this.groups();
     return groups?.find(x => x.name === name);
+  }
+
+  public async user(email: string) {
+    const { data, errors } = await this.client.user({
+      email,
+    });
+
+    this.errorHandler(errors);
+
+    return data?.user;
   }
 
   public async users() {
