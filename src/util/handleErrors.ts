@@ -11,7 +11,6 @@ export const handleErrors = (logger?: Logger) => {
           console.error(e.message);
         }
       });
-      throw errors[0];
     }
   };
 };

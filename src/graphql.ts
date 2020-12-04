@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as SchemaTypes from './types/cherrytwist-schema';
 
 import { GraphQLClient } from 'graphql-request';
@@ -285,7 +286,7 @@ export type OrganisationsQuery = {
 };
 
 export type UserQueryVariables = SchemaTypes.Exact<{
-  ID: SchemaTypes.Scalars['String'];
+  email: SchemaTypes.Scalars['String'];
 }>;
 
 export type UserQuery = {
@@ -297,6 +298,23 @@ export type UserQuery = {
       avatar?: SchemaTypes.Maybe<string>;
     }>;
   };
+};
+
+export type UsersQueryVariables = SchemaTypes.Exact<{ [key: string]: never }>;
+
+export type UsersQuery = {
+  users: Array<{
+    id: string;
+    name: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    profile?: SchemaTypes.Maybe<{
+      id: string;
+      avatar?: SchemaTypes.Maybe<string>;
+      description?: SchemaTypes.Maybe<string>;
+    }>;
+  }>;
 };
 
 export const ChallengeDetailsFragmentDoc = gql`
@@ -604,13 +622,29 @@ export const OrganisationsDocument = gql`
   }
 `;
 export const UserDocument = gql`
-  query user($ID: String!) {
-    user(ID: $ID) {
+  query user($email: String!) {
+    user(ID: $email) {
       name
       id
       profile {
         id
         avatar
+      }
+    }
+  }
+`;
+export const UsersDocument = gql`
+  query users {
+    users {
+      id
+      name
+      firstName
+      lastName
+      email
+      profile {
+        id
+        avatar
+        description
       }
     }
   }
@@ -1090,6 +1124,19 @@ export function getSdk(
     }> {
       return withWrapper(() =>
         client.rawRequest<UserQuery>(print(UserDocument), variables)
+      );
+    },
+    users(
+      variables?: UsersQueryVariables
+    ): Promise<{
+      data?: UsersQuery | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<UsersQuery>(print(UsersDocument), variables)
       );
     },
   };
