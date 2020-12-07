@@ -4,6 +4,7 @@ import { getSdk, Sdk } from './graphql';
 import {
   ChallengeInput,
   ContextInput,
+  EcoverseInput,
   OpportunityInput,
   UserInput,
 } from './types/cherrytwist-schema';
@@ -223,6 +224,16 @@ export class CherrytwistClient {
     return data?.updateEcoverse;
   }
 
+  async updateEcoverse(ecoverse: EcoverseInput) {
+    const { data, errors } = await this.client.updateEcoverse({
+      ecoverseData: ecoverse,
+    });
+
+    this.errorHandler(errors);
+
+    return data?.updateEcoverse;
+  }
+
   async addTagToTagset(tagsetID: string, tagName: string) {
     const { data, errors } = await this.client.addTagToTagset({
       tagsetID: Number(tagsetID),
@@ -356,8 +367,16 @@ export class CherrytwistClient {
     return data?.createGroupOnEcoverse;
   }
 
+  // TODO [ATS] - how to update textId
   // Load in mutations file
-  async updateHostOrganisation(name: string, logoUri?: string) {
+  async updateHostOrganisation(
+    name: string,
+    logoUri?: string,
+    logoFile?: string,
+    _textId?: string,
+    description?: string,
+    keywords?: string[]
+  ) {
     const {
       data: hostInfo,
       errors: hostInfoErrors,
@@ -375,6 +394,35 @@ export class CherrytwistClient {
         logoUri,
         'Logo for the ecoverse host'
       );
+    }
+
+    if (logoFile) {
+      await this.addReference(
+        hostProfileID,
+        'logo',
+        logoFile,
+        'Logo file for the ecoverse host'
+      );
+    }
+
+    if (description) {
+      await this.updateProfile(hostProfileID, undefined, description);
+    }
+
+    if (keywords) {
+      const keywordsTagset = hostInfo.host.profile.tagsets?.find(
+        x => x.name === 'Keywords'
+      );
+      if (keywordsTagset) {
+        for (let k = 0; k < keywords.length; k++) {
+          try {
+            await this.addTagToTagset(keywordsTagset.id, keywords[k]);
+          } catch (ex) {
+            this.errorHandler(ex);
+            break;
+          }
+        }
+      }
     }
 
     const { data, errors } = await this.client.updateOrganisation({
