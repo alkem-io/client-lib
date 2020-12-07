@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
-import { TokenEndpointFactory } from 'src/types/auth.types';
+import { TokenEndpointFactory } from '../types/auth.types';
 
 declare module 'axios' {
   interface AxiosResponse<T = any> extends Promise<T> {}

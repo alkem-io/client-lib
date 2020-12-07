@@ -1,4 +1,4 @@
-import { TokenError } from 'src/contracts/token.error';
+import { TokenError } from '../contracts/token.error';
 import { AuthConfig } from '../contracts/auth.config';
 import { Token } from '../contracts/token';
 import { AuthConfigFactory } from '../types/auth.types';
