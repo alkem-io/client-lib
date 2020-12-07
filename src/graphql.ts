@@ -266,7 +266,16 @@ export type HostInfoQueryVariables = SchemaTypes.Exact<{
 }>;
 
 export type HostInfoQuery = {
-  host: { id: string; name: string; profile: { id: string } };
+  host: {
+    id: string;
+    name: string;
+    profile: {
+      id: string;
+      tagsets?: SchemaTypes.Maybe<
+        Array<{ id: string; name: string; tags: Array<string> }>
+      >;
+    };
+  };
 };
 
 export type OrganisationsQueryVariables = SchemaTypes.Exact<{
@@ -604,6 +613,11 @@ export const HostInfoDocument = gql`
       name
       profile {
         id
+        tagsets {
+          id
+          name
+          tags
+        }
       }
     }
   }
