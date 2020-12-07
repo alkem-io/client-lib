@@ -1,4 +1,4 @@
-export interface IAuthConfig {
+export interface AuthConfig {
   clientID: string;
   clientSecret: string;
   scope: string;

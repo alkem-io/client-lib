@@ -1,5 +1,5 @@
 import { AuthenticationClient } from './authentication/authentication.client';
-import { IToken } from './contracts/token';
+import { Token } from './contracts/token';
 import * as dotenv from 'dotenv';
 
 const main = async () => {
@@ -17,7 +17,7 @@ const main = async () => {
 
   const authClient = new AuthenticationClient(() => authConfig);
   const res = await authClient.authenticateROPC();
-  const token = res as IToken;
+  const token = res as Token;
 
   if(token)
     console.log(token.access_token);

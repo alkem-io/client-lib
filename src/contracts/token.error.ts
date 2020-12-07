@@ -1,4 +1,4 @@
-export interface ITokenError {
+export interface TokenError {
   correlation_id: string;
   error: string;
   error_codes: string;
