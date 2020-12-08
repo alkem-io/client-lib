@@ -4,6 +4,11 @@ query hostInfo {
     name
     profile {
       id
+      tagsets {
+        id
+        name
+        tags
+      }
     }
   }
 }

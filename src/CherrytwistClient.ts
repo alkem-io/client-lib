@@ -4,6 +4,7 @@ import { getSdk, Sdk } from './graphql';
 import {
   ChallengeInput,
   ContextInput,
+  EcoverseInput,
   OpportunityInput,
   UserInput,
 } from './types/cherrytwist-schema';
@@ -60,6 +61,7 @@ export class CherrytwistClient {
     return challenge;
   }
 
+  // TODO [ATS]: Change ChallengeId to be string;
   public async createOpportunity(
     challengeID: number,
     opportunity: OpportunityInput
@@ -96,11 +98,11 @@ export class CherrytwistClient {
 
   public async updateUserProfile(
     userEmail: string,
-    description: string,
-    avatarURI: string
+    description?: string,
+    avatarURI?: string
   ): Promise<boolean> {
     const { data, errors } = await this.client.user({
-      ID: userEmail,
+      email: userEmail,
     });
 
     const profileID = data?.user.profile?.id;
@@ -188,6 +190,14 @@ export class CherrytwistClient {
     return data?.addUserToChallenge;
   }
 
+  async addUserToChallengeByEmail(email: string, challengeName: string) {
+    const user = await this.user(email);
+
+    if (!user) throw new Error(`User ${email} not found!`);
+
+    return await this.addUserToChallenge(challengeName, user.id);
+  }
+
   async addChallengeLead(challengeName: string, organisationID: string) {
     const challenge = await this.getChallenge(challengeName);
 
@@ -207,6 +217,16 @@ export class CherrytwistClient {
       ecoverseData: {
         context: context,
       },
+    });
+
+    this.errorHandler(errors);
+
+    return data?.updateEcoverse;
+  }
+
+  async updateEcoverse(ecoverse: EcoverseInput) {
+    const { data, errors } = await this.client.updateEcoverse({
+      ecoverseData: ecoverse,
     });
 
     this.errorHandler(errors);
@@ -347,8 +367,16 @@ export class CherrytwistClient {
     return data?.createGroupOnEcoverse;
   }
 
+  // TODO [ATS] - how to update textId
   // Load in mutations file
-  async updateHostOrganisation(name: string, logoUri?: string) {
+  async updateHostOrganisation(
+    name: string,
+    logoUri?: string,
+    logoFile?: string,
+    _textId?: string,
+    description?: string,
+    keywords?: string[]
+  ) {
     const {
       data: hostInfo,
       errors: hostInfoErrors,
@@ -366,6 +394,35 @@ export class CherrytwistClient {
         logoUri,
         'Logo for the ecoverse host'
       );
+    }
+
+    if (logoFile) {
+      await this.addReference(
+        hostProfileID,
+        'logo',
+        logoFile,
+        'Logo file for the ecoverse host'
+      );
+    }
+
+    if (description) {
+      await this.updateProfile(hostProfileID, undefined, description);
+    }
+
+    if (keywords) {
+      const keywordsTagset = hostInfo.host.profile.tagsets?.find(
+        x => x.name === 'Keywords'
+      );
+      if (keywordsTagset) {
+        for (let k = 0; k < keywords.length; k++) {
+          try {
+            await this.addTagToTagset(keywordsTagset.id, keywords[k]);
+          } catch (ex) {
+            this.errorHandler(ex);
+            break;
+          }
+        }
+      }
     }
 
     const { data, errors } = await this.client.updateOrganisation({
@@ -449,5 +506,23 @@ export class CherrytwistClient {
   public async groupByName(name: string) {
     const groups = await this.groups();
     return groups?.find(x => x.name === name);
+  }
+
+  public async user(email: string) {
+    const { data, errors } = await this.client.user({
+      email,
+    });
+
+    this.errorHandler(errors);
+
+    return data?.user;
+  }
+
+  public async users() {
+    const { data, errors } = await this.client.users();
+
+    this.errorHandler(errors);
+
+    return data?.users;
   }
 }
