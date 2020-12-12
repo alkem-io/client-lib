@@ -1,6 +1,6 @@
 {
   "name": "cherrytwist-lib",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "Library for interacting with a Cherrytwist server instance",
   "author": "Cherrytwist Foundation",
   "private": false,
@@ -13,7 +13,6 @@
     "clean": "rimraf ./dist",
     "format": "prettier --write \"src/**/*.ts\" \"graphql/**/*.graphql\"",
     "codegen": "graphql-codegen --config codegen.yml",
-    "data-load-samples": "ts-node-dev src/test/submit-sample-data.ts",
     "lint": "tsc --noEmit && eslint src/**/*.ts{,x}",
     "lint:fix": "tsc --noEmit && eslint src/**/*.ts{,x} --fix",
     "populate": "ts-node-dev src/populate.ts",
