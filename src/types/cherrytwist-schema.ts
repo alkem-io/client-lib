@@ -56,14 +56,6 @@ export type Reference = {
   description: Scalars['String'];
 };
 
-export type Template = {
-  id: Scalars['ID'];
-  name: Scalars['String'];
-  description: Scalars['String'];
-  /** The set of user types that are available within this template */
-  users?: Maybe<Array<User>>;
-};
-
 export type User = {
   id: Scalars['ID'];
   name: Scalars['String'];
@@ -197,8 +189,6 @@ export type Ecoverse = {
   organisations?: Maybe<Array<Organisation>>;
   /** The Challenges hosted by the Ecoverse */
   challenges?: Maybe<Array<Challenge>>;
-  /** The set of templates registered with this Ecoverse */
-  templates?: Maybe<Array<Template>>;
   /** The set of tags for the ecoverse */
   tagset?: Maybe<Tagset>;
 };
@@ -328,7 +318,7 @@ export type UserTemplate = {
   tagsets?: Maybe<Array<Scalars['String']>>;
 };
 
-export type UxTemplate = {
+export type Template = {
   /** Template name. */
   name: Scalars['String'];
   /** Template description. */
@@ -343,7 +333,7 @@ export type Config = {
   /** Cherrytwist Web Client Config. */
   webClient: WebClientConfig;
   /** Cherrytwist Template. */
-  template: UxTemplate;
+  template: Template;
 };
 
 export type Query = {
@@ -377,8 +367,6 @@ export type Query = {
   group: UserGroup;
   /** All challenges */
   challenges: Array<Challenge>;
-  /** All templates */
-  templates: Array<Template>;
   /** A particular challenge */
   challenge: Challenge;
   /** All organisations */
@@ -529,8 +517,6 @@ export type Mutation = {
   updateEcoverse: Ecoverse;
   /** Creates a new user as a member of the ecoverse, including an account if enabled */
   createUser: User;
-  /** Creates a new template for the population of entities within tis ecoverse */
-  createTemplate: Template;
   /** Creates a new user as a member of the ecoverse, without an account */
   createUserProfile: User;
   /** Removes the specified user from the ecoverse */
@@ -743,10 +729,6 @@ export type MutationCreateUserArgs = {
   userData: UserInput;
 };
 
-export type MutationCreateTemplateArgs = {
-  templateData: TemplateInput;
-};
-
 export type MutationCreateUserProfileArgs = {
   userData: UserInput;
 };
@@ -871,9 +853,4 @@ export type EcoverseInput = {
   context?: Maybe<ContextInput>;
   /** The set of tags to apply to this ecoverse */
   tags?: Maybe<Array<Scalars['String']>>;
-};
-
-export type TemplateInput = {
-  name?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
 };
