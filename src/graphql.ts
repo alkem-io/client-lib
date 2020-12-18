@@ -49,6 +49,15 @@ export type AddUserToGroupMutationVariables = SchemaTypes.Exact<{
 
 export type AddUserToGroupMutation = { addUserToGroup: boolean };
 
+export type AddUserToOpportunityMutationVariables = SchemaTypes.Exact<{
+  userID: SchemaTypes.Scalars['Float'];
+  opportunityID: SchemaTypes.Scalars['Float'];
+}>;
+
+export type AddUserToOpportunityMutation = {
+  addUserToOpportunity: { id: string; name: string };
+};
+
 export type CreateActorGroupMutationVariables = SchemaTypes.Exact<{
   actorGroupData: SchemaTypes.ActorGroupInput;
   opportunityID: SchemaTypes.Scalars['Float'];
@@ -418,6 +427,14 @@ export const AddUserToChallengeDocument = gql`
 export const AddUserToGroupDocument = gql`
   mutation addUserToGroup($userID: Float!, $groupID: Float!) {
     addUserToGroup(userID: $userID, groupID: $groupID)
+  }
+`;
+export const AddUserToOpportunityDocument = gql`
+  mutation addUserToOpportunity($userID: Float!, $opportunityID: Float!) {
+    addUserToOpportunity(userID: $userID, opportunityID: $opportunityID) {
+      id
+      name
+    }
   }
 `;
 export const CreateActorGroupDocument = gql`
@@ -793,6 +810,22 @@ export function getSdk(
       return withWrapper(() =>
         client.rawRequest<AddUserToGroupMutation>(
           print(AddUserToGroupDocument),
+          variables
+        )
+      );
+    },
+    addUserToOpportunity(
+      variables: AddUserToOpportunityMutationVariables
+    ): Promise<{
+      data?: AddUserToOpportunityMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<AddUserToOpportunityMutation>(
+          print(AddUserToOpportunityDocument),
           variables
         )
       );

@@ -533,4 +533,18 @@ export class CherrytwistClient {
 
     return data?.opportunities;
   }
+
+  async addUserToOpportunity(userID: string, opportunityID: string) {
+    const uID = Number(userID);
+    const oID = Number(opportunityID);
+
+    const { data, errors } = await this.client.addUserToOpportunity({
+      userID: uID,
+      opportunityID: oID,
+    });
+
+    this.errorHandler(errors);
+
+    return data?.addUserToOpportunity;
+  }
 }
