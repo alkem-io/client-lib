@@ -1,0 +1,28 @@
+query opportunities {
+  opportunities {
+    id
+    ...OpportunityProfile
+    actorGroups {
+      id
+      name
+    }
+  }
+}
+
+fragment OpportunityProfile on Opportunity {
+  textID
+  name
+  state
+  context {
+    tagline
+    background
+    vision
+    impact
+    who
+    references {
+      name
+      uri
+      description
+    }
+  }
+}

@@ -6,7 +6,7 @@ mutation createActorGroup(
     actorGroupData: $actorGroupData
     opportunityID: $opportunityID
   ) {
-    name
     id
+    name
   }
 }

@@ -246,7 +246,7 @@ export class CherrytwistClient {
   }
 
   async createRelation(
-    opportunityID: number,
+    opportunityID: string,
     type: string,
     description: string,
     actorName: string,
@@ -262,7 +262,7 @@ export class CherrytwistClient {
     };
 
     const { data, errors } = await this.client.createRelation({
-      opportunityID: opportunityID,
+      opportunityID: Number(opportunityID),
       relationData,
     });
 
@@ -272,7 +272,7 @@ export class CherrytwistClient {
   }
 
   async createActorGroup(
-    opportunityID: number,
+    opportunityID: string,
     actorGroupName: string,
     description: string
   ) {
@@ -291,14 +291,14 @@ export class CherrytwistClient {
 
   // Create a actorgroup for the given opportunity
   async createActor(
-    actorGroupID: number,
+    actorGroupID: string,
     actorName: string,
     value?: string,
     impact?: string,
     description = ''
-  ): Promise<any> {
+  ) {
     const { data, errors } = await this.client.createActor({
-      actorGroupID,
+      actorGroupID: Number(actorGroupID),
       actorData: {
         name: actorName,
         value,
@@ -312,16 +312,16 @@ export class CherrytwistClient {
     return data?.createActor;
   }
 
-  // Create a actorgroup for the given opportunity
+  // Create a actor group for the given opportunity
   async updateActor(
-    actorID: number,
+    actorID: string,
     actorName: string,
     value: string,
     impact = '',
     description = ''
-  ): Promise<any> {
+  ) {
     const { data, errors } = await this.client.updateActor({
-      ID: actorID,
+      ID: Number(actorID),
       actorData: {
         name: actorName,
         value,
@@ -337,13 +337,13 @@ export class CherrytwistClient {
 
   // Create a aspect for the given opportunity
   async createAspect(
-    opportunityID: number,
+    opportunityID: string,
     title: string,
     framing: string,
     explanation: string
   ) {
     const { data, errors } = await this.client.createAspect({
-      opportunityID,
+      opportunityID: Number(opportunityID),
       aspectData: {
         title,
         framing,
@@ -524,5 +524,13 @@ export class CherrytwistClient {
     this.errorHandler(errors);
 
     return data?.users;
+  }
+
+  public async opportunities() {
+    const { data, errors } = await this.client.opportunities();
+
+    this.errorHandler(errors);
+
+    return data?.opportunities;
   }
 }

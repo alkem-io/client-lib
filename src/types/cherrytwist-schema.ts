@@ -234,26 +234,32 @@ export type MemberOf = {
   organisations: Array<Organisation>;
 };
 
-export type AadClientConfig = {
-  /** Config for MSAL authentication library on Cherrytwist Web Client. */
-  msalConfig: MsalConfig;
-  /** Config for accessing the Cherrytwist API. */
-  apiConfig: AadApiConfig;
-  /** Scopes required for the user login. For OpenID Connect login flows, these are openid and profile + optionally offline_access if refresh tokens are utilized. */
-  loginRequest: AadScope;
-  /** Scopes for requesting a token. This is the Cherrytwist API app registration URI + ./default. */
-  tokenRequest: AadScope;
-  /** Scopes for silent token acquisition. Cherrytwist API scope + OpenID mandatory scopes. */
-  silentRequest: AadScope;
-  /** Is the client and server authentication enabled? */
-  authEnabled: Scalars['Boolean'];
+export type SearchResultEntry = {
+  /** The score for this search result; more matches means a higher score. */
+  score?: Maybe<Scalars['Float']>;
+  /** The terms that were matched for this result */
+  terms?: Maybe<Array<Scalars['String']>>;
+  /** Each search result contains either a User or UserGroup */
+  result?: Maybe<SearchResult>;
 };
 
-export type MsalConfig = {
-  /** Azure Active Directory OpenID Connect endpoint configuration. */
-  auth: MsalAuth;
-  /** Token cache configuration.  */
-  cache: MsalCache;
+export type SearchResult = User | UserGroup;
+
+export type ServiceMetadata = {
+  /** Service name e.g. CT Server */
+  name?: Maybe<Scalars['String']>;
+  /** Version in the format {major.minor.patch} - using SemVer. */
+  version?: Maybe<Scalars['String']>;
+};
+
+export type Metadata = {
+  /** Collection of metadata about Cherrytwist services. */
+  services: Array<ServiceMetadata>;
+};
+
+export type ApiConfig = {
+  /** Configuration payload for the Cherrytwist API. */
+  resourceScope: Scalars['String'];
 };
 
 export type MsalAuth = {
@@ -272,26 +278,73 @@ export type MsalCache = {
   storeAuthStateInCookie?: Maybe<Scalars['Boolean']>;
 };
 
-export type AadApiConfig = {
-  /** Configuration payload for the Cherrytwist API. */
-  resourceScope: Scalars['String'];
+export type MsalConfig = {
+  /** Azure Active Directory OpenID Connect endpoint configuration. */
+  auth: MsalAuth;
+  /** Token cache configuration.  */
+  cache: MsalCache;
 };
 
-export type AadScope = {
+export type Scope = {
   /** OpenID Scopes. */
   scopes: Array<Scalars['String']>;
 };
 
-export type SearchResultEntry = {
-  /** The score for this search result; more matches means a higher score. */
-  score?: Maybe<Scalars['Float']>;
-  /** The terms that were matched for this result */
-  terms?: Maybe<Array<Scalars['String']>>;
-  /** Each search result contains either a User or UserGroup */
-  result?: Maybe<SearchResult>;
+export type AadConfig = {
+  /** Config for MSAL authentication library on Cherrytwist Web Client. */
+  msalConfig: MsalConfig;
+  /** Config for accessing the Cherrytwist API. */
+  apiConfig: ApiConfig;
+  /** Scopes required for the user login. For OpenID Connect login flows, these are openid and profile + optionally offline_access if refresh tokens are utilized. */
+  loginRequest: Scope;
+  /** Scopes for requesting a token. This is the Cherrytwist API app registration URI + ./default. */
+  tokenRequest: Scope;
+  /** Scopes for silent token acquisition. Cherrytwist API scope + OpenID mandatory scopes. */
+  silentRequest: Scope;
+  /** Is the client and server authentication enabled? */
+  authEnabled: Scalars['Boolean'];
 };
 
-export type SearchResult = User | UserGroup;
+export type WebClientConfig = {
+  /** Cherrytwist Client AAD config. */
+  aadConfig: AadConfig;
+};
+
+export type OpportunityTemplate = {
+  /** Template opportunity name. */
+  name: Scalars['String'];
+  /** Template actor groups. */
+  actorGroups?: Maybe<Array<Scalars['String']>>;
+  /** Template aspects. */
+  aspects?: Maybe<Array<Scalars['String']>>;
+  /** Template relations. */
+  relations?: Maybe<Array<Scalars['String']>>;
+};
+
+export type UserTemplate = {
+  /** Template user name. */
+  name: Scalars['String'];
+  /** Template tagsets. */
+  tagsets?: Maybe<Array<Scalars['String']>>;
+};
+
+export type UxTemplate = {
+  /** Template name. */
+  name: Scalars['String'];
+  /** Template description. */
+  description: Scalars['String'];
+  /** Users template. */
+  users: Array<UserTemplate>;
+  /** Opportunities template. */
+  opportunities: Array<OpportunityTemplate>;
+};
+
+export type Config = {
+  /** Cherrytwist Web Client Config. */
+  webClient: WebClientConfig;
+  /** Cherrytwist Template. */
+  template: UxTemplate;
+};
 
 export type Query = {
   /** The currently logged in user */
@@ -334,10 +387,14 @@ export type Query = {
   organisation: Organisation;
   /** The tagset associated with this Ecoverse */
   tagset: Tagset;
-  /** CT Web Client Configuration */
-  clientConfig: AadClientConfig;
   /** Search the ecoverse for terms supplied */
   search: Array<SearchResultEntry>;
+  /** Cherrytwist Services Metadata */
+  metadata: Metadata;
+  /** Cherrytwist Web Client AAD Configuration */
+  clientConfig: AadConfig;
+  /** Cherrytwist configuration. Provides configuration to external services in the Cherrytwist ecosystem. */
+  configuration: Config;
 };
 
 export type QueryOpportunityArgs = {

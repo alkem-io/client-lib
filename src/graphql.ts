@@ -55,7 +55,7 @@ export type CreateActorGroupMutationVariables = SchemaTypes.Exact<{
 }>;
 
 export type CreateActorGroupMutation = {
-  createActorGroup: { name: string; id: string };
+  createActorGroup: { id: string; name: string };
 };
 
 export type CreateActorMutationVariables = SchemaTypes.Exact<{
@@ -278,6 +278,35 @@ export type HostInfoQuery = {
   };
 };
 
+export type OpportunitiesQueryVariables = SchemaTypes.Exact<{
+  [key: string]: never;
+}>;
+
+export type OpportunitiesQuery = {
+  opportunities: Array<
+    {
+      id: string;
+      actorGroups?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
+    } & OpportunityProfileFragment
+  >;
+};
+
+export type OpportunityProfileFragment = {
+  textID: string;
+  name: string;
+  state?: SchemaTypes.Maybe<string>;
+  context?: SchemaTypes.Maybe<{
+    tagline?: SchemaTypes.Maybe<string>;
+    background?: SchemaTypes.Maybe<string>;
+    vision?: SchemaTypes.Maybe<string>;
+    impact?: SchemaTypes.Maybe<string>;
+    who?: SchemaTypes.Maybe<string>;
+    references?: SchemaTypes.Maybe<
+      Array<{ name: string; uri: string; description: string }>
+    >;
+  }>;
+};
+
 export type OrganisationsQueryVariables = SchemaTypes.Exact<{
   [key: string]: never;
 }>;
@@ -341,6 +370,25 @@ export const ChallengeDetailsFragmentDoc = gql`
     }
   }
 `;
+export const OpportunityProfileFragmentDoc = gql`
+  fragment OpportunityProfile on Opportunity {
+    textID
+    name
+    state
+    context {
+      tagline
+      background
+      vision
+      impact
+      who
+      references {
+        name
+        uri
+        description
+      }
+    }
+  }
+`;
 export const AddChallengeLeadDocument = gql`
   mutation addChallengeLead($challengeID: Float!, $organisationID: Float!) {
     addChallengeLead(organisationID: $organisationID, challengeID: $challengeID)
@@ -381,8 +429,8 @@ export const CreateActorGroupDocument = gql`
       actorGroupData: $actorGroupData
       opportunityID: $opportunityID
     ) {
-      name
       id
+      name
     }
   }
 `;
@@ -621,6 +669,19 @@ export const HostInfoDocument = gql`
       }
     }
   }
+`;
+export const OpportunitiesDocument = gql`
+  query opportunities {
+    opportunities {
+      id
+      ...OpportunityProfile
+      actorGroups {
+        id
+        name
+      }
+    }
+  }
+  ${OpportunityProfileFragmentDoc}
 `;
 export const OrganisationsDocument = gql`
   query organisations {
@@ -1109,6 +1170,22 @@ export function getSdk(
     }> {
       return withWrapper(() =>
         client.rawRequest<HostInfoQuery>(print(HostInfoDocument), variables)
+      );
+    },
+    opportunities(
+      variables?: OpportunitiesQueryVariables
+    ): Promise<{
+      data?: OpportunitiesQuery | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<OpportunitiesQuery>(
+          print(OpportunitiesDocument),
+          variables
+        )
       );
     },
     organisations(
