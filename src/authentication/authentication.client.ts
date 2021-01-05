@@ -92,4 +92,30 @@ export class AuthenticationClient extends HttpClient {
 
     return token as Token;
   }
+
+    /**
+   * [On-behalf-of Flow](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow)
+   *
+   *
+   * @api public
+   * @returns Returns {@linkcode Token} if the grant is successful or {@linkcode TokenError} if the grant fails.
+   */
+  async authenticateOBO(access_token: string): Promise<Token | TokenError> {
+    let token;
+    const params = new URLSearchParams();
+    params.append('client_id', this.authConfig.clientID);
+    params.append('client_secret', this.authConfig.clientSecret);
+    params.append('scope', this.authConfig.scope);
+    params.append('grant_type', AuthFlow.OBO);
+    params.append('assertion', access_token);
+    params.append('requested_token_use', 'on_behalf_of');
+
+    try {
+      token = await this.authenticate(params);
+    } catch (error) {
+      return error.response.data as TokenError;
+    }
+
+    return token as Token;
+  }
 }
