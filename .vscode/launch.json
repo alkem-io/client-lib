@@ -28,17 +28,5 @@
         ],
         "type": "pwa-node"
     },
-    {
-      "name": "Get Access Token",
-      "request": "launch",
-      "runtimeArgs": [
-          "run", "get-access-token"
-      ],
-      "runtimeExecutable": "npm",
-      "skipFiles": [
-          "<node_internals>/**"
-      ],
-      "type": "pwa-node"
-  }
     ]
 }
