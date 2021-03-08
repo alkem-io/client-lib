@@ -6,6 +6,7 @@ import {
   ContextInput,
   EcoverseInput,
   OpportunityInput,
+  UpdateChallengeInput,
   UserInput,
 } from './types/cherrytwist-schema';
 import { ErrorHandler, handleErrors } from './util/handleErrors';
@@ -474,9 +475,8 @@ export class CherrytwistClient {
     return data?.challenges;
   }
 
-  public async updateChallenge(id: string, challenge: ChallengeInput) {
+  public async updateChallenge(challenge: UpdateChallengeInput) {
     const { data, errors } = await this.client.updateChallenge({
-      challengeID: Number(id),
       challengeData: challenge,
     });
 
@@ -492,7 +492,7 @@ export class CherrytwistClient {
 
     this.errorHandler(errors);
 
-    return data?.createUserProfile;
+    return data?.createUser;
   }
 
   public async groups() {

@@ -7,7 +7,7 @@ The key capabilities of this package include:
 * Command line authentication with AAD, which is the Identity Provider supported out of the box by Cherrytwist platform
 * Using the authentication to obtain a Token to allow command line interaction with Cherrytwist api elements that require authorisation (and thus authentication)
 
-This package also provides a sample script, `src/test-connectopn.ts`, to demonstrate the usage of the package.
+This package also provides a sample script, `src/test-connection.ts`, to demonstrate the usage of the package.
 
 Finally, this package provides a utility for carrying out performance test data population for a Cherrytwist server.
 
