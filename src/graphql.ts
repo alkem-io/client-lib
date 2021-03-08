@@ -178,7 +178,7 @@ export type CreateUserMutationVariables = SchemaTypes.Exact<{
 }>;
 
 export type CreateUserMutation = {
-  createUserProfile: {
+  createUser: {
     name: string;
     id: string;
     profile?: SchemaTypes.Maybe<{ id: string }>;
@@ -202,8 +202,7 @@ export type UpdateActorMutationVariables = SchemaTypes.Exact<{
 export type UpdateActorMutation = { updateActor: { name: string } };
 
 export type UpdateChallengeMutationVariables = SchemaTypes.Exact<{
-  challengeID: SchemaTypes.Scalars['Float'];
-  challengeData: SchemaTypes.ChallengeInput;
+  challengeData: SchemaTypes.UpdateChallengeInput;
 }>;
 
 export type UpdateChallengeMutation = {
@@ -573,7 +572,7 @@ export const CreateTagsetOnProfileDocument = gql`
 `;
 export const CreateUserDocument = gql`
   mutation createUser($userData: UserInput!) {
-    createUserProfile(userData: $userData) {
+    createUser(userData: $userData) {
       name
       id
       profile {
@@ -598,11 +597,8 @@ export const UpdateActorDocument = gql`
   }
 `;
 export const UpdateChallengeDocument = gql`
-  mutation updateChallenge(
-    $challengeID: Float!
-    $challengeData: ChallengeInput!
-  ) {
-    updateChallenge(challengeID: $challengeID, challengeData: $challengeData) {
+  mutation updateChallenge($challengeData: UpdateChallengeInput!) {
+    updateChallenge(challengeData: $challengeData) {
       ...ChallengeDetails
     }
   }

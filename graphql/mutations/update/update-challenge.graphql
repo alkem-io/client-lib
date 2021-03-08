@@ -1,8 +1,7 @@
 mutation updateChallenge(
-  $challengeID: Float!
-  $challengeData: ChallengeInput!
+  $challengeData: UpdateChallengeInput!
 ) {
-  updateChallenge(challengeID: $challengeID, challengeData: $challengeData) {
+  updateChallenge(challengeData: $challengeData) {
     ...ChallengeDetails
   }
 }
