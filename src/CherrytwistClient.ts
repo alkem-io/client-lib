@@ -199,6 +199,18 @@ export class CherrytwistClient {
     });
   }
 
+  async addUserToEcoverse(userID: string) {
+    const response = await this.client.ecoverseInfo();
+    const communityID = Number(response.data?.ecoverse?.community?.id);
+
+    if (!response) return;
+
+    return await this.client.addUserToCommunity({
+      userID: Number(userID),
+      communityID: communityID,
+    });
+  }
+
   async addUserToChallengeByEmail(email: string, challengeName: string) {
     const user = await this.user(email);
 
