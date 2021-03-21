@@ -1,0 +1,10 @@
+query organisation($id: String!) {
+  organisation(ID: $id) {
+    name
+    id
+    profile {
+      id
+    }
+  }
+}
+

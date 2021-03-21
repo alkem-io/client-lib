@@ -357,6 +357,14 @@ export type OpportunityQuery = {
   };
 };
 
+export type OrganisationQueryVariables = SchemaTypes.Exact<{
+  id: SchemaTypes.Scalars['String'];
+}>;
+
+export type OrganisationQuery = {
+  organisation: { name: string; id: string; profile: { id: string } };
+};
+
 export type OrganisationsQueryVariables = SchemaTypes.Exact<{
   [key: string]: never;
 }>;
@@ -781,6 +789,17 @@ export const OpportunityDocument = gql`
       community {
         id
         name
+      }
+    }
+  }
+`;
+export const OrganisationDocument = gql`
+  query organisation($id: String!) {
+    organisation(ID: $id) {
+      name
+      id
+      profile {
+        id
       }
     }
   }
@@ -1328,6 +1347,22 @@ export function getSdk(
       return withWrapper(() =>
         client.rawRequest<OpportunityQuery>(
           print(OpportunityDocument),
+          variables
+        )
+      );
+    },
+    organisation(
+      variables: OrganisationQueryVariables
+    ): Promise<{
+      data?: OrganisationQuery | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<OrganisationQuery>(
+          print(OrganisationDocument),
           variables
         )
       );

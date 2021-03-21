@@ -211,14 +211,6 @@ export class CherrytwistClient {
     });
   }
 
-  async addUserToChallengeByEmail(email: string, challengeName: string) {
-    const user = await this.user(email);
-
-    if (!user) throw new Error(`User ${email} not found!`);
-
-    return await this.addUserToChallenge(challengeName, user.id);
-  }
-
   async addChallengeLead(challengeName: string, organisationID: string) {
     const response = await this.client.challenge({ id: challengeName });
 
@@ -410,6 +402,16 @@ export class CherrytwistClient {
     this.errorHandler(errors);
 
     return data?.organisations;
+  }
+
+  public async organisation(orgID: string) {
+    const { data, errors } = await this.client.organisation({
+      id: orgID,
+    });
+
+    this.errorHandler(errors);
+
+    return data?.organisation;
   }
 
   public async createChallenge(challenge: ChallengeInput) {
