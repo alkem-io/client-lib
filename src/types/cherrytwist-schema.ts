@@ -307,7 +307,7 @@ export type Mutation = {
   /** Creates a new user group for the organisation with the given id */
   createGroupOnOrganisation: UserGroup;
   /** Creates a new Opportunity for the challenge with the given id */
-  createOpportunityOnChallenge: Opportunity;
+  createOpportunity: Opportunity;
   /** Creates a new organisation and registers it with the ecoverse */
   createOrganisation: Organisation;
   /** Create a new Project on the Opportunity identified by the ID */
@@ -373,8 +373,8 @@ export type Mutation = {
 };
 
 export type MutationAddChallengeLeadArgs = {
-  challengeID: Scalars['Float'];
-  organisationID: Scalars['Float'];
+  challengeID: Scalars['String'];
+  organisationID: Scalars['String'];
 };
 
 export type MutationAddTagToTagsetArgs = {
@@ -440,8 +440,7 @@ export type MutationCreateGroupOnOrganisationArgs = {
   orgID: Scalars['Float'];
 };
 
-export type MutationCreateOpportunityOnChallengeArgs = {
-  challengeID: Scalars['Float'];
+export type MutationCreateOpportunityArgs = {
   opportunityData: OpportunityInput;
 };
 
@@ -495,8 +494,8 @@ export type MutationRemoveChallengeArgs = {
 };
 
 export type MutationRemoveChallengeLeadArgs = {
-  challengeID: Scalars['Float'];
-  organisationID: Scalars['Float'];
+  challengeID: Scalars['String'];
+  organisationID: Scalars['String'];
 };
 
 export type MutationRemoveGroupFocalPointArgs = {
@@ -613,6 +612,7 @@ export type Opportunity = {
 };
 
 export type OpportunityInput = {
+  challengeID?: Maybe<Scalars['String']>;
   context?: Maybe<ContextInput>;
   name?: Maybe<Scalars['String']>;
   state?: Maybe<Scalars['String']>;

@@ -72,19 +72,14 @@ export class CherrytwistClient {
     return serverVersion;
   }
 
-  // TODO [ATS]: Change ChallengeId to be string;
-  public async createOpportunity(
-    challengeID: number,
-    opportunity: OpportunityInput
-  ) {
+  public async createOpportunity(opportunity: OpportunityInput) {
     const result = await this.client.createOpportunity({
-      challengeID,
       opportunityData: opportunity,
     });
 
     this.errorHandler(result.errors);
 
-    return result.data?.createOpportunityOnChallenge;
+    return result.data?.createOpportunity;
   }
 
   public async addReference(
@@ -212,12 +207,9 @@ export class CherrytwistClient {
   }
 
   async addChallengeLead(challengeName: string, organisationID: string) {
-    const response = await this.client.challenge({ id: challengeName });
-
-    if (!response) return false;
     const { data, errors } = await this.client.addChallengeLead({
-      challengeID: Number(response.data?.challenge.id),
-      organisationID: Number(organisationID),
+      challengeID: challengeName,
+      organisationID: organisationID,
     });
 
     this.errorHandler(errors);

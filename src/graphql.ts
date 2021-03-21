@@ -25,8 +25,8 @@ export type OpportunityDetailsFragment = {
 };
 
 export type AddChallengeLeadMutationVariables = SchemaTypes.Exact<{
-  challengeID: SchemaTypes.Scalars['Float'];
-  organisationID: SchemaTypes.Scalars['Float'];
+  challengeID: SchemaTypes.Scalars['String'];
+  organisationID: SchemaTypes.Scalars['String'];
 }>;
 
 export type AddChallengeLeadMutation = { addChallengeLead: boolean };
@@ -121,11 +121,10 @@ export type CreateGroupOnOrganisationMutation = {
 
 export type CreateOpportunityMutationVariables = SchemaTypes.Exact<{
   opportunityData: SchemaTypes.OpportunityInput;
-  challengeID: SchemaTypes.Scalars['Float'];
 }>;
 
 export type CreateOpportunityMutation = {
-  createOpportunityOnChallenge: { id: string; name: string; textID: string };
+  createOpportunity: { id: string; name: string; textID: string };
 };
 
 export type CreateOrganisationMutationVariables = SchemaTypes.Exact<{
@@ -467,7 +466,7 @@ export const OpportunityProfileFragmentDoc = gql`
   }
 `;
 export const AddChallengeLeadDocument = gql`
-  mutation addChallengeLead($challengeID: Float!, $organisationID: Float!) {
+  mutation addChallengeLead($challengeID: String!, $organisationID: String!) {
     addChallengeLead(organisationID: $organisationID, challengeID: $challengeID)
   }
 `;
@@ -559,14 +558,8 @@ export const CreateGroupOnOrganisationDocument = gql`
   }
 `;
 export const CreateOpportunityDocument = gql`
-  mutation createOpportunity(
-    $opportunityData: OpportunityInput!
-    $challengeID: Float!
-  ) {
-    createOpportunityOnChallenge(
-      opportunityData: $opportunityData
-      challengeID: $challengeID
-    ) {
+  mutation createOpportunity($opportunityData: OpportunityInput!) {
+    createOpportunity(opportunityData: $opportunityData) {
       id
       name
       textID
