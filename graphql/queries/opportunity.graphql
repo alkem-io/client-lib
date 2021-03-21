@@ -1,0 +1,11 @@
+query opportunity($id: String!) {
+  opportunity(ID: $id) {
+    name
+    id
+    community {
+      id
+      name
+    }
+  }
+}
+

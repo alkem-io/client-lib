@@ -240,6 +240,18 @@ export type UpdateProfileMutationVariables = SchemaTypes.Exact<{
 
 export type UpdateProfileMutation = { updateProfile: boolean };
 
+export type ChallengeQueryVariables = SchemaTypes.Exact<{
+  id: SchemaTypes.Scalars['String'];
+}>;
+
+export type ChallengeQuery = {
+  challenge: {
+    name: string;
+    id: string;
+    community?: SchemaTypes.Maybe<{ id: string; name: string }>;
+  };
+};
+
 export type ChallengesBaseQueryVariables = SchemaTypes.Exact<{
   [key: string]: never;
 }>;
@@ -254,11 +266,13 @@ export type ChallengesQueryVariables = SchemaTypes.Exact<{
 
 export type ChallengesQuery = { challenges: Array<ChallengeDetailsFragment> };
 
-export type EcoverseNameQueryVariables = SchemaTypes.Exact<{
+export type EcoverseInfoQueryVariables = SchemaTypes.Exact<{
   [key: string]: never;
 }>;
 
-export type EcoverseNameQuery = { ecoverse: { name: string } };
+export type EcoverseInfoQuery = {
+  ecoverse: { name: string; community?: SchemaTypes.Maybe<{ id: string }> };
+};
 
 export type GroupsQueryVariables = SchemaTypes.Exact<{ [key: string]: never }>;
 
@@ -285,6 +299,19 @@ export type HostInfoQuery = {
           Array<{ id: string; name: string; tags: Array<string> }>
         >;
       };
+    }>;
+  };
+};
+
+export type MetadataQueryVariables = SchemaTypes.Exact<{
+  [key: string]: never;
+}>;
+
+export type MetadataQuery = {
+  metadata: {
+    services: Array<{
+      name?: SchemaTypes.Maybe<string>;
+      version?: SchemaTypes.Maybe<string>;
     }>;
   };
 };
@@ -316,6 +343,18 @@ export type OpportunityProfileFragment = {
       Array<{ name: string; uri: string; description: string }>
     >;
   }>;
+};
+
+export type OpportunityQueryVariables = SchemaTypes.Exact<{
+  id: SchemaTypes.Scalars['String'];
+}>;
+
+export type OpportunityQuery = {
+  opportunity: {
+    name: string;
+    id: string;
+    community?: SchemaTypes.Maybe<{ id: string; name: string }>;
+  };
 };
 
 export type OrganisationsQueryVariables = SchemaTypes.Exact<{
@@ -643,6 +682,18 @@ export const UpdateProfileDocument = gql`
     updateProfile(profileData: $profileData, ID: $ID)
   }
 `;
+export const ChallengeDocument = gql`
+  query challenge($id: String!) {
+    challenge(ID: $id) {
+      name
+      id
+      community {
+        id
+        name
+      }
+    }
+  }
+`;
 export const ChallengesBaseDocument = gql`
   query challengesBase {
     challenges {
@@ -659,10 +710,13 @@ export const ChallengesDocument = gql`
   }
   ${ChallengeDetailsFragmentDoc}
 `;
-export const EcoverseNameDocument = gql`
-  query ecoverseName {
+export const EcoverseInfoDocument = gql`
+  query ecoverseInfo {
     ecoverse {
       name
+      community {
+        id
+      }
     }
   }
 `;
@@ -696,6 +750,16 @@ export const HostInfoDocument = gql`
     }
   }
 `;
+export const MetadataDocument = gql`
+  query metadata {
+    metadata {
+      services {
+        name
+        version
+      }
+    }
+  }
+`;
 export const OpportunitiesDocument = gql`
   query opportunities {
     opportunities {
@@ -708,6 +772,18 @@ export const OpportunitiesDocument = gql`
     }
   }
   ${OpportunityProfileFragmentDoc}
+`;
+export const OpportunityDocument = gql`
+  query opportunity($id: String!) {
+    opportunity(ID: $id) {
+      name
+      id
+      community {
+        id
+        name
+      }
+    }
+  }
 `;
 export const OrganisationsDocument = gql`
   query organisations {
@@ -1127,6 +1203,19 @@ export function getSdk(
         )
       );
     },
+    challenge(
+      variables: ChallengeQueryVariables
+    ): Promise<{
+      data?: ChallengeQuery | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<ChallengeQuery>(print(ChallengeDocument), variables)
+      );
+    },
     challengesBase(
       variables?: ChallengesBaseQueryVariables
     ): Promise<{
@@ -1156,18 +1245,18 @@ export function getSdk(
         client.rawRequest<ChallengesQuery>(print(ChallengesDocument), variables)
       );
     },
-    ecoverseName(
-      variables?: EcoverseNameQueryVariables
+    ecoverseInfo(
+      variables?: EcoverseInfoQueryVariables
     ): Promise<{
-      data?: EcoverseNameQuery | undefined;
+      data?: EcoverseInfoQuery | undefined;
       extensions?: any;
       headers: Headers;
       status: number;
       errors?: GraphQLError[] | undefined;
     }> {
       return withWrapper(() =>
-        client.rawRequest<EcoverseNameQuery>(
-          print(EcoverseNameDocument),
+        client.rawRequest<EcoverseInfoQuery>(
+          print(EcoverseInfoDocument),
           variables
         )
       );
@@ -1198,6 +1287,19 @@ export function getSdk(
         client.rawRequest<HostInfoQuery>(print(HostInfoDocument), variables)
       );
     },
+    metadata(
+      variables?: MetadataQueryVariables
+    ): Promise<{
+      data?: MetadataQuery | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<MetadataQuery>(print(MetadataDocument), variables)
+      );
+    },
     opportunities(
       variables?: OpportunitiesQueryVariables
     ): Promise<{
@@ -1210,6 +1312,22 @@ export function getSdk(
       return withWrapper(() =>
         client.rawRequest<OpportunitiesQuery>(
           print(OpportunitiesDocument),
+          variables
+        )
+      );
+    },
+    opportunity(
+      variables: OpportunityQueryVariables
+    ): Promise<{
+      data?: OpportunityQuery | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<OpportunityQuery>(
+          print(OpportunityDocument),
           variables
         )
       );

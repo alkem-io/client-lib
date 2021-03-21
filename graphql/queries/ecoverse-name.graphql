@@ -1,5 +1,0 @@
-query ecoverseName {
-  ecoverse {
-    name
-  }
-}
