@@ -1,13 +1,15 @@
 query hostInfo {
-  host {
-    id
-    name
-    profile {
+  ecoverse {
+    host {
       id
-      tagsets {
+      name
+      profile {
         id
-        name
-        tags
+        tagsets {
+          id
+         name
+         tags
+        }
       }
     }
   }

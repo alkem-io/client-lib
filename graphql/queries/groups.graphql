@@ -1,6 +1,10 @@
 query groups {
-  groups {
-    id
-    name
+  ecoverse {
+    community {
+      groups {
+        id
+        name
+      }
+    }
   }
 }

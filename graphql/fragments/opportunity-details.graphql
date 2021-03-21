@@ -1,4 +1,4 @@
-fragment ChallengeDetails on Challenge {
+fragment OpportunityDetails on Opportunity {
   id
   name
   tagset {
