@@ -210,18 +210,60 @@ export type ContextInput = {
 };
 
 export type Ecoverse = {
+  /** All applications to join */
+  application: Application;
+  /** A particular Challenge, either by its ID or textID */
+  challenge: Challenge;
   /** The challenges for the ecoverse. */
   challenges?: Maybe<Array<Challenge>>;
   /** The community for the ecoverse. */
   community?: Maybe<Community>;
   /** The shared understanding for the Ecoverse */
   context?: Maybe<Context>;
+  /** The user group with the specified id anywhere in the ecoverse */
+  group: UserGroup;
+  /** The user groups on this Ecoverse */
+  groups: Array<UserGroup>;
+  /** All groups on this Ecoverse that have the provided tag */
+  groupsWithTag: Array<UserGroup>;
   /** The organisation that hosts this Ecoverse instance */
   host?: Maybe<Organisation>;
   id: Scalars['ID'];
   name: Scalars['String'];
+  /** All opportunities within the ecoverse */
+  opportunities: Array<Opportunity>;
+  /** A particular opportunitiy, identified by the ID or textID */
+  opportunity: Opportunity;
+  /** A particular Project, identified by the ID */
+  project: Project;
+  /** All projects within this ecoverse */
+  projects: Array<Project>;
   /** The set of tags for the ecoverse */
   tagset?: Maybe<Tagset>;
+};
+
+export type EcoverseApplicationArgs = {
+  ID: Scalars['Float'];
+};
+
+export type EcoverseChallengeArgs = {
+  ID: Scalars['String'];
+};
+
+export type EcoverseGroupArgs = {
+  ID: Scalars['Float'];
+};
+
+export type EcoverseGroupsWithTagArgs = {
+  tag: Scalars['String'];
+};
+
+export type EcoverseOpportunityArgs = {
+  ID: Scalars['String'];
+};
+
+export type EcoverseProjectArgs = {
+  ID: Scalars['Float'];
 };
 
 export type EcoverseInput = {
@@ -691,40 +733,18 @@ export type ProjectInput = {
 };
 
 export type Query = {
-  /** All applications to join */
-  application: Application;
-  /** All applications to join */
-  applications: Array<Application>;
-  /** A particular Challenge, either by its ID or textID */
-  challenge: Challenge;
-  /** The Challenges on this platform */
-  challenges: Array<Challenge>;
   /** Cherrytwist configuration. Provides configuration to external services in the Cherrytwist ecosystem. */
   configuration: Config;
   /** The ecoverse. */
   ecoverse: Ecoverse;
-  /** The user group with the specified id anywhere in the ecoverse */
-  group: UserGroup;
-  /** The user groups on this platform */
-  groups: Array<UserGroup>;
-  /** All groups that have the provided tag */
-  groupsWithTag: Array<UserGroup>;
   /** The currently logged in user */
   me: User;
   /** Cherrytwist Services Metadata */
   metadata: Metadata;
-  /** All opportunities within the ecoverse */
-  opportunities: Array<Opportunity>;
-  /** A particular opportunitiy, identified by the ID or textID */
-  opportunity: Opportunity;
   /** A particular Organisation */
   organisation: Organisation;
   /** The Organisations on this platform */
   organisations: Array<Organisation>;
-  /** A particular Project, identified by the ID */
-  project: Project;
-  /** All projects within this ecoverse */
-  projects: Array<Project>;
   /** Search the ecoverse for terms supplied */
   search: Array<SearchResultEntry>;
   /** A particular user, identified by the ID or by email */
@@ -735,32 +755,8 @@ export type Query = {
   usersById: Array<User>;
 };
 
-export type QueryApplicationArgs = {
-  ID: Scalars['Float'];
-};
-
-export type QueryChallengeArgs = {
-  ID: Scalars['String'];
-};
-
-export type QueryGroupArgs = {
-  ID: Scalars['Float'];
-};
-
-export type QueryGroupsWithTagArgs = {
-  tag: Scalars['String'];
-};
-
-export type QueryOpportunityArgs = {
-  ID: Scalars['String'];
-};
-
 export type QueryOrganisationArgs = {
   ID: Scalars['String'];
-};
-
-export type QueryProjectArgs = {
-  ID: Scalars['Float'];
 };
 
 export type QuerySearchArgs = {

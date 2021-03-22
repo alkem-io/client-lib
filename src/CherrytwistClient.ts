@@ -184,7 +184,9 @@ export class CherrytwistClient {
 
   async addUserToChallenge(challengeName: string, userID: string) {
     const response = await this.client.challenge({ id: challengeName });
-    const communityID = Number(response.data?.challenge?.community?.id);
+    const communityID = Number(
+      response.data?.ecoverse.challenge?.community?.id
+    );
 
     if (!response) return;
 
@@ -421,7 +423,7 @@ export class CherrytwistClient {
 
     this.errorHandler(errors);
 
-    return data?.challenges;
+    return data?.ecoverse.challenges;
   }
 
   public async updateChallenge(challenge: UpdateChallengeInput) {
@@ -500,12 +502,12 @@ export class CherrytwistClient {
 
     this.errorHandler(errors);
 
-    return data?.opportunities;
+    return data?.ecoverse.opportunities;
   }
 
   async addUserToOpportunity(userID: string, opportunityID: string) {
     const opportunity = await this.client.opportunity({ id: opportunityID });
-    const communityID = opportunity.data?.opportunity?.community?.id;
+    const communityID = opportunity.data?.ecoverse.opportunity?.community?.id;
     return await this.addUserToCommunity(userID, communityID);
   }
 

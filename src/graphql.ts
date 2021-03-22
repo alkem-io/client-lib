@@ -244,10 +244,12 @@ export type ChallengeQueryVariables = SchemaTypes.Exact<{
 }>;
 
 export type ChallengeQuery = {
-  challenge: {
-    name: string;
-    id: string;
-    community?: SchemaTypes.Maybe<{ id: string; name: string }>;
+  ecoverse: {
+    challenge: {
+      name: string;
+      id: string;
+      community?: SchemaTypes.Maybe<{ id: string; name: string }>;
+    };
   };
 };
 
@@ -256,14 +258,18 @@ export type ChallengesBaseQueryVariables = SchemaTypes.Exact<{
 }>;
 
 export type ChallengesBaseQuery = {
-  challenges: Array<{ id: string; name: string }>;
+  ecoverse: {
+    challenges?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
+  };
 };
 
 export type ChallengesQueryVariables = SchemaTypes.Exact<{
   [key: string]: never;
 }>;
 
-export type ChallengesQuery = { challenges: Array<ChallengeDetailsFragment> };
+export type ChallengesQuery = {
+  ecoverse: { challenges?: SchemaTypes.Maybe<Array<ChallengeDetailsFragment>> };
+};
 
 export type EcoverseInfoQueryVariables = SchemaTypes.Exact<{
   [key: string]: never;
@@ -320,12 +326,14 @@ export type OpportunitiesQueryVariables = SchemaTypes.Exact<{
 }>;
 
 export type OpportunitiesQuery = {
-  opportunities: Array<
-    {
-      id: string;
-      actorGroups?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
-    } & OpportunityProfileFragment
-  >;
+  ecoverse: {
+    opportunities: Array<
+      {
+        id: string;
+        actorGroups?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
+      } & OpportunityProfileFragment
+    >;
+  };
 };
 
 export type OpportunityProfileFragment = {
@@ -349,10 +357,12 @@ export type OpportunityQueryVariables = SchemaTypes.Exact<{
 }>;
 
 export type OpportunityQuery = {
-  opportunity: {
-    name: string;
-    id: string;
-    community?: SchemaTypes.Maybe<{ id: string; name: string }>;
+  ecoverse: {
+    opportunity: {
+      name: string;
+      id: string;
+      community?: SchemaTypes.Maybe<{ id: string; name: string }>;
+    };
   };
 };
 
@@ -685,28 +695,34 @@ export const UpdateProfileDocument = gql`
 `;
 export const ChallengeDocument = gql`
   query challenge($id: String!) {
-    challenge(ID: $id) {
-      name
-      id
-      community {
-        id
+    ecoverse {
+      challenge(ID: $id) {
         name
+        id
+        community {
+          id
+          name
+        }
       }
     }
   }
 `;
 export const ChallengesBaseDocument = gql`
   query challengesBase {
-    challenges {
-      id
-      name
+    ecoverse {
+      challenges {
+        id
+        name
+      }
     }
   }
 `;
 export const ChallengesDocument = gql`
   query challenges {
-    challenges {
-      ...ChallengeDetails
+    ecoverse {
+      challenges {
+        ...ChallengeDetails
+      }
     }
   }
   ${ChallengeDetailsFragmentDoc}
@@ -763,12 +779,14 @@ export const MetadataDocument = gql`
 `;
 export const OpportunitiesDocument = gql`
   query opportunities {
-    opportunities {
-      id
-      ...OpportunityProfile
-      actorGroups {
+    ecoverse {
+      opportunities {
         id
-        name
+        ...OpportunityProfile
+        actorGroups {
+          id
+          name
+        }
       }
     }
   }
@@ -776,12 +794,14 @@ export const OpportunitiesDocument = gql`
 `;
 export const OpportunityDocument = gql`
   query opportunity($id: String!) {
-    opportunity(ID: $id) {
-      name
-      id
-      community {
-        id
+    ecoverse {
+      opportunity(ID: $id) {
         name
+        id
+        community {
+          id
+          name
+        }
       }
     }
   }
