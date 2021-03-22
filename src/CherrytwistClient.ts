@@ -378,9 +378,10 @@ export class CherrytwistClient {
     return data?.createGroupOnCommunity;
   }
 
-  public async createOrganisation(name: string) {
+  public async createOrganisation(name: string, textID: string) {
     const { data, errors } = await this.client.createOrganisation({
       organisationData: {
+        textID,
         name,
       },
     });
