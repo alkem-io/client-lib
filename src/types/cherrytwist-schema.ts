@@ -684,12 +684,16 @@ export type Organisation = {
   name: Scalars['String'];
   /** The profile for this organisation. */
   profile: Profile;
+  /** A short text identifier for this Organisation */
+  textID: Scalars['String'];
 };
 
 export type OrganisationInput = {
   /** The name for this organisation */
   name?: Maybe<Scalars['String']>;
   profileData?: Maybe<ProfileInput>;
+  /** The unique text based ID for this organisation */
+  textID?: Maybe<Scalars['String']>;
 };
 
 export type Profile = {
