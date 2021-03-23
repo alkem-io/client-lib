@@ -24,7 +24,7 @@ export class CherrytwistClient {
 
     const client = new GraphQLClient(this.config.graphqlEndpoint, {
       headers: {
-        authorization: 'Bearer',
+        authorization: `Bearer ${config.accessToken}`,
       },
     });
     this.client = getSdk(client);
