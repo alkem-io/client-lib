@@ -1,8 +1,5 @@
-mutation updateOrganisation(
-  $orgID: Float!
-  $organisationData: OrganisationInput!
-) {
-  updateOrganisation(orgID: $orgID, organisationData: $organisationData) {
+mutation updateOrganisation($organisationData: UpdateOrganisationInput!) {
+  updateOrganisation(organisationData: $organisationData) {
     id
     name
     profile {

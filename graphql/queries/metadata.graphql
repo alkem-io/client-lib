@@ -1,0 +1,8 @@
+query metadata {
+  metadata {
+    services {
+      name
+      version
+    }
+  }
+}

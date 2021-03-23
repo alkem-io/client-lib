@@ -128,15 +128,12 @@ export type AuthenticationProviderConfigUnion =
   | SimpleAuthProviderConfig;
 
 export type Challenge = {
-  applications: Array<Application>;
+  /** The community for the challenge */
+  community?: Maybe<Community>;
   /** The shared understanding for the challenge */
   context?: Maybe<Context>;
-  /** All users that are contributing to this challenge. */
-  contributors?: Maybe<Array<User>>;
-  /** Groups of users related to a challenge. */
-  groups?: Maybe<Array<UserGroup>>;
   id: Scalars['ID'];
-  /** The leads for the challenge. The focal point for the user group is the primary challenge lead. */
+  /** The Organisations that are leading this Challenge. */
   leadOrganisations: Array<Organisation>;
   /** The name of the challenge */
   name: Scalars['String'];
@@ -163,6 +160,20 @@ export type ChallengeTemplate = {
   applications?: Maybe<Array<ApplicationTemplate>>;
   /** Challenge template name. */
   name: Scalars['String'];
+};
+
+export type Community = {
+  /** Application available for this community. */
+  applications: Array<Application>;
+  /** Groups of users related to a Community. */
+  groups?: Maybe<Array<UserGroup>>;
+  id: Scalars['ID'];
+  /** All users that are contributing to this Community. */
+  members?: Maybe<Array<User>>;
+  /** The name of the Community */
+  name: Scalars['String'];
+  /** The type of the Community */
+  type: Scalars['String'];
 };
 
 export type Config = {
@@ -199,25 +210,67 @@ export type ContextInput = {
 };
 
 export type Ecoverse = {
-  /** The Challenges hosted by the Ecoverse */
+  /** All applications to join */
+  application: Application;
+  /** A particular Challenge, either by its ID or textID */
+  challenge: Challenge;
+  /** The challenges for the ecoverse. */
   challenges?: Maybe<Array<Challenge>>;
+  /** The community for the ecoverse. */
+  community?: Maybe<Community>;
   /** The shared understanding for the Ecoverse */
   context?: Maybe<Context>;
-  /** The set of groups at the Ecoverse level */
-  groups?: Maybe<Array<UserGroup>>;
+  /** The user group with the specified id anywhere in the ecoverse */
+  group: UserGroup;
+  /** The user groups on this Ecoverse */
+  groups: Array<UserGroup>;
+  /** All groups on this Ecoverse that have the provided tag */
+  groupsWithTag: Array<UserGroup>;
   /** The organisation that hosts this Ecoverse instance */
   host?: Maybe<Organisation>;
   id: Scalars['ID'];
   name: Scalars['String'];
-  /** The set of partner organisations associated with this Ecoverse */
-  organisations?: Maybe<Array<Organisation>>;
+  /** All opportunities within the ecoverse */
+  opportunities: Array<Opportunity>;
+  /** A particular opportunitiy, identified by the ID or textID */
+  opportunity: Opportunity;
+  /** A particular Project, identified by the ID */
+  project: Project;
+  /** All projects within this ecoverse */
+  projects: Array<Project>;
   /** The set of tags for the ecoverse */
   tagset?: Maybe<Tagset>;
+};
+
+export type EcoverseApplicationArgs = {
+  ID: Scalars['Float'];
+};
+
+export type EcoverseChallengeArgs = {
+  ID: Scalars['String'];
+};
+
+export type EcoverseGroupArgs = {
+  ID: Scalars['Float'];
+};
+
+export type EcoverseGroupsWithTagArgs = {
+  tag: Scalars['String'];
+};
+
+export type EcoverseOpportunityArgs = {
+  ID: Scalars['String'];
+};
+
+export type EcoverseProjectArgs = {
+  ID: Scalars['Float'];
 };
 
 export type EcoverseInput = {
   /** Updated context for the ecoverse; will be merged with existing context */
   context?: Maybe<ContextInput>;
+  /** The host Organisation for the ecoverse */
+  hostID?: Maybe<Scalars['Float']>;
   /** The new name for the ecoverse */
   name?: Maybe<Scalars['String']>;
   /** The set of tags to apply to this ecoverse */
@@ -232,12 +285,8 @@ export type EcoverseTemplate = {
 };
 
 export type MemberOf = {
-  /** References to the challenges the user is a member of */
-  challenges: Array<Challenge>;
-  /** References to the groups the user is in at the ecoverse level */
-  groups: Array<UserGroup>;
-  /** References to the opportunities the user is a member of */
-  opportunities: Array<Opportunity>;
+  /** References to the Communities the user is a member of */
+  communities: Array<Community>;
   /** References to the orgnaisaitons the user is a member of */
   organisations: Array<Organisation>;
 };
@@ -271,16 +320,14 @@ export type MsalConfig = {
 };
 
 export type Mutation = {
-  /** Adds the specified organisation as a lead for the specified challenge */
+  /** Adds the specified organisation as a lead for the specified Community */
   addChallengeLead: Scalars['Boolean'];
   /** Add the provided tag to the tagset with the given ID */
   addTagToTagset: Tagset;
-  /** Adds the user with the given identifier as a member of the specified challenge */
-  addUserToChallenge: UserGroup;
+  /** Adds the user with the given identifier as a member of the specified Community */
+  addUserToCommunity: UserGroup;
   /** Adds the user with the given identifier to the specified user group */
   addUserToGroup: Scalars['Boolean'];
-  /** Adds the user with the given identifier as a member of the specified opportunity */
-  addUserToOpportunity: UserGroup;
   /** Create application to join this ecoverse */
   approveApplication: Application;
   /** Assign the user with the given ID as focal point for the given group */
@@ -289,28 +336,20 @@ export type Mutation = {
   createActor: Actor;
   /** Create a new actor group on the Opportunity identified by the ID */
   createActorGroup: ActorGroup;
-  /** Create application to join this ecoverse */
+  /** Create application to join this Community */
   createApplication: Application;
-  /** Create application to join this challenge */
-  createApplicationForChallenge: Application;
-  /** Create application to join this opportunity */
-  createApplicationForOpportunity: Application;
   /** Create a new aspect on the Opportunity identified by the ID */
   createAspect: Aspect;
   /** Create a new aspect on the Project identified by the ID */
   createAspectOnProject: Aspect;
   /** Creates a new challenge and registers it with the ecoverse */
   createChallenge: Challenge;
-  /** Creates a new user group for the challenge with the given id */
-  createGroupOnChallenge: UserGroup;
-  /** Creates a new user group at the ecoverse level */
-  createGroupOnEcoverse: UserGroup;
-  /** Creates a new user group for the opportunity with the given id */
-  createGroupOnOpportunity: UserGroup;
+  /** Creates a new user group for the Community with the given id */
+  createGroupOnCommunity: UserGroup;
   /** Creates a new user group for the organisation with the given id */
   createGroupOnOrganisation: UserGroup;
   /** Creates a new Opportunity for the challenge with the given id */
-  createOpportunityOnChallenge: Opportunity;
+  createOpportunity: Opportunity;
   /** Creates a new organisation and registers it with the ecoverse */
   createOrganisation: Organisation;
   /** Create a new Project on the Opportunity identified by the ID */
@@ -333,7 +372,7 @@ export type Mutation = {
   removeAspect: Scalars['Boolean'];
   /** Removes the Challenge with the specified ID */
   removeChallenge: Scalars['Boolean'];
-  /** Remove the specified organisation as a lead for the specified challenge */
+  /** Remove the specified organisation as a lead for the specified Challenge */
   removeChallengeLead: Scalars['Boolean'];
   /** Remove the focal point for the given group */
   removeGroupFocalPoint?: Maybe<UserGroup>;
@@ -376,8 +415,8 @@ export type Mutation = {
 };
 
 export type MutationAddChallengeLeadArgs = {
-  challengeID: Scalars['Float'];
-  organisationID: Scalars['Float'];
+  challengeID: Scalars['String'];
+  organisationID: Scalars['String'];
 };
 
 export type MutationAddTagToTagsetArgs = {
@@ -385,18 +424,13 @@ export type MutationAddTagToTagsetArgs = {
   tagsetID: Scalars['Float'];
 };
 
-export type MutationAddUserToChallengeArgs = {
-  challengeID: Scalars['Float'];
+export type MutationAddUserToCommunityArgs = {
+  communityID: Scalars['Float'];
   userID: Scalars['Float'];
 };
 
 export type MutationAddUserToGroupArgs = {
   groupID: Scalars['Float'];
-  userID: Scalars['Float'];
-};
-
-export type MutationAddUserToOpportunityArgs = {
-  opportunityID: Scalars['Float'];
   userID: Scalars['Float'];
 };
 
@@ -421,16 +455,7 @@ export type MutationCreateActorGroupArgs = {
 
 export type MutationCreateApplicationArgs = {
   applicationData: ApplicationInput;
-};
-
-export type MutationCreateApplicationForChallengeArgs = {
-  applicationData: ApplicationInput;
-  ID: Scalars['Float'];
-};
-
-export type MutationCreateApplicationForOpportunityArgs = {
-  applicationData: ApplicationInput;
-  ID: Scalars['Float'];
+  communityID: Scalars['Float'];
 };
 
 export type MutationCreateAspectArgs = {
@@ -447,18 +472,9 @@ export type MutationCreateChallengeArgs = {
   challengeData: ChallengeInput;
 };
 
-export type MutationCreateGroupOnChallengeArgs = {
-  challengeID: Scalars['Float'];
+export type MutationCreateGroupOnCommunityArgs = {
+  communityID: Scalars['Float'];
   groupName: Scalars['String'];
-};
-
-export type MutationCreateGroupOnEcoverseArgs = {
-  groupName: Scalars['String'];
-};
-
-export type MutationCreateGroupOnOpportunityArgs = {
-  groupName: Scalars['String'];
-  opportunityID: Scalars['Float'];
 };
 
 export type MutationCreateGroupOnOrganisationArgs = {
@@ -466,8 +482,7 @@ export type MutationCreateGroupOnOrganisationArgs = {
   orgID: Scalars['Float'];
 };
 
-export type MutationCreateOpportunityOnChallengeArgs = {
-  challengeID: Scalars['Float'];
+export type MutationCreateOpportunityArgs = {
   opportunityData: OpportunityInput;
 };
 
@@ -521,8 +536,8 @@ export type MutationRemoveChallengeArgs = {
 };
 
 export type MutationRemoveChallengeLeadArgs = {
-  challengeID: Scalars['Float'];
-  organisationID: Scalars['Float'];
+  challengeID: Scalars['String'];
+  organisationID: Scalars['String'];
 };
 
 export type MutationRemoveGroupFocalPointArgs = {
@@ -582,13 +597,11 @@ export type MutationUpdateEcoverseArgs = {
 };
 
 export type MutationUpdateOpportunityArgs = {
-  ID: Scalars['Float'];
-  opportunityData: OpportunityInput;
+  opportunityData: UpdateOpportunityInput;
 };
 
 export type MutationUpdateOrganisationArgs = {
-  organisationData: OrganisationInput;
-  orgID: Scalars['Float'];
+  organisationData: UpdateOrganisationInput;
 };
 
 export type MutationUpdateProfileArgs = {
@@ -619,15 +632,12 @@ export type NvpInput = {
 export type Opportunity = {
   /** The set of actor groups within the context of this Opportunity. */
   actorGroups?: Maybe<Array<ActorGroup>>;
-  applications: Array<Application>;
   /** The set of aspects within the context of this Opportunity. */
   aspects?: Maybe<Array<Aspect>>;
+  /** The community for the opportunity */
+  community?: Maybe<Community>;
   /** The shared understanding for the opportunity */
   context?: Maybe<Context>;
-  /** All users that are contributing to this Opportunity. */
-  contributors?: Maybe<Array<User>>;
-  /** Groups of users related to a Opportunity. */
-  groups?: Maybe<Array<UserGroup>>;
   id: Scalars['ID'];
   /** The name of the Opportunity */
   name: Scalars['String'];
@@ -637,14 +647,18 @@ export type Opportunity = {
   relations?: Maybe<Array<Relation>>;
   /** The maturity phase of the Opportunity i.e. new, being refined, ongoing etc */
   state?: Maybe<Scalars['String']>;
+  /** The set of tags for the Opportunity */
+  tagset?: Maybe<Tagset>;
   /** A short text identifier for this Opportunity */
   textID: Scalars['String'];
 };
 
 export type OpportunityInput = {
+  challengeID?: Maybe<Scalars['String']>;
   context?: Maybe<ContextInput>;
   name?: Maybe<Scalars['String']>;
   state?: Maybe<Scalars['String']>;
+  tags?: Maybe<Array<Scalars['String']>>;
   textID?: Maybe<Scalars['String']>;
 };
 
@@ -670,12 +684,16 @@ export type Organisation = {
   name: Scalars['String'];
   /** The profile for this organisation. */
   profile: Profile;
+  /** A short text identifier for this Organisation */
+  textID: Scalars['String'];
 };
 
 export type OrganisationInput = {
   /** The name for this organisation */
   name?: Maybe<Scalars['String']>;
   profileData?: Maybe<ProfileInput>;
+  /** The unique text based ID for this organisation */
+  textID?: Maybe<Scalars['String']>;
 };
 
 export type Profile = {
@@ -719,50 +737,20 @@ export type ProjectInput = {
 };
 
 export type Query = {
-  /** All applications to join */
-  application: Application;
-  /** All applications for this ecoverse */
-  applications: Array<Application>;
-  /** A particular challenge */
-  challenge: Challenge;
-  /** All challenges */
-  challenges: Array<Challenge>;
   /** Cherrytwist configuration. Provides configuration to external services in the Cherrytwist ecosystem. */
   configuration: Config;
-  /** The shared understanding for this ecoverse */
-  context: Context;
-  /** The user group with the specified id anywhere in the ecoverse */
-  group: UserGroup;
-  /** All groups at the ecoverse level */
-  groups: Array<UserGroup>;
-  /** All groups that have the provided tag */
-  groupsWithTag: Array<UserGroup>;
-  /** The host organisation for the ecoverse */
-  host: Organisation;
+  /** The ecoverse. */
+  ecoverse: Ecoverse;
   /** The currently logged in user */
   me: User;
-  /** The members of this ecoverse */
-  members: Array<User>;
   /** Cherrytwist Services Metadata */
   metadata: Metadata;
-  /** The name for this ecoverse */
-  name: Scalars['String'];
-  /** All opportunities within the ecoverse */
-  opportunities: Array<Opportunity>;
-  /** A particular opportunitiy, identified by the ID */
-  opportunity: Opportunity;
-  /** A particular organisation */
+  /** A particular Organisation */
   organisation: Organisation;
-  /** All organisations */
+  /** The Organisations on this platform */
   organisations: Array<Organisation>;
-  /** A particular Project, identified by the ID */
-  project: Project;
-  /** All projects within this ecoverse */
-  projects: Array<Project>;
   /** Search the ecoverse for terms supplied */
   search: Array<SearchResultEntry>;
-  /** The tagset associated with this Ecoverse */
-  tagset: Tagset;
   /** A particular user, identified by the ID or by email */
   user: User;
   /** The users who have profiles on this platform */
@@ -771,32 +759,8 @@ export type Query = {
   usersById: Array<User>;
 };
 
-export type QueryApplicationArgs = {
-  ID: Scalars['Float'];
-};
-
-export type QueryChallengeArgs = {
-  ID: Scalars['Float'];
-};
-
-export type QueryGroupArgs = {
-  ID: Scalars['Float'];
-};
-
-export type QueryGroupsWithTagArgs = {
-  tag: Scalars['String'];
-};
-
-export type QueryOpportunityArgs = {
-  ID: Scalars['Float'];
-};
-
 export type QueryOrganisationArgs = {
-  ID: Scalars['Float'];
-};
-
-export type QueryProjectArgs = {
-  ID: Scalars['Float'];
+  ID: Scalars['String'];
 };
 
 export type QuerySearchArgs = {
@@ -930,10 +894,25 @@ export type Template = {
 
 export type UpdateChallengeInput = {
   context?: Maybe<ContextInput>;
-  ID: Scalars['Float'];
+  ID: Scalars['String'];
   name?: Maybe<Scalars['String']>;
   state?: Maybe<Scalars['String']>;
   tags?: Maybe<Array<Scalars['String']>>;
+};
+
+export type UpdateOpportunityInput = {
+  context?: Maybe<ContextInput>;
+  ID: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
+  state?: Maybe<Scalars['String']>;
+  tags?: Maybe<Array<Scalars['String']>>;
+};
+
+export type UpdateOrganisationInput = {
+  ID: Scalars['String'];
+  /** The name for this organisation */
+  name?: Maybe<Scalars['String']>;
+  profileData?: Maybe<ProfileInput>;
 };
 
 export type User = {
@@ -957,10 +936,10 @@ export type User = {
 };
 
 export type UserGroup = {
-  /** The focal point for this group */
+  /** The User that is the focal point of this User Group. */
   focalPoint?: Maybe<User>;
   id: Scalars['ID'];
-  /** The set of users that are members of this group */
+  /** The Users that are members of this User Group. */
   members?: Maybe<Array<User>>;
   name: Scalars['String'];
   /** Containing entity for this UserGroup. */
@@ -974,7 +953,7 @@ export type UserGroupInput = {
   profileData?: Maybe<ProfileInput>;
 };
 
-export type UserGroupParent = Challenge | Ecoverse | Opportunity | Organisation;
+export type UserGroupParent = Community | Organisation;
 
 export type UserInput = {
   aadPassword?: Maybe<Scalars['String']>;

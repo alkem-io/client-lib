@@ -4,7 +4,7 @@ const main = async () => {
   const ctClient = new CherrytwistClient({
     graphqlEndpoint: 'http://localhost:4000/graphql',
   });
-  await ctClient.testConnection();
+  await ctClient.validateConnection();
 };
 
 try {

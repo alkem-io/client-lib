@@ -1,0 +1,10 @@
+mutation addUserToCommunity($userID: Float!, $communityID: Float!) {
+  addUserToCommunity(communityID: $communityID, userID: $userID) {
+    name
+    id
+    members {
+      id
+      name
+    }
+  }
+}

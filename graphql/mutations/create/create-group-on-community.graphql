@@ -1,0 +1,6 @@
+mutation createGroupOnCommunity($groupName: String!, $communityID: Float!) {
+  createGroupOnCommunity(groupName: $groupName, communityID: $communityID) {
+    name
+    id
+  }
+}

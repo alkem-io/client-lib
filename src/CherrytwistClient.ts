@@ -7,9 +7,12 @@ import {
   EcoverseInput,
   OpportunityInput,
   UpdateChallengeInput,
+  UpdateOpportunityInput,
+  UpdateOrganisationInput,
   UserInput,
 } from './types/cherrytwist-schema';
 import { ErrorHandler, handleErrors } from './util/handleErrors';
+import semver from 'semver';
 
 export class CherrytwistClient {
   private config: ClientConfig;
@@ -19,7 +22,7 @@ export class CherrytwistClient {
   constructor(config: ClientConfig) {
     this.config = config;
 
-    const client = new GraphQLClient(config.graphqlEndpoint, {
+    const client = new GraphQLClient(this.config.graphqlEndpoint, {
       headers: {
         authorization: 'Bearer',
       },
@@ -29,52 +32,54 @@ export class CherrytwistClient {
     this.errorHandler = handleErrors();
   }
 
-  public async testConnection(): Promise<boolean> {
-    try {
-      const { data, errors } = await this.client.ecoverseName();
+  public async validateConnection(): Promise<boolean> {
+    const { data, errors } = await this.client.ecoverseInfo();
 
-      const ecoverseName = data?.name;
+    const ecoverseName = data?.ecoverse.name;
 
-      if (errors) {
-        return false;
-      }
-      return !!ecoverseName;
-    } catch (ex) {
+    if (errors || !ecoverseName) {
       return false;
     }
+
+    await this.validateServerVersion();
+
+    return true;
   }
 
-  private async getChallenge(name: string) {
-    const {
-      data: challengesData,
-      errors: challengesErrors,
-    } = await this.client.challengesBase();
+  public async validateServerVersion(): Promise<boolean> {
+    const serverVersion = await this.serverVersion();
+    const MIN_SERVER_VERSION = '0.10.0';
+    const validVersion = semver.gte(serverVersion, MIN_SERVER_VERSION);
+    if (!validVersion)
+      throw new Error(
+        `Detected server version (${serverVersion} not compatible with required server version: ${MIN_SERVER_VERSION})`
+      );
+    return true;
+  }
 
-    this.errorHandler(challengesErrors);
-
-    if (!challengesData) return;
-    const challenges = challengesData.challenges;
-
-    const challenge = challenges.find(
-      c => c.name.toLowerCase() === name.toLowerCase()
+  public async serverVersion() {
+    const { data, errors } = await this.client.metadata();
+    if (errors) {
+      throw new Error('Unable to query meta data');
+    }
+    const serverMetaData = data?.metadata.services.find(
+      service => service.name === 'ct-server'
     );
-
-    return challenge;
+    if (!serverMetaData) throw new Error('Unable to locate server meta data');
+    const serverVersion = serverMetaData.version;
+    if (!serverVersion)
+      throw new Error(`Unable to retrive CT server version: ${serverVersion}`);
+    return serverVersion;
   }
 
-  // TODO [ATS]: Change ChallengeId to be string;
-  public async createOpportunity(
-    challengeID: number,
-    opportunity: OpportunityInput
-  ) {
+  public async createOpportunity(opportunity: OpportunityInput) {
     const result = await this.client.createOpportunity({
-      challengeID,
       opportunityData: opportunity,
     });
 
     this.errorHandler(result.errors);
 
-    return result.data?.createOpportunityOnChallenge;
+    return result.data?.createOpportunity;
   }
 
   public async addReference(
@@ -178,34 +183,35 @@ export class CherrytwistClient {
   }
 
   async addUserToChallenge(challengeName: string, userID: string) {
-    const challenge = await this.getChallenge(challengeName);
+    const response = await this.client.challenge({ id: challengeName });
+    const communityID = Number(
+      response.data?.ecoverse.challenge?.community?.id
+    );
 
-    if (!challenge) return;
+    if (!response) return;
 
-    const { data, errors } = await this.client.addUserToChallenge({
+    return await this.client.addUserToCommunity({
       userID: Number(userID),
-      challengeID: Number(challenge.id),
+      communityID: communityID,
     });
-
-    this.errorHandler(errors);
-    return data?.addUserToChallenge;
   }
 
-  async addUserToChallengeByEmail(email: string, challengeName: string) {
-    const user = await this.user(email);
+  async addUserToEcoverse(userID: string) {
+    const response = await this.client.ecoverseInfo();
+    const communityID = Number(response.data?.ecoverse?.community?.id);
 
-    if (!user) throw new Error(`User ${email} not found!`);
+    if (!response) return;
 
-    return await this.addUserToChallenge(challengeName, user.id);
+    return await this.client.addUserToCommunity({
+      userID: Number(userID),
+      communityID: communityID,
+    });
   }
 
   async addChallengeLead(challengeName: string, organisationID: string) {
-    const challenge = await this.getChallenge(challengeName);
-
-    if (!challenge) return false;
     const { data, errors } = await this.client.addChallengeLead({
-      challengeID: Number(challenge.id),
-      organisationID: Number(organisationID),
+      challengeID: challengeName,
+      organisationID: organisationID,
     });
 
     this.errorHandler(errors);
@@ -359,87 +365,23 @@ export class CherrytwistClient {
 
   // Create a gouup at the ecoverse level with the given name
   async createEcoverseGroup(groupName: string) {
-    const { data, errors } = await this.client.createGroupOnEcoverse({
+    const ecoverseInfo = await this.client.ecoverseInfo();
+
+    const communityID = Number(ecoverseInfo.data?.ecoverse.community?.id);
+    const { data, errors } = await this.client.createGroupOnCommunity({
       groupName,
+      communityID,
     });
 
     this.errorHandler(errors);
 
-    return data?.createGroupOnEcoverse;
+    return data?.createGroupOnCommunity;
   }
 
-  // TODO [ATS] - how to update textId
-  // Load in mutations file
-  async updateHostOrganisation(
-    name: string,
-    logoUri?: string,
-    logoFile?: string,
-    _textId?: string,
-    description?: string,
-    keywords?: string[]
-  ) {
-    const {
-      data: hostInfo,
-      errors: hostInfoErrors,
-    } = await this.client.hostInfo();
-    this.errorHandler(hostInfoErrors);
-
-    if (!hostInfo) return;
-    const hostID = hostInfo.host.id;
-    const hostProfileID = hostInfo.host.profile.id;
-
-    if (logoUri) {
-      await this.addReference(
-        hostProfileID,
-        'logo',
-        logoUri,
-        'Logo for the ecoverse host'
-      );
-    }
-
-    if (logoFile) {
-      await this.addReference(
-        hostProfileID,
-        'logo',
-        logoFile,
-        'Logo file for the ecoverse host'
-      );
-    }
-
-    if (description) {
-      await this.updateProfile(hostProfileID, undefined, description);
-    }
-
-    if (keywords) {
-      const keywordsTagset = hostInfo.host.profile.tagsets?.find(
-        x => x.name === 'Keywords'
-      );
-      if (keywordsTagset) {
-        for (let k = 0; k < keywords.length; k++) {
-          try {
-            await this.addTagToTagset(keywordsTagset.id, keywords[k]);
-          } catch (ex) {
-            this.errorHandler(ex);
-            break;
-          }
-        }
-      }
-    }
-
-    const { data, errors } = await this.client.updateOrganisation({
-      orgID: Number(hostID),
-      organisationData: {
-        name,
-      },
-    });
-
-    this.errorHandler(errors);
-    return data?.updateOrganisation;
-  }
-
-  public async createOrganisation(name: string) {
+  public async createOrganisation(name: string, textID: string) {
     const { data, errors } = await this.client.createOrganisation({
       organisationData: {
+        textID,
         name,
       },
     });
@@ -457,6 +399,16 @@ export class CherrytwistClient {
     return data?.organisations;
   }
 
+  public async organisation(orgID: string) {
+    const { data, errors } = await this.client.organisation({
+      id: orgID,
+    });
+
+    this.errorHandler(errors);
+
+    return data?.organisation;
+  }
+
   public async createChallenge(challenge: ChallengeInput) {
     const { data, errors } = await this.client.createChallenge({
       challengeData: challenge,
@@ -472,7 +424,7 @@ export class CherrytwistClient {
 
     this.errorHandler(errors);
 
-    return data?.challenges;
+    return data?.ecoverse.challenges;
   }
 
   public async updateChallenge(challenge: UpdateChallengeInput) {
@@ -483,6 +435,26 @@ export class CherrytwistClient {
     this.errorHandler(errors);
 
     return data?.updateChallenge;
+  }
+
+  public async updateOpportunity(opportunity: UpdateOpportunityInput) {
+    const { data, errors } = await this.client.updateOpportunity({
+      opportunityData: opportunity,
+    });
+
+    this.errorHandler(errors);
+
+    return data?.updateOpportunity;
+  }
+
+  public async updateOrganisation(organisation: UpdateOrganisationInput) {
+    const { data, errors } = await this.client.updateOrganisation({
+      organisationData: organisation,
+    });
+
+    this.errorHandler(errors);
+
+    return data?.updateOrganisation;
   }
 
   public async createUser(user: UserInput) {
@@ -500,7 +472,7 @@ export class CherrytwistClient {
 
     this.errorHandler(errors);
 
-    return data?.groups;
+    return data?.ecoverse.community?.groups;
   }
 
   public async groupByName(name: string) {
@@ -531,20 +503,28 @@ export class CherrytwistClient {
 
     this.errorHandler(errors);
 
-    return data?.opportunities;
+    return data?.ecoverse.opportunities;
   }
 
   async addUserToOpportunity(userID: string, opportunityID: string) {
-    const uID = Number(userID);
-    const oID = Number(opportunityID);
+    const opportunity = await this.client.opportunity({ id: opportunityID });
+    const communityID = opportunity.data?.ecoverse.opportunity?.community?.id;
+    return await this.addUserToCommunity(userID, communityID);
+  }
 
-    const { data, errors } = await this.client.addUserToOpportunity({
+  async addUserToCommunity(userID: string, communityID?: string) {
+    const uID = Number(userID);
+    if (!communityID)
+      throw new Error(`Unable to locate community: ${communityID}`);
+    const cID = Number(communityID);
+
+    const { data, errors } = await this.client.addUserToCommunity({
       userID: uID,
-      opportunityID: oID,
+      communityID: cID,
     });
 
     this.errorHandler(errors);
 
-    return data?.addUserToOpportunity;
+    return data?.addUserToCommunity;
   }
 }

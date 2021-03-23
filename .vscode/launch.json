@@ -17,10 +17,10 @@
         "type": "pwa-node"
     },
     {
-        "name": "Test Connection",
+        "name": "Validate Connection",
         "request": "launch",
         "runtimeArgs": [
-            "run", "test-connection"
+            "run", "validate-connection"
         ],
         "runtimeExecutable": "npm",
         "skipFiles": [

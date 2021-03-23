@@ -1,6 +1,6 @@
 {
   "name": "@cherrytwist/client-lib",
-  "version": "0.5.0",
+  "version": "0.5.8",
   "description": "Library for interacting with a Cherrytwist server instance",
   "author": "Cherrytwist Foundation",
   "private": false,
@@ -15,7 +15,7 @@
     "codegen": "graphql-codegen --config codegen.yml",
     "lint": "tsc --noEmit && eslint src/**/*.ts{,x}",
     "lint:fix": "tsc --noEmit && eslint src/**/*.ts{,x} --fix",
-    "test-connection": "ts-node-dev src/test-connection.ts",
+    "validate-connection": "ts-node-dev src/validate-connection.ts",
     "postcodegen": "prettier --write src/graphql*.ts src/types/*.ts ",
     "prepublishOnly": "npm run build"
   },
@@ -37,6 +37,7 @@
     "@graphql-codegen/typescript-operations": "1.17.12",
     "@types/node": "^14.14.10",
     "@types/supertest": "^2.0.8",
+    "@types/semver": "^7.3.4",
     "@typescript-eslint/eslint-plugin": "^4.9.0",
     "@typescript-eslint/parser": "^4.9.0",
     "eslint": "^7.14.0",
@@ -55,7 +56,8 @@
     "graphql-request": "^3.3.0",
     "graphql-tag": "^2.11.0",
     "jsonpath": "^1.0.2",
-    "winston": "^3.3.3"
+    "winston": "^3.3.3",
+    "semver": "^7.3.4"
   },
   "files": [
     "dist/**/*"

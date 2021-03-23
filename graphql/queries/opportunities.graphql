@@ -1,10 +1,12 @@
 query opportunities {
-  opportunities {
-    id
-    ...OpportunityProfile
-    actorGroups {
+  ecoverse {
+    opportunities {
       id
-      name
+      ...OpportunityProfile
+      actorGroups {
+        id
+        name
+      }
     }
   }
 }
