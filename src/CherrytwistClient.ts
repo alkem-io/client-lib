@@ -15,7 +15,7 @@ import { ErrorHandler, handleErrors } from './util/handleErrors';
 import semver from 'semver';
 
 export class CherrytwistClient {
-  private config: ClientConfig;
+  public config: ClientConfig;
   private client: Sdk;
   private errorHandler: ErrorHandler;
 
