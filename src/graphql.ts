@@ -31,18 +31,8 @@ export type AddChallengeLeadMutationVariables = SchemaTypes.Exact<{
 
 export type AddChallengeLeadMutation = { addChallengeLead: boolean };
 
-export type AddTagToTagsetMutationVariables = SchemaTypes.Exact<{
-  tag: SchemaTypes.Scalars['String'];
-  tagsetID: SchemaTypes.Scalars['Float'];
-}>;
-
-export type AddTagToTagsetMutation = {
-  addTagToTagset: { id: string; name: string; tags: Array<string> };
-};
-
 export type AddUserToCommunityMutationVariables = SchemaTypes.Exact<{
-  userID: SchemaTypes.Scalars['Float'];
-  communityID: SchemaTypes.Scalars['Float'];
+  membershipData: SchemaTypes.UpdateMembershipInput;
 }>;
 
 export type AddUserToCommunityMutation = {
@@ -54,15 +44,13 @@ export type AddUserToCommunityMutation = {
 };
 
 export type AddUserToGroupMutationVariables = SchemaTypes.Exact<{
-  userID: SchemaTypes.Scalars['Float'];
-  groupID: SchemaTypes.Scalars['Float'];
+  membershipData: SchemaTypes.UpdateMembershipInput;
 }>;
 
 export type AddUserToGroupMutation = { addUserToGroup: boolean };
 
 export type CreateActorGroupMutationVariables = SchemaTypes.Exact<{
-  actorGroupData: SchemaTypes.ActorGroupInput;
-  opportunityID: SchemaTypes.Scalars['Float'];
+  actorGroupData: SchemaTypes.CreateActorGroupInput;
 }>;
 
 export type CreateActorGroupMutation = {
@@ -70,8 +58,7 @@ export type CreateActorGroupMutation = {
 };
 
 export type CreateActorMutationVariables = SchemaTypes.Exact<{
-  actorData: SchemaTypes.ActorInput;
-  actorGroupID: SchemaTypes.Scalars['Float'];
+  actorData: SchemaTypes.CreateActorInput;
 }>;
 
 export type CreateActorMutation = {
@@ -85,8 +72,7 @@ export type CreateActorMutation = {
 };
 
 export type CreateAspectMutationVariables = SchemaTypes.Exact<{
-  aspectData: SchemaTypes.AspectInput;
-  opportunityID: SchemaTypes.Scalars['Float'];
+  aspectData: SchemaTypes.CreateAspectInput;
 }>;
 
 export type CreateAspectMutation = {
@@ -94,16 +80,15 @@ export type CreateAspectMutation = {
 };
 
 export type CreateChallengeMutationVariables = SchemaTypes.Exact<{
-  challengeData: SchemaTypes.ChallengeInput;
+  challengeData: SchemaTypes.CreateChallengeInput;
 }>;
 
 export type CreateChallengeMutation = {
-  createChallenge: ChallengeDetailsFragment;
+  createChallenge: { id: string; name: string };
 };
 
 export type CreateGroupOnCommunityMutationVariables = SchemaTypes.Exact<{
-  groupName: SchemaTypes.Scalars['String'];
-  communityID: SchemaTypes.Scalars['Float'];
+  groupData: SchemaTypes.CreateUserGroupInput;
 }>;
 
 export type CreateGroupOnCommunityMutation = {
@@ -111,8 +96,7 @@ export type CreateGroupOnCommunityMutation = {
 };
 
 export type CreateGroupOnOrganisationMutationVariables = SchemaTypes.Exact<{
-  groupName: SchemaTypes.Scalars['String'];
-  organisationID: SchemaTypes.Scalars['Float'];
+  groupData: SchemaTypes.CreateUserGroupInput;
 }>;
 
 export type CreateGroupOnOrganisationMutation = {
@@ -120,7 +104,7 @@ export type CreateGroupOnOrganisationMutation = {
 };
 
 export type CreateOpportunityMutationVariables = SchemaTypes.Exact<{
-  opportunityData: SchemaTypes.OpportunityInput;
+  opportunityData: SchemaTypes.CreateOpportunityInput;
 }>;
 
 export type CreateOpportunityMutation = {
@@ -128,7 +112,7 @@ export type CreateOpportunityMutation = {
 };
 
 export type CreateOrganisationMutationVariables = SchemaTypes.Exact<{
-  organisationData: SchemaTypes.OrganisationInput;
+  organisationData: SchemaTypes.CreateOrganisationInput;
 }>;
 
 export type CreateOrganisationMutation = {
@@ -136,8 +120,7 @@ export type CreateOrganisationMutation = {
 };
 
 export type CreateReferenceOnProfileMutationVariables = SchemaTypes.Exact<{
-  referenceInput: SchemaTypes.ReferenceInput;
-  profileID: SchemaTypes.Scalars['Float'];
+  referenceInput: SchemaTypes.CreateReferenceInput;
 }>;
 
 export type CreateReferenceOnProfileMutation = {
@@ -145,15 +128,13 @@ export type CreateReferenceOnProfileMutation = {
 };
 
 export type CreateRelationMutationVariables = SchemaTypes.Exact<{
-  relationData: SchemaTypes.RelationInput;
-  opportunityID: SchemaTypes.Scalars['Float'];
+  relationData: SchemaTypes.CreateRelationInput;
 }>;
 
 export type CreateRelationMutation = { createRelation: { type: string } };
 
 export type CreateTagsetOnProfileMutationVariables = SchemaTypes.Exact<{
-  tagsetName: SchemaTypes.Scalars['String'];
-  profileID: SchemaTypes.Scalars['Float'];
+  tagsetData: SchemaTypes.CreateTagsetInput;
 }>;
 
 export type CreateTagsetOnProfileMutation = {
@@ -161,7 +142,7 @@ export type CreateTagsetOnProfileMutation = {
 };
 
 export type CreateUserMutationVariables = SchemaTypes.Exact<{
-  userData: SchemaTypes.UserInput;
+  userData: SchemaTypes.CreateUserInput;
 }>;
 
 export type CreateUserMutation = {
@@ -172,18 +153,16 @@ export type CreateUserMutation = {
   };
 };
 
-export type ReplaceTagsOnTagsetMutationVariables = SchemaTypes.Exact<{
-  tags: Array<SchemaTypes.Scalars['String']>;
-  tagsetID: SchemaTypes.Scalars['Float'];
+export type UpdateTagsetMutationVariables = SchemaTypes.Exact<{
+  tagsetData: SchemaTypes.UpdateTagsetInput;
 }>;
 
-export type ReplaceTagsOnTagsetMutation = {
-  replaceTagsOnTagset: { name: string; tags: Array<string> };
+export type UpdateTagsetMutation = {
+  updateTagset: { name: string; tags: Array<string> };
 };
 
 export type UpdateActorMutationVariables = SchemaTypes.Exact<{
-  actorData: SchemaTypes.ActorInput;
-  ID: SchemaTypes.Scalars['Float'];
+  actorData: SchemaTypes.UpdateActorInput;
 }>;
 
 export type UpdateActorMutation = { updateActor: { name: string } };
@@ -197,7 +176,7 @@ export type UpdateChallengeMutation = {
 };
 
 export type UpdateEcoverseMutationVariables = SchemaTypes.Exact<{
-  ecoverseData: SchemaTypes.EcoverseInput;
+  ecoverseData: SchemaTypes.UpdateEcoverseInput;
 }>;
 
 export type UpdateEcoverseMutation = {
@@ -233,11 +212,10 @@ export type UpdateOrganisationMutation = {
 };
 
 export type UpdateProfileMutationVariables = SchemaTypes.Exact<{
-  profileData: SchemaTypes.ProfileInput;
-  ID: SchemaTypes.Scalars['Float'];
+  profileData: SchemaTypes.UpdateProfileInput;
 }>;
 
-export type UpdateProfileMutation = { updateProfile: boolean };
+export type UpdateProfileMutation = { updateProfile: { id: string } };
 
 export type ChallengeQueryVariables = SchemaTypes.Exact<{
   id: SchemaTypes.Scalars['String'];
@@ -480,18 +458,9 @@ export const AddChallengeLeadDocument = gql`
     addChallengeLead(organisationID: $organisationID, challengeID: $challengeID)
   }
 `;
-export const AddTagToTagsetDocument = gql`
-  mutation addTagToTagset($tag: String!, $tagsetID: Float!) {
-    addTagToTagset(tag: $tag, tagsetID: $tagsetID) {
-      id
-      name
-      tags
-    }
-  }
-`;
 export const AddUserToCommunityDocument = gql`
-  mutation addUserToCommunity($userID: Float!, $communityID: Float!) {
-    addUserToCommunity(communityID: $communityID, userID: $userID) {
+  mutation addUserToCommunity($membershipData: UpdateMembershipInput!) {
+    addUserToCommunity(membershipData: $membershipData) {
       name
       id
       members {
@@ -502,27 +471,21 @@ export const AddUserToCommunityDocument = gql`
   }
 `;
 export const AddUserToGroupDocument = gql`
-  mutation addUserToGroup($userID: Float!, $groupID: Float!) {
-    addUserToGroup(userID: $userID, groupID: $groupID)
+  mutation addUserToGroup($membershipData: UpdateMembershipInput!) {
+    addUserToGroup(membershipData: $membershipData)
   }
 `;
 export const CreateActorGroupDocument = gql`
-  mutation createActorGroup(
-    $actorGroupData: ActorGroupInput!
-    $opportunityID: Float!
-  ) {
-    createActorGroup(
-      actorGroupData: $actorGroupData
-      opportunityID: $opportunityID
-    ) {
+  mutation createActorGroup($actorGroupData: CreateActorGroupInput!) {
+    createActorGroup(actorGroupData: $actorGroupData) {
       id
       name
     }
   }
 `;
 export const CreateActorDocument = gql`
-  mutation createActor($actorData: ActorInput!, $actorGroupID: Float!) {
-    createActor(actorData: $actorData, actorGroupID: $actorGroupID) {
+  mutation createActor($actorData: CreateActorInput!) {
+    createActor(actorData: $actorData) {
       id
       name
       description
@@ -532,8 +495,8 @@ export const CreateActorDocument = gql`
   }
 `;
 export const CreateAspectDocument = gql`
-  mutation createAspect($aspectData: AspectInput!, $opportunityID: Float!) {
-    createAspect(aspectData: $aspectData, opportunityID: $opportunityID) {
+  mutation createAspect($aspectData: CreateAspectInput!) {
+    createAspect(aspectData: $aspectData) {
       title
       framing
       explanation
@@ -541,34 +504,31 @@ export const CreateAspectDocument = gql`
   }
 `;
 export const CreateChallengeDocument = gql`
-  mutation createChallenge($challengeData: ChallengeInput!) {
+  mutation createChallenge($challengeData: CreateChallengeInput!) {
     createChallenge(challengeData: $challengeData) {
-      ...ChallengeDetails
+      id
+      name
     }
   }
-  ${ChallengeDetailsFragmentDoc}
 `;
 export const CreateGroupOnCommunityDocument = gql`
-  mutation createGroupOnCommunity($groupName: String!, $communityID: Float!) {
-    createGroupOnCommunity(groupName: $groupName, communityID: $communityID) {
+  mutation createGroupOnCommunity($groupData: CreateUserGroupInput!) {
+    createGroupOnCommunity(groupData: $groupData) {
       name
       id
     }
   }
 `;
 export const CreateGroupOnOrganisationDocument = gql`
-  mutation createGroupOnOrganisation(
-    $groupName: String!
-    $organisationID: Float!
-  ) {
-    createGroupOnOrganisation(groupName: $groupName, orgID: $organisationID) {
+  mutation createGroupOnOrganisation($groupData: CreateUserGroupInput!) {
+    createGroupOnOrganisation(groupData: $groupData) {
       id
       name
     }
   }
 `;
 export const CreateOpportunityDocument = gql`
-  mutation createOpportunity($opportunityData: OpportunityInput!) {
+  mutation createOpportunity($opportunityData: CreateOpportunityInput!) {
     createOpportunity(opportunityData: $opportunityData) {
       id
       name
@@ -577,7 +537,7 @@ export const CreateOpportunityDocument = gql`
   }
 `;
 export const CreateOrganisationDocument = gql`
-  mutation createOrganisation($organisationData: OrganisationInput!) {
+  mutation createOrganisation($organisationData: CreateOrganisationInput!) {
     createOrganisation(organisationData: $organisationData) {
       name
       id
@@ -588,14 +548,8 @@ export const CreateOrganisationDocument = gql`
   }
 `;
 export const CreateReferenceOnProfileDocument = gql`
-  mutation createReferenceOnProfile(
-    $referenceInput: ReferenceInput!
-    $profileID: Float!
-  ) {
-    createReferenceOnProfile(
-      referenceInput: $referenceInput
-      profileID: $profileID
-    ) {
+  mutation createReferenceOnProfile($referenceInput: CreateReferenceInput!) {
+    createReferenceOnProfile(referenceInput: $referenceInput) {
       name
       uri
       description
@@ -603,25 +557,22 @@ export const CreateReferenceOnProfileDocument = gql`
   }
 `;
 export const CreateRelationDocument = gql`
-  mutation createRelation(
-    $relationData: RelationInput!
-    $opportunityID: Float!
-  ) {
-    createRelation(relationData: $relationData, opportunityID: $opportunityID) {
+  mutation createRelation($relationData: CreateRelationInput!) {
+    createRelation(relationData: $relationData) {
       type
     }
   }
 `;
 export const CreateTagsetOnProfileDocument = gql`
-  mutation createTagsetOnProfile($tagsetName: String!, $profileID: Float!) {
-    createTagsetOnProfile(tagsetName: $tagsetName, profileID: $profileID) {
+  mutation createTagsetOnProfile($tagsetData: CreateTagsetInput!) {
+    createTagsetOnProfile(tagsetData: $tagsetData) {
       id
       tags
     }
   }
 `;
 export const CreateUserDocument = gql`
-  mutation createUser($userData: UserInput!) {
+  mutation createUser($userData: CreateUserInput!) {
     createUser(userData: $userData) {
       name
       id
@@ -631,17 +582,17 @@ export const CreateUserDocument = gql`
     }
   }
 `;
-export const ReplaceTagsOnTagsetDocument = gql`
-  mutation replaceTagsOnTagset($tags: [String!]!, $tagsetID: Float!) {
-    replaceTagsOnTagset(tags: $tags, tagsetID: $tagsetID) {
+export const UpdateTagsetDocument = gql`
+  mutation updateTagset($tagsetData: UpdateTagsetInput!) {
+    updateTagset(tagsetData: $tagsetData) {
       name
       tags
     }
   }
 `;
 export const UpdateActorDocument = gql`
-  mutation updateActor($actorData: ActorInput!, $ID: Float!) {
-    updateActor(actorData: $actorData, ID: $ID) {
+  mutation updateActor($actorData: UpdateActorInput!) {
+    updateActor(actorData: $actorData) {
       name
     }
   }
@@ -655,7 +606,7 @@ export const UpdateChallengeDocument = gql`
   ${ChallengeDetailsFragmentDoc}
 `;
 export const UpdateEcoverseDocument = gql`
-  mutation updateEcoverse($ecoverseData: EcoverseInput!) {
+  mutation updateEcoverse($ecoverseData: UpdateEcoverseInput!) {
     updateEcoverse(ecoverseData: $ecoverseData) {
       name
       context {
@@ -689,8 +640,10 @@ export const UpdateOrganisationDocument = gql`
   }
 `;
 export const UpdateProfileDocument = gql`
-  mutation updateProfile($profileData: ProfileInput!, $ID: Float!) {
-    updateProfile(profileData: $profileData, ID: $ID)
+  mutation updateProfile($profileData: UpdateProfileInput!) {
+    updateProfile(profileData: $profileData) {
+      id
+    }
   }
 `;
 export const ChallengeDocument = gql`
@@ -879,22 +832,6 @@ export function getSdk(
       return withWrapper(() =>
         client.rawRequest<AddChallengeLeadMutation>(
           print(AddChallengeLeadDocument),
-          variables
-        )
-      );
-    },
-    addTagToTagset(
-      variables: AddTagToTagsetMutationVariables
-    ): Promise<{
-      data?: AddTagToTagsetMutation | undefined;
-      extensions?: any;
-      headers: Headers;
-      status: number;
-      errors?: GraphQLError[] | undefined;
-    }> {
-      return withWrapper(() =>
-        client.rawRequest<AddTagToTagsetMutation>(
-          print(AddTagToTagsetDocument),
           variables
         )
       );
@@ -1123,18 +1060,18 @@ export function getSdk(
         )
       );
     },
-    replaceTagsOnTagset(
-      variables: ReplaceTagsOnTagsetMutationVariables
+    updateTagset(
+      variables: UpdateTagsetMutationVariables
     ): Promise<{
-      data?: ReplaceTagsOnTagsetMutation | undefined;
+      data?: UpdateTagsetMutation | undefined;
       extensions?: any;
       headers: Headers;
       status: number;
       errors?: GraphQLError[] | undefined;
     }> {
       return withWrapper(() =>
-        client.rawRequest<ReplaceTagsOnTagsetMutation>(
-          print(ReplaceTagsOnTagsetDocument),
+        client.rawRequest<UpdateTagsetMutation>(
+          print(UpdateTagsetDocument),
           variables
         )
       );

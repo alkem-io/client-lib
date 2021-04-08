@@ -1,10 +1,6 @@
-mutation createReferenceOnProfile(
-  $referenceInput: ReferenceInput!
-  $profileID: Float!
-) {
+mutation createReferenceOnProfile($referenceInput: CreateReferenceInput!) {
   createReferenceOnProfile(
     referenceInput: $referenceInput
-    profileID: $profileID
   ) {
     name
     uri

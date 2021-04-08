@@ -1,5 +1,5 @@
-mutation createRelation($relationData: RelationInput!, $opportunityID: Float!) {
-  createRelation(relationData: $relationData, opportunityID: $opportunityID) {
+mutation createRelation($relationData: CreateRelationInput!) {
+  createRelation(relationData: $relationData) {
     type
   }
 }

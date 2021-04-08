@@ -1,10 +1,8 @@
 mutation createActorGroup(
-  $actorGroupData: ActorGroupInput!
-  $opportunityID: Float!
+  $actorGroupData: CreateActorGroupInput!
 ) {
   createActorGroup(
     actorGroupData: $actorGroupData
-    opportunityID: $opportunityID
   ) {
     id
     name

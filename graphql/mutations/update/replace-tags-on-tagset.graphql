@@ -1,5 +1,5 @@
-mutation replaceTagsOnTagset($tags: [String!]!, $tagsetID: Float!) {
-  replaceTagsOnTagset(tags: $tags, tagsetID: $tagsetID) {
+mutation updateTagset($tagsetData: UpdateTagsetInput!) {
+  updateTagset(tagsetData: $tagsetData) {
     name
     tags
   }

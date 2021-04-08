@@ -2,14 +2,14 @@ import { GraphQLClient } from 'graphql-request';
 import { ClientConfig } from './config/ClientConfig';
 import { getSdk, Sdk } from './graphql';
 import {
-  ChallengeInput,
-  ContextInput,
-  EcoverseInput,
-  OpportunityInput,
+  CreateChallengeInput,
+  UpdateEcoverseInput,
+  CreateOpportunityInput,
   UpdateChallengeInput,
   UpdateOpportunityInput,
   UpdateOrganisationInput,
-  UserInput,
+  CreateUserInput,
+  UpdateContextInput,
 } from './types/cherrytwist-schema';
 import { ErrorHandler, handleErrors } from './util/handleErrors';
 import semver from 'semver';
@@ -48,7 +48,7 @@ export class CherrytwistClient {
 
   public async validateServerVersion(): Promise<boolean> {
     const serverVersion = await this.serverVersion();
-    const MIN_SERVER_VERSION = '0.10.0';
+    const MIN_SERVER_VERSION = '0.10.3';
     const validVersion = semver.gte(serverVersion, MIN_SERVER_VERSION);
     if (!validVersion)
       throw new Error(
@@ -72,7 +72,7 @@ export class CherrytwistClient {
     return serverVersion;
   }
 
-  public async createOpportunity(opportunity: OpportunityInput) {
+  public async createOpportunity(opportunity: CreateOpportunityInput) {
     const result = await this.client.createOpportunity({
       opportunityData: opportunity,
     });
@@ -89,8 +89,8 @@ export class CherrytwistClient {
     referenceDesc: string
   ) {
     const { data, errors } = await this.client.createReferenceOnProfile({
-      profileID: Number(profileID),
       referenceInput: {
+        parentID: Number(profileID),
         uri: referenceURI,
         name: referenceName,
         description: referenceDesc,
@@ -127,15 +127,13 @@ export class CherrytwistClient {
     avatarURI?: string,
     description?: string
   ) {
-    const ID = Number(profileID);
-
     const { data, errors } = await this.client.updateProfile({
-      ID,
       profileData: {
+        ID: profileID,
         avatar: avatarURI,
         description: description,
-        tagsetsData: [],
-        referencesData: [],
+        createTagsetsData: [],
+        createReferencesData: [],
       },
     });
     this.errorHandler(errors);
@@ -149,8 +147,10 @@ export class CherrytwistClient {
   ): Promise<boolean> {
     if (tags) {
       const { data, errors } = await this.client.createTagsetOnProfile({
-        profileID: Number(profileID),
-        tagsetName,
+        tagsetData: {
+          parentID: Number(profileID),
+          name: tagsetName,
+        },
       });
 
       this.errorHandler(errors);
@@ -158,9 +158,11 @@ export class CherrytwistClient {
       const newTagsetId = Number(data?.createTagsetOnProfile.id);
       if (!data) return false;
 
-      const { errors: replaceErrors } = await this.client.replaceTagsOnTagset({
-        tagsetID: newTagsetId,
-        tags,
+      const { errors: replaceErrors } = await this.client.updateTagset({
+        tagsetData: {
+          ID: newTagsetId,
+          tags,
+        },
       });
 
       this.errorHandler(replaceErrors);
@@ -173,8 +175,10 @@ export class CherrytwistClient {
     const gID = Number(groupID);
 
     const { data, errors } = await this.client.addUserToGroup({
-      userID: uID,
-      groupID: gID,
+      membershipData: {
+        childID: uID,
+        parentID: gID,
+      },
     });
 
     this.errorHandler(errors);
@@ -191,8 +195,10 @@ export class CherrytwistClient {
     if (!response) return;
 
     return await this.client.addUserToCommunity({
-      userID: Number(userID),
-      communityID: communityID,
+      membershipData: {
+        childID: Number(userID),
+        parentID: communityID,
+      },
     });
   }
 
@@ -203,8 +209,10 @@ export class CherrytwistClient {
     if (!response) return;
 
     return await this.client.addUserToCommunity({
-      userID: Number(userID),
-      communityID: communityID,
+      membershipData: {
+        childID: Number(userID),
+        parentID: communityID,
+      },
     });
   }
 
@@ -219,9 +227,10 @@ export class CherrytwistClient {
     return !!data?.addChallengeLead;
   }
 
-  async updateEcoverseContext(context: ContextInput) {
+  async updateEcoverseContext(context: UpdateContextInput) {
     const { data, errors } = await this.client.updateEcoverse({
       ecoverseData: {
+        ID: '1',
         context: context,
       },
     });
@@ -231,7 +240,7 @@ export class CherrytwistClient {
     return data?.updateEcoverse;
   }
 
-  async updateEcoverse(ecoverse: EcoverseInput) {
+  async updateEcoverse(ecoverse: UpdateEcoverseInput) {
     const { data, errors } = await this.client.updateEcoverse({
       ecoverseData: ecoverse,
     });
@@ -239,17 +248,6 @@ export class CherrytwistClient {
     this.errorHandler(errors);
 
     return data?.updateEcoverse;
-  }
-
-  async addTagToTagset(tagsetID: string, tagName: string) {
-    const { data, errors } = await this.client.addTagToTagset({
-      tagsetID: Number(tagsetID),
-      tag: tagName,
-    });
-
-    this.errorHandler(errors);
-
-    return data?.addTagToTagset;
   }
 
   async createRelation(
@@ -261,6 +259,7 @@ export class CherrytwistClient {
     actorType: string
   ) {
     const relationData = {
+      parentID: Number(opportunityID),
       type,
       description,
       actorName,
@@ -269,7 +268,6 @@ export class CherrytwistClient {
     };
 
     const { data, errors } = await this.client.createRelation({
-      opportunityID: Number(opportunityID),
       relationData,
     });
 
@@ -284,8 +282,8 @@ export class CherrytwistClient {
     description: string
   ) {
     const { data, errors } = await this.client.createActorGroup({
-      opportunityID: Number(opportunityID),
       actorGroupData: {
+        parentID: Number(opportunityID),
         name: actorGroupName,
         description,
       },
@@ -305,8 +303,8 @@ export class CherrytwistClient {
     description = ''
   ) {
     const { data, errors } = await this.client.createActor({
-      actorGroupID: Number(actorGroupID),
       actorData: {
+        parentID: Number(actorGroupID),
         name: actorName,
         value,
         impact,
@@ -328,8 +326,8 @@ export class CherrytwistClient {
     description = ''
   ) {
     const { data, errors } = await this.client.updateActor({
-      ID: Number(actorID),
       actorData: {
+        ID: actorID,
         name: actorName,
         value,
         impact,
@@ -350,8 +348,8 @@ export class CherrytwistClient {
     explanation: string
   ) {
     const { data, errors } = await this.client.createAspect({
-      opportunityID: Number(opportunityID),
       aspectData: {
+        parentID: Number(opportunityID),
         title,
         framing,
         explanation,
@@ -369,8 +367,10 @@ export class CherrytwistClient {
 
     const communityID = Number(ecoverseInfo.data?.ecoverse.community?.id);
     const { data, errors } = await this.client.createGroupOnCommunity({
-      groupName,
-      communityID,
+      groupData: {
+        name: groupName,
+        parentID: communityID,
+      },
     });
 
     this.errorHandler(errors);
@@ -409,7 +409,7 @@ export class CherrytwistClient {
     return data?.organisation;
   }
 
-  public async createChallenge(challenge: ChallengeInput) {
+  public async createChallenge(challenge: CreateChallengeInput) {
     const { data, errors } = await this.client.createChallenge({
       challengeData: challenge,
     });
@@ -457,7 +457,7 @@ export class CherrytwistClient {
     return data?.updateOrganisation;
   }
 
-  public async createUser(user: UserInput) {
+  public async createUser(user: CreateUserInput) {
     const { data, errors } = await this.client.createUser({
       userData: user,
     });
@@ -519,8 +519,10 @@ export class CherrytwistClient {
     const cID = Number(communityID);
 
     const { data, errors } = await this.client.addUserToCommunity({
-      userID: uID,
-      communityID: cID,
+      membershipData: {
+        childID: uID,
+        parentID: cID,
+      },
     });
 
     this.errorHandler(errors);
