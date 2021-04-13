@@ -1,3 +1,5 @@
-mutation updateProfile($profileData: ProfileInput!, $ID: Float!) {
-  updateProfile(profileData: $profileData, ID: $ID)
+mutation updateProfile($profileData: UpdateProfileInput!) {
+  updateProfile(profileData: $profileData) {
+    id
+  }
 }

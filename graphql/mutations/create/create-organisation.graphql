@@ -1,4 +1,4 @@
-mutation createOrganisation($organisationData: OrganisationInput!) {
+mutation createOrganisation($organisationData: CreateOrganisationInput!) {
   createOrganisation(organisationData: $organisationData) {
     name
     id

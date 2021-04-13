@@ -1,4 +1,4 @@
-mutation updateEcoverse($ecoverseData: EcoverseInput!) {
+mutation updateEcoverse($ecoverseData: UpdateEcoverseInput!) {
   updateEcoverse(ecoverseData: $ecoverseData) {
     name
     context {

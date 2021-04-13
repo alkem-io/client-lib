@@ -1,5 +1,5 @@
-mutation createActor($actorData: ActorInput!, $actorGroupID: Float!) {
-  createActor(actorData: $actorData, actorGroupID: $actorGroupID) {
+mutation createActor($actorData: CreateActorInput!) {
+  createActor(actorData: $actorData) {
     id
     name
     description

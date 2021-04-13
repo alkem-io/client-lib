@@ -1,5 +1,5 @@
-mutation createGroupOnCommunity($groupName: String!, $communityID: Float!) {
-  createGroupOnCommunity(groupName: $groupName, communityID: $communityID) {
+mutation createGroupOnCommunity($groupData: CreateUserGroupInput!) {
+  createGroupOnCommunity(groupData: $groupData) {
     name
     id
   }

@@ -1,5 +1,5 @@
-mutation updateActor($actorData: ActorInput!, $ID: Float!) {
-  updateActor(actorData: $actorData, ID: $ID) {
+mutation updateActor($actorData: UpdateActorInput!) {
+  updateActor(actorData: $actorData) {
     name
   }
 }
