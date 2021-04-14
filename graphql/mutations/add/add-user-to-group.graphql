@@ -1,3 +1,11 @@
-mutation addUserToGroup($membershipData: UpdateMembershipInput!) {
-  addUserToGroup(membershipData: $membershipData)
+mutation addUserToGroup($input: AssignUserGroupMemberInput!) {
+  assignUserToGroup(membershipData: $input) {
+    id
+    members {
+      id
+      email
+      firstName
+      lastName
+    }
+  }
 }

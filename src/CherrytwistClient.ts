@@ -10,6 +10,7 @@ import {
   UpdateOrganisationInput,
   CreateUserInput,
   UpdateContextInput,
+  Reference,
 } from './types/cherrytwist-schema';
 import { ErrorHandler, handleErrors } from './util/handleErrors';
 import semver from 'semver';
@@ -48,7 +49,7 @@ export class CherrytwistClient {
 
   public async validateServerVersion(): Promise<boolean> {
     const serverVersion = await this.serverVersion();
-    const MIN_SERVER_VERSION = '0.10.3';
+    const MIN_SERVER_VERSION = '0.10.6';
     const validVersion = semver.gte(serverVersion, MIN_SERVER_VERSION);
     if (!validVersion)
       throw new Error(
@@ -132,8 +133,6 @@ export class CherrytwistClient {
         ID: profileID,
         avatar: avatarURI,
         description: description,
-        createTagsetsData: [],
-        createReferencesData: [],
       },
     });
     this.errorHandler(errors);
@@ -175,15 +174,15 @@ export class CherrytwistClient {
     const gID = Number(groupID);
 
     const { data, errors } = await this.client.addUserToGroup({
-      membershipData: {
-        childID: uID,
-        parentID: gID,
+      input: {
+        userID: uID,
+        groupID: gID,
       },
     });
 
     this.errorHandler(errors);
 
-    return !!data?.addUserToGroup;
+    return !!data?.assignUserToGroup;
   }
 
   async addUserToChallenge(challengeName: string, userID: string) {
@@ -195,9 +194,9 @@ export class CherrytwistClient {
     if (!response) return;
 
     return await this.client.addUserToCommunity({
-      membershipData: {
-        childID: Number(userID),
-        parentID: communityID,
+      input: {
+        userID: Number(userID),
+        communityID,
       },
     });
   }
@@ -209,22 +208,24 @@ export class CherrytwistClient {
     if (!response) return;
 
     return await this.client.addUserToCommunity({
-      membershipData: {
-        childID: Number(userID),
-        parentID: communityID,
+      input: {
+        userID: Number(userID),
+        communityID,
       },
     });
   }
 
   async addChallengeLead(challengeName: string, organisationID: string) {
     const { data, errors } = await this.client.addChallengeLead({
-      challengeID: challengeName,
-      organisationID: organisationID,
+      input: {
+        challengeID: challengeName,
+        organisationID: organisationID,
+      },
     });
 
     this.errorHandler(errors);
 
-    return !!data?.addChallengeLead;
+    return !!data?.assignChallengeLead;
   }
 
   async updateEcoverseContext(context: UpdateContextInput) {
@@ -519,14 +520,52 @@ export class CherrytwistClient {
     const cID = Number(communityID);
 
     const { data, errors } = await this.client.addUserToCommunity({
-      membershipData: {
-        childID: uID,
-        parentID: cID,
+      input: {
+        userID: uID,
+        communityID: cID,
       },
     });
 
     this.errorHandler(errors);
 
-    return data?.addUserToCommunity;
+    return data?.assignUserToCommunity;
+  }
+
+  async updateEcoverseReferences(references: Omit<Reference, 'id'>[]) {
+    const ecoverseInfo = await this.client.ecoverseInfo();
+    const contextId = ecoverseInfo.data?.ecoverse.context?.id;
+    if (!contextId) {
+      throw new Error('Ecoverse context id does not exitsts.');
+    }
+    const existinggReferences =
+      ecoverseInfo.data?.ecoverse.context?.references || [];
+    const newReferences = references.filter(r =>
+      existinggReferences.every(x => x.name !== r.name)
+    );
+    const oldReferences = existinggReferences.filter(r =>
+      references.some(x => x.name === r.name)
+    );
+
+    for (const oldRef of oldReferences) {
+      this.client.updateReference({
+        input: {
+          ID: Number(oldRef.id),
+          name: oldRef.name,
+          description: oldRef.description,
+          uri: oldRef.uri,
+        },
+      });
+    }
+
+    for (const newRef of newReferences) {
+      this.client.createReferenceOnContext({
+        input: {
+          parentID: Number(contextId),
+          name: newRef.name,
+          description: newRef.description,
+          uri: newRef.uri,
+        },
+      });
+    }
   }
 }

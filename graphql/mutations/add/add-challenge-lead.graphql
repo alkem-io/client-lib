@@ -1,3 +1,9 @@
-mutation addChallengeLead($challengeID: String!, $organisationID: String!) {
-  addChallengeLead(organisationID: $organisationID, challengeID: $challengeID)
+mutation addChallengeLead($input: AssignChallengeLeadInput!) {
+  assignChallengeLead(assignInput: $input) {
+    id
+    leadOrganisations {
+      id
+      name
+    }
+  }
 }

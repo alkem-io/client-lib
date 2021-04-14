@@ -8,6 +8,9 @@ generates:
     config:
       skipTypename: true
       maybeValue: T | undefined
+      scalars:
+        Upload: File
+        TextID: string
   src/graphql.ts:
     preset: import-types
     presetConfig:
