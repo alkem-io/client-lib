@@ -25,18 +25,22 @@ export type OpportunityDetailsFragment = {
 };
 
 export type AddChallengeLeadMutationVariables = SchemaTypes.Exact<{
-  challengeID: SchemaTypes.Scalars['String'];
-  organisationID: SchemaTypes.Scalars['String'];
+  input: SchemaTypes.AssignChallengeLeadInput;
 }>;
 
-export type AddChallengeLeadMutation = { addChallengeLead: boolean };
+export type AddChallengeLeadMutation = {
+  assignChallengeLead: {
+    id: string;
+    leadOrganisations: Array<{ id: string; name: string }>;
+  };
+};
 
 export type AddUserToCommunityMutationVariables = SchemaTypes.Exact<{
-  membershipData: SchemaTypes.UpdateMembershipInput;
+  input: SchemaTypes.AssignCommunityMemberInput;
 }>;
 
 export type AddUserToCommunityMutation = {
-  addUserToCommunity: {
+  assignUserToCommunity: {
     name: string;
     id: string;
     members?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
@@ -44,10 +48,17 @@ export type AddUserToCommunityMutation = {
 };
 
 export type AddUserToGroupMutationVariables = SchemaTypes.Exact<{
-  membershipData: SchemaTypes.UpdateMembershipInput;
+  input: SchemaTypes.AssignUserGroupMemberInput;
 }>;
 
-export type AddUserToGroupMutation = { addUserToGroup: boolean };
+export type AddUserToGroupMutation = {
+  assignUserToGroup: {
+    id: string;
+    members?: SchemaTypes.Maybe<
+      Array<{ id: string; email: string; firstName: string; lastName: string }>
+    >;
+  };
+};
 
 export type CreateActorGroupMutationVariables = SchemaTypes.Exact<{
   actorGroupData: SchemaTypes.CreateActorGroupInput;
@@ -119,6 +130,19 @@ export type CreateOrganisationMutation = {
   createOrganisation: { name: string; id: string; profile: { id: string } };
 };
 
+export type CreateReferenceOnContextMutationVariables = SchemaTypes.Exact<{
+  input: SchemaTypes.CreateReferenceInput;
+}>;
+
+export type CreateReferenceOnContextMutation = {
+  createReferenceOnContext: {
+    id: string;
+    name: string;
+    description: string;
+    uri: string;
+  };
+};
+
 export type CreateReferenceOnProfileMutationVariables = SchemaTypes.Exact<{
   referenceInput: SchemaTypes.CreateReferenceInput;
 }>;
@@ -150,6 +174,19 @@ export type CreateUserMutation = {
     name: string;
     id: string;
     profile?: SchemaTypes.Maybe<{ id: string }>;
+  };
+};
+
+export type DeleteReferenceMutationVariables = SchemaTypes.Exact<{
+  input: SchemaTypes.DeleteReferenceInput;
+}>;
+
+export type DeleteReferenceMutation = {
+  deleteReference: {
+    id: string;
+    name: string;
+    description: string;
+    uri: string;
   };
 };
 
@@ -217,6 +254,19 @@ export type UpdateProfileMutationVariables = SchemaTypes.Exact<{
 
 export type UpdateProfileMutation = { updateProfile: { id: string } };
 
+export type UpdateReferenceMutationVariables = SchemaTypes.Exact<{
+  input: SchemaTypes.UpdateReferenceInput;
+}>;
+
+export type UpdateReferenceMutation = {
+  updateReference: {
+    id: string;
+    name: string;
+    description: string;
+    uri: string;
+  };
+};
+
 export type ChallengeQueryVariables = SchemaTypes.Exact<{
   id: SchemaTypes.Scalars['String'];
 }>;
@@ -254,7 +304,17 @@ export type EcoverseInfoQueryVariables = SchemaTypes.Exact<{
 }>;
 
 export type EcoverseInfoQuery = {
-  ecoverse: { name: string; community?: SchemaTypes.Maybe<{ id: string }> };
+  ecoverse: {
+    id: string;
+    name: string;
+    community?: SchemaTypes.Maybe<{ id: string }>;
+    context?: SchemaTypes.Maybe<{
+      id: string;
+      references?: SchemaTypes.Maybe<
+        Array<{ id: string; name: string; description: string; uri: string }>
+      >;
+    }>;
+  };
 };
 
 export type GroupsQueryVariables = SchemaTypes.Exact<{ [key: string]: never }>;
@@ -454,13 +514,19 @@ export const OpportunityProfileFragmentDoc = gql`
   }
 `;
 export const AddChallengeLeadDocument = gql`
-  mutation addChallengeLead($challengeID: String!, $organisationID: String!) {
-    addChallengeLead(organisationID: $organisationID, challengeID: $challengeID)
+  mutation addChallengeLead($input: AssignChallengeLeadInput!) {
+    assignChallengeLead(assignInput: $input) {
+      id
+      leadOrganisations {
+        id
+        name
+      }
+    }
   }
 `;
 export const AddUserToCommunityDocument = gql`
-  mutation addUserToCommunity($membershipData: UpdateMembershipInput!) {
-    addUserToCommunity(membershipData: $membershipData) {
+  mutation addUserToCommunity($input: AssignCommunityMemberInput!) {
+    assignUserToCommunity(membershipData: $input) {
       name
       id
       members {
@@ -471,8 +537,16 @@ export const AddUserToCommunityDocument = gql`
   }
 `;
 export const AddUserToGroupDocument = gql`
-  mutation addUserToGroup($membershipData: UpdateMembershipInput!) {
-    addUserToGroup(membershipData: $membershipData)
+  mutation addUserToGroup($input: AssignUserGroupMemberInput!) {
+    assignUserToGroup(membershipData: $input) {
+      id
+      members {
+        id
+        email
+        firstName
+        lastName
+      }
+    }
   }
 `;
 export const CreateActorGroupDocument = gql`
@@ -547,6 +621,16 @@ export const CreateOrganisationDocument = gql`
     }
   }
 `;
+export const CreateReferenceOnContextDocument = gql`
+  mutation createReferenceOnContext($input: CreateReferenceInput!) {
+    createReferenceOnContext(referenceInput: $input) {
+      id
+      name
+      description
+      uri
+    }
+  }
+`;
 export const CreateReferenceOnProfileDocument = gql`
   mutation createReferenceOnProfile($referenceInput: CreateReferenceInput!) {
     createReferenceOnProfile(referenceInput: $referenceInput) {
@@ -579,6 +663,16 @@ export const CreateUserDocument = gql`
       profile {
         id
       }
+    }
+  }
+`;
+export const DeleteReferenceDocument = gql`
+  mutation deleteReference($input: DeleteReferenceInput!) {
+    deleteReference(deleteData: $input) {
+      id
+      name
+      description
+      uri
     }
   }
 `;
@@ -646,6 +740,16 @@ export const UpdateProfileDocument = gql`
     }
   }
 `;
+export const UpdateReferenceDocument = gql`
+  mutation updateReference($input: UpdateReferenceInput!) {
+    updateReference(updateData: $input) {
+      id
+      name
+      description
+      uri
+    }
+  }
+`;
 export const ChallengeDocument = gql`
   query challenge($id: String!) {
     ecoverse {
@@ -683,9 +787,19 @@ export const ChallengesDocument = gql`
 export const EcoverseInfoDocument = gql`
   query ecoverseInfo {
     ecoverse {
+      id
       name
       community {
         id
+      }
+      context {
+        id
+        references {
+          id
+          name
+          description
+          uri
+        }
       }
     }
   }
@@ -996,6 +1110,22 @@ export function getSdk(
         )
       );
     },
+    createReferenceOnContext(
+      variables: CreateReferenceOnContextMutationVariables
+    ): Promise<{
+      data?: CreateReferenceOnContextMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<CreateReferenceOnContextMutation>(
+          print(CreateReferenceOnContextDocument),
+          variables
+        )
+      );
+    },
     createReferenceOnProfile(
       variables: CreateReferenceOnProfileMutationVariables
     ): Promise<{
@@ -1056,6 +1186,22 @@ export function getSdk(
       return withWrapper(() =>
         client.rawRequest<CreateUserMutation>(
           print(CreateUserDocument),
+          variables
+        )
+      );
+    },
+    deleteReference(
+      variables: DeleteReferenceMutationVariables
+    ): Promise<{
+      data?: DeleteReferenceMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<DeleteReferenceMutation>(
+          print(DeleteReferenceDocument),
           variables
         )
       );
@@ -1168,6 +1314,22 @@ export function getSdk(
       return withWrapper(() =>
         client.rawRequest<UpdateProfileMutation>(
           print(UpdateProfileDocument),
+          variables
+        )
+      );
+    },
+    updateReference(
+      variables: UpdateReferenceMutationVariables
+    ): Promise<{
+      data?: UpdateReferenceMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<UpdateReferenceMutation>(
+          print(UpdateReferenceDocument),
           variables
         )
       );

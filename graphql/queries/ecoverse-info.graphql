@@ -1,8 +1,18 @@
 query ecoverseInfo {
   ecoverse {
+    id
     name
     community {
       id
+    }
+    context {
+      id
+      references {
+        id
+        name
+        description
+        uri
+      }
     }
   }
 }

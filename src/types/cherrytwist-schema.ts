@@ -13,8 +13,10 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** A short text based identifier, 3 <= length <= 20. Used for URL paths in clients.  */
+  TextID: string;
   /** The `Upload` scalar type represents a file upload. */
-  Upload: any;
+  Upload: File;
 };
 
 export type AadAuthProviderConfig = {
@@ -80,6 +82,26 @@ export type Aspect = {
   framing: Scalars['String'];
   id: Scalars['ID'];
   title: Scalars['String'];
+};
+
+export type AssignChallengeLeadInput = {
+  challengeID: Scalars['String'];
+  organisationID: Scalars['String'];
+};
+
+export type AssignCommunityMemberInput = {
+  communityID: Scalars['Float'];
+  userID: Scalars['Float'];
+};
+
+export type AssignUserGroupFocalPointInput = {
+  groupID: Scalars['Float'];
+  userID: Scalars['Float'];
+};
+
+export type AssignUserGroupMemberInput = {
+  groupID: Scalars['Float'];
+  userID: Scalars['Float'];
 };
 
 export type AuthenticationConfig = {
@@ -172,14 +194,14 @@ export type Context = {
 
 export type CreateActorGroupInput = {
   description?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
   parentID: Scalars['Float'];
 };
 
 export type CreateActorInput = {
   description?: Maybe<Scalars['String']>;
   impact?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
   parentID: Scalars['Float'];
   value?: Maybe<Scalars['String']>;
 };
@@ -191,28 +213,42 @@ export type CreateApplicationInput = {
 };
 
 export type CreateAspectInput = {
-  explanation?: Maybe<Scalars['String']>;
-  framing?: Maybe<Scalars['String']>;
+  explanation: Scalars['String'];
+  framing: Scalars['String'];
   parentID: Scalars['Float'];
-  title?: Maybe<Scalars['String']>;
+  title: Scalars['String'];
 };
 
 export type CreateChallengeInput = {
   context?: Maybe<CreateContextInput>;
-  name?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  parentID: Scalars['Float'];
   state?: Maybe<Scalars['String']>;
   tags?: Maybe<Array<Scalars['String']>>;
-  textID?: Maybe<Scalars['String']>;
+  textID: Scalars['TextID'];
 };
 
 export type CreateContextInput = {
   background?: Maybe<Scalars['String']>;
   impact?: Maybe<Scalars['String']>;
-  /** Set of references to _replace_ the existing references */
+  /** Set of References for the new Context. */
   references?: Maybe<Array<CreateReferenceInput>>;
   tagline?: Maybe<Scalars['String']>;
   vision?: Maybe<Scalars['String']>;
   who?: Maybe<Scalars['String']>;
+};
+
+export type CreateEcoverseInput = {
+  /** Context for the Ecoverse. */
+  context?: Maybe<CreateContextInput>;
+  /** The host Organisation for the ecoverse */
+  hostID?: Maybe<Scalars['String']>;
+  /** The name for the ecoverse */
+  name: Scalars['String'];
+  /** The set of tags to apply to this Ecoverse */
+  tags?: Maybe<Array<Scalars['String']>>;
+  /** The unique text ID for the ecoverse */
+  textID: Scalars['TextID'];
 };
 
 export type CreateNvpInput = {
@@ -226,15 +262,15 @@ export type CreateOpportunityInput = {
   parentID: Scalars['String'];
   state?: Maybe<Scalars['String']>;
   tags?: Maybe<Array<Scalars['String']>>;
-  textID: Scalars['String'];
+  textID: Scalars['TextID'];
 };
 
 export type CreateOrganisationInput = {
   /** The name for this organisation */
-  name?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
   profileData?: Maybe<CreateProfileInput>;
   /** The unique text based ID for this organisation */
-  textID?: Maybe<Scalars['String']>;
+  textID: Scalars['String'];
 };
 
 export type CreateProfileInput = {
@@ -246,10 +282,10 @@ export type CreateProfileInput = {
 
 export type CreateProjectInput = {
   description?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
   parentID: Scalars['Float'];
   state?: Maybe<Scalars['String']>;
-  textID?: Maybe<Scalars['String']>;
+  textID: Scalars['TextID'];
 };
 
 export type CreateReferenceInput = {
@@ -260,12 +296,12 @@ export type CreateReferenceInput = {
 };
 
 export type CreateRelationInput = {
-  actorName?: Maybe<Scalars['String']>;
+  actorName: Scalars['String'];
   actorRole?: Maybe<Scalars['String']>;
   actorType?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   parentID: Scalars['Float'];
-  type?: Maybe<Scalars['String']>;
+  type: Scalars['String'];
 };
 
 export type CreateTagsetInput = {
@@ -275,7 +311,7 @@ export type CreateTagsetInput = {
 };
 
 export type CreateUserGroupInput = {
-  name?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
   parentID: Scalars['Float'];
   profileData?: Maybe<CreateProfileInput>;
 };
@@ -284,14 +320,61 @@ export type CreateUserInput = {
   accountUpn?: Maybe<Scalars['String']>;
   city?: Maybe<Scalars['String']>;
   country?: Maybe<Scalars['String']>;
-  /** Email address is required for mutations! */
-  email?: Maybe<Scalars['String']>;
+  email: Scalars['String'];
   firstName?: Maybe<Scalars['String']>;
   gender?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   phone?: Maybe<Scalars['String']>;
   profileData?: Maybe<CreateProfileInput>;
+};
+
+export type DeleteActorGroupInput = {
+  ID: Scalars['Float'];
+};
+
+export type DeleteActorInput = {
+  ID: Scalars['Float'];
+};
+
+export type DeleteApplicationInput = {
+  ID: Scalars['Float'];
+};
+
+export type DeleteAspectInput = {
+  ID: Scalars['Float'];
+};
+
+export type DeleteChallengeInput = {
+  ID: Scalars['Float'];
+};
+
+export type DeleteOpportunityInput = {
+  ID: Scalars['Float'];
+};
+
+export type DeleteOrganisationInput = {
+  ID: Scalars['Float'];
+};
+
+export type DeleteProjectInput = {
+  ID: Scalars['Float'];
+};
+
+export type DeleteReferenceInput = {
+  ID: Scalars['Float'];
+};
+
+export type DeleteRelationInput = {
+  ID: Scalars['Float'];
+};
+
+export type DeleteUserGroupInput = {
+  ID: Scalars['Float'];
+};
+
+export type DeleteUserInput = {
+  ID: Scalars['Float'];
 };
 
 export type DemoAuthProviderConfig = {
@@ -314,7 +397,7 @@ export type Ecoverse = {
   context?: Maybe<Context>;
   /** The user group with the specified id anywhere in the ecoverse */
   group: UserGroup;
-  /** The user groups on this Ecoverse */
+  /** The User Groups on this Ecoverse */
   groups: Array<UserGroup>;
   /** All groups on this Ecoverse that have the provided tag */
   groupsWithTag: Array<UserGroup>;
@@ -332,6 +415,8 @@ export type Ecoverse = {
   projects: Array<Project>;
   /** The set of tags for the ecoverse */
   tagset?: Maybe<Tagset>;
+  /** A short text identifier for this Ecoverse */
+  textID: Scalars['String'];
 };
 
 export type EcoverseApplicationArgs = {
@@ -401,124 +486,128 @@ export type MsalConfig = {
 };
 
 export type Mutation = {
-  /** Adds the specified organisation as a lead for the specified Community */
-  addChallengeLead: Scalars['Boolean'];
-  /** Adds the user with the given identifier as a member of the specified Community */
-  addUserToCommunity: UserGroup;
-  /** Adds the user with the given identifier to the specified user group */
-  addUserToGroup: Scalars['Boolean'];
-  /** Create application to join this ecoverse */
+  /** Approve a User Application to join this Community. */
   approveApplication: Application;
-  /** Assign the user with the given ID as focal point for the given group */
+  /** Assigns an organisation as a lead for the Challenge. */
+  assignChallengeLead: Challenge;
+  /** Assigns a User as the focal point of the specified User Group. */
   assignGroupFocalPoint?: Maybe<UserGroup>;
-  /** Create a new actor on the ActorGroup with the specified ID */
+  /** Assigns a User as a member of the specified Community. */
+  assignUserToCommunity: UserGroup;
+  /** Assigns a User as a member of the specified User Group. */
+  assignUserToGroup: UserGroup;
+  /** Creates a new Actor in the specified ActorGroup. */
   createActor: Actor;
-  /** Create a new actor group on the Opportunity */
+  /** Create a new Actor Group on the Opportunity. */
   createActorGroup: ActorGroup;
-  /** Create application to join this Community */
+  /** Creates Application for a User to join this Community. */
   createApplication: Application;
-  /** Create a new aspect on the Opportunity */
+  /** Create a new Aspect on the Opportunity. */
   createAspect: Aspect;
-  /** Create a new aspect on the Project */
+  /** Create a new Aspect on the Project. */
   createAspectOnProject: Aspect;
-  /** Creates a new challenge and registers it with the ecoverse */
+  /** Creates a new Challenge within the specified Ecoverse. */
   createChallenge: Challenge;
-  /** Creates a new user group for the Community with the given id */
+  /** Creates a new Ecoverse. */
+  createEcoverse: Ecoverse;
+  /** Creates a new User Group in the specified Community. */
   createGroupOnCommunity: UserGroup;
-  /** Creates a new user group for the organisation with the given id */
+  /** Creates a new User Group for the specified Organisation. */
   createGroupOnOrganisation: UserGroup;
-  /** Creates a new Opportunity for the challenge with the given id */
+  /** Creates a new Opportunity within the parent Challenge. */
   createOpportunity: Opportunity;
-  /** Creates a new organisation and registers it with the ecoverse */
+  /** Creates a new Organisation on the platform. */
   createOrganisation: Organisation;
   /** Create a new Project on the Opportunity */
   createProject: Project;
-  /** Creates a new reference with the specified name for the context with given id */
+  /** Creates a new Reference on the specified Context. */
   createReferenceOnContext: Reference;
-  /** Creates a new reference with the specified name for the profile with given id */
+  /** Creates a new Reference on the specified Profile. */
   createReferenceOnProfile: Reference;
-  /** Create a new relation on the Opportunity */
+  /** Create a new Relation on the Opportunity. */
   createRelation: Relation;
-  /** Creates a new tagset with the specified name for the profile with given id */
+  /** Creates a new Tagset on the specified Profile */
   createTagsetOnProfile: Tagset;
-  /** Creates a new user profile on behalf of an admin or the user account owner. */
+  /** Creates a new User on the platform. */
   createUser: User;
-  /** Removes the actor  with the specified ID */
-  removeActor: Actor;
-  /** Removes the actor group with the specified ID */
-  removeActorGroup: ActorGroup;
-  /** Removes the aspect with the specified ID */
-  removeAspect: Aspect;
-  /** Removes the Challenge with the specified ID */
-  removeChallenge: Challenge;
-  /** Remove the specified organisation as a lead for the specified Challenge */
-  removeChallengeLead: Scalars['Boolean'];
-  /** Remove the focal point for the given group */
+  /** Deletes the specified Actor. */
+  deleteActor: Actor;
+  /** Deletes the specified Actor Group, including contained Actors. */
+  deleteActorGroup: ActorGroup;
+  /** Deletes the specified Aspect. */
+  deleteAspect: Aspect;
+  /** Deletes the specified Challenge. */
+  deleteChallenge: Challenge;
+  /** Deletes the Opportunity. */
+  deleteOpportunity: Opportunity;
+  /** Deletes the specified Organisation. */
+  deleteOrganisation: Organisation;
+  /** Deletes the specified Project. */
+  deleteProject: Project;
+  /** Deletes the specified Reference. */
+  deleteReference: Reference;
+  /** Deletes the specified Relation. */
+  deleteRelation: Relation;
+  /** Deletes the specified User. */
+  deleteUser: User;
+  /** Removes the specified User Application. */
+  deleteUserApplication: Application;
+  /** Deletes the specified User Group. */
+  deleteUserGroup: UserGroup;
+  /** Remove an organisation as a lead for the Challenge. */
+  removeChallengeLead: Challenge;
+  /** Removes the focal point for the specified User Group. */
   removeGroupFocalPoint?: Maybe<UserGroup>;
-  /** Removes the Opportunity with the specified ID */
-  removeOpportunity: Opportunity;
-  /** Removes the Organisaiton with the specified ID */
-  removeOrganisation: Organisation;
-  /** Removes the Project with the specified ID */
-  removeProject: Project;
-  /** Removes the reference  with the specified ID */
-  removeReference: Reference;
-  /** Removes the relation with the specified ID */
-  removeRelation: Relation;
-  /** Removes the specified user profile. */
-  removeUser: User;
-  /** Removes user application with the specified applicationID */
-  removeUserApplication: Application;
-  /** Removes the user with the given identifier as a member of the specified Community */
+  /** Removes a User as a member of the specified Community. */
   removeUserFromCommunity: UserGroup;
-  /** Remove the user with the given identifier to the specified user group */
+  /** Removes the specified User from specified user group */
   removeUserFromGroup: UserGroup;
-  /** Removes the user group with the specified ID */
-  removeUserGroup: UserGroup;
-  /** Updates the actor with the specified ID with the supplied data */
+  /** Updates the specified Actor. */
   updateActor: Actor;
-  /** Updates the aspect with the specified ID */
+  /** Updates the specified Aspect. */
   updateAspect: Aspect;
-  /** Updates the specified Challenge with the provided data (merge) */
+  /** Updates the specified Challenge. */
   updateChallenge: Challenge;
-  /** Updates the Ecoverse with the provided data */
+  /** Updates the Ecoverse. */
   updateEcoverse: Ecoverse;
-  /** Updates the specified Opportunity with the provided data (merge) */
+  /** Updates the Opportunity. */
   updateOpportunity: Opportunity;
-  /** Updates the organisation with the given data */
+  /** Updates the specified Organisation. */
   updateOrganisation: Organisation;
-  /** Updates the fields on the Profile, such as avatar location or description */
+  /** Updates the specified Profile. */
   updateProfile: Profile;
-  /** Updates the Project with the specified ID */
+  /** Updates the specified Project. */
   updateProject: Project;
-  /** Replace the set of tags in a tagset with the provided tags */
+  /** Update the specified Reference. */
+  updateReference: Reference;
+  /** Updates the Tagset. */
   updateTagset: Tagset;
-  /** Update the base user information. Note: email address cannot be updated. */
+  /** Updates the User. Note: email address cannot be updated. */
   updateUser: User;
-  /** Update the user group information. */
+  /** Updates the specified User Group. */
   updateUserGroup: UserGroup;
+  /** Uploads and sets an avatar image for the specified Profile. */
   uploadAvatar: Profile;
-};
-
-export type MutationAddChallengeLeadArgs = {
-  challengeID: Scalars['String'];
-  organisationID: Scalars['String'];
-};
-
-export type MutationAddUserToCommunityArgs = {
-  membershipData: UpdateMembershipInput;
-};
-
-export type MutationAddUserToGroupArgs = {
-  membershipData: UpdateMembershipInput;
 };
 
 export type MutationApproveApplicationArgs = {
   ID: Scalars['Float'];
 };
 
+export type MutationAssignChallengeLeadArgs = {
+  assignInput: AssignChallengeLeadInput;
+};
+
 export type MutationAssignGroupFocalPointArgs = {
-  membershipData: UpdateMembershipInput;
+  membershipData: AssignUserGroupFocalPointInput;
+};
+
+export type MutationAssignUserToCommunityArgs = {
+  membershipData: AssignCommunityMemberInput;
+};
+
+export type MutationAssignUserToGroupArgs = {
+  membershipData: AssignUserGroupMemberInput;
 };
 
 export type MutationCreateActorArgs = {
@@ -543,6 +632,10 @@ export type MutationCreateAspectOnProjectArgs = {
 
 export type MutationCreateChallengeArgs = {
   challengeData: CreateChallengeInput;
+};
+
+export type MutationCreateEcoverseArgs = {
+  ecoverseData: CreateEcoverseInput;
 };
 
 export type MutationCreateGroupOnCommunityArgs = {
@@ -585,69 +678,68 @@ export type MutationCreateUserArgs = {
   userData: CreateUserInput;
 };
 
-export type MutationRemoveActorArgs = {
-  removeData: RemoveEntityInput;
+export type MutationDeleteActorArgs = {
+  deleteData: DeleteActorInput;
 };
 
-export type MutationRemoveActorGroupArgs = {
-  removeData: RemoveEntityInput;
+export type MutationDeleteActorGroupArgs = {
+  deleteData: DeleteActorGroupInput;
 };
 
-export type MutationRemoveAspectArgs = {
-  removeData: RemoveEntityInput;
+export type MutationDeleteAspectArgs = {
+  deleteData: DeleteAspectInput;
 };
 
-export type MutationRemoveChallengeArgs = {
-  removeData: RemoveEntityInput;
+export type MutationDeleteChallengeArgs = {
+  deleteData: DeleteChallengeInput;
+};
+
+export type MutationDeleteOpportunityArgs = {
+  deleteData: DeleteOpportunityInput;
+};
+
+export type MutationDeleteOrganisationArgs = {
+  deleteData: DeleteOrganisationInput;
+};
+
+export type MutationDeleteProjectArgs = {
+  deleteData: DeleteProjectInput;
+};
+
+export type MutationDeleteReferenceArgs = {
+  deleteData: DeleteReferenceInput;
+};
+
+export type MutationDeleteRelationArgs = {
+  deleteData: DeleteRelationInput;
+};
+
+export type MutationDeleteUserArgs = {
+  deleteData: DeleteUserInput;
+};
+
+export type MutationDeleteUserApplicationArgs = {
+  deleteData: DeleteApplicationInput;
+};
+
+export type MutationDeleteUserGroupArgs = {
+  deleteData: DeleteUserGroupInput;
 };
 
 export type MutationRemoveChallengeLeadArgs = {
-  challengeID: Scalars['String'];
-  organisationID: Scalars['String'];
+  removeData: RemoveChallengeLeadInput;
 };
 
 export type MutationRemoveGroupFocalPointArgs = {
-  groupID: Scalars['Float'];
-};
-
-export type MutationRemoveOpportunityArgs = {
-  removeData: RemoveEntityInput;
-};
-
-export type MutationRemoveOrganisationArgs = {
-  removeData: RemoveEntityInput;
-};
-
-export type MutationRemoveProjectArgs = {
-  removeData: RemoveEntityInput;
-};
-
-export type MutationRemoveReferenceArgs = {
-  removeData: RemoveEntityInput;
-};
-
-export type MutationRemoveRelationArgs = {
-  removeData: RemoveEntityInput;
-};
-
-export type MutationRemoveUserArgs = {
-  removeData: RemoveEntityInput;
-};
-
-export type MutationRemoveUserApplicationArgs = {
-  removeData: RemoveEntityInput;
+  removeData: RemoveUserGroupFocalPoint;
 };
 
 export type MutationRemoveUserFromCommunityArgs = {
-  membershipData: UpdateMembershipInput;
+  membershipData: RemoveCommunityMemberInput;
 };
 
 export type MutationRemoveUserFromGroupArgs = {
-  membershipData: UpdateMembershipInput;
-};
-
-export type MutationRemoveUserGroupArgs = {
-  removeData: RemoveEntityInput;
+  membershipData: RemoveUserGroupMemberInput;
 };
 
 export type MutationUpdateActorArgs = {
@@ -682,6 +774,10 @@ export type MutationUpdateProjectArgs = {
   projectData: UpdateProjectInput;
 };
 
+export type MutationUpdateReferenceArgs = {
+  updateData: UpdateReferenceInput;
+};
+
 export type MutationUpdateTagsetArgs = {
   tagsetData: UpdateTagsetInput;
 };
@@ -696,7 +792,7 @@ export type MutationUpdateUserGroupArgs = {
 
 export type MutationUploadAvatarArgs = {
   file: Scalars['Upload'];
-  profileID: Scalars['Float'];
+  uploadData: UploadProfileAvatarInput;
 };
 
 export type Opportunity = {
@@ -778,7 +874,7 @@ export type Project = {
 export type Query = {
   /** Cherrytwist configuration. Provides configuration to external services in the Cherrytwist ecosystem. */
   configuration: Config;
-  /** The ecoverse. */
+  /** An ecoverse. If no ID is specified then the first Ecoverse is returned. */
   ecoverse: Ecoverse;
   /** The currently logged in user */
   me: User;
@@ -796,6 +892,10 @@ export type Query = {
   users: Array<User>;
   /** The users filtered by list of IDs. */
   usersById: Array<User>;
+};
+
+export type QueryEcoverseArgs = {
+  ID?: Maybe<Scalars['Float']>;
 };
 
 export type QueryOrganisationArgs = {
@@ -843,8 +943,23 @@ export type Relation = {
   type: Scalars['String'];
 };
 
-export type RemoveEntityInput = {
-  ID: Scalars['Float'];
+export type RemoveChallengeLeadInput = {
+  challengeID: Scalars['String'];
+  organisationID: Scalars['String'];
+};
+
+export type RemoveCommunityMemberInput = {
+  communityID: Scalars['Float'];
+  userID: Scalars['Float'];
+};
+
+export type RemoveUserGroupFocalPoint = {
+  groupID: Scalars['Float'];
+};
+
+export type RemoveUserGroupMemberInput = {
+  groupID: Scalars['Float'];
+  userID: Scalars['Float'];
 };
 
 export type Scope = {
@@ -934,12 +1049,8 @@ export type UpdateChallengeInput = {
 
 export type UpdateContextInput = {
   background?: Maybe<Scalars['String']>;
-  /** Create additional references */
-  createReferences?: Maybe<Array<CreateReferenceInput>>;
   impact?: Maybe<Scalars['String']>;
   tagline?: Maybe<Scalars['String']>;
-  /** Update the existing references */
-  updateReferences?: Maybe<Array<UpdateReferenceInput>>;
   vision?: Maybe<Scalars['String']>;
   who?: Maybe<Scalars['String']>;
 };
@@ -949,16 +1060,11 @@ export type UpdateEcoverseInput = {
   /** Updated context for the ecoverse; will be merged with existing context */
   context?: Maybe<UpdateContextInput>;
   /** The host Organisation for the ecoverse */
-  hostID?: Maybe<Scalars['Float']>;
+  hostID?: Maybe<Scalars['String']>;
   /** The new name for the ecoverse */
   name?: Maybe<Scalars['String']>;
   /** The set of tags to apply to this ecoverse */
   tags?: Maybe<Array<Scalars['String']>>;
-};
-
-export type UpdateMembershipInput = {
-  childID: Scalars['Float'];
-  parentID: Scalars['Float'];
 };
 
 export type UpdateOpportunityInput = {
@@ -979,19 +1085,15 @@ export type UpdateOrganisationInput = {
 export type UpdateProfileInput = {
   ID: Scalars['String'];
   avatar?: Maybe<Scalars['String']>;
-  createReferencesData?: Maybe<Array<CreateReferenceInput>>;
-  createTagsetsData?: Maybe<Array<CreateTagsetInput>>;
   description?: Maybe<Scalars['String']>;
-  updateReferencesData?: Maybe<Array<UpdateReferenceInput>>;
-  updateTagsetsData?: Maybe<Array<UpdateTagsetInput>>;
 };
 
 export type UpdateProjectInput = {
   ID: Scalars['String'];
   description?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
   state?: Maybe<Scalars['String']>;
-  textID?: Maybe<Scalars['String']>;
+  textID: Scalars['String'];
 };
 
 export type UpdateReferenceInput = {
@@ -1018,14 +1120,17 @@ export type UpdateUserInput = {
   accountUpn?: Maybe<Scalars['String']>;
   city?: Maybe<Scalars['String']>;
   country?: Maybe<Scalars['String']>;
-  /** Email address is required for mutations! */
-  email?: Maybe<Scalars['String']>;
   firstName?: Maybe<Scalars['String']>;
   gender?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   phone?: Maybe<Scalars['String']>;
   profileData?: Maybe<UpdateProfileInput>;
+};
+
+export type UploadProfileAvatarInput = {
+  file: Scalars['String'];
+  profileID: Scalars['String'];
 };
 
 export type User = {
