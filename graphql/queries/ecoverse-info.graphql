@@ -1,6 +1,7 @@
 query ecoverseInfo {
   ecoverse {
     id
+    textID
     name
     community {
       id

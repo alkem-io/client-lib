@@ -2,6 +2,7 @@ query organisation($id: String!) {
   organisation(ID: $id) {
     name
     id
+    textID
     profile {
       id
     }

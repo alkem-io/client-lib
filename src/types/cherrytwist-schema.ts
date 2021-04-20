@@ -13,7 +13,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** A short text based identifier, 3 <= length <= 20. Used for URL paths in clients.  */
+  /** A short text based identifier, 3 <= length <= 20. Used for URL paths in clients. Characters allowed: a-z,A-Z,0-9. */
   TextID: string;
   /** The `Upload` scalar type represents a file upload. */
   Upload: File;
@@ -59,16 +59,15 @@ export type ApiConfig = {
 
 export type Application = {
   id: Scalars['ID'];
+  lifecycle: Lifecycle;
   questions: Array<Question>;
-  status: ApplicationStatus;
   user: User;
 };
 
-export enum ApplicationStatus {
-  Approved = 'approved',
-  New = 'new',
-  Rejected = 'rejected',
-}
+export type ApplicationLifecycleEventInput = {
+  ID: Scalars['Float'];
+  eventName: Scalars['String'];
+};
 
 export type ApplicationTemplate = {
   /** Application template name. */
@@ -270,7 +269,7 @@ export type CreateOrganisationInput = {
   name: Scalars['String'];
   profileData?: Maybe<CreateProfileInput>;
   /** The unique text based ID for this organisation */
-  textID: Scalars['String'];
+  textID: Scalars['TextID'];
 };
 
 export type CreateProfileInput = {
@@ -450,6 +449,14 @@ export type EcoverseTemplate = {
   name: Scalars['String'];
 };
 
+export type Lifecycle = {
+  id: Scalars['ID'];
+  /** The next events of this Lifecycle. */
+  nextEvents?: Maybe<Array<Scalars['String']>>;
+  /** The current state of this Lifecycle. */
+  state?: Maybe<Scalars['String']>;
+};
+
 export type MemberOf = {
   /** References to the Communities the user is a member of */
   communities: Array<Community>;
@@ -486,8 +493,6 @@ export type MsalConfig = {
 };
 
 export type Mutation = {
-  /** Approve a User Application to join this Community. */
-  approveApplication: Application;
   /** Assigns an organisation as a lead for the Challenge. */
   assignChallengeLead: Challenge;
   /** Assigns a User as the focal point of the specified User Group. */
@@ -554,6 +559,8 @@ export type Mutation = {
   deleteUserApplication: Application;
   /** Deletes the specified User Group. */
   deleteUserGroup: UserGroup;
+  /** Trigger an event on the Application. */
+  eventOnApplication: Application;
   /** Remove an organisation as a lead for the Challenge. */
   removeChallengeLead: Challenge;
   /** Removes the focal point for the specified User Group. */
@@ -588,10 +595,6 @@ export type Mutation = {
   updateUserGroup: UserGroup;
   /** Uploads and sets an avatar image for the specified Profile. */
   uploadAvatar: Profile;
-};
-
-export type MutationApproveApplicationArgs = {
-  ID: Scalars['Float'];
 };
 
 export type MutationAssignChallengeLeadArgs = {
@@ -724,6 +727,10 @@ export type MutationDeleteUserApplicationArgs = {
 
 export type MutationDeleteUserGroupArgs = {
   deleteData: DeleteUserGroupInput;
+};
+
+export type MutationEventOnApplicationArgs = {
+  applicationEventData: ApplicationLifecycleEventInput;
 };
 
 export type MutationRemoveChallengeLeadArgs = {

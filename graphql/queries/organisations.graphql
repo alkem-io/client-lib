@@ -2,6 +2,7 @@ query organisations {
   organisations {
     name
     id
+    textID
     profile {
       id
       avatar
