@@ -2,6 +2,7 @@ query challengesBase {
   ecoverse {
     challenges {
       id
+      textID
       name
     }
   }

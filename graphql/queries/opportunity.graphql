@@ -3,6 +3,7 @@ query opportunity($id: String!) {
     opportunity(ID: $id) {
       name
       id
+      textID
       community {
         id
         name

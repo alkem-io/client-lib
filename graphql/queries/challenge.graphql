@@ -3,6 +3,7 @@ query challenge($id: String!) {
     challenge(ID: $id) {
       name
       id
+      textID
       community {
         id
         name

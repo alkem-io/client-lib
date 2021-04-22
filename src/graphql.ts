@@ -276,6 +276,7 @@ export type ChallengeQuery = {
     challenge: {
       name: string;
       id: string;
+      textID: string;
       community?: SchemaTypes.Maybe<{ id: string; name: string }>;
     };
   };
@@ -287,7 +288,9 @@ export type ChallengesBaseQueryVariables = SchemaTypes.Exact<{
 
 export type ChallengesBaseQuery = {
   ecoverse: {
-    challenges?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
+    challenges?: SchemaTypes.Maybe<
+      Array<{ id: string; textID: string; name: string }>
+    >;
   };
 };
 
@@ -306,6 +309,7 @@ export type EcoverseInfoQueryVariables = SchemaTypes.Exact<{
 export type EcoverseInfoQuery = {
   ecoverse: {
     id: string;
+    textID: string;
     name: string;
     community?: SchemaTypes.Maybe<{ id: string }>;
     context?: SchemaTypes.Maybe<{
@@ -377,7 +381,7 @@ export type OpportunitiesQuery = {
 export type OpportunityProfileFragment = {
   textID: string;
   name: string;
-  state?: SchemaTypes.Maybe<string>;
+  lifecycle?: SchemaTypes.Maybe<{ state?: SchemaTypes.Maybe<string> }>;
   context?: SchemaTypes.Maybe<{
     tagline?: SchemaTypes.Maybe<string>;
     background?: SchemaTypes.Maybe<string>;
@@ -399,6 +403,7 @@ export type OpportunityQuery = {
     opportunity: {
       name: string;
       id: string;
+      textID: string;
       community?: SchemaTypes.Maybe<{ id: string; name: string }>;
     };
   };
@@ -409,7 +414,12 @@ export type OrganisationQueryVariables = SchemaTypes.Exact<{
 }>;
 
 export type OrganisationQuery = {
-  organisation: { name: string; id: string; profile: { id: string } };
+  organisation: {
+    name: string;
+    id: string;
+    textID: string;
+    profile: { id: string };
+  };
 };
 
 export type OrganisationsQueryVariables = SchemaTypes.Exact<{
@@ -420,6 +430,7 @@ export type OrganisationsQuery = {
   organisations: Array<{
     name: string;
     id: string;
+    textID: string;
     profile: {
       id: string;
       avatar?: SchemaTypes.Maybe<string>;
@@ -498,7 +509,9 @@ export const OpportunityProfileFragmentDoc = gql`
   fragment OpportunityProfile on Opportunity {
     textID
     name
-    state
+    lifecycle {
+      state
+    }
     context {
       tagline
       background
@@ -756,6 +769,7 @@ export const ChallengeDocument = gql`
       challenge(ID: $id) {
         name
         id
+        textID
         community {
           id
           name
@@ -769,6 +783,7 @@ export const ChallengesBaseDocument = gql`
     ecoverse {
       challenges {
         id
+        textID
         name
       }
     }
@@ -788,6 +803,7 @@ export const EcoverseInfoDocument = gql`
   query ecoverseInfo {
     ecoverse {
       id
+      textID
       name
       community {
         id
@@ -865,6 +881,7 @@ export const OpportunityDocument = gql`
       opportunity(ID: $id) {
         name
         id
+        textID
         community {
           id
           name
@@ -878,6 +895,7 @@ export const OrganisationDocument = gql`
     organisation(ID: $id) {
       name
       id
+      textID
       profile {
         id
       }
@@ -889,6 +907,7 @@ export const OrganisationsDocument = gql`
     organisations {
       name
       id
+      textID
       profile {
         id
         avatar
