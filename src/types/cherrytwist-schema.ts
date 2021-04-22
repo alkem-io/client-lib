@@ -128,23 +128,28 @@ export type AuthenticationProviderConfigUnion =
   | DemoAuthProviderConfig;
 
 export type Challenge = {
-  /** The community for the challenge */
+  /** The community for the challenge. */
   community?: Maybe<Community>;
   /** The shared understanding for the challenge */
   context?: Maybe<Context>;
   id: Scalars['ID'];
   /** The Organisations that are leading this Challenge. */
   leadOrganisations: Array<Organisation>;
+  /** The lifeycle for the Challenge. */
+  lifecycle?: Maybe<Lifecycle>;
   /** The name of the challenge */
   name: Scalars['String'];
   /** The set of opportunities within this challenge. */
   opportunities?: Maybe<Array<Opportunity>>;
-  /** The maturity phase of the challenge i.e. new, being refined, ongoing etc */
-  state?: Maybe<Scalars['String']>;
   /** The set of tags for the challenge */
   tagset?: Maybe<Tagset>;
   /** A short text identifier for this challenge */
   textID: Scalars['String'];
+};
+
+export type ChallengeLifecycleEventInput = {
+  ID: Scalars['Float'];
+  eventName: Scalars['String'];
 };
 
 export type ChallengeTemplate = {
@@ -220,9 +225,9 @@ export type CreateAspectInput = {
 
 export type CreateChallengeInput = {
   context?: Maybe<CreateContextInput>;
+  lifecycleTemplate?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   parentID: Scalars['Float'];
-  state?: Maybe<Scalars['String']>;
   tags?: Maybe<Array<Scalars['String']>>;
   textID: Scalars['TextID'];
 };
@@ -257,9 +262,9 @@ export type CreateNvpInput = {
 
 export type CreateOpportunityInput = {
   context?: Maybe<CreateContextInput>;
+  lifecycleTemplate?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   parentID: Scalars['String'];
-  state?: Maybe<Scalars['String']>;
   tags?: Maybe<Array<Scalars['String']>>;
   textID: Scalars['TextID'];
 };
@@ -283,7 +288,6 @@ export type CreateProjectInput = {
   description?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   parentID: Scalars['Float'];
-  state?: Maybe<Scalars['String']>;
   textID: Scalars['TextID'];
 };
 
@@ -455,6 +459,8 @@ export type Lifecycle = {
   nextEvents?: Maybe<Array<Scalars['String']>>;
   /** The current state of this Lifecycle. */
   state?: Maybe<Scalars['String']>;
+  /** The Lifecycle template identifier. */
+  templateId?: Maybe<Scalars['String']>;
 };
 
 export type MemberOf = {
@@ -561,6 +567,12 @@ export type Mutation = {
   deleteUserGroup: UserGroup;
   /** Trigger an event on the Application. */
   eventOnApplication: Application;
+  /** Trigger an event on the Challenge. */
+  eventOnChallenge: Challenge;
+  /** Trigger an event on an Opportunity. */
+  eventOnOpportunity: Opportunity;
+  /** Trigger an event on the Project. */
+  eventOnProject: Project;
   /** Remove an organisation as a lead for the Challenge. */
   removeChallengeLead: Challenge;
   /** Removes the focal point for the specified User Group. */
@@ -733,6 +745,18 @@ export type MutationEventOnApplicationArgs = {
   applicationEventData: ApplicationLifecycleEventInput;
 };
 
+export type MutationEventOnChallengeArgs = {
+  challengeEventData: ChallengeLifecycleEventInput;
+};
+
+export type MutationEventOnOpportunityArgs = {
+  opportunityEventData: OpportunityLifecycleEventInput;
+};
+
+export type MutationEventOnProjectArgs = {
+  projectEventData: ProjectLifecycleEventInput;
+};
+
 export type MutationRemoveChallengeLeadArgs = {
   removeData: RemoveChallengeLeadInput;
 };
@@ -807,23 +831,28 @@ export type Opportunity = {
   actorGroups?: Maybe<Array<ActorGroup>>;
   /** The set of aspects within the context of this Opportunity. */
   aspects?: Maybe<Array<Aspect>>;
-  /** The community for the opportunity */
+  /** The community for the opportunity. */
   community?: Maybe<Community>;
   /** The shared understanding for the opportunity */
   context?: Maybe<Context>;
   id: Scalars['ID'];
+  /** The lifeycle for the Challenge. */
+  lifecycle?: Maybe<Lifecycle>;
   /** The name of the Opportunity */
   name: Scalars['String'];
   /** The set of projects within the context of this Opportunity */
   projects?: Maybe<Array<Project>>;
   /** The set of relations within the context of this Opportunity. */
   relations?: Maybe<Array<Relation>>;
-  /** The maturity phase of the Opportunity i.e. new, being refined, ongoing etc */
-  state?: Maybe<Scalars['String']>;
   /** The set of tags for the Opportunity */
   tagset?: Maybe<Tagset>;
   /** A short text identifier for this Opportunity */
   textID: Scalars['String'];
+};
+
+export type OpportunityLifecycleEventInput = {
+  ID: Scalars['Float'];
+  eventName: Scalars['String'];
 };
 
 export type OpportunityTemplate = {
@@ -869,13 +898,18 @@ export type Project = {
   aspects?: Maybe<Array<Aspect>>;
   description?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
-  name: Scalars['String'];
   /** The maturity phase of the project i.e. new, being refined, committed, in-progress, closed etc */
-  state?: Maybe<Scalars['String']>;
+  lifecycle?: Maybe<Lifecycle>;
+  name: Scalars['String'];
   /** The set of tags for the project */
   tagset?: Maybe<Tagset>;
   /** A short text identifier for this Opportunity */
   textID: Scalars['String'];
+};
+
+export type ProjectLifecycleEventInput = {
+  ID: Scalars['Float'];
+  eventName: Scalars['String'];
 };
 
 export type Query = {
@@ -1050,7 +1084,6 @@ export type UpdateChallengeInput = {
   ID: Scalars['String'];
   context?: Maybe<UpdateContextInput>;
   name?: Maybe<Scalars['String']>;
-  state?: Maybe<Scalars['String']>;
   tags?: Maybe<Array<Scalars['String']>>;
 };
 
@@ -1099,7 +1132,6 @@ export type UpdateProjectInput = {
   ID: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  state?: Maybe<Scalars['String']>;
   textID: Scalars['String'];
 };
 

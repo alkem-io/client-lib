@@ -14,7 +14,9 @@ query opportunities {
 fragment OpportunityProfile on Opportunity {
   textID
   name
-  state
+  lifecycle {
+    state
+  }
   context {
     tagline
     background

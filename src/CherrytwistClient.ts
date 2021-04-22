@@ -49,7 +49,7 @@ export class CherrytwistClient {
 
   public async validateServerVersion(): Promise<boolean> {
     const serverVersion = await this.serverVersion();
-    const MIN_SERVER_VERSION = '0.10.6';
+    const MIN_SERVER_VERSION = '0.10.7';
     const validVersion = semver.gte(serverVersion, MIN_SERVER_VERSION);
     if (!validVersion)
       throw new Error(

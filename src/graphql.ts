@@ -381,7 +381,7 @@ export type OpportunitiesQuery = {
 export type OpportunityProfileFragment = {
   textID: string;
   name: string;
-  state?: SchemaTypes.Maybe<string>;
+  lifecycle?: SchemaTypes.Maybe<{ state?: SchemaTypes.Maybe<string> }>;
   context?: SchemaTypes.Maybe<{
     tagline?: SchemaTypes.Maybe<string>;
     background?: SchemaTypes.Maybe<string>;
@@ -509,7 +509,9 @@ export const OpportunityProfileFragmentDoc = gql`
   fragment OpportunityProfile on Opportunity {
     textID
     name
-    state
+    lifecycle {
+      state
+    }
     context {
       tagline
       background
