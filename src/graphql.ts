@@ -190,14 +190,6 @@ export type DeleteReferenceMutation = {
   };
 };
 
-export type UpdateTagsetMutationVariables = SchemaTypes.Exact<{
-  tagsetData: SchemaTypes.UpdateTagsetInput;
-}>;
-
-export type UpdateTagsetMutation = {
-  updateTagset: { name: string; tags: Array<string> };
-};
-
 export type UpdateActorMutationVariables = SchemaTypes.Exact<{
   actorData: SchemaTypes.UpdateActorInput;
 }>;
@@ -253,19 +245,6 @@ export type UpdateProfileMutationVariables = SchemaTypes.Exact<{
 }>;
 
 export type UpdateProfileMutation = { updateProfile: { id: string } };
-
-export type UpdateReferenceMutationVariables = SchemaTypes.Exact<{
-  input: SchemaTypes.UpdateReferenceInput;
-}>;
-
-export type UpdateReferenceMutation = {
-  updateReference: {
-    id: string;
-    name: string;
-    description: string;
-    uri: string;
-  };
-};
 
 export type ChallengeQueryVariables = SchemaTypes.Exact<{
   id: SchemaTypes.Scalars['String'];
@@ -689,14 +668,6 @@ export const DeleteReferenceDocument = gql`
     }
   }
 `;
-export const UpdateTagsetDocument = gql`
-  mutation updateTagset($tagsetData: UpdateTagsetInput!) {
-    updateTagset(tagsetData: $tagsetData) {
-      name
-      tags
-    }
-  }
-`;
 export const UpdateActorDocument = gql`
   mutation updateActor($actorData: UpdateActorInput!) {
     updateActor(actorData: $actorData) {
@@ -750,16 +721,6 @@ export const UpdateProfileDocument = gql`
   mutation updateProfile($profileData: UpdateProfileInput!) {
     updateProfile(profileData: $profileData) {
       id
-    }
-  }
-`;
-export const UpdateReferenceDocument = gql`
-  mutation updateReference($input: UpdateReferenceInput!) {
-    updateReference(updateData: $input) {
-      id
-      name
-      description
-      uri
     }
   }
 `;
@@ -1225,22 +1186,6 @@ export function getSdk(
         )
       );
     },
-    updateTagset(
-      variables: UpdateTagsetMutationVariables
-    ): Promise<{
-      data?: UpdateTagsetMutation | undefined;
-      extensions?: any;
-      headers: Headers;
-      status: number;
-      errors?: GraphQLError[] | undefined;
-    }> {
-      return withWrapper(() =>
-        client.rawRequest<UpdateTagsetMutation>(
-          print(UpdateTagsetDocument),
-          variables
-        )
-      );
-    },
     updateActor(
       variables: UpdateActorMutationVariables
     ): Promise<{
@@ -1333,22 +1278,6 @@ export function getSdk(
       return withWrapper(() =>
         client.rawRequest<UpdateProfileMutation>(
           print(UpdateProfileDocument),
-          variables
-        )
-      );
-    },
-    updateReference(
-      variables: UpdateReferenceMutationVariables
-    ): Promise<{
-      data?: UpdateReferenceMutation | undefined;
-      extensions?: any;
-      headers: Headers;
-      status: number;
-      errors?: GraphQLError[] | undefined;
-    }> {
-      return withWrapper(() =>
-        client.rawRequest<UpdateReferenceMutation>(
-          print(UpdateReferenceDocument),
           variables
         )
       );

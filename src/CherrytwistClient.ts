@@ -11,6 +11,7 @@ import {
   CreateUserInput,
   UpdateContextInput,
   Reference,
+  UpdateReferenceInput,
 } from './types/cherrytwist-schema';
 import { ErrorHandler, handleErrors } from './util/handleErrors';
 import semver from 'semver';
@@ -49,7 +50,7 @@ export class CherrytwistClient {
 
   public async validateServerVersion(): Promise<boolean> {
     const serverVersion = await this.serverVersion();
-    const MIN_SERVER_VERSION = '0.10.7';
+    const MIN_SERVER_VERSION = '0.11.0';
     const validVersion = semver.gte(serverVersion, MIN_SERVER_VERSION);
     if (!validVersion)
       throw new Error(
@@ -139,13 +140,13 @@ export class CherrytwistClient {
     return data?.updateProfile;
   }
 
-  async createTagset(
+  async createTagsetOnProfile(
     profileID: string,
     tagsetName: string,
     tags: string[]
   ): Promise<boolean> {
     if (tags) {
-      const { data, errors } = await this.client.createTagsetOnProfile({
+      const { errors } = await this.client.createTagsetOnProfile({
         tagsetData: {
           parentID: Number(profileID),
           name: tagsetName,
@@ -153,18 +154,6 @@ export class CherrytwistClient {
       });
 
       this.errorHandler(errors);
-
-      const newTagsetId = Number(data?.createTagsetOnProfile.id);
-      if (!data) return false;
-
-      const { errors: replaceErrors } = await this.client.updateTagset({
-        tagsetData: {
-          ID: newTagsetId,
-          tags,
-        },
-      });
-
-      this.errorHandler(replaceErrors);
     }
     return true;
   }
@@ -531,28 +520,38 @@ export class CherrytwistClient {
     return data?.assignUserToCommunity;
   }
 
-  async updateEcoverseReferences(references: Omit<Reference, 'id'>[]) {
+  async updateReferencesOnEcoverse(references: Omit<Reference, 'id'>[]) {
     const ecoverseInfo = await this.client.ecoverseInfo();
     const contextId = ecoverseInfo.data?.ecoverse.context?.id;
     if (!contextId) {
-      throw new Error('Ecoverse context id does not exitsts.');
+      throw new Error('Ecoverse context id does not exist.');
     }
-    const existinggReferences =
+    const existingReferences =
       ecoverseInfo.data?.ecoverse.context?.references || [];
     const newReferences = references.filter(r =>
-      existinggReferences.every(x => x.name !== r.name)
+      existingReferences.every(x => x.name !== r.name)
     );
-    const oldReferences = existinggReferences.filter(r =>
+    const oldReferences = existingReferences.filter(r =>
       references.some(x => x.name === r.name)
     );
 
+    const updateRefsInput: UpdateReferenceInput[] = [];
     for (const oldRef of oldReferences) {
-      this.client.updateReference({
-        input: {
-          ID: Number(oldRef.id),
-          name: oldRef.name,
-          description: oldRef.description,
-          uri: oldRef.uri,
+      const newRefInput: UpdateReferenceInput = {
+        ID: Number(oldRef.id),
+        name: oldRef.name,
+        description: oldRef.description,
+        uri: oldRef.uri,
+      };
+      updateRefsInput.push(newRefInput);
+    }
+    if (updateRefsInput.length > 0) {
+      let ecoverseID = ecoverseInfo.data?.ecoverse.id;
+      if (!ecoverseID) ecoverseID = '';
+      await this.updateEcoverse({
+        ID: ecoverseID,
+        context: {
+          references: updateRefsInput,
         },
       });
     }

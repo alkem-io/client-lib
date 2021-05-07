@@ -1,8 +1,0 @@
-mutation updateReference($input: UpdateReferenceInput!) {
-  updateReference(updateData: $input) {
-    id
-    name
-    description
-    uri
-  }
-}
