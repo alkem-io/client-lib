@@ -1,6 +1,0 @@
-mutation updateTagset($tagsetData: UpdateTagsetInput!) {
-  updateTagset(tagsetData: $tagsetData) {
-    name
-    tags
-  }
-}
