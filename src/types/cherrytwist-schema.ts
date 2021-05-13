@@ -259,7 +259,7 @@ export type CreateChallengeInput = {
   context?: Maybe<CreateContextInput>;
   lifecycleTemplate?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  parentID: Scalars['Float'];
+  parentID: Scalars['String'];
   tags?: Maybe<Array<Scalars['String']>>;
   textID: Scalars['TextID'];
 };
