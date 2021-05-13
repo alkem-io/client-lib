@@ -4,9 +4,7 @@ import { getSdk, Sdk } from './graphql';
 import {
   CreateChallengeInput,
   UpdateEcoverseInput,
-  CreateOpportunityInput,
   UpdateChallengeInput,
-  UpdateOpportunityInput,
   UpdateOrganisationInput,
   CreateUserInput,
   UpdateContextInput,
@@ -50,7 +48,7 @@ export class CherrytwistClient {
 
   public async validateServerVersion(): Promise<boolean> {
     const serverVersion = await this.serverVersion();
-    const MIN_SERVER_VERSION = '0.11.0';
+    const MIN_SERVER_VERSION = '0.11.1';
     const validVersion = semver.gte(serverVersion, MIN_SERVER_VERSION);
     if (!validVersion)
       throw new Error(
@@ -74,14 +72,14 @@ export class CherrytwistClient {
     return serverVersion;
   }
 
-  public async createOpportunity(opportunity: CreateOpportunityInput) {
-    const result = await this.client.createOpportunity({
-      opportunityData: opportunity,
+  public async createChildChallenge(challengeData: CreateChallengeInput) {
+    const result = await this.client.createChildChallenge({
+      childChallengeData: challengeData,
     });
 
     this.errorHandler(result.errors);
 
-    return result.data?.createOpportunity;
+    return result.data?.createChildChallenge;
   }
 
   public async addReference(
@@ -241,7 +239,7 @@ export class CherrytwistClient {
   }
 
   async createRelation(
-    opportunityID: string,
+    collaborationID: string,
     type: string,
     description: string,
     actorName: string,
@@ -249,7 +247,7 @@ export class CherrytwistClient {
     actorType: string
   ) {
     const relationData = {
-      parentID: Number(opportunityID),
+      parentID: Number(collaborationID),
       type,
       description,
       actorName,
@@ -267,13 +265,13 @@ export class CherrytwistClient {
   }
 
   async createActorGroup(
-    opportunityID: string,
+    ecosystemModelID: string,
     actorGroupName: string,
     description: string
   ) {
     const { data, errors } = await this.client.createActorGroup({
       actorGroupData: {
-        parentID: Number(opportunityID),
+        parentID: Number(ecosystemModelID),
         name: actorGroupName,
         description,
       },
@@ -284,7 +282,6 @@ export class CherrytwistClient {
     return data?.createActorGroup;
   }
 
-  // Create a actorgroup for the given opportunity
   async createActor(
     actorGroupID: string,
     actorName: string,
@@ -307,7 +304,6 @@ export class CherrytwistClient {
     return data?.createActor;
   }
 
-  // Create a actor group for the given opportunity
   async updateActor(
     actorID: string,
     actorName: string,
@@ -330,16 +326,16 @@ export class CherrytwistClient {
     return data?.updateActor;
   }
 
-  // Create a aspect for the given opportunity
+  // Create a aspect for the given context
   async createAspect(
-    opportunityID: string,
+    contextID: string,
     title: string,
     framing: string,
     explanation: string
   ) {
     const { data, errors } = await this.client.createAspect({
       aspectData: {
-        parentID: Number(opportunityID),
+        parentID: Number(contextID),
         title,
         framing,
         explanation,
@@ -427,16 +423,6 @@ export class CherrytwistClient {
     return data?.updateChallenge;
   }
 
-  public async updateOpportunity(opportunity: UpdateOpportunityInput) {
-    const { data, errors } = await this.client.updateOpportunity({
-      opportunityData: opportunity,
-    });
-
-    this.errorHandler(errors);
-
-    return data?.updateOpportunity;
-  }
-
   public async updateOrganisation(organisation: UpdateOrganisationInput) {
     const { data, errors } = await this.client.updateOrganisation({
       organisationData: organisation,
@@ -494,12 +480,6 @@ export class CherrytwistClient {
     this.errorHandler(errors);
 
     return data?.ecoverse.opportunities;
-  }
-
-  async addUserToOpportunity(userID: string, opportunityID: string) {
-    const opportunity = await this.client.opportunity({ id: opportunityID });
-    const communityID = opportunity.data?.ecoverse.opportunity?.community?.id;
-    return await this.addUserToCommunity(userID, communityID);
   }
 
   async addUserToCommunity(userID: string, communityID?: string) {

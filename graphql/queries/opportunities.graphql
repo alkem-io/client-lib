@@ -3,15 +3,16 @@ query opportunities {
     opportunities {
       id
       ...OpportunityProfile
-      actorGroups {
-        id
-        name
+      collaboration {
+        relations {
+          actorName
+        }
       }
     }
   }
 }
 
-fragment OpportunityProfile on Opportunity {
+fragment OpportunityProfile on Challenge {
   textID
   name
   lifecycle {
@@ -27,6 +28,12 @@ fragment OpportunityProfile on Opportunity {
       name
       uri
       description
+    }
+    ecosystemModel {
+      actorGroups {
+        id
+        name
+      }
     }
   }
 }

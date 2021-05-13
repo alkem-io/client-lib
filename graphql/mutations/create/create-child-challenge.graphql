@@ -1,0 +1,7 @@
+mutation createChildChallenge($childChallengeData: CreateChallengeInput!) {
+  createChildChallenge(challengeData: $childChallengeData) {
+    id
+    name
+    textID
+  }
+}
