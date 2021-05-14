@@ -348,7 +348,7 @@ export class CherrytwistClient {
   }
 
   // Create a gouup at the ecoverse level with the given name
-  async createEcoverseGroup(groupName: string) {
+  async createEcoverseGroup(groupName: string, groupDesc: string) {
     const ecoverseInfo = await this.client.ecoverseInfo();
 
     const communityID = Number(ecoverseInfo.data?.ecoverse.community?.id);
@@ -356,6 +356,9 @@ export class CherrytwistClient {
       groupData: {
         name: groupName,
         parentID: communityID,
+        profileData: {
+          description: groupDesc,
+        },
       },
     });
 

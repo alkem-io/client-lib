@@ -211,9 +211,11 @@ export type Config = {
 };
 
 export type Context = {
+  /** The Aspects for this Context. */
+  aspects?: Maybe<Array<Aspect>>;
   /** A detailed description of the current situation */
   background?: Maybe<Scalars['String']>;
-  /** The model of the Ecosystem */
+  /** The EcosystemModel for this Context. */
   ecosystemModel?: Maybe<EcosystemModel>;
   id: Scalars['ID'];
   /** What is the potential impact? */

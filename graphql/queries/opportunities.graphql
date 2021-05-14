@@ -2,7 +2,36 @@ query opportunities {
   ecoverse {
     opportunities {
       id
-      ...OpportunityProfile
+      textID
+      name
+      lifecycle {
+        state
+      }
+      context {
+        id
+        tagline
+        background
+        vision
+        impact
+        who
+        references {
+          name
+          uri
+          description
+        }
+        ecosystemModel {
+          id
+          actorGroups {
+            id
+            name
+          }
+        }
+        aspects {
+          title
+          explanation
+          framing
+        }
+      }
       collaboration {
         relations {
           actorName
@@ -12,28 +41,3 @@ query opportunities {
   }
 }
 
-fragment OpportunityProfile on Challenge {
-  textID
-  name
-  lifecycle {
-    state
-  }
-  context {
-    tagline
-    background
-    vision
-    impact
-    who
-    references {
-      name
-      uri
-      description
-    }
-    ecosystemModel {
-      actorGroups {
-        id
-        name
-      }
-    }
-  }
-}

@@ -337,34 +337,34 @@ export type OpportunitiesQueryVariables = SchemaTypes.Exact<{
 
 export type OpportunitiesQuery = {
   ecoverse: {
-    opportunities: Array<
-      {
+    opportunities: Array<{
+      id: string;
+      textID: string;
+      name: string;
+      lifecycle?: SchemaTypes.Maybe<{ state?: SchemaTypes.Maybe<string> }>;
+      context?: SchemaTypes.Maybe<{
         id: string;
-        collaboration?: SchemaTypes.Maybe<{
-          relations?: SchemaTypes.Maybe<Array<{ actorName: string }>>;
+        tagline?: SchemaTypes.Maybe<string>;
+        background?: SchemaTypes.Maybe<string>;
+        vision?: SchemaTypes.Maybe<string>;
+        impact?: SchemaTypes.Maybe<string>;
+        who?: SchemaTypes.Maybe<string>;
+        references?: SchemaTypes.Maybe<
+          Array<{ name: string; uri: string; description: string }>
+        >;
+        ecosystemModel?: SchemaTypes.Maybe<{
+          id: string;
+          actorGroups?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
         }>;
-      } & OpportunityProfileFragment
-    >;
-  };
-};
-
-export type OpportunityProfileFragment = {
-  textID: string;
-  name: string;
-  lifecycle?: SchemaTypes.Maybe<{ state?: SchemaTypes.Maybe<string> }>;
-  context?: SchemaTypes.Maybe<{
-    tagline?: SchemaTypes.Maybe<string>;
-    background?: SchemaTypes.Maybe<string>;
-    vision?: SchemaTypes.Maybe<string>;
-    impact?: SchemaTypes.Maybe<string>;
-    who?: SchemaTypes.Maybe<string>;
-    references?: SchemaTypes.Maybe<
-      Array<{ name: string; uri: string; description: string }>
-    >;
-    ecosystemModel?: SchemaTypes.Maybe<{
-      actorGroups?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
+        aspects?: SchemaTypes.Maybe<
+          Array<{ title: string; explanation: string; framing: string }>
+        >;
+      }>;
+      collaboration?: SchemaTypes.Maybe<{
+        relations?: SchemaTypes.Maybe<Array<{ actorName: string }>>;
+      }>;
     }>;
-  }>;
+  };
 };
 
 export type OrganisationQueryVariables = SchemaTypes.Exact<{
@@ -450,33 +450,6 @@ export const ChallengeDetailsFragmentDoc = gql`
         actorGroups {
           name
           id
-        }
-      }
-    }
-  }
-`;
-export const OpportunityProfileFragmentDoc = gql`
-  fragment OpportunityProfile on Challenge {
-    textID
-    name
-    lifecycle {
-      state
-    }
-    context {
-      tagline
-      background
-      vision
-      impact
-      who
-      references {
-        name
-        uri
-        description
-      }
-      ecosystemModel {
-        actorGroups {
-          id
-          name
         }
       }
     }
@@ -795,7 +768,36 @@ export const OpportunitiesDocument = gql`
     ecoverse {
       opportunities {
         id
-        ...OpportunityProfile
+        textID
+        name
+        lifecycle {
+          state
+        }
+        context {
+          id
+          tagline
+          background
+          vision
+          impact
+          who
+          references {
+            name
+            uri
+            description
+          }
+          ecosystemModel {
+            id
+            actorGroups {
+              id
+              name
+            }
+          }
+          aspects {
+            title
+            explanation
+            framing
+          }
+        }
         collaboration {
           relations {
             actorName
@@ -804,7 +806,6 @@ export const OpportunitiesDocument = gql`
       }
     }
   }
-  ${OpportunityProfileFragmentDoc}
 `;
 export const OrganisationDocument = gql`
   query organisation($id: String!) {
