@@ -266,7 +266,7 @@ export class CherrytwistClient {
   }
 
   async createRelation(
-    collaborationID: string,
+    opportunityID: string,
     type: string,
     description: string,
     actorName: string,
@@ -274,7 +274,7 @@ export class CherrytwistClient {
     actorType: string
   ) {
     const relationData = {
-      parentID: Number(collaborationID),
+      parentID: Number(opportunityID),
       type,
       description,
       actorName,
