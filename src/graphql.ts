@@ -360,9 +360,7 @@ export type OpportunitiesQuery = {
           Array<{ title: string; explanation: string; framing: string }>
         >;
       }>;
-      collaboration?: SchemaTypes.Maybe<{
-        relations?: SchemaTypes.Maybe<Array<{ actorName: string }>>;
-      }>;
+      relations?: SchemaTypes.Maybe<Array<{ actorName: string }>>;
     }>;
   };
 };
@@ -798,10 +796,8 @@ export const OpportunitiesDocument = gql`
             framing
           }
         }
-        collaboration {
-          relations {
-            actorName
-          }
+        relations {
+          actorName
         }
       }
     }

@@ -521,7 +521,7 @@ export class CherrytwistClient {
     const updateRefsInput: UpdateReferenceInput[] = [];
     for (const oldRef of oldReferences) {
       const newRefInput: UpdateReferenceInput = {
-        ID: Number(oldRef.id),
+        ID: oldRef.id,
         name: oldRef.name,
         description: oldRef.description,
         uri: oldRef.uri,
