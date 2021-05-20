@@ -10,6 +10,7 @@ import {
   UpdateContextInput,
   Reference,
   UpdateReferenceInput,
+  CreateOpportunityInput,
 } from './types/cherrytwist-schema';
 import { ErrorHandler, handleErrors } from './util/handleErrors';
 import semver from 'semver';
@@ -80,6 +81,16 @@ export class CherrytwistClient {
     this.errorHandler(result.errors);
 
     return result.data?.createChildChallenge;
+  }
+
+  public async createOpportunity(opportunityData: CreateOpportunityInput) {
+    const result = await this.client.createOpportunity({
+      opportunityData: opportunityData,
+    });
+
+    this.errorHandler(result.errors);
+
+    return result.data?.createOpportunity;
   }
 
   public async addReference(
@@ -176,6 +187,22 @@ export class CherrytwistClient {
     const response = await this.client.challenge({ id: challengeName });
     const communityID = Number(
       response.data?.ecoverse.challenge?.community?.id
+    );
+
+    if (!response) return;
+
+    return await this.client.addUserToCommunity({
+      input: {
+        userID: Number(userID),
+        communityID,
+      },
+    });
+  }
+
+  async addUserToOpportunity(opportunityName: string, userID: string) {
+    const response = await this.client.opportunity({ id: opportunityName });
+    const communityID = Number(
+      response.data?.ecoverse.opportunity?.community?.id
     );
 
     if (!response) return;

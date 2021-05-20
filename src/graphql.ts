@@ -119,6 +119,14 @@ export type CreateGroupOnOrganisationMutation = {
   createGroupOnOrganisation: { id: string; name: string };
 };
 
+export type CreateOpportunityMutationVariables = SchemaTypes.Exact<{
+  opportunityData: SchemaTypes.CreateOpportunityInput;
+}>;
+
+export type CreateOpportunityMutation = {
+  createOpportunity: { id: string; name: string; textID: string };
+};
+
 export type CreateOrganisationMutationVariables = SchemaTypes.Exact<{
   organisationData: SchemaTypes.CreateOrganisationInput;
 }>;
@@ -365,6 +373,21 @@ export type OpportunitiesQuery = {
   };
 };
 
+export type OpportunityQueryVariables = SchemaTypes.Exact<{
+  id: SchemaTypes.Scalars['String'];
+}>;
+
+export type OpportunityQuery = {
+  ecoverse: {
+    opportunity: {
+      name: string;
+      id: string;
+      textID: string;
+      community?: SchemaTypes.Maybe<{ id: string; name: string }>;
+    };
+  };
+};
+
 export type OrganisationQueryVariables = SchemaTypes.Exact<{
   id: SchemaTypes.Scalars['String'];
 }>;
@@ -547,6 +570,15 @@ export const CreateGroupOnOrganisationDocument = gql`
     createGroupOnOrganisation(groupData: $groupData) {
       id
       name
+    }
+  }
+`;
+export const CreateOpportunityDocument = gql`
+  mutation createOpportunity($opportunityData: CreateOpportunityInput!) {
+    createOpportunity(opportunityData: $opportunityData) {
+      id
+      name
+      textID
     }
   }
 `;
@@ -803,6 +835,21 @@ export const OpportunitiesDocument = gql`
     }
   }
 `;
+export const OpportunityDocument = gql`
+  query opportunity($id: String!) {
+    ecoverse {
+      opportunity(ID: $id) {
+        name
+        id
+        textID
+        community {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
 export const OrganisationDocument = gql`
   query organisation($id: String!) {
     organisation(ID: $id) {
@@ -1022,6 +1069,22 @@ export function getSdk(
       return withWrapper(() =>
         client.rawRequest<CreateGroupOnOrganisationMutation>(
           print(CreateGroupOnOrganisationDocument),
+          variables
+        )
+      );
+    },
+    createOpportunity(
+      variables: CreateOpportunityMutationVariables
+    ): Promise<{
+      data?: CreateOpportunityMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<CreateOpportunityMutation>(
+          print(CreateOpportunityDocument),
           variables
         )
       );
@@ -1327,6 +1390,22 @@ export function getSdk(
       return withWrapper(() =>
         client.rawRequest<OpportunitiesQuery>(
           print(OpportunitiesDocument),
+          variables
+        )
+      );
+    },
+    opportunity(
+      variables: OpportunityQueryVariables
+    ): Promise<{
+      data?: OpportunityQuery | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<OpportunityQuery>(
+          print(OpportunityDocument),
           variables
         )
       );

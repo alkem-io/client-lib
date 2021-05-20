@@ -32,11 +32,9 @@ query opportunities {
           framing
         }
       }
-      collaboration {
-        relations {
+      relations {
           actorName
         }
-      }
     }
   }
 }
