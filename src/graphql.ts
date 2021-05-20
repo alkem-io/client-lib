@@ -13,14 +13,11 @@ export type ChallengeDetailsFragment = {
   community?: SchemaTypes.Maybe<{
     groups?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
   }>;
-};
-
-export type OpportunityDetailsFragment = {
-  id: string;
-  name: string;
-  tagset?: SchemaTypes.Maybe<{ tags: Array<string>; id: string; name: string }>;
-  community?: SchemaTypes.Maybe<{
-    groups?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
+  context?: SchemaTypes.Maybe<{
+    ecosystemModel?: SchemaTypes.Maybe<{
+      id: string;
+      actorGroups?: SchemaTypes.Maybe<Array<{ name: string; id: string }>>;
+    }>;
   }>;
 };
 
@@ -96,6 +93,14 @@ export type CreateChallengeMutationVariables = SchemaTypes.Exact<{
 
 export type CreateChallengeMutation = {
   createChallenge: { id: string; name: string };
+};
+
+export type CreateChildChallengeMutationVariables = SchemaTypes.Exact<{
+  childChallengeData: SchemaTypes.CreateChallengeInput;
+}>;
+
+export type CreateChildChallengeMutation = {
+  createChildChallenge: { id: string; name: string; textID: string };
 };
 
 export type CreateGroupOnCommunityMutationVariables = SchemaTypes.Exact<{
@@ -213,14 +218,6 @@ export type UpdateEcoverseMutation = {
     name: string;
     context?: SchemaTypes.Maybe<{ tagline?: SchemaTypes.Maybe<string> }>;
   };
-};
-
-export type UpdateOpportunityMutationVariables = SchemaTypes.Exact<{
-  opportunityData: SchemaTypes.UpdateOpportunityInput;
-}>;
-
-export type UpdateOpportunityMutation = {
-  updateOpportunity: OpportunityDetailsFragment;
 };
 
 export type UpdateOrganisationMutationVariables = SchemaTypes.Exact<{
@@ -348,29 +345,32 @@ export type OpportunitiesQueryVariables = SchemaTypes.Exact<{
 
 export type OpportunitiesQuery = {
   ecoverse: {
-    opportunities: Array<
-      {
+    opportunities: Array<{
+      id: string;
+      textID: string;
+      name: string;
+      lifecycle?: SchemaTypes.Maybe<{ state?: SchemaTypes.Maybe<string> }>;
+      context?: SchemaTypes.Maybe<{
         id: string;
-        actorGroups?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
-      } & OpportunityProfileFragment
-    >;
+        tagline?: SchemaTypes.Maybe<string>;
+        background?: SchemaTypes.Maybe<string>;
+        vision?: SchemaTypes.Maybe<string>;
+        impact?: SchemaTypes.Maybe<string>;
+        who?: SchemaTypes.Maybe<string>;
+        references?: SchemaTypes.Maybe<
+          Array<{ name: string; uri: string; description: string }>
+        >;
+        ecosystemModel?: SchemaTypes.Maybe<{
+          id: string;
+          actorGroups?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
+        }>;
+        aspects?: SchemaTypes.Maybe<
+          Array<{ title: string; explanation: string; framing: string }>
+        >;
+      }>;
+      relations?: SchemaTypes.Maybe<Array<{ actorName: string }>>;
+    }>;
   };
-};
-
-export type OpportunityProfileFragment = {
-  textID: string;
-  name: string;
-  lifecycle?: SchemaTypes.Maybe<{ state?: SchemaTypes.Maybe<string> }>;
-  context?: SchemaTypes.Maybe<{
-    tagline?: SchemaTypes.Maybe<string>;
-    background?: SchemaTypes.Maybe<string>;
-    vision?: SchemaTypes.Maybe<string>;
-    impact?: SchemaTypes.Maybe<string>;
-    who?: SchemaTypes.Maybe<string>;
-    references?: SchemaTypes.Maybe<
-      Array<{ name: string; uri: string; description: string }>
-    >;
-  }>;
 };
 
 export type OpportunityQueryVariables = SchemaTypes.Exact<{
@@ -465,42 +465,13 @@ export const ChallengeDetailsFragmentDoc = gql`
         name
       }
     }
-  }
-`;
-export const OpportunityDetailsFragmentDoc = gql`
-  fragment OpportunityDetails on Opportunity {
-    id
-    name
-    tagset {
-      tags
-      id
-      name
-    }
-    community {
-      groups {
-        id
-        name
-      }
-    }
-  }
-`;
-export const OpportunityProfileFragmentDoc = gql`
-  fragment OpportunityProfile on Opportunity {
-    textID
-    name
-    lifecycle {
-      state
-    }
     context {
-      tagline
-      background
-      vision
-      impact
-      who
-      references {
-        name
-        uri
-        description
+      ecosystemModel {
+        id
+        actorGroups {
+          name
+          id
+        }
       }
     }
   }
@@ -574,6 +545,15 @@ export const CreateChallengeDocument = gql`
     createChallenge(challengeData: $challengeData) {
       id
       name
+    }
+  }
+`;
+export const CreateChildChallengeDocument = gql`
+  mutation createChildChallenge($childChallengeData: CreateChallengeInput!) {
+    createChildChallenge(challengeData: $childChallengeData) {
+      id
+      name
+      textID
     }
   }
 `;
@@ -692,14 +672,6 @@ export const UpdateEcoverseDocument = gql`
       }
     }
   }
-`;
-export const UpdateOpportunityDocument = gql`
-  mutation updateOpportunity($opportunityData: UpdateOpportunityInput!) {
-    updateOpportunity(opportunityData: $opportunityData) {
-      ...OpportunityDetails
-    }
-  }
-  ${OpportunityDetailsFragmentDoc}
 `;
 export const UpdateOrganisationDocument = gql`
   mutation updateOrganisation($organisationData: UpdateOrganisationInput!) {
@@ -826,15 +798,42 @@ export const OpportunitiesDocument = gql`
     ecoverse {
       opportunities {
         id
-        ...OpportunityProfile
-        actorGroups {
+        textID
+        name
+        lifecycle {
+          state
+        }
+        context {
           id
-          name
+          tagline
+          background
+          vision
+          impact
+          who
+          references {
+            name
+            uri
+            description
+          }
+          ecosystemModel {
+            id
+            actorGroups {
+              id
+              name
+            }
+          }
+          aspects {
+            title
+            explanation
+            framing
+          }
+        }
+        relations {
+          actorName
         }
       }
     }
   }
-  ${OpportunityProfileFragmentDoc}
 `;
 export const OpportunityDocument = gql`
   query opportunity($id: String!) {
@@ -1022,6 +1021,22 @@ export function getSdk(
       return withWrapper(() =>
         client.rawRequest<CreateChallengeMutation>(
           print(CreateChallengeDocument),
+          variables
+        )
+      );
+    },
+    createChildChallenge(
+      variables: CreateChildChallengeMutationVariables
+    ): Promise<{
+      data?: CreateChildChallengeMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<CreateChildChallengeMutation>(
+          print(CreateChildChallengeDocument),
           variables
         )
       );
@@ -1230,22 +1245,6 @@ export function getSdk(
       return withWrapper(() =>
         client.rawRequest<UpdateEcoverseMutation>(
           print(UpdateEcoverseDocument),
-          variables
-        )
-      );
-    },
-    updateOpportunity(
-      variables: UpdateOpportunityMutationVariables
-    ): Promise<{
-      data?: UpdateOpportunityMutation | undefined;
-      extensions?: any;
-      headers: Headers;
-      status: number;
-      errors?: GraphQLError[] | undefined;
-    }> {
-      return withWrapper(() =>
-        client.rawRequest<UpdateOpportunityMutation>(
-          print(UpdateOpportunityDocument),
           variables
         )
       );
