@@ -73,7 +73,7 @@ export type ApiConfig = {
 export type Application = {
   /** The ID of the entity */
   id: Scalars['ID'];
-  lifecycle: Lifecycle2;
+  lifecycle: Lifecycle;
   questions: Array<Question>;
   user: User;
 };
@@ -161,7 +161,7 @@ export type Challenge = {
   /** The Organisations that are leading this Challenge. */
   leadOrganisations: Array<Organisation>;
   /** The lifeycle for the Challenge. */
-  lifecycle?: Maybe<Lifecycle2>;
+  lifecycle?: Maybe<Lifecycle>;
   name: Scalars['String'];
   /** The Opportunities for the challenge. */
   opportunites?: Maybe<Array<Opportunity>>;
@@ -290,11 +290,11 @@ export type CreateNvpInput = {
 };
 
 export type CreateOpportunityInput = {
+  challengeID: Scalars['String'];
   context?: Maybe<CreateContextInput>;
   lifecycleTemplate?: Maybe<Scalars['String']>;
   /** The name for the entity. */
   name: Scalars['String'];
-  parentID: Scalars['String'];
   tags?: Maybe<Array<Scalars['String']>>;
   /** A display identifier, unique within the containing entity. */
   textID: Scalars['TextID'];
@@ -319,7 +319,7 @@ export type CreateProjectInput = {
   description?: Maybe<Scalars['String']>;
   /** The name for the entity. */
   name: Scalars['String'];
-  parentID: Scalars['Float'];
+  opportunityID: Scalars['Float'];
   /** A display identifier, unique within the containing entity. */
   textID: Scalars['TextID'];
 };
@@ -518,7 +518,7 @@ export type Groupable = {
   groups?: Maybe<Array<UserGroup>>;
 };
 
-export type Lifecycle2 = {
+export type Lifecycle = {
   /** The ID of the entity */
   id: Scalars['ID'];
   /** The machine definition, describing the states, transitions etc for this Lifeycle. */
@@ -660,6 +660,8 @@ export type Mutation = {
   eventOnApplication: Application;
   /** Trigger an event on the Challenge. */
   eventOnChallenge: Challenge;
+  /** Trigger an event on the Opportunity. */
+  eventOnOpportunity: Opportunity;
   /** Trigger an event on the Project. */
   eventOnProject: Project;
   /** Grants an authorization credential to a User. */
@@ -836,6 +838,10 @@ export type MutationEventOnChallengeArgs = {
   challengeEventData: ChallengeEventInput;
 };
 
+export type MutationEventOnOpportunityArgs = {
+  opportunityEventData: OpportunityEventInput;
+};
+
 export type MutationEventOnProjectArgs = {
   projectEventData: ProjectEventInput;
 };
@@ -920,7 +926,7 @@ export type Opportunity = {
   /** The ID of the entity */
   id: Scalars['ID'];
   /** The lifeycle for the Opportunity. */
-  lifecycle?: Maybe<Lifecycle2>;
+  lifecycle?: Maybe<Lifecycle>;
   name: Scalars['String'];
   /** The set of projects within the context of this Opportunity */
   projects?: Maybe<Array<Project>>;
@@ -930,6 +936,11 @@ export type Opportunity = {
   tagset?: Maybe<Tagset>;
   /** A short text identifier for this Organisation */
   textID: Scalars['String'];
+};
+
+export type OpportunityEventInput = {
+  ID: Scalars['Float'];
+  eventName: Scalars['String'];
 };
 
 export type OpportunityTemplate = {
@@ -980,7 +991,7 @@ export type Project = {
   /** The ID of the entity */
   id: Scalars['ID'];
   /** The maturity phase of the project i.e. new, being refined, committed, in-progress, closed etc */
-  lifecycle2?: Maybe<Lifecycle2>;
+  lifecycle?: Maybe<Lifecycle>;
   name: Scalars['String'];
   /** The set of tags for the project */
   tagset?: Maybe<Tagset>;
