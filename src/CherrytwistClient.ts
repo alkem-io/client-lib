@@ -12,6 +12,7 @@ import {
   UpdateContextInput,
   Reference,
   UpdateReferenceInput,
+  CreateEcoverseInput,
 } from './types/cherrytwist-schema';
 import { ErrorHandler, handleErrors } from './util/handleErrors';
 import semver from 'semver';
@@ -34,22 +35,14 @@ export class CherrytwistClient {
     this.errorHandler = handleErrors();
   }
 
-  public async validateConnection(): Promise<boolean> {
-    const { data, errors } = await this.client.ecoverseInfo();
+  public async validateConnection() {
+    const serverVersion = await this.serverVersion();
 
-    const ecoverseName = data?.ecoverse.name;
-
-    if (errors || !ecoverseName) {
-      return false;
-    }
-
-    await this.validateServerVersion();
-
-    return true;
+    this.validateServerVersion(serverVersion);
+    return serverVersion;
   }
 
-  public async validateServerVersion(): Promise<boolean> {
-    const serverVersion = await this.serverVersion();
+  public validateServerVersion(serverVersion: string): boolean {
     const MIN_SERVER_VERSION = '0.11.0';
     const validVersion = semver.gte(serverVersion, MIN_SERVER_VERSION);
     if (!validVersion)
@@ -59,10 +52,12 @@ export class CherrytwistClient {
     return true;
   }
 
-  public async serverVersion() {
+  public async serverVersion(): Promise<string> {
     const { data, errors } = await this.client.metadata();
     if (errors) {
-      throw new Error('Unable to query meta data');
+      throw new Error(
+        `Unable to query meta data from: ${this.config.graphqlEndpoint}`
+      );
     }
     const serverMetaData = data?.metadata.services.find(
       service => service.name === 'ct-server'
@@ -72,6 +67,28 @@ export class CherrytwistClient {
     if (!serverVersion)
       throw new Error(`Unable to retrive CT server version: ${serverVersion}`);
     return serverVersion;
+  }
+
+  public async ecoverseExists(): Promise<boolean> {
+    try {
+      const result = await this.client.ecoverse({
+        id: this.config.ecoverseID,
+      });
+      if (!result.errors) return true;
+    } catch (error) {
+      return false;
+    }
+    return true;
+  }
+
+  public async createEcoverse(ecoverseData: CreateEcoverseInput) {
+    const result = await this.client.createEcoverse({
+      ecoverseData: ecoverseData,
+    });
+
+    this.errorHandler(result.errors);
+
+    return result.data?.createEcoverse;
   }
 
   public async createOpportunity(opportunity: CreateOpportunityInput) {
@@ -92,7 +109,7 @@ export class CherrytwistClient {
   ) {
     const { data, errors } = await this.client.createReferenceOnProfile({
       referenceInput: {
-        parentID: Number(profileID),
+        parentID: profileID,
         uri: referenceURI,
         name: referenceName,
         description: referenceDesc,
@@ -148,7 +165,7 @@ export class CherrytwistClient {
     if (tags) {
       const { errors } = await this.client.createTagsetOnProfile({
         tagsetData: {
-          parentID: Number(profileID),
+          parentID: profileID,
           name: tagsetName,
         },
       });
@@ -159,8 +176,8 @@ export class CherrytwistClient {
   }
 
   async addUserToGroup(userID: string, groupID: string): Promise<boolean> {
-    const uID = Number(userID);
-    const gID = Number(groupID);
+    const uID = userID;
+    const gID = groupID;
 
     const { data, errors } = await this.client.addUserToGroup({
       input: {
@@ -174,31 +191,36 @@ export class CherrytwistClient {
     return !!data?.assignUserToGroup;
   }
 
-  async addUserToChallenge(challengeName: string, userID: string) {
-    const response = await this.client.challenge({ id: challengeName });
-    const communityID = Number(
-      response.data?.ecoverse.challenge?.community?.id
-    );
+  async addUserToChallenge(
+    ecoverseID: string,
+    challengeName: string,
+    userID: string
+  ) {
+    const response = await this.client.challenge({
+      ecoverseID: ecoverseID,
+      challengeID: challengeName,
+    });
+    const communityID = response.data?.ecoverse.challenge?.community?.id;
 
     if (!response) return;
 
     return await this.client.addUserToCommunity({
       input: {
-        userID: Number(userID),
+        userID: userID,
         communityID,
       },
     });
   }
 
   async addUserToEcoverse(userID: string) {
-    const response = await this.client.ecoverseInfo();
-    const communityID = Number(response.data?.ecoverse?.community?.id);
+    const response = await this.ecoverseInfo();
+    const communityID = response.data?.ecoverse?.community?.id;
 
     if (!response) return;
 
     return await this.client.addUserToCommunity({
       input: {
-        userID: Number(userID),
+        userID: userID,
         communityID,
       },
     });
@@ -221,6 +243,7 @@ export class CherrytwistClient {
     const { data, errors } = await this.client.updateEcoverse({
       ecoverseData: {
         ID: '1',
+        nameID: 'test',
         context: context,
       },
     });
@@ -248,17 +271,15 @@ export class CherrytwistClient {
     actorRole: string,
     actorType: string
   ) {
-    const relationData = {
-      parentID: Number(opportunityID),
-      type,
-      description,
-      actorName,
-      actorType,
-      actorRole,
-    };
-
     const { data, errors } = await this.client.createRelation({
-      relationData,
+      relationData: {
+        parentID: opportunityID,
+        type,
+        description,
+        actorName,
+        actorType,
+        actorRole,
+      },
     });
 
     this.errorHandler(errors);
@@ -273,7 +294,7 @@ export class CherrytwistClient {
   ) {
     const { data, errors } = await this.client.createActorGroup({
       actorGroupData: {
-        parentID: Number(opportunityID),
+        ecosystemModelID: opportunityID,
         name: actorGroupName,
         description,
       },
@@ -294,7 +315,7 @@ export class CherrytwistClient {
   ) {
     const { data, errors } = await this.client.createActor({
       actorData: {
-        parentID: Number(actorGroupID),
+        actorGroupID: actorGroupID,
         name: actorName,
         value,
         impact,
@@ -339,7 +360,7 @@ export class CherrytwistClient {
   ) {
     const { data, errors } = await this.client.createAspect({
       aspectData: {
-        parentID: Number(opportunityID),
+        parentID: opportunityID,
         title,
         framing,
         explanation,
@@ -353,9 +374,9 @@ export class CherrytwistClient {
 
   // Create a gouup at the ecoverse level with the given name
   async createEcoverseGroup(groupName: string) {
-    const ecoverseInfo = await this.client.ecoverseInfo();
+    const ecoverseInfo = await this.ecoverseInfo();
 
-    const communityID = Number(ecoverseInfo.data?.ecoverse.community?.id);
+    const communityID = ecoverseInfo.data?.ecoverse.community?.id;
     const { data, errors } = await this.client.createGroupOnCommunity({
       groupData: {
         name: groupName,
@@ -368,11 +389,11 @@ export class CherrytwistClient {
     return data?.createGroupOnCommunity;
   }
 
-  public async createOrganisation(name: string, textID: string) {
+  public async createOrganisation(displayName: string, nameID: string) {
     const { data, errors } = await this.client.createOrganisation({
       organisationData: {
-        textID,
-        name,
+        nameID: nameID,
+        displayName: displayName,
       },
     });
 
@@ -410,7 +431,9 @@ export class CherrytwistClient {
   }
 
   public async challenges() {
-    const { data, errors } = await this.client.challenges();
+    const { data, errors } = await this.client.challenges({
+      ecoverseID: this.config.ecoverseID,
+    });
 
     this.errorHandler(errors);
 
@@ -458,7 +481,9 @@ export class CherrytwistClient {
   }
 
   public async groups() {
-    const { data, errors } = await this.client.groups();
+    const { data, errors } = await this.client.groups({
+      ecoverseID: this.config.ecoverseID,
+    });
 
     this.errorHandler(errors);
 
@@ -489,7 +514,9 @@ export class CherrytwistClient {
   }
 
   public async opportunities() {
-    const { data, errors } = await this.client.opportunities();
+    const { data, errors } = await this.client.opportunities({
+      ecoverseID: this.config.ecoverseID,
+    });
 
     this.errorHandler(errors);
 
@@ -497,16 +524,19 @@ export class CherrytwistClient {
   }
 
   async addUserToOpportunity(userID: string, opportunityID: string) {
-    const opportunity = await this.client.opportunity({ id: opportunityID });
+    const opportunity = await this.client.opportunity({
+      ecoverseID: this.config.ecoverseID,
+      opportunityID: opportunityID,
+    });
     const communityID = opportunity.data?.ecoverse.opportunity?.community?.id;
     return await this.addUserToCommunity(userID, communityID);
   }
 
   async addUserToCommunity(userID: string, communityID?: string) {
-    const uID = Number(userID);
+    const uID = userID;
     if (!communityID)
       throw new Error(`Unable to locate community: ${communityID}`);
-    const cID = Number(communityID);
+    const cID = communityID;
 
     const { data, errors } = await this.client.addUserToCommunity({
       input: {
@@ -520,8 +550,14 @@ export class CherrytwistClient {
     return data?.assignUserToCommunity;
   }
 
+  async ecoverseInfo() {
+    return await this.client.ecoverse({
+      id: this.config.ecoverseID,
+    });
+  }
+
   async updateReferencesOnEcoverse(references: Omit<Reference, 'id'>[]) {
-    const ecoverseInfo = await this.client.ecoverseInfo();
+    const ecoverseInfo = await this.ecoverseInfo();
     const contextId = ecoverseInfo.data?.ecoverse.context?.id;
     if (!contextId) {
       throw new Error('Ecoverse context id does not exist.');
@@ -538,7 +574,7 @@ export class CherrytwistClient {
     const updateRefsInput: UpdateReferenceInput[] = [];
     for (const oldRef of oldReferences) {
       const newRefInput: UpdateReferenceInput = {
-        ID: Number(oldRef.id),
+        ID: oldRef.id,
         name: oldRef.name,
         description: oldRef.description,
         uri: oldRef.uri,
@@ -559,7 +595,7 @@ export class CherrytwistClient {
     for (const newRef of newReferences) {
       this.client.createReferenceOnContext({
         input: {
-          parentID: Number(contextId),
+          parentID: contextId,
           name: newRef.name,
           description: newRef.description,
           uri: newRef.uri,

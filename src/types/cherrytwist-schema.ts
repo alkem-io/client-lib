@@ -15,8 +15,14 @@ export type Scalars = {
   Float: number;
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSON: any;
-  /** A short text based identifier, 3 <= length <= 20. Used for URL paths in clients. Characters allowed: a-z,A-Z,0-9. */
-  TextID: string;
+  /** A human readable identifier, 3 <= length <= 25. Used for URL paths in clients. Characters allowed: a-z,A-Z,0-9. */
+  NameID: any;
+  /** A uuid identifier. Length 36 charachters. */
+  UUID: any;
+  /** A UUID or NameID identifier. */
+  UUID_NAMEID: any;
+  /** A UUID or Email identifier. */
+  UUID_NAMEID_EMAIL: any;
   /** The `Upload` scalar type represents a file upload. */
   Upload: File;
 };
@@ -37,7 +43,8 @@ export type AadAuthProviderConfig = {
 export type Actor = {
   /** A description of this actor */
   description?: Maybe<Scalars['String']>;
-  id: Scalars['ID'];
+  /** The ID of the entity */
+  id: Scalars['UUID'];
   /** The change / effort required of this actor */
   impact?: Maybe<Scalars['String']>;
   name: Scalars['String'];
@@ -50,7 +57,8 @@ export type ActorGroup = {
   actors?: Maybe<Array<Actor>>;
   /** A description of this group of actors */
   description?: Maybe<Scalars['String']>;
-  id: Scalars['ID'];
+  /** The ID of the entity */
+  id: Scalars['UUID'];
   name: Scalars['String'];
 };
 
@@ -59,7 +67,8 @@ export type Agent = {
   credentials?: Maybe<Array<Credential>>;
   /** The Decentralized Identifier (DID) for this Agent. */
   did?: Maybe<Scalars['String']>;
-  id: Scalars['ID'];
+  /** The ID of the entity */
+  id: Scalars['UUID'];
 };
 
 export type ApiConfig = {
@@ -68,14 +77,15 @@ export type ApiConfig = {
 };
 
 export type Application = {
-  id: Scalars['ID'];
+  /** The ID of the entity */
+  id: Scalars['UUID'];
   lifecycle: Lifecycle;
   questions: Array<Question>;
   user: User;
 };
 
 export type ApplicationEventInput = {
-  ID: Scalars['Float'];
+  ID: Scalars['UUID'];
   eventName: Scalars['String'];
 };
 
@@ -89,31 +99,24 @@ export type ApplicationTemplate = {
 export type Aspect = {
   explanation: Scalars['String'];
   framing: Scalars['String'];
-  id: Scalars['ID'];
+  /** The ID of the entity */
+  id: Scalars['UUID'];
   title: Scalars['String'];
 };
 
-export type AssignAuthorizationCredentialInput = {
-  /** The resource to which this credential is tied. */
-  resourceID?: Maybe<Scalars['Float']>;
-  type: AuthorizationCredential;
-  /** The user to whom the credential is being granted. */
-  userID: Scalars['Float'];
-};
-
 export type AssignChallengeLeadInput = {
-  challengeID: Scalars['String'];
-  organisationID: Scalars['String'];
+  challengeID: Scalars['UUID'];
+  organisationID: Scalars['UUID_NAMEID'];
 };
 
 export type AssignCommunityMemberInput = {
-  communityID: Scalars['Float'];
-  userID: Scalars['Float'];
+  communityID: Scalars['UUID'];
+  userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
 export type AssignUserGroupMemberInput = {
-  groupID: Scalars['Float'];
-  userID: Scalars['Float'];
+  groupID: Scalars['UUID'];
+  userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
 export type AuthenticationConfig = {
@@ -147,31 +150,36 @@ export enum AuthorizationCredential {
   GlobalAdminCommunity = 'GlobalAdminCommunity',
   GlobalRegistered = 'GlobalRegistered',
   OrganisationMember = 'OrganisationMember',
-  UserUpdate = 'UserUpdate',
+  UserGroupMember = 'UserGroupMember',
 }
 
 export type Challenge = {
+  /** The activity within this Challenge. */
+  activity?: Maybe<Array<Nvp>>;
+  /** The set of child Challenges within this challenge. */
+  challenges?: Maybe<Array<Challenge>>;
   /** The community for the challenge. */
   community?: Maybe<Community>;
-  /** The shared understanding for the challenge */
+  /** The context for the challenge. */
   context?: Maybe<Context>;
-  id: Scalars['ID'];
+  /** The display name. */
+  displayName: Scalars['String'];
+  /** The ID of the entity */
+  id: Scalars['UUID'];
   /** The Organisations that are leading this Challenge. */
   leadOrganisations: Array<Organisation>;
   /** The lifeycle for the Challenge. */
   lifecycle?: Maybe<Lifecycle>;
-  /** The name of the challenge */
-  name: Scalars['String'];
-  /** The set of opportunities within this challenge. */
+  /** A name identifier of the entity, unique within a given scope. */
+  nameID: Scalars['NameID'];
+  /** The Opportunities for the challenge. */
   opportunities?: Maybe<Array<Opportunity>>;
   /** The set of tags for the challenge */
   tagset?: Maybe<Tagset>;
-  /** A short text identifier for this challenge */
-  textID: Scalars['String'];
 };
 
 export type ChallengeEventInput = {
-  ID: Scalars['Float'];
+  ID: Scalars['UUID'];
   eventName: Scalars['String'];
 };
 
@@ -182,18 +190,17 @@ export type ChallengeTemplate = {
   name: Scalars['String'];
 };
 
-export type Community = {
+export type Community = Groupable & {
   /** Application available for this community. */
   applications: Array<Application>;
+  /** The name of the Community */
+  displayName: Scalars['String'];
   /** Groups of users related to a Community. */
   groups?: Maybe<Array<UserGroup>>;
-  id: Scalars['ID'];
+  /** The ID of the entity */
+  id: Scalars['UUID'];
   /** All users that are contributing to this Community. */
   members?: Maybe<Array<User>>;
-  /** The name of the Community */
-  name: Scalars['String'];
-  /** The type of the Community */
-  type: Scalars['String'];
 };
 
 export type Config = {
@@ -204,9 +211,14 @@ export type Config = {
 };
 
 export type Context = {
+  /** The Aspects for this Context. */
+  aspects?: Maybe<Array<Aspect>>;
   /** A detailed description of the current situation */
   background?: Maybe<Scalars['String']>;
-  id: Scalars['ID'];
+  /** The EcosystemModel for this Context. */
+  ecosystemModel?: Maybe<EcosystemModel>;
+  /** The ID of the entity */
+  id: Scalars['UUID'];
   /** What is the potential impact? */
   impact?: Maybe<Scalars['String']>;
   /** A list of URLs to relevant information. */
@@ -221,38 +233,40 @@ export type Context = {
 
 export type CreateActorGroupInput = {
   description?: Maybe<Scalars['String']>;
+  ecosystemModelID: Scalars['UUID'];
   name: Scalars['String'];
-  parentID: Scalars['Float'];
 };
 
 export type CreateActorInput = {
+  actorGroupID: Scalars['UUID'];
   description?: Maybe<Scalars['String']>;
   impact?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  parentID: Scalars['Float'];
   value?: Maybe<Scalars['String']>;
 };
 
 export type CreateApplicationInput = {
-  parentID: Scalars['Float'];
+  parentID: Scalars['UUID'];
   questions: Array<CreateNvpInput>;
-  userId: Scalars['Float'];
+  userID: Scalars['UUID'];
 };
 
 export type CreateAspectInput = {
   explanation: Scalars['String'];
   framing: Scalars['String'];
-  parentID: Scalars['Float'];
+  parentID: Scalars['UUID'];
   title: Scalars['String'];
 };
 
 export type CreateChallengeInput = {
   context?: Maybe<CreateContextInput>;
+  /** The display name for the entity. */
+  displayName?: Maybe<Scalars['String']>;
   lifecycleTemplate?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
-  parentID: Scalars['Float'];
+  /** A readable identifier, unique within the containing scope. */
+  nameID: Scalars['NameID'];
+  parentID: Scalars['UUID_NAMEID'];
   tags?: Maybe<Array<Scalars['String']>>;
-  textID: Scalars['TextID'];
 };
 
 export type CreateContextInput = {
@@ -266,16 +280,15 @@ export type CreateContextInput = {
 };
 
 export type CreateEcoverseInput = {
-  /** Context for the Ecoverse. */
   context?: Maybe<CreateContextInput>;
+  /** The display name for the entity. */
+  displayName?: Maybe<Scalars['String']>;
   /** The host Organisation for the ecoverse */
-  hostID?: Maybe<Scalars['String']>;
-  /** The name for the ecoverse */
-  name: Scalars['String'];
-  /** The set of tags to apply to this Ecoverse */
+  hostID?: Maybe<Scalars['UUID_NAMEID']>;
+  lifecycleTemplate?: Maybe<Scalars['String']>;
+  /** A readable identifier, unique within the containing scope. */
+  nameID: Scalars['NameID'];
   tags?: Maybe<Array<Scalars['String']>>;
-  /** The unique text ID for the ecoverse */
-  textID: Scalars['TextID'];
 };
 
 export type CreateNvpInput = {
@@ -284,20 +297,22 @@ export type CreateNvpInput = {
 };
 
 export type CreateOpportunityInput = {
+  challengeID: Scalars['UUID_NAMEID'];
   context?: Maybe<CreateContextInput>;
+  /** The display name for the entity. */
+  displayName?: Maybe<Scalars['String']>;
   lifecycleTemplate?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
-  parentID: Scalars['String'];
+  /** A readable identifier, unique within the containing scope. */
+  nameID: Scalars['NameID'];
   tags?: Maybe<Array<Scalars['String']>>;
-  textID: Scalars['TextID'];
 };
 
 export type CreateOrganisationInput = {
-  /** The name for this organisation */
-  name: Scalars['String'];
+  /** The display name for the entity. */
+  displayName?: Maybe<Scalars['String']>;
+  /** A readable identifier, unique within the containing scope. */
+  nameID: Scalars['NameID'];
   profileData?: Maybe<CreateProfileInput>;
-  /** The unique text based ID for this organisation */
-  textID: Scalars['TextID'];
 };
 
 export type CreateProfileInput = {
@@ -309,15 +324,17 @@ export type CreateProfileInput = {
 
 export type CreateProjectInput = {
   description?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
-  parentID: Scalars['Float'];
-  textID: Scalars['TextID'];
+  /** The display name for the entity. */
+  displayName?: Maybe<Scalars['String']>;
+  /** A readable identifier, unique within the containing scope. */
+  nameID: Scalars['NameID'];
+  opportunityID: Scalars['UUID_NAMEID'];
 };
 
 export type CreateReferenceInput = {
   description?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  parentID?: Maybe<Scalars['Float']>;
+  parentID?: Maybe<Scalars['UUID']>;
   uri?: Maybe<Scalars['String']>;
 };
 
@@ -326,19 +343,19 @@ export type CreateRelationInput = {
   actorRole?: Maybe<Scalars['String']>;
   actorType?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  parentID: Scalars['Float'];
+  parentID: Scalars['String'];
   type: Scalars['String'];
 };
 
 export type CreateTagsetInput = {
   name: Scalars['String'];
-  parentID?: Maybe<Scalars['Float']>;
+  parentID?: Maybe<Scalars['UUID']>;
   tags?: Maybe<Array<Scalars['String']>>;
 };
 
 export type CreateUserGroupInput = {
   name: Scalars['String'];
-  parentID: Scalars['Float'];
+  parentID: Scalars['UUID'];
   profileData?: Maybe<CreateProfileInput>;
 };
 
@@ -346,67 +363,75 @@ export type CreateUserInput = {
   accountUpn?: Maybe<Scalars['String']>;
   city?: Maybe<Scalars['String']>;
   country?: Maybe<Scalars['String']>;
+  /** The display name for the entity. */
+  displayName?: Maybe<Scalars['String']>;
   email: Scalars['String'];
   firstName?: Maybe<Scalars['String']>;
   gender?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
+  /** A readable identifier, unique within the containing scope. */
+  nameID: Scalars['NameID'];
   phone?: Maybe<Scalars['String']>;
   profileData?: Maybe<CreateProfileInput>;
 };
 
 export type Credential = {
-  id: Scalars['ID'];
-  resourceID: Scalars['Float'];
+  /** The ID of the entity */
+  id: Scalars['UUID'];
+  resourceID: Scalars['String'];
   type: Scalars['String'];
 };
 
 export type DeleteActorGroupInput = {
-  ID: Scalars['Float'];
+  ID: Scalars['UUID'];
 };
 
 export type DeleteActorInput = {
-  ID: Scalars['Float'];
+  ID: Scalars['UUID'];
 };
 
 export type DeleteApplicationInput = {
-  ID: Scalars['Float'];
+  ID: Scalars['UUID'];
 };
 
 export type DeleteAspectInput = {
-  ID: Scalars['Float'];
+  ID: Scalars['UUID'];
 };
 
 export type DeleteChallengeInput = {
-  ID: Scalars['Float'];
+  ID: Scalars['UUID'];
+};
+
+export type DeleteEcoverseInput = {
+  ID: Scalars['UUID'];
 };
 
 export type DeleteOpportunityInput = {
-  ID: Scalars['Float'];
+  ID: Scalars['UUID'];
 };
 
 export type DeleteOrganisationInput = {
-  ID: Scalars['Float'];
+  ID: Scalars['UUID'];
 };
 
 export type DeleteProjectInput = {
-  ID: Scalars['Float'];
+  ID: Scalars['UUID'];
 };
 
 export type DeleteReferenceInput = {
-  ID: Scalars['Float'];
+  ID: Scalars['UUID'];
 };
 
 export type DeleteRelationInput = {
-  ID: Scalars['Float'];
+  ID: Scalars['String'];
 };
 
 export type DeleteUserGroupInput = {
-  ID: Scalars['Float'];
+  ID: Scalars['UUID'];
 };
 
 export type DeleteUserInput = {
-  ID: Scalars['Float'];
+  ID: Scalars['UUID'];
 };
 
 export type DemoAuthProviderConfig = {
@@ -416,17 +441,30 @@ export type DemoAuthProviderConfig = {
   tokenEndpoint: Scalars['String'];
 };
 
+export type EcosystemModel = {
+  /** A list of ActorGroups */
+  actorGroups?: Maybe<Array<ActorGroup>>;
+  /** Overview of this ecosystem model. */
+  description?: Maybe<Scalars['String']>;
+  /** The ID of the entity */
+  id: Scalars['UUID'];
+};
+
 export type Ecoverse = {
+  /** The activity within this Ecoverse. */
+  activity?: Maybe<Array<Nvp>>;
   /** All applications to join */
   application: Application;
-  /** A particular Challenge, either by its ID or textID */
+  /** A particular Challenge, either by its ID or nameID */
   challenge: Challenge;
   /** The challenges for the ecoverse. */
   challenges?: Maybe<Array<Challenge>>;
   /** The community for the ecoverse. */
   community?: Maybe<Community>;
-  /** The shared understanding for the Ecoverse */
+  /** The context for the ecoverse. */
   context?: Maybe<Context>;
+  /** The display name. */
+  displayName: Scalars['String'];
   /** The user group with the specified id anywhere in the ecoverse */
   group: UserGroup;
   /** The User Groups on this Ecoverse */
@@ -435,32 +473,32 @@ export type Ecoverse = {
   groupsWithTag: Array<UserGroup>;
   /** The organisation that hosts this Ecoverse instance */
   host?: Maybe<Organisation>;
-  id: Scalars['ID'];
-  name: Scalars['String'];
+  /** The ID of the entity */
+  id: Scalars['UUID'];
+  /** A name identifier of the entity, unique within a given scope. */
+  nameID: Scalars['NameID'];
   /** All opportunities within the ecoverse */
   opportunities: Array<Opportunity>;
-  /** A particular opportunitiy, identified by the ID or textID */
+  /** A particular Opportunity, either by its ID or nameID */
   opportunity: Opportunity;
   /** A particular Project, identified by the ID */
   project: Project;
   /** All projects within this ecoverse */
   projects: Array<Project>;
-  /** The set of tags for the ecoverse */
+  /** The set of tags for the  ecoverse. */
   tagset?: Maybe<Tagset>;
-  /** A short text identifier for this Ecoverse */
-  textID: Scalars['String'];
 };
 
 export type EcoverseApplicationArgs = {
-  ID: Scalars['Float'];
+  ID: Scalars['UUID'];
 };
 
 export type EcoverseChallengeArgs = {
-  ID: Scalars['String'];
+  ID: Scalars['UUID_NAMEID'];
 };
 
 export type EcoverseGroupArgs = {
-  ID: Scalars['String'];
+  ID: Scalars['UUID'];
 };
 
 export type EcoverseGroupsWithTagArgs = {
@@ -468,11 +506,11 @@ export type EcoverseGroupsWithTagArgs = {
 };
 
 export type EcoverseOpportunityArgs = {
-  ID: Scalars['String'];
+  ID: Scalars['UUID_NAMEID'];
 };
 
 export type EcoverseProjectArgs = {
-  ID: Scalars['String'];
+  ID: Scalars['UUID_NAMEID'];
 };
 
 export type EcoverseTemplate = {
@@ -482,16 +520,60 @@ export type EcoverseTemplate = {
   name: Scalars['String'];
 };
 
+export type GrantAuthorizationCredentialInput = {
+  /** The resource to which this credential is tied. */
+  resourceID?: Maybe<Scalars['UUID']>;
+  type: AuthorizationCredential;
+  /** The user to whom the credential is being granted. */
+  userID: Scalars['UUID_NAMEID_EMAIL'];
+};
+
+export type Groupable = {
+  /** The groups contained by this entity. */
+  groups?: Maybe<Array<UserGroup>>;
+};
+
 export type Lifecycle = {
-  id: Scalars['ID'];
+  /** The ID of the entity */
+  id: Scalars['UUID'];
   /** The machine definition, describing the states, transitions etc for this Lifeycle. */
   machineDef: Scalars['JSON'];
   /** The next events of this Lifecycle. */
   nextEvents?: Maybe<Array<Scalars['String']>>;
   /** The current state of this Lifecycle. */
   state?: Maybe<Scalars['String']>;
-  /** The Lifecycle template identifier. */
-  templateId?: Maybe<Scalars['String']>;
+  /** The Lifecycle template name. */
+  templateName?: Maybe<Scalars['String']>;
+};
+
+export type Membership = {
+  /** Ecoverses the user is a member of, with child memberships */
+  ecoverses: Array<MembershipEcoverseResultEntry>;
+  /** Names and IDs of  the Organisations the user is a member of */
+  organisations: Array<MembershipResultEntry>;
+};
+
+export type MembershipEcoverseResultEntry = {
+  /** Names and IDs of the Challenges the user is a member of */
+  challenges: Array<MembershipResultEntry>;
+  /** The ID of the Ecoverse */
+  id?: Maybe<Scalars['UUID']>;
+  /** The name of the Ecoverse. */
+  name?: Maybe<Scalars['String']>;
+  /** Names and IDs of  the UserGroups the user is a member of */
+  userGroups: Array<MembershipResultEntry>;
+};
+
+export type MembershipInput = {
+  /** The ID of the user to retrieve the membership of. */
+  userID: Scalars['UUID_NAMEID_EMAIL'];
+};
+
+export type MembershipResultEntry = {
+  /** The ID of the entry the user is a member of. */
+  id: Scalars['UUID'];
+  /** Name of the entity */
+  name: Scalars['String'];
 };
 
 export type Metadata = {
@@ -525,15 +607,13 @@ export type MsalConfig = {
 export type Mutation = {
   /** Assigns an organisation as a lead for the Challenge. */
   assignChallengeLead: Challenge;
-  /** Assigns an authorization credential to a User. */
-  assignCredentialToUser: User;
   /** Assigns a User as a member of the specified Community. */
   assignUserToCommunity: UserGroup;
   /** Assigns a User as a member of the specified User Group. */
   assignUserToGroup: UserGroup;
   /** Creates a new Actor in the specified ActorGroup. */
   createActor: Actor;
-  /** Create a new Actor Group on the Opportunity. */
+  /** Create a new Actor Group on the EcosystemModel. */
   createActorGroup: ActorGroup;
   /** Creates Application for a User to join this Community. */
   createApplication: Application;
@@ -543,6 +623,8 @@ export type Mutation = {
   createAspectOnProject: Aspect;
   /** Creates a new Challenge within the specified Ecoverse. */
   createChallenge: Challenge;
+  /** Creates a new child challenge within the parent Challenge. */
+  createChildChallenge: Challenge;
   /** Creates a new Ecoverse. */
   createEcoverse: Ecoverse;
   /** Creates a new User Group in the specified Community. */
@@ -573,7 +655,9 @@ export type Mutation = {
   deleteAspect: Aspect;
   /** Deletes the specified Challenge. */
   deleteChallenge: Challenge;
-  /** Deletes the Opportunity. */
+  /** Deletes the specified Ecoverse. */
+  deleteEcoverse: Ecoverse;
+  /** Deletes the specified Opportunity. */
   deleteOpportunity: Opportunity;
   /** Deletes the specified Organisation. */
   deleteOrganisation: Organisation;
@@ -593,18 +677,20 @@ export type Mutation = {
   eventOnApplication: Application;
   /** Trigger an event on the Challenge. */
   eventOnChallenge: Challenge;
-  /** Trigger an event on an Opportunity. */
+  /** Trigger an event on the Opportunity. */
   eventOnOpportunity: Opportunity;
   /** Trigger an event on the Project. */
   eventOnProject: Project;
+  /** Grants an authorization credential to a User. */
+  grantCredentialToUser: User;
   /** Remove an organisation as a lead for the Challenge. */
   removeChallengeLead: Challenge;
-  /** Removes an authorization credential from a User. */
-  removeCredentialFromUser: User;
   /** Removes a User as a member of the specified Community. */
   removeUserFromCommunity: UserGroup;
   /** Removes the specified User from specified user group */
   removeUserFromGroup: UserGroup;
+  /** Removes an authorization credential from a User. */
+  revokeCredentialFromUser: User;
   /** Updates the specified Actor. */
   updateActor: Actor;
   /** Updates the specified Aspect. */
@@ -613,7 +699,7 @@ export type Mutation = {
   updateChallenge: Challenge;
   /** Updates the Ecoverse. */
   updateEcoverse: Ecoverse;
-  /** Updates the Opportunity. */
+  /** Updates the specified Opportunity. */
   updateOpportunity: Opportunity;
   /** Updates the specified Organisation. */
   updateOrganisation: Organisation;
@@ -621,7 +707,7 @@ export type Mutation = {
   updateProfile: Profile;
   /** Updates the specified Project. */
   updateProject: Project;
-  /** Updates the User. Note: email address cannot be updated. */
+  /** Updates the User. */
   updateUser: User;
   /** Updates the specified User Group. */
   updateUserGroup: UserGroup;
@@ -631,10 +717,6 @@ export type Mutation = {
 
 export type MutationAssignChallengeLeadArgs = {
   assignInput: AssignChallengeLeadInput;
-};
-
-export type MutationAssignCredentialToUserArgs = {
-  assignCredentialData: AssignAuthorizationCredentialInput;
 };
 
 export type MutationAssignUserToCommunityArgs = {
@@ -666,6 +748,10 @@ export type MutationCreateAspectOnProjectArgs = {
 };
 
 export type MutationCreateChallengeArgs = {
+  challengeData: CreateChallengeInput;
+};
+
+export type MutationCreateChildChallengeArgs = {
   challengeData: CreateChallengeInput;
 };
 
@@ -729,6 +815,10 @@ export type MutationDeleteChallengeArgs = {
   deleteData: DeleteChallengeInput;
 };
 
+export type MutationDeleteEcoverseArgs = {
+  deleteData: DeleteEcoverseInput;
+};
+
 export type MutationDeleteOpportunityArgs = {
   deleteData: DeleteOpportunityInput;
 };
@@ -777,12 +867,12 @@ export type MutationEventOnProjectArgs = {
   projectEventData: ProjectEventInput;
 };
 
-export type MutationRemoveChallengeLeadArgs = {
-  removeData: RemoveChallengeLeadInput;
+export type MutationGrantCredentialToUserArgs = {
+  grantCredentialData: GrantAuthorizationCredentialInput;
 };
 
-export type MutationRemoveCredentialFromUserArgs = {
-  removeCredentialData: RemoveAuthorizationCredentialInput;
+export type MutationRemoveChallengeLeadArgs = {
+  removeData: RemoveChallengeLeadInput;
 };
 
 export type MutationRemoveUserFromCommunityArgs = {
@@ -791,6 +881,10 @@ export type MutationRemoveUserFromCommunityArgs = {
 
 export type MutationRemoveUserFromGroupArgs = {
   membershipData: RemoveUserGroupMemberInput;
+};
+
+export type MutationRevokeCredentialFromUserArgs = {
+  revokeCredentialData: RevokeAuthorizationCredentialInput;
 };
 
 export type MutationUpdateActorArgs = {
@@ -838,32 +932,36 @@ export type MutationUploadAvatarArgs = {
   uploadData: UploadProfileAvatarInput;
 };
 
-export type Opportunity = {
-  /** The set of actor groups within the context of this Opportunity. */
-  actorGroups?: Maybe<Array<ActorGroup>>;
-  /** The set of aspects within the context of this Opportunity. */
-  aspects?: Maybe<Array<Aspect>>;
-  /** The community for the opportunity. */
-  community?: Maybe<Community>;
-  /** The shared understanding for the opportunity */
-  context?: Maybe<Context>;
-  id: Scalars['ID'];
-  /** The lifeycle for the Challenge. */
-  lifecycle?: Maybe<Lifecycle>;
-  /** The name of the Opportunity */
+export type Nvp = {
+  /** The ID of the entity */
+  id: Scalars['UUID'];
   name: Scalars['String'];
+  value: Scalars['String'];
+};
+
+export type Opportunity = {
+  /** The community for the Opportunity. */
+  community?: Maybe<Community>;
+  /** The context for the Opportunity. */
+  context?: Maybe<Context>;
+  /** The display name. */
+  displayName: Scalars['String'];
+  /** The ID of the entity */
+  id: Scalars['UUID'];
+  /** The lifeycle for the Opportunity. */
+  lifecycle?: Maybe<Lifecycle>;
+  /** A name identifier of the entity, unique within a given scope. */
+  nameID: Scalars['NameID'];
   /** The set of projects within the context of this Opportunity */
   projects?: Maybe<Array<Project>>;
-  /** The set of relations within the context of this Opportunity. */
+  /** The set of Relations within the context of this Opportunity. */
   relations?: Maybe<Array<Relation>>;
-  /** The set of tags for the Opportunity */
+  /** The set of tags for the challenge */
   tagset?: Maybe<Tagset>;
-  /** A short text identifier for this Opportunity */
-  textID: Scalars['String'];
 };
 
 export type OpportunityEventInput = {
-  ID: Scalars['Float'];
+  ID: Scalars['UUID'];
   eventName: Scalars['String'];
 };
 
@@ -880,25 +978,28 @@ export type OpportunityTemplate = {
   relations?: Maybe<Array<Scalars['String']>>;
 };
 
-export type Organisation = {
-  /** Groups defined on this organisation. */
-  groups?: Maybe<Array<UserGroup>>;
-  id: Scalars['ID'];
-  /** Users that are contributing to this organisation. */
-  members?: Maybe<Array<User>>;
-  name: Scalars['String'];
-  /** The profile for this organisation. */
-  profile: Profile;
-  /** A short text identifier for this Organisation */
-  textID: Scalars['String'];
-};
+export type Organisation = Groupable &
+  Searchable & {
+    /** The display name. */
+    displayName: Scalars['String'];
+    /** Groups defined on this organisation. */
+    groups?: Maybe<Array<UserGroup>>;
+    id: Scalars['UUID'];
+    /** All users that are members of this Organisation. */
+    members?: Maybe<Array<User>>;
+    /** A name identifier of the entity, unique within a given scope. */
+    nameID: Scalars['NameID'];
+    /** The profile for this organisation. */
+    profile: Profile;
+  };
 
 export type Profile = {
   /** A URI that points to the location of an avatar, either on a shared location or a gravatar */
   avatar?: Maybe<Scalars['String']>;
   /** A short description of the entity associated with this profile. */
   description?: Maybe<Scalars['String']>;
-  id: Scalars['ID'];
+  /** The ID of the entity */
+  id: Scalars['UUID'];
   /** A list of URLs to relevant information. */
   references?: Maybe<Array<Reference>>;
   /** A list of named tagsets, each of which has a list of tags. */
@@ -909,18 +1010,22 @@ export type Project = {
   /** The set of aspects for this Project. Note: likley to change. */
   aspects?: Maybe<Array<Aspect>>;
   description?: Maybe<Scalars['String']>;
-  id: Scalars['ID'];
+  /** The display name. */
+  displayName: Scalars['String'];
+  /** The ID of the entity */
+  id: Scalars['UUID'];
   /** The maturity phase of the project i.e. new, being refined, committed, in-progress, closed etc */
   lifecycle?: Maybe<Lifecycle>;
-  name: Scalars['String'];
+  /** A name identifier of the entity, unique within a given scope. */
+  nameID: Scalars['NameID'];
   /** The set of tags for the project */
   tagset?: Maybe<Tagset>;
-  /** A short text identifier for this Opportunity */
-  textID: Scalars['String'];
 };
 
 export type ProjectEventInput = {
-  ID: Scalars['Float'];
+  /** The ID of the entity to which the event is sent */
+  ID: Scalars['String'];
+  /** The name of the event. Simple text and matching an event in the Lifecycle definition. */
   eventName: Scalars['String'];
 };
 
@@ -929,8 +1034,12 @@ export type Query = {
   configuration: Config;
   /** An ecoverse. If no ID is specified then the first Ecoverse is returned. */
   ecoverse: Ecoverse;
+  /** The Ecoverses on this platform */
+  ecoverses: Array<Ecoverse>;
   /** The currently logged in user */
   me: User;
+  /** Search the ecoverse for terms supplied */
+  membership: Membership;
   /** Cherrytwist Services Metadata */
   metadata: Metadata;
   /** A particular Organisation */
@@ -950,11 +1059,15 @@ export type Query = {
 };
 
 export type QueryEcoverseArgs = {
-  ID?: Maybe<Scalars['Float']>;
+  ID?: Maybe<Scalars['UUID_NAMEID']>;
+};
+
+export type QueryMembershipArgs = {
+  membershipData: MembershipInput;
 };
 
 export type QueryOrganisationArgs = {
-  ID: Scalars['String'];
+  ID: Scalars['UUID_NAMEID'];
 };
 
 export type QuerySearchArgs = {
@@ -962,11 +1075,11 @@ export type QuerySearchArgs = {
 };
 
 export type QueryUserArgs = {
-  ID: Scalars['String'];
+  ID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
 export type QueryUsersByIdArgs = {
-  IDs: Array<Scalars['String']>;
+  IDs: Array<Scalars['UUID_NAMEID_EMAIL']>;
 };
 
 export type QueryUsersWithAuthorizationCredentialArgs = {
@@ -974,7 +1087,8 @@ export type QueryUsersWithAuthorizationCredentialArgs = {
 };
 
 export type Question = {
-  id: Scalars['ID'];
+  /** The ID of the entity */
+  id: Scalars['UUID'];
   name: Scalars['String'];
   value: Scalars['String'];
 };
@@ -988,7 +1102,8 @@ export type QuestionTemplate = {
 
 export type Reference = {
   description: Scalars['String'];
-  id: Scalars['ID'];
+  /** The ID of the entity */
+  id: Scalars['UUID'];
   name: Scalars['String'];
   uri: Scalars['String'];
 };
@@ -997,32 +1112,33 @@ export type Relation = {
   actorName: Scalars['String'];
   actorRole: Scalars['String'];
   actorType: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  id: Scalars['ID'];
+  description: Scalars['String'];
+  /** The ID of the entity */
+  id: Scalars['UUID'];
   type: Scalars['String'];
-};
-
-export type RemoveAuthorizationCredentialInput = {
-  /** The resource to which access is being removed. */
-  resourceID?: Maybe<Scalars['Float']>;
-  type: Scalars['String'];
-  /** The user from whom the credential is being removed. */
-  userID: Scalars['Float'];
 };
 
 export type RemoveChallengeLeadInput = {
-  challengeID: Scalars['String'];
-  organisationID: Scalars['String'];
+  challengeID: Scalars['UUID'];
+  organisationID: Scalars['UUID_NAMEID'];
 };
 
 export type RemoveCommunityMemberInput = {
-  communityID: Scalars['Float'];
-  userID: Scalars['Float'];
+  communityID: Scalars['UUID'];
+  userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
 export type RemoveUserGroupMemberInput = {
-  groupID: Scalars['Float'];
-  userID: Scalars['Float'];
+  groupID: Scalars['UUID'];
+  userID: Scalars['UUID_NAMEID_EMAIL'];
+};
+
+export type RevokeAuthorizationCredentialInput = {
+  /** The resource to which access is being removed. */
+  resourceID?: Maybe<Scalars['String']>;
+  type: AuthorizationCredential;
+  /** The user from whom the credential is being removed. */
+  userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
 export type Scope = {
@@ -1041,15 +1157,17 @@ export type SearchInput = {
   typesFilter?: Maybe<Array<Scalars['String']>>;
 };
 
-export type SearchResult = Organisation | User | UserGroup;
-
 export type SearchResultEntry = {
   /** Each search result contains either a User, UserGroup or Organisation */
-  result?: Maybe<SearchResult>;
+  result?: Maybe<Searchable>;
   /** The score for this search result; more matches means a higher score. */
   score?: Maybe<Scalars['Float']>;
   /** The terms that were matched for this result */
   terms?: Maybe<Array<Scalars['String']>>;
+};
+
+export type Searchable = {
+  id: Scalars['UUID'];
 };
 
 export type ServiceMetadata = {
@@ -1060,7 +1178,8 @@ export type ServiceMetadata = {
 };
 
 export type Tagset = {
-  id: Scalars['ID'];
+  /** The ID of the entity */
+  id: Scalars['UUID'];
   name: Scalars['String'];
   tags: Array<Scalars['String']>;
 };
@@ -1088,7 +1207,7 @@ export type Template = {
 };
 
 export type UpdateActorInput = {
-  ID: Scalars['String'];
+  ID: Scalars['UUID'];
   description?: Maybe<Scalars['String']>;
   impact?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
@@ -1096,16 +1215,21 @@ export type UpdateActorInput = {
 };
 
 export type UpdateAspectInput = {
-  ID: Scalars['String'];
+  ID: Scalars['UUID'];
   explanation?: Maybe<Scalars['String']>;
   framing?: Maybe<Scalars['String']>;
   title?: Maybe<Scalars['String']>;
 };
 
 export type UpdateChallengeInput = {
-  ID: Scalars['String'];
+  ID: Scalars['UUID'];
+  /** Update the contained Context entity. */
   context?: Maybe<UpdateContextInput>;
-  name?: Maybe<Scalars['String']>;
+  /** The display name for this entity. */
+  displayName?: Maybe<Scalars['String']>;
+  /** A display identifier, unique within the containing scope. Note: updating the nameID will affect URL on the client. */
+  nameID?: Maybe<Scalars['NameID']>;
+  /** Update the tags on the Tagset. */
   tags?: Maybe<Array<Scalars['String']>>;
 };
 
@@ -1120,34 +1244,42 @@ export type UpdateContextInput = {
 };
 
 export type UpdateEcoverseInput = {
-  ID: Scalars['String'];
-  /** Updated context for the ecoverse; will be merged with existing context */
+  ID: Scalars['UUID'];
+  /** Update the contained Context entity. */
   context?: Maybe<UpdateContextInput>;
+  /** The display name for this entity. */
+  displayName?: Maybe<Scalars['String']>;
   /** The host Organisation for the ecoverse */
   hostID?: Maybe<Scalars['String']>;
-  /** The new name for the ecoverse */
-  name?: Maybe<Scalars['String']>;
-  /** The set of tags to apply to this ecoverse */
+  /** A display identifier, unique within the containing scope. Note: updating the nameID will affect URL on the client. */
+  nameID?: Maybe<Scalars['NameID']>;
+  /** Update the tags on the Tagset. */
   tags?: Maybe<Array<Scalars['String']>>;
 };
 
 export type UpdateOpportunityInput = {
-  ID: Scalars['String'];
+  ID: Scalars['UUID'];
+  /** Update the contained Context entity. */
   context?: Maybe<UpdateContextInput>;
-  name?: Maybe<Scalars['String']>;
-  state?: Maybe<Scalars['String']>;
+  /** The display name for this entity. */
+  displayName?: Maybe<Scalars['String']>;
+  /** A display identifier, unique within the containing scope. Note: updating the nameID will affect URL on the client. */
+  nameID?: Maybe<Scalars['NameID']>;
+  /** Update the tags on the Tagset. */
   tags?: Maybe<Array<Scalars['String']>>;
 };
 
 export type UpdateOrganisationInput = {
-  ID: Scalars['String'];
-  /** The name for this organisation */
-  name?: Maybe<Scalars['String']>;
+  ID: Scalars['UUID'];
+  /** The display name for this entity. */
+  displayName?: Maybe<Scalars['String']>;
+  /** A display identifier, unique within the containing scope. Note: updating the nameID will affect URL on the client. */
+  nameID?: Maybe<Scalars['NameID']>;
   profileData?: Maybe<UpdateProfileInput>;
 };
 
 export type UpdateProfileInput = {
-  ID: Scalars['String'];
+  ID: Scalars['UUID'];
   avatar?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   references?: Maybe<Array<UpdateReferenceInput>>;
@@ -1155,40 +1287,45 @@ export type UpdateProfileInput = {
 };
 
 export type UpdateProjectInput = {
-  ID: Scalars['String'];
+  ID: Scalars['UUID'];
   description?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
-  textID: Scalars['String'];
+  /** The display name for this entity. */
+  displayName?: Maybe<Scalars['String']>;
+  /** A display identifier, unique within the containing scope. Note: updating the nameID will affect URL on the client. */
+  nameID?: Maybe<Scalars['NameID']>;
 };
 
 export type UpdateReferenceInput = {
-  ID: Scalars['Float'];
+  ID: Scalars['UUID'];
   description?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   uri?: Maybe<Scalars['String']>;
 };
 
 export type UpdateTagsetInput = {
-  ID: Scalars['Float'];
+  ID: Scalars['UUID'];
   name?: Maybe<Scalars['String']>;
   tags?: Maybe<Array<Scalars['String']>>;
 };
 
 export type UpdateUserGroupInput = {
-  ID: Scalars['String'];
+  ID: Scalars['UUID'];
   name?: Maybe<Scalars['String']>;
   profileData?: Maybe<UpdateProfileInput>;
 };
 
 export type UpdateUserInput = {
-  ID: Scalars['String'];
+  ID: Scalars['UUID'];
   accountUpn?: Maybe<Scalars['String']>;
   city?: Maybe<Scalars['String']>;
   country?: Maybe<Scalars['String']>;
+  /** The display name for this entity. */
+  displayName?: Maybe<Scalars['String']>;
   firstName?: Maybe<Scalars['String']>;
   gender?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
+  /** A display identifier, unique within the containing scope. Note: updating the nameID will affect URL on the client. */
+  nameID?: Maybe<Scalars['NameID']>;
   phone?: Maybe<Scalars['String']>;
   profileData?: Maybe<UpdateProfileInput>;
 };
@@ -1198,36 +1335,37 @@ export type UploadProfileAvatarInput = {
   profileID: Scalars['String'];
 };
 
-export type User = {
+export type User = Searchable & {
   /** The unique personal identifier (upn) for the account associated with this user profile */
   accountUpn: Scalars['String'];
   /** The agent for this User */
   agent?: Maybe<Agent>;
   city: Scalars['String'];
   country: Scalars['String'];
+  /** The display name. */
+  displayName: Scalars['String'];
   email: Scalars['String'];
   firstName: Scalars['String'];
   gender: Scalars['String'];
-  id: Scalars['ID'];
+  id: Scalars['UUID'];
   lastName: Scalars['String'];
-  name: Scalars['String'];
+  /** A name identifier of the entity, unique within a given scope. */
+  nameID: Scalars['NameID'];
   phone: Scalars['String'];
   /** The profile for this User */
   profile?: Maybe<Profile>;
 };
 
-export type UserGroup = {
-  id: Scalars['ID'];
+export type UserGroup = Searchable & {
+  id: Scalars['UUID'];
   /** The Users that are members of this User Group. */
   members?: Maybe<Array<User>>;
   name: Scalars['String'];
   /** Containing entity for this UserGroup. */
-  parent?: Maybe<UserGroupParent>;
+  parent?: Maybe<Groupable>;
   /** The profile for the user group */
   profile?: Maybe<Profile>;
 };
-
-export type UserGroupParent = Community | Organisation;
 
 export type UserTemplate = {
   /** User template name. */
@@ -1238,7 +1376,7 @@ export type UserTemplate = {
 
 export type UsersWithAuthorizationCredentialInput = {
   /** The resource to which a credential needs to be bound. */
-  resourceID?: Maybe<Scalars['Float']>;
+  resourceID?: Maybe<Scalars['UUID']>;
   /** The type of credential. */
-  type: Scalars['String'];
+  type: AuthorizationCredential;
 };
