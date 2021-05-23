@@ -12,4 +12,13 @@ fragment ChallengeDetails on Challenge {
       name
     }
   }
+  context {
+    ecosystemModel {
+      id
+      actorGroups {
+        name
+        id
+      }
+    }
+  }
 }

@@ -4,15 +4,14 @@ import { getSdk, Sdk } from './graphql';
 import {
   CreateChallengeInput,
   UpdateEcoverseInput,
-  CreateOpportunityInput,
   UpdateChallengeInput,
-  UpdateOpportunityInput,
   UpdateOrganisationInput,
   CreateUserInput,
   UpdateContextInput,
   Reference,
   UpdateReferenceInput,
   CreateEcoverseInput,
+  CreateOpportunityInput,
 } from './types/cherrytwist-schema';
 import { ErrorHandler, handleErrors } from './util/handleErrors';
 import semver from 'semver';
@@ -43,7 +42,7 @@ export class CherrytwistClient {
   }
 
   public validateServerVersion(serverVersion: string): boolean {
-    const MIN_SERVER_VERSION = '0.11.0';
+    const MIN_SERVER_VERSION = '0.11.1';
     const validVersion = semver.gte(serverVersion, MIN_SERVER_VERSION);
     if (!validVersion)
       throw new Error(
@@ -85,15 +84,22 @@ export class CherrytwistClient {
     const result = await this.client.createEcoverse({
       ecoverseData: ecoverseData,
     });
-
-    this.errorHandler(result.errors);
-
     return result.data?.createEcoverse;
   }
 
-  public async createOpportunity(opportunity: CreateOpportunityInput) {
+  public async createChildChallenge(challengeData: CreateChallengeInput) {
+    const result = await this.client.createChildChallenge({
+      childChallengeData: challengeData,
+    });
+
+    this.errorHandler(result.errors);
+
+    return result.data?.createChildChallenge;
+  }
+
+  public async createOpportunity(opportunityData: CreateOpportunityInput) {
     const result = await this.client.createOpportunity({
-      opportunityData: opportunity,
+      opportunityData: opportunityData,
     });
 
     this.errorHandler(result.errors);
@@ -212,6 +218,25 @@ export class CherrytwistClient {
     });
   }
 
+  async addUserToOpportunity(opportunityName: string, userID: string) {
+    const response = await this.client.opportunity({
+      ecoverseID: this.config.ecoverseID,
+      opportunityID: opportunityName,
+    });
+    const communityID = Number(
+      response.data?.ecoverse.opportunity?.community?.id
+    );
+
+    if (!response) return;
+
+    return await this.client.addUserToCommunity({
+      input: {
+        userID: Number(userID),
+        communityID,
+      },
+    });
+  }
+
   async addUserToEcoverse(userID: string) {
     const response = await this.ecoverseInfo();
     const communityID = response.data?.ecoverse?.community?.id;
@@ -242,8 +267,8 @@ export class CherrytwistClient {
   async updateEcoverseContext(context: UpdateContextInput) {
     const { data, errors } = await this.client.updateEcoverse({
       ecoverseData: {
-        ID: '1',
-        nameID: 'test',
+        ID: this.config.ecoverseID,
+        nameID: this.config.ecoverseID,
         context: context,
       },
     });
@@ -288,13 +313,13 @@ export class CherrytwistClient {
   }
 
   async createActorGroup(
-    opportunityID: string,
+    ecosystemModelID: string,
     actorGroupName: string,
     description: string
   ) {
     const { data, errors } = await this.client.createActorGroup({
       actorGroupData: {
-        ecosystemModelID: opportunityID,
+        ecosystemModelID: ecosystemModelID,
         name: actorGroupName,
         description,
       },
@@ -305,7 +330,6 @@ export class CherrytwistClient {
     return data?.createActorGroup;
   }
 
-  // Create a actorgroup for the given opportunity
   async createActor(
     actorGroupID: string,
     actorName: string,
@@ -328,7 +352,6 @@ export class CherrytwistClient {
     return data?.createActor;
   }
 
-  // Create a actor group for the given opportunity
   async updateActor(
     actorID: string,
     actorName: string,
@@ -351,16 +374,16 @@ export class CherrytwistClient {
     return data?.updateActor;
   }
 
-  // Create a aspect for the given opportunity
+  // Create a aspect for the given context
   async createAspect(
-    opportunityID: string,
+    contextID: string,
     title: string,
     framing: string,
     explanation: string
   ) {
     const { data, errors } = await this.client.createAspect({
       aspectData: {
-        parentID: opportunityID,
+        parentID: contextID,
         title,
         framing,
         explanation,
@@ -373,14 +396,16 @@ export class CherrytwistClient {
   }
 
   // Create a gouup at the ecoverse level with the given name
-  async createEcoverseGroup(groupName: string) {
+  async createEcoverseGroup(groupName: string, groupDesc: string) {
     const ecoverseInfo = await this.ecoverseInfo();
-
     const communityID = ecoverseInfo.data?.ecoverse.community?.id;
     const { data, errors } = await this.client.createGroupOnCommunity({
       groupData: {
         name: groupName,
         parentID: communityID,
+        profileData: {
+          description: groupDesc,
+        },
       },
     });
 
@@ -450,16 +475,6 @@ export class CherrytwistClient {
     return data?.updateChallenge;
   }
 
-  public async updateOpportunity(opportunity: UpdateOpportunityInput) {
-    const { data, errors } = await this.client.updateOpportunity({
-      opportunityData: opportunity,
-    });
-
-    this.errorHandler(errors);
-
-    return data?.updateOpportunity;
-  }
-
   public async updateOrganisation(organisation: UpdateOrganisationInput) {
     const { data, errors } = await this.client.updateOrganisation({
       organisationData: organisation,
@@ -521,15 +536,6 @@ export class CherrytwistClient {
     this.errorHandler(errors);
 
     return data?.ecoverse.opportunities;
-  }
-
-  async addUserToOpportunity(userID: string, opportunityID: string) {
-    const opportunity = await this.client.opportunity({
-      ecoverseID: this.config.ecoverseID,
-      opportunityID: opportunityID,
-    });
-    const communityID = opportunity.data?.ecoverse.opportunity?.community?.id;
-    return await this.addUserToCommunity(userID, communityID);
   }
 
   async addUserToCommunity(userID: string, communityID?: string) {

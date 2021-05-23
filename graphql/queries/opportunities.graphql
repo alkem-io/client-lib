@@ -11,6 +11,9 @@ query opportunities($ecoverseID: UUID_NAMEID!) {
           }
         }
       }
+      relations {
+          actorName
+        }
     }
   }
 }
