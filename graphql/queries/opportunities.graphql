@@ -1,19 +1,23 @@
-query opportunities {
-  ecoverse {
+query opportunities($ecoverseID: UUID_NAMEID!) {
+  ecoverse(ID: $ecoverseID) {
     opportunities {
       id
       ...OpportunityProfile
-      actorGroups {
-        id
-        name
+      context {
+        ecosystemModel {
+          actorGroups {
+            id
+            name
+          }
+        }
       }
     }
   }
 }
 
 fragment OpportunityProfile on Opportunity {
-  textID
-  name
+  nameID
+  displayName
   lifecycle {
     state
   }

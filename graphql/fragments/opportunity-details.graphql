@@ -1,6 +1,6 @@
 fragment OpportunityDetails on Opportunity {
   id
-  name
+  nameID
   tagset {
     tags
     id

@@ -1,8 +1,8 @@
 query organisations {
   organisations {
-    name
+    displayName
     id
-    textID
+    nameID
     profile {
       id
       avatar

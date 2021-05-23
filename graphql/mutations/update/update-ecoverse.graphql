@@ -1,6 +1,9 @@
 mutation updateEcoverse($ecoverseData: UpdateEcoverseInput!) {
   updateEcoverse(ecoverseData: $ecoverseData) {
-    name
+    nameID
+    host {
+      nameID
+    }
     context {
       tagline
     }

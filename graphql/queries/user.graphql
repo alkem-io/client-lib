@@ -1,7 +1,8 @@
-query user($email: String!) {
+query user($email: UUID_NAMEID_EMAIL!) {
   user(ID: $email) {
-    name
+    displayName
     id
+    nameID
     profile {
       id
       avatar

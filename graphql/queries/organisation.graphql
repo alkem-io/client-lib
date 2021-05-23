@@ -1,8 +1,8 @@
-query organisation($id: String!) {
+query organisation($id: UUID_NAMEID!) {
   organisation(ID: $id) {
-    name
+    displayName
     id
-    textID
+    nameID
     profile {
       id
     }
