@@ -220,7 +220,7 @@ export class CherrytwistClient {
     return await this.client.addUserToCommunity({
       input: {
         userID: userID,
-        communityID,
+        communityID: communityID,
       },
     });
   }

@@ -46,11 +46,7 @@ export type AddUserToCommunityMutationVariables = SchemaTypes.Exact<{
 }>;
 
 export type AddUserToCommunityMutation = {
-  assignUserToCommunity: {
-    name: string;
-    id: any;
-    members?: SchemaTypes.Maybe<Array<{ id: any; nameID: any }>>;
-  };
+  assignUserToCommunity: { nameID: any; id: any };
 };
 
 export type AddUserToGroupMutationVariables = SchemaTypes.Exact<{
@@ -568,12 +564,8 @@ export const AddChallengeLeadDocument = gql`
 export const AddUserToCommunityDocument = gql`
   mutation addUserToCommunity($input: AssignCommunityMemberInput!) {
     assignUserToCommunity(membershipData: $input) {
-      name
+      nameID
       id
-      members {
-        id
-        nameID
-      }
     }
   }
 `;

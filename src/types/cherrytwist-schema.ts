@@ -608,7 +608,7 @@ export type Mutation = {
   /** Assigns an organisation as a lead for the Challenge. */
   assignChallengeLead: Challenge;
   /** Assigns a User as a member of the specified Community. */
-  assignUserToCommunity: UserGroup;
+  assignUserToCommunity: User;
   /** Assigns a User as a member of the specified User Group. */
   assignUserToGroup: UserGroup;
   /** Creates a new Actor in the specified ActorGroup. */
