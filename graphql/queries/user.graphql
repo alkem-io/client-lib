@@ -1,5 +1,5 @@
-query user($email: UUID_NAMEID_EMAIL!) {
-  user(ID: $email) {
+query user($userID: UUID_NAMEID_EMAIL!) {
+  user(ID: $userID) {
     displayName
     id
     nameID

@@ -1222,7 +1222,8 @@ export type UpdateAspectInput = {
 };
 
 export type UpdateChallengeInput = {
-  ID: Scalars['UUID'];
+  /** The ID of the entity to be updated. */
+  ID: Scalars['UUID_NAMEID'];
   /** Update the contained Context entity. */
   context?: Maybe<UpdateContextInput>;
   /** The display name for this entity. */
@@ -1244,13 +1245,14 @@ export type UpdateContextInput = {
 };
 
 export type UpdateEcoverseInput = {
-  ID: Scalars['UUID'];
+  /** The ID of the entity to be updated. */
+  ID: Scalars['UUID_NAMEID'];
   /** Update the contained Context entity. */
   context?: Maybe<UpdateContextInput>;
   /** The display name for this entity. */
   displayName?: Maybe<Scalars['String']>;
-  /** The host Organisation for the ecoverse */
-  hostID?: Maybe<Scalars['String']>;
+  /** Update the host Organisation for the Ecoverse. */
+  hostID?: Maybe<Scalars['UUID_NAMEID']>;
   /** A display identifier, unique within the containing scope. Note: updating the nameID will affect URL on the client. */
   nameID?: Maybe<Scalars['NameID']>;
   /** Update the tags on the Tagset. */
@@ -1258,7 +1260,8 @@ export type UpdateEcoverseInput = {
 };
 
 export type UpdateOpportunityInput = {
-  ID: Scalars['UUID'];
+  /** The ID of the entity to be updated. */
+  ID: Scalars['UUID_NAMEID'];
   /** Update the contained Context entity. */
   context?: Maybe<UpdateContextInput>;
   /** The display name for this entity. */
@@ -1270,7 +1273,8 @@ export type UpdateOpportunityInput = {
 };
 
 export type UpdateOrganisationInput = {
-  ID: Scalars['UUID'];
+  /** The ID of the entity to be updated. */
+  ID: Scalars['UUID_NAMEID'];
   /** The display name for this entity. */
   displayName?: Maybe<Scalars['String']>;
   /** A display identifier, unique within the containing scope. Note: updating the nameID will affect URL on the client. */
@@ -1287,7 +1291,8 @@ export type UpdateProfileInput = {
 };
 
 export type UpdateProjectInput = {
-  ID: Scalars['UUID'];
+  /** The ID of the entity to be updated. */
+  ID: Scalars['UUID_NAMEID'];
   description?: Maybe<Scalars['String']>;
   /** The display name for this entity. */
   displayName?: Maybe<Scalars['String']>;
@@ -1315,7 +1320,8 @@ export type UpdateUserGroupInput = {
 };
 
 export type UpdateUserInput = {
-  ID: Scalars['UUID'];
+  /** The ID of the entity to be updated. */
+  ID: Scalars['UUID_NAMEID'];
   accountUpn?: Maybe<Scalars['String']>;
   city?: Maybe<Scalars['String']>;
   country?: Maybe<Scalars['String']>;

@@ -409,6 +409,19 @@ export type OpportunityQuery = {
       id: any;
       nameID: any;
       community?: SchemaTypes.Maybe<{ id: any; displayName: string }>;
+      context?: SchemaTypes.Maybe<{
+        id: any;
+        ecosystemModel?: SchemaTypes.Maybe<{
+          id: any;
+          actorGroups?: SchemaTypes.Maybe<
+            Array<{
+              id: any;
+              name: string;
+              actors?: SchemaTypes.Maybe<Array<{ name: string }>>;
+            }>
+          >;
+        }>;
+      }>;
     };
   };
 };
@@ -444,7 +457,7 @@ export type OrganisationsQuery = {
 };
 
 export type UserQueryVariables = SchemaTypes.Exact<{
-  email: SchemaTypes.Scalars['UUID_NAMEID_EMAIL'];
+  userID: SchemaTypes.Scalars['UUID_NAMEID_EMAIL'];
 }>;
 
 export type UserQuery = {
@@ -903,6 +916,19 @@ export const OpportunityDocument = gql`
           id
           displayName
         }
+        context {
+          id
+          ecosystemModel {
+            id
+            actorGroups {
+              id
+              name
+              actors {
+                name
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -934,8 +960,8 @@ export const OrganisationsDocument = gql`
   }
 `;
 export const UserDocument = gql`
-  query user($email: UUID_NAMEID_EMAIL!) {
-    user(ID: $email) {
+  query user($userID: UUID_NAMEID_EMAIL!) {
+    user(ID: $userID) {
       displayName
       id
       nameID

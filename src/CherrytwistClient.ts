@@ -68,16 +68,23 @@ export class CherrytwistClient {
     return serverVersion;
   }
 
-  public async ecoverseExists(): Promise<boolean> {
+  public async ecoverseExists(ecoverseID: string): Promise<boolean> {
     try {
       const result = await this.client.ecoverse({
-        id: this.config.ecoverseID,
+        id: ecoverseID,
       });
       if (!result.errors) return true;
     } catch (error) {
       return false;
     }
     return true;
+  }
+
+  async ecoverseInfo(ecoverseID: string) {
+    const response = await this.client.ecoverse({
+      id: ecoverseID,
+    });
+    return response.data?.ecoverse;
   }
 
   public async createEcoverse(ecoverseData: CreateEcoverseInput) {
@@ -133,7 +140,7 @@ export class CherrytwistClient {
     avatarURI?: string
   ): Promise<boolean> {
     const { data, errors } = await this.client.user({
-      email: userEmail,
+      userID: userEmail,
     });
 
     const profileID = data?.user.profile?.id;
@@ -218,30 +225,58 @@ export class CherrytwistClient {
     });
   }
 
-  async addUserToOpportunity(opportunityName: string, userID: string) {
-    const response = await this.client.opportunity({
-      ecoverseID: this.config.ecoverseID,
-      opportunityID: opportunityName,
-    });
-    const communityID = Number(
-      response.data?.ecoverse.opportunity?.community?.id
-    );
-
-    if (!response) return;
-
-    return await this.client.addUserToCommunity({
-      input: {
-        userID: Number(userID),
-        communityID,
-      },
-    });
+  public async opportunityByNameID(
+    ecoverseID: string,
+    opportunityNameID: string
+  ) {
+    try {
+      const result = await this.client.opportunity({
+        ecoverseID: ecoverseID,
+        opportunityID: opportunityNameID,
+      });
+      if (!result.errors) return result.data?.ecoverse.opportunity;
+    } catch (error) {
+      return;
+    }
   }
 
-  async addUserToEcoverse(userID: string) {
-    const response = await this.ecoverseInfo();
-    const communityID = response.data?.ecoverse?.community?.id;
+  async challengeByNameID(ecoverseNameID: string, challengeNameID: string) {
+    try {
+      const response = await this.client.challenge({
+        ecoverseID: ecoverseNameID,
+        challengeID: challengeNameID,
+      });
 
-    if (!response) return;
+      if (!response) return;
+      return response.data?.ecoverse.challenge;
+    } catch (error) {
+      return;
+    }
+  }
+
+  async user(userID: string) {
+    try {
+      const response = await this.client.user({
+        userID: userID,
+      });
+
+      if (!response) return;
+      return response.data?.user;
+    } catch (error) {
+      return;
+    }
+  }
+
+  async addUserToOpportunity(
+    ecoverseName: string,
+    opportunityName: string,
+    userID: string
+  ) {
+    const opportunityInfo = await this.opportunityByNameID(
+      ecoverseName,
+      opportunityName
+    );
+    const communityID = opportunityInfo?.community?.id;
 
     return await this.client.addUserToCommunity({
       input: {
@@ -251,10 +286,24 @@ export class CherrytwistClient {
     });
   }
 
-  async addChallengeLead(challengeName: string, organisationID: string) {
+  async addUserToEcoverse(ecoverseID: string, userID: string) {
+    const ecoverseInfo = await this.ecoverseInfo(ecoverseID);
+    const communityID = ecoverseInfo?.community?.id;
+
+    if (!ecoverseInfo) return;
+
+    return await this.client.addUserToCommunity({
+      input: {
+        userID: userID,
+        communityID,
+      },
+    });
+  }
+
+  async addChallengeLead(challengeID: string, organisationID: string) {
     const { data, errors } = await this.client.addChallengeLead({
       input: {
-        challengeID: challengeName,
+        challengeID: challengeID,
         organisationID: organisationID,
       },
     });
@@ -264,11 +313,10 @@ export class CherrytwistClient {
     return !!data?.assignChallengeLead;
   }
 
-  async updateEcoverseContext(context: UpdateContextInput) {
+  async updateEcoverseContext(ecoverseID: string, context: UpdateContextInput) {
     const { data, errors } = await this.client.updateEcoverse({
       ecoverseData: {
-        ID: this.config.ecoverseID,
-        nameID: this.config.ecoverseID,
+        ID: ecoverseID,
         context: context,
       },
     });
@@ -396,9 +444,13 @@ export class CherrytwistClient {
   }
 
   // Create a gouup at the ecoverse level with the given name
-  async createEcoverseGroup(groupName: string, groupDesc: string) {
-    const ecoverseInfo = await this.ecoverseInfo();
-    const communityID = ecoverseInfo.data?.ecoverse.community?.id;
+  async createEcoverseGroup(
+    ecoverseID: string,
+    groupName: string,
+    groupDesc: string
+  ) {
+    const ecoverseInfo = await this.ecoverseInfo(ecoverseID);
+    const communityID = ecoverseInfo?.community?.id;
     const { data, errors } = await this.client.createGroupOnCommunity({
       groupData: {
         name: groupName,
@@ -455,9 +507,9 @@ export class CherrytwistClient {
     return data?.createChallenge;
   }
 
-  public async challenges() {
+  public async challenges(ecoverseID: string) {
     const { data, errors } = await this.client.challenges({
-      ecoverseID: this.config.ecoverseID,
+      ecoverseID: ecoverseID,
     });
 
     this.errorHandler(errors);
@@ -495,9 +547,9 @@ export class CherrytwistClient {
     return data?.createUser;
   }
 
-  public async groups() {
+  public async groups(ecoverseID: string) {
     const { data, errors } = await this.client.groups({
-      ecoverseID: this.config.ecoverseID,
+      ecoverseID: ecoverseID,
     });
 
     this.errorHandler(errors);
@@ -505,19 +557,9 @@ export class CherrytwistClient {
     return data?.ecoverse.community?.groups;
   }
 
-  public async groupByName(name: string) {
-    const groups = await this.groups();
+  public async groupByName(ecoverseID: string, name: string) {
+    const groups = await this.groups(ecoverseID);
     return groups?.find(x => x.name === name);
-  }
-
-  public async user(email: string) {
-    const { data, errors } = await this.client.user({
-      email,
-    });
-
-    this.errorHandler(errors);
-
-    return data?.user;
   }
 
   public async users() {
@@ -528,9 +570,9 @@ export class CherrytwistClient {
     return data?.users;
   }
 
-  public async opportunities() {
+  public async opportunities(ecoverseID: string) {
     const { data, errors } = await this.client.opportunities({
-      ecoverseID: this.config.ecoverseID,
+      ecoverseID: ecoverseID,
     });
 
     this.errorHandler(errors);
@@ -556,20 +598,16 @@ export class CherrytwistClient {
     return data?.assignUserToCommunity;
   }
 
-  async ecoverseInfo() {
-    return await this.client.ecoverse({
-      id: this.config.ecoverseID,
-    });
-  }
-
-  async updateReferencesOnEcoverse(references: Omit<Reference, 'id'>[]) {
-    const ecoverseInfo = await this.ecoverseInfo();
-    const contextId = ecoverseInfo.data?.ecoverse.context?.id;
+  async updateReferencesOnEcoverse(
+    ecoverseID: string,
+    references: Omit<Reference, 'id'>[]
+  ) {
+    const ecoverseInfo = await this.ecoverseInfo(ecoverseID);
+    const contextId = ecoverseInfo?.context?.id;
     if (!contextId) {
       throw new Error('Ecoverse context id does not exist.');
     }
-    const existingReferences =
-      ecoverseInfo.data?.ecoverse.context?.references || [];
+    const existingReferences = ecoverseInfo?.context?.references || [];
     const newReferences = references.filter(r =>
       existingReferences.every(x => x.name !== r.name)
     );
@@ -588,8 +626,6 @@ export class CherrytwistClient {
       updateRefsInput.push(newRefInput);
     }
     if (updateRefsInput.length > 0) {
-      let ecoverseID = ecoverseInfo.data?.ecoverse.id;
-      if (!ecoverseID) ecoverseID = '';
       await this.updateEcoverse({
         ID: ecoverseID,
         context: {

@@ -8,6 +8,19 @@ query opportunity($ecoverseID: UUID_NAMEID!, $opportunityID: UUID_NAMEID!) {
         id
         displayName
       }
+      context {
+        id
+        ecosystemModel {
+          id
+          actorGroups {
+            id
+            name
+            actors {
+              name
+            }
+          }
+        }
+      }
     }
   }
 }
