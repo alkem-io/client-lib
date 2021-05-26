@@ -560,6 +560,8 @@ export type MembershipEcoverseResultEntry = {
   id?: Maybe<Scalars['UUID']>;
   /** The name of the Ecoverse. */
   name?: Maybe<Scalars['String']>;
+  /** Names and IDs of the Opportunities the user is a member of */
+  opportunities: Array<MembershipResultEntry>;
   /** Names and IDs of  the UserGroups the user is a member of */
   userGroups: Array<MembershipResultEntry>;
 };
@@ -570,10 +572,12 @@ export type MembershipInput = {
 };
 
 export type MembershipResultEntry = {
+  /** Display name of the entity */
+  displayName: Scalars['String'];
   /** The ID of the entry the user is a member of. */
   id: Scalars['UUID'];
-  /** Name of the entity */
-  name: Scalars['String'];
+  /** Name Identifier of the entity */
+  nameID: Scalars['NameID'];
 };
 
 export type Metadata = {
@@ -608,7 +612,7 @@ export type Mutation = {
   /** Assigns an organisation as a lead for the Challenge. */
   assignChallengeLead: Challenge;
   /** Assigns a User as a member of the specified Community. */
-  assignUserToCommunity: User;
+  assignUserToCommunity: Community;
   /** Assigns a User as a member of the specified User Group. */
   assignUserToGroup: UserGroup;
   /** Creates a new Actor in the specified ActorGroup. */
@@ -686,7 +690,7 @@ export type Mutation = {
   /** Remove an organisation as a lead for the Challenge. */
   removeChallengeLead: Challenge;
   /** Removes a User as a member of the specified Community. */
-  removeUserFromCommunity: UserGroup;
+  removeUserFromCommunity: Community;
   /** Removes the specified User from specified user group */
   removeUserFromGroup: UserGroup;
   /** Removes an authorization credential from a User. */
@@ -940,6 +944,8 @@ export type Nvp = {
 };
 
 export type Opportunity = {
+  /** The activity within this Opportunity. */
+  activity?: Maybe<Array<Nvp>>;
   /** The community for the Opportunity. */
   community?: Maybe<Community>;
   /** The context for the Opportunity. */
