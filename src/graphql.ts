@@ -234,6 +234,14 @@ export type UpdateEcoverseMutation = {
   };
 };
 
+export type UpdateOpportunityMutationVariables = SchemaTypes.Exact<{
+  opportunityData: SchemaTypes.UpdateOpportunityInput;
+}>;
+
+export type UpdateOpportunityMutation = {
+  updateOpportunity: { id: any; displayName: string; nameID: any };
+};
+
 export type UpdateOrganisationMutationVariables = SchemaTypes.Exact<{
   organisationData: SchemaTypes.UpdateOrganisationInput;
 }>;
@@ -752,6 +760,15 @@ export const UpdateEcoverseDocument = gql`
       context {
         tagline
       }
+    }
+  }
+`;
+export const UpdateOpportunityDocument = gql`
+  mutation updateOpportunity($opportunityData: UpdateOpportunityInput!) {
+    updateOpportunity(opportunityData: $opportunityData) {
+      id
+      displayName
+      nameID
     }
   }
 `;
@@ -1338,6 +1355,22 @@ export function getSdk(
       return withWrapper(() =>
         client.rawRequest<UpdateEcoverseMutation>(
           print(UpdateEcoverseDocument),
+          variables
+        )
+      );
+    },
+    updateOpportunity(
+      variables: UpdateOpportunityMutationVariables
+    ): Promise<{
+      data?: UpdateOpportunityMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<UpdateOpportunityMutation>(
+          print(UpdateOpportunityDocument),
           variables
         )
       );

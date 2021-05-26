@@ -12,6 +12,7 @@ import {
   UpdateReferenceInput,
   CreateEcoverseInput,
   CreateOpportunityInput,
+  UpdateOpportunityInput,
 } from './types/cherrytwist-schema';
 import { ErrorHandler, handleErrors } from './util/handleErrors';
 import semver from 'semver';
@@ -525,6 +526,16 @@ export class CherrytwistClient {
     this.errorHandler(errors);
 
     return data?.updateChallenge;
+  }
+
+  public async updateOpportunity(opportunity: UpdateOpportunityInput) {
+    const { data, errors } = await this.client.updateOpportunity({
+      opportunityData: opportunity,
+    });
+
+    this.errorHandler(errors);
+
+    return data?.updateOpportunity;
   }
 
   public async updateOrganisation(organisation: UpdateOrganisationInput) {
