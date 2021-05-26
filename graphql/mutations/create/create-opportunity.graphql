@@ -1,7 +1,7 @@
 mutation createOpportunity($opportunityData: CreateOpportunityInput!) {
   createOpportunity(opportunityData: $opportunityData) {
     id
-    name
-    textID
+    displayName
+    nameID
   }
 }

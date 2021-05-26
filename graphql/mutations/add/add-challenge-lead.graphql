@@ -3,7 +3,7 @@ mutation addChallengeLead($input: AssignChallengeLeadInput!) {
     id
     leadOrganisations {
       id
-      name
+      nameID
     }
   }
 }

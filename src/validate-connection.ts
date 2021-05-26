@@ -5,7 +5,19 @@ const main = async () => {
     graphqlEndpoint: 'http://localhost:4000/graphql',
     accessToken: 'notSet',
   });
-  await ctClient.validateConnection();
+  const serverVersion = await ctClient.validateConnection();
+  console.log(`Cherrytwist platform version: ${serverVersion}`);
+
+  const ecoverseID = 'Test';
+  const ecoverseExists = await ctClient.ecoverseExists(ecoverseID);
+  console.log(`Ecoverse '${ecoverseID}' exists: ${ecoverseExists}`);
+
+  if (!ecoverseExists) {
+    const newEcoverse = await ctClient.createEcoverse({
+      nameID: ecoverseID,
+    });
+    console.log(`Created ecoverse: ${newEcoverse?.nameID}`);
+  }
 };
 
 try {

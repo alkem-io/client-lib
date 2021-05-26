@@ -1,0 +1,15 @@
+fragment OpportunityDetails on Opportunity {
+  id
+  nameID
+  tagset {
+    tags
+    id
+    name
+  }
+  community {
+    groups {
+      id
+      name
+    }
+  }
+}

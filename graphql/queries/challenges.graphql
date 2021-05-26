@@ -1,17 +1,9 @@
-query challengesBase {
-  ecoverse {
+query challenges($ecoverseID: UUID_NAMEID!) {
+  ecoverse(ID: $ecoverseID) {
     challenges {
       id
-      textID
-      name
-    }
-  }
-}
-
-query challenges {
-  ecoverse {
-    challenges {
-      ...ChallengeDetails
+      nameID
+      displayName
     }
   }
 }

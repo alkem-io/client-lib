@@ -1,6 +1,6 @@
 fragment ChallengeDetails on Challenge {
   id
-  name
+  nameID
   tagset {
     tags
     id

@@ -1,0 +1,8 @@
+query ecoverses {
+  ecoverses {
+    displayName
+    id
+    nameID
+
+  }
+}

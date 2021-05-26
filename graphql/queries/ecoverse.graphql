@@ -1,8 +1,8 @@
-query ecoverseInfo {
-  ecoverse {
+query ecoverse($id: UUID_NAMEID!) {
+  ecoverse(ID: $id) {
     id
-    textID
-    name
+    nameID
+    displayName
     community {
       id
     }

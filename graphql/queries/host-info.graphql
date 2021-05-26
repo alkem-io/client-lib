@@ -1,8 +1,9 @@
-query hostInfo {
-  ecoverse {
+query hostInfo($ecoverseID: UUID_NAMEID!) {
+  ecoverse(ID: $ecoverseID) {
     host {
       id
-      name
+      nameID
+      displayName
       profile {
         id
         tagsets {
