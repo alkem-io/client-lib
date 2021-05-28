@@ -41,6 +41,8 @@ export type AadAuthProviderConfig = {
 };
 
 export type Actor = {
+  /** The authorization rules for the entity */
+  authorization: Authorization;
   /** A description of this actor */
   description?: Maybe<Scalars['String']>;
   /** The ID of the entity */
@@ -55,6 +57,8 @@ export type Actor = {
 export type ActorGroup = {
   /** The set of actors in this actor group */
   actors?: Maybe<Array<Actor>>;
+  /** The authorization rules for the entity */
+  authorization: Authorization;
   /** A description of this group of actors */
   description?: Maybe<Scalars['String']>;
   /** The ID of the entity */
@@ -97,6 +101,8 @@ export type ApplicationTemplate = {
 };
 
 export type Aspect = {
+  /** The authorization rules for the entity */
+  authorization: Authorization;
   explanation: Scalars['String'];
   framing: Scalars['String'];
   /** The ID of the entity */
@@ -143,19 +149,32 @@ export type AuthenticationProviderConfigUnion =
   | AadAuthProviderConfig
   | DemoAuthProviderConfig;
 
+export type Authorization = {
+  anonymousReadAccess: Scalars['Boolean'];
+  credentialRules: Scalars['String'];
+};
+
 export enum AuthorizationCredential {
+  ChallengeAdmin = 'ChallengeAdmin',
+  ChallengeMember = 'ChallengeMember',
   CommunityMember = 'CommunityMember',
+  EcoverseAdmin = 'EcoverseAdmin',
+  EcoverseMember = 'EcoverseMember',
   GlobalAdmin = 'GlobalAdmin',
   GlobalAdminChallenges = 'GlobalAdminChallenges',
   GlobalAdminCommunity = 'GlobalAdminCommunity',
   GlobalRegistered = 'GlobalRegistered',
+  OrganisationAdmin = 'OrganisationAdmin',
   OrganisationMember = 'OrganisationMember',
   UserGroupMember = 'UserGroupMember',
+  UserSelfManagement = 'UserSelfManagement',
 }
 
 export type Challenge = {
   /** The activity within this Challenge. */
   activity?: Maybe<Array<Nvp>>;
+  /** The authorization rules for the entity */
+  authorization: Authorization;
   /** The set of child Challenges within this challenge. */
   challenges?: Maybe<Array<Challenge>>;
   /** The community for the challenge. */
@@ -193,6 +212,8 @@ export type ChallengeTemplate = {
 export type Community = Groupable & {
   /** Application available for this community. */
   applications: Array<Application>;
+  /** The authorization rules for the entity */
+  authorization: Authorization;
   /** The name of the Community */
   displayName: Scalars['String'];
   /** Groups of users related to a Community. */
@@ -213,6 +234,8 @@ export type Config = {
 export type Context = {
   /** The Aspects for this Context. */
   aspects?: Maybe<Array<Aspect>>;
+  /** The authorization rules for the entity */
+  authorization: Authorization;
   /** A detailed description of the current situation */
   background?: Maybe<Scalars['String']>;
   /** The EcosystemModel for this Context. */
@@ -334,7 +357,20 @@ export type CreateProjectInput = {
 export type CreateReferenceInput = {
   description?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  parentID?: Maybe<Scalars['UUID']>;
+  uri?: Maybe<Scalars['String']>;
+};
+
+export type CreateReferenceOnContextInput = {
+  contextID: Scalars['UUID'];
+  description?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  uri?: Maybe<Scalars['String']>;
+};
+
+export type CreateReferenceOnProfileInput = {
+  description?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  profileID: Scalars['UUID'];
   uri?: Maybe<Scalars['String']>;
 };
 
@@ -349,7 +385,12 @@ export type CreateRelationInput = {
 
 export type CreateTagsetInput = {
   name: Scalars['String'];
-  parentID?: Maybe<Scalars['UUID']>;
+  tags?: Maybe<Array<Scalars['String']>>;
+};
+
+export type CreateTagsetOnProfileInput = {
+  name: Scalars['String'];
+  profileID?: Maybe<Scalars['UUID']>;
   tags?: Maybe<Array<Scalars['String']>>;
 };
 
@@ -444,6 +485,8 @@ export type DemoAuthProviderConfig = {
 export type EcosystemModel = {
   /** A list of ActorGroups */
   actorGroups?: Maybe<Array<ActorGroup>>;
+  /** The authorization rules for the entity */
+  authorization: Authorization;
   /** Overview of this ecosystem model. */
   description?: Maybe<Scalars['String']>;
   /** The ID of the entity */
@@ -455,6 +498,8 @@ export type Ecoverse = {
   activity?: Maybe<Array<Nvp>>;
   /** All applications to join */
   application: Application;
+  /** The authorization rules for the entity */
+  authorization: Authorization;
   /** A particular Challenge, either by its ID or nameID */
   challenge: Challenge;
   /** The challenges for the ecoverse. */
@@ -547,23 +592,10 @@ export type Lifecycle = {
 };
 
 export type Membership = {
-  /** Ecoverses the user is a member of, with child memberships */
-  ecoverses: Array<MembershipEcoverseResultEntry>;
-  /** Names and IDs of  the Organisations the user is a member of */
-  organisations: Array<MembershipResultEntry>;
-};
-
-export type MembershipEcoverseResultEntry = {
-  /** Names and IDs of the Challenges the user is a member of */
-  challenges: Array<MembershipResultEntry>;
-  /** The ID of the Ecoverse */
-  id?: Maybe<Scalars['UUID']>;
-  /** The name of the Ecoverse. */
-  name?: Maybe<Scalars['String']>;
-  /** Names and IDs of the Opportunities the user is a member of */
-  opportunities: Array<MembershipResultEntry>;
-  /** Names and IDs of  the UserGroups the user is a member of */
-  userGroups: Array<MembershipResultEntry>;
+  /** Details of Ecoverses the user is a member of, with child memberships */
+  ecoverses: Array<MembershipResultEntryEcoverse>;
+  /** Details of the Organisations the user is a member of, with child memberships. */
+  organisations: Array<MembershipResultEntryOrganisation>;
 };
 
 export type MembershipInput = {
@@ -578,6 +610,32 @@ export type MembershipResultEntry = {
   id: Scalars['UUID'];
   /** Name Identifier of the entity */
   nameID: Scalars['NameID'];
+};
+
+export type MembershipResultEntryEcoverse = {
+  /** Details of the Challenges the user is a member of */
+  challenges: Array<MembershipResultEntry>;
+  /** Display name of the entity */
+  displayName: Scalars['String'];
+  /** The ID of the entry the user is a member of. */
+  id: Scalars['UUID'];
+  /** Name Identifier of the entity */
+  nameID: Scalars['NameID'];
+  /** Details of the Opportunities the user is a member of */
+  opportunities: Array<MembershipResultEntry>;
+  /** Details of the UserGroups the user is a member of */
+  userGroups: Array<MembershipResultEntry>;
+};
+
+export type MembershipResultEntryOrganisation = {
+  /** Display name of the entity */
+  displayName: Scalars['String'];
+  /** The ID of the entry the user is a member of. */
+  id: Scalars['UUID'];
+  /** Name Identifier of the entity */
+  nameID: Scalars['NameID'];
+  /** Details of the UserGroups the user is a member of */
+  userGroups: Array<MembershipResultEntry>;
 };
 
 export type Metadata = {
@@ -784,11 +842,11 @@ export type MutationCreateProjectArgs = {
 };
 
 export type MutationCreateReferenceOnContextArgs = {
-  referenceInput: CreateReferenceInput;
+  referenceInput: CreateReferenceOnContextInput;
 };
 
 export type MutationCreateReferenceOnProfileArgs = {
-  referenceInput: CreateReferenceInput;
+  referenceInput: CreateReferenceOnProfileInput;
 };
 
 export type MutationCreateRelationArgs = {
@@ -796,7 +854,7 @@ export type MutationCreateRelationArgs = {
 };
 
 export type MutationCreateTagsetOnProfileArgs = {
-  tagsetData: CreateTagsetInput;
+  tagsetData: CreateTagsetOnProfileInput;
 };
 
 export type MutationCreateUserArgs = {
@@ -946,6 +1004,8 @@ export type Nvp = {
 export type Opportunity = {
   /** The activity within this Opportunity. */
   activity?: Maybe<Array<Nvp>>;
+  /** The authorization rules for the entity */
+  authorization: Authorization;
   /** The community for the Opportunity. */
   community?: Maybe<Community>;
   /** The context for the Opportunity. */
@@ -986,6 +1046,8 @@ export type OpportunityTemplate = {
 
 export type Organisation = Groupable &
   Searchable & {
+    /** The authorization rules for the entity */
+    authorization: Authorization;
     /** The display name. */
     displayName: Scalars['String'];
     /** Groups defined on this organisation. */
@@ -1000,6 +1062,8 @@ export type Organisation = Groupable &
   };
 
 export type Profile = {
+  /** The authorization rules for the entity */
+  authorization: Authorization;
   /** A URI that points to the location of an avatar, either on a shared location or a gravatar */
   avatar?: Maybe<Scalars['String']>;
   /** A short description of the entity associated with this profile. */
@@ -1015,6 +1079,8 @@ export type Profile = {
 export type Project = {
   /** The set of aspects for this Project. Note: likley to change. */
   aspects?: Maybe<Array<Aspect>>;
+  /** The authorization rules for the entity */
+  authorization: Authorization;
   description?: Maybe<Scalars['String']>;
   /** The display name. */
   displayName: Scalars['String'];
@@ -1107,6 +1173,8 @@ export type QuestionTemplate = {
 };
 
 export type Reference = {
+  /** The authorization rules for the entity */
+  authorization: Authorization;
   description: Scalars['String'];
   /** The ID of the entity */
   id: Scalars['UUID'];
@@ -1118,6 +1186,8 @@ export type Relation = {
   actorName: Scalars['String'];
   actorRole: Scalars['String'];
   actorType: Scalars['String'];
+  /** The authorization rules for the entity */
+  authorization: Authorization;
   description: Scalars['String'];
   /** The ID of the entity */
   id: Scalars['UUID'];
@@ -1184,6 +1254,8 @@ export type ServiceMetadata = {
 };
 
 export type Tagset = {
+  /** The authorization rules for the entity */
+  authorization: Authorization;
   /** The ID of the entity */
   id: Scalars['UUID'];
   name: Scalars['String'];
@@ -1326,8 +1398,7 @@ export type UpdateUserGroupInput = {
 };
 
 export type UpdateUserInput = {
-  /** The ID of the entity to be updated. */
-  ID: Scalars['UUID_NAMEID'];
+  ID: Scalars['UUID_NAMEID_EMAIL'];
   accountUpn?: Maybe<Scalars['String']>;
   city?: Maybe<Scalars['String']>;
   country?: Maybe<Scalars['String']>;
@@ -1352,6 +1423,8 @@ export type User = Searchable & {
   accountUpn: Scalars['String'];
   /** The agent for this User */
   agent?: Maybe<Agent>;
+  /** The authorization rules for the entity */
+  authorization: Authorization;
   city: Scalars['String'];
   country: Scalars['String'];
   /** The display name. */
@@ -1369,6 +1442,8 @@ export type User = Searchable & {
 };
 
 export type UserGroup = Searchable & {
+  /** The authorization rules for the entity */
+  authorization: Authorization;
   id: Scalars['UUID'];
   /** The Users that are members of this User Group. */
   members?: Maybe<Array<User>>;

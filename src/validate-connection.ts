@@ -11,13 +11,6 @@ const main = async () => {
   const ecoverseID = 'Test';
   const ecoverseExists = await ctClient.ecoverseExists(ecoverseID);
   console.log(`Ecoverse '${ecoverseID}' exists: ${ecoverseExists}`);
-
-  if (!ecoverseExists) {
-    const newEcoverse = await ctClient.createEcoverse({
-      nameID: ecoverseID,
-    });
-    console.log(`Created ecoverse: ${newEcoverse?.nameID}`);
-  }
 };
 
 try {

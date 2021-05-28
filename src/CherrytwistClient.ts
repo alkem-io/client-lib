@@ -43,7 +43,7 @@ export class CherrytwistClient {
   }
 
   public validateServerVersion(serverVersion: string): boolean {
-    const MIN_SERVER_VERSION = '0.11.1';
+    const MIN_SERVER_VERSION = '0.11.3';
     const validVersion = semver.gte(serverVersion, MIN_SERVER_VERSION);
     if (!validVersion)
       throw new Error(
@@ -123,7 +123,7 @@ export class CherrytwistClient {
   ) {
     const { data, errors } = await this.client.createReferenceOnProfile({
       referenceInput: {
-        parentID: profileID,
+        profileID: profileID,
         uri: referenceURI,
         name: referenceName,
         description: referenceDesc,
@@ -179,7 +179,7 @@ export class CherrytwistClient {
     if (tags) {
       const { errors } = await this.client.createTagsetOnProfile({
         tagsetData: {
-          parentID: profileID,
+          profileID: profileID,
           name: tagsetName,
         },
       });
@@ -648,7 +648,7 @@ export class CherrytwistClient {
     for (const newRef of newReferences) {
       this.client.createReferenceOnContext({
         input: {
-          parentID: contextId,
+          contextID: contextId,
           name: newRef.name,
           description: newRef.description,
           uri: newRef.uri,

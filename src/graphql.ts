@@ -154,7 +154,7 @@ export type CreateOrganisationMutation = {
 };
 
 export type CreateReferenceOnContextMutationVariables = SchemaTypes.Exact<{
-  input: SchemaTypes.CreateReferenceInput;
+  input: SchemaTypes.CreateReferenceOnContextInput;
 }>;
 
 export type CreateReferenceOnContextMutation = {
@@ -167,7 +167,7 @@ export type CreateReferenceOnContextMutation = {
 };
 
 export type CreateReferenceOnProfileMutationVariables = SchemaTypes.Exact<{
-  referenceInput: SchemaTypes.CreateReferenceInput;
+  referenceInput: SchemaTypes.CreateReferenceOnProfileInput;
 }>;
 
 export type CreateReferenceOnProfileMutation = {
@@ -181,7 +181,7 @@ export type CreateRelationMutationVariables = SchemaTypes.Exact<{
 export type CreateRelationMutation = { createRelation: { type: string } };
 
 export type CreateTagsetOnProfileMutationVariables = SchemaTypes.Exact<{
-  tagsetData: SchemaTypes.CreateTagsetInput;
+  tagsetData: SchemaTypes.CreateTagsetOnProfileInput;
 }>;
 
 export type CreateTagsetOnProfileMutation = {
@@ -681,7 +681,7 @@ export const CreateOrganisationDocument = gql`
   }
 `;
 export const CreateReferenceOnContextDocument = gql`
-  mutation createReferenceOnContext($input: CreateReferenceInput!) {
+  mutation createReferenceOnContext($input: CreateReferenceOnContextInput!) {
     createReferenceOnContext(referenceInput: $input) {
       id
       name
@@ -691,7 +691,9 @@ export const CreateReferenceOnContextDocument = gql`
   }
 `;
 export const CreateReferenceOnProfileDocument = gql`
-  mutation createReferenceOnProfile($referenceInput: CreateReferenceInput!) {
+  mutation createReferenceOnProfile(
+    $referenceInput: CreateReferenceOnProfileInput!
+  ) {
     createReferenceOnProfile(referenceInput: $referenceInput) {
       name
       uri
@@ -707,7 +709,7 @@ export const CreateRelationDocument = gql`
   }
 `;
 export const CreateTagsetOnProfileDocument = gql`
-  mutation createTagsetOnProfile($tagsetData: CreateTagsetInput!) {
+  mutation createTagsetOnProfile($tagsetData: CreateTagsetOnProfileInput!) {
     createTagsetOnProfile(tagsetData: $tagsetData) {
       id
       tags
