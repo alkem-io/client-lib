@@ -8,7 +8,6 @@ import {
   UpdateOrganisationInput,
   CreateUserInput,
   UpdateContextInput,
-  Reference,
   UpdateReferenceInput,
   CreateEcoverseInput,
   CreateOpportunityInput,
@@ -611,7 +610,7 @@ export class CherrytwistClient {
 
   async updateReferencesOnEcoverse(
     ecoverseID: string,
-    references: Omit<Reference, 'id'>[]
+    references: Omit<UpdateReferenceInput, 'ID'>[]
   ) {
     const ecoverseInfo = await this.ecoverseInfo(ecoverseID);
     const contextId = ecoverseInfo?.context?.id;
@@ -649,7 +648,7 @@ export class CherrytwistClient {
       this.client.createReferenceOnContext({
         input: {
           contextID: contextId,
-          name: newRef.name,
+          name: newRef.name || '',
           description: newRef.description,
           uri: newRef.uri,
         },
