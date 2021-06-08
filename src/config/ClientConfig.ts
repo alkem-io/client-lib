@@ -1,6 +1,6 @@
-import { UserCredentials } from 'src/types';
+import { AuthInfo } from 'src/types';
 
 export interface ClientConfig {
   graphqlEndpoint: string;
-  credentials: UserCredentials;
+  authInfo: AuthInfo;
 }

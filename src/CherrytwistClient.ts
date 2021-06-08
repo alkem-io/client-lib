@@ -28,7 +28,7 @@ export class CherrytwistClient {
 
   public async configureGraphqlClient(config: ClientConfig) {
     this.config = config;
-    const apiToken = await getApiToken(config.credentials);
+    const apiToken = await getApiToken(config.authInfo);
 
     const client = new GraphQLClient(this.config.graphqlEndpoint, {
       headers: {

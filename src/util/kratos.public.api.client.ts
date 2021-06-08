@@ -10,16 +10,26 @@ import { HttpClient } from './http.client';
  * import { UserCredentials } from './types';
  * import { KratosPublicApiClient } from './util/kratos.public.api.client';
  *
- * export async function getApiToken(
- *   credentials: UserCredentials
- * ): Promise<string> {
- *   const apiEndpointConfig = () =>
- *     process.env.AUTH_ORY_KRATOS_PUBLIC_BASE_URL ?? 'http://localhost:4433/';
+ * export async function getApiToken(authInfo: AuthInfo): Promise<string> {
+ * const authClient = new KratosPublicApiClient(authInfo.apiEndpointFactory);
  *
- *   const authClient = new KratosPublicApiClient(apiEndpointConfig);
- *
- *   return await authClient.authenticate(credentials);
+ * return await authClient.authenticate(authInfo.credentials);
  * }
+ *
+ * const main = async () => {
+ * const apiEndpointConfig = () =>
+ *   process.env.AUTH_ORY_KRATOS_PUBLIC_BASE_URL ?? 'http://localhost:4433/';
+ *
+ * const token = await getApiToken({
+ *   credentials: {
+ *     email: process.env.AUTH_ADMIN_EMAIL ?? 'admin@cherrytwist.org',
+ *     password: process.env.AUTH_ADMIN_PASSWORD ?? '!Rn5Ez5FuuyUNc!',
+ *   },
+ *   apiEndpointFactory: apiEndpointConfig,
+ * });
+ *
+ * console.log(token);
+ * };
  */
 export class KratosPublicApiClient extends HttpClient {
   public constructor(apiEndpoint: ApiEndpointFactory) {
