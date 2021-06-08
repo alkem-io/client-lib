@@ -15,23 +15,27 @@ import {
 } from './types/cherrytwist-schema';
 import { ErrorHandler, handleErrors } from './util/handleErrors';
 import semver from 'semver';
+import { getApiToken } from './get-api-token';
 
 export class CherrytwistClient {
-  public config: ClientConfig;
-  private client: Sdk;
+  public config!: ClientConfig;
+  private client!: Sdk;
   private errorHandler: ErrorHandler;
 
-  constructor(config: ClientConfig) {
+  constructor() {
+    this.errorHandler = handleErrors();
+  }
+
+  public async configureGraphqlClient(config: ClientConfig) {
     this.config = config;
+    const apiToken = await getApiToken(config.credentials);
 
     const client = new GraphQLClient(this.config.graphqlEndpoint, {
       headers: {
-        authorization: `Bearer ${config.accessToken}`,
+        authorization: `Bearer ${apiToken}`,
       },
     });
     this.client = getSdk(client);
-
-    this.errorHandler = handleErrors();
   }
 
   public async validateConnection() {

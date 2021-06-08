@@ -16,6 +16,7 @@
     "lint": "tsc --noEmit && eslint src/**/*.ts{,x}",
     "lint:fix": "tsc --noEmit && eslint src/**/*.ts{,x} --fix",
     "validate-connection": "ts-node-dev src/validate-connection.ts",
+    "get-api-token": "ts-node-dev src/get-api-token.ts",
     "postcodegen": "prettier --write src/graphql*.ts src/types/*.ts ",
     "prepublishOnly": "npm run build"
   },
@@ -51,6 +52,7 @@
   },
   "dependencies": {
     "adal-node": "^0.2.1",
+    "axios": "^0.21.1",
     "dotenv": "^8.2.0",
     "graphql": "^15.4.0",
     "graphql-request": "^3.3.0",
