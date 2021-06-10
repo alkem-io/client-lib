@@ -27,22 +27,9 @@ export type Scalars = {
   Upload: File;
 };
 
-export type AadAuthProviderConfig = {
-  /** Config for accessing the Cherrytwist API. */
-  apiConfig: ApiConfig;
-  /** Scopes required for the user login. For OpenID Connect login flows, these are openid and profile + optionally offline_access if refresh tokens are utilized. */
-  loginRequest: Scope;
-  /** Config for MSAL authentication library on Cherrytwist Web Client. */
-  msalConfig: MsalConfig;
-  /** Scopes for silent token acquisition. Cherrytwist API scope + OpenID mandatory scopes. */
-  silentRequest: Scope;
-  /** Scopes for requesting a token. This is the Cherrytwist API app registration URI + ./default. */
-  tokenRequest: Scope;
-};
-
 export type Actor = {
   /** The authorization rules for the entity */
-  authorization: Authorization;
+  authorization?: Maybe<Authorization>;
   /** A description of this actor */
   description?: Maybe<Scalars['String']>;
   /** The ID of the entity */
@@ -58,7 +45,7 @@ export type ActorGroup = {
   /** The set of actors in this actor group */
   actors?: Maybe<Array<Actor>>;
   /** The authorization rules for the entity */
-  authorization: Authorization;
+  authorization?: Maybe<Authorization>;
   /** A description of this group of actors */
   description?: Maybe<Scalars['String']>;
   /** The ID of the entity */
@@ -75,12 +62,9 @@ export type Agent = {
   id: Scalars['UUID'];
 };
 
-export type ApiConfig = {
-  /** Configuration payload for the Cherrytwist API. */
-  resourceScope: Scalars['String'];
-};
-
 export type Application = {
+  /** The authorization rules for the entity */
+  authorization?: Maybe<Authorization>;
   /** The ID of the entity */
   id: Scalars['UUID'];
   lifecycle: Lifecycle;
@@ -89,7 +73,7 @@ export type Application = {
 };
 
 export type ApplicationEventInput = {
-  ID: Scalars['UUID'];
+  applicationID: Scalars['UUID'];
   eventName: Scalars['String'];
 };
 
@@ -102,7 +86,7 @@ export type ApplicationTemplate = {
 
 export type Aspect = {
   /** The authorization rules for the entity */
-  authorization: Authorization;
+  authorization?: Maybe<Authorization>;
   explanation: Scalars['String'];
   framing: Scalars['String'];
   /** The ID of the entity */
@@ -145,9 +129,7 @@ export type AuthenticationProviderConfig = {
   name: Scalars['String'];
 };
 
-export type AuthenticationProviderConfigUnion =
-  | AadAuthProviderConfig
-  | DemoAuthProviderConfig;
+export type AuthenticationProviderConfigUnion = OryConfig;
 
 export type Authorization = {
   anonymousReadAccess: Scalars['Boolean'];
@@ -157,13 +139,13 @@ export type Authorization = {
 export enum AuthorizationCredential {
   ChallengeAdmin = 'ChallengeAdmin',
   ChallengeMember = 'ChallengeMember',
-  CommunityMember = 'CommunityMember',
   EcoverseAdmin = 'EcoverseAdmin',
   EcoverseMember = 'EcoverseMember',
   GlobalAdmin = 'GlobalAdmin',
   GlobalAdminChallenges = 'GlobalAdminChallenges',
   GlobalAdminCommunity = 'GlobalAdminCommunity',
   GlobalRegistered = 'GlobalRegistered',
+  OpportunityMember = 'OpportunityMember',
   OrganisationAdmin = 'OrganisationAdmin',
   OrganisationMember = 'OrganisationMember',
   UserGroupMember = 'UserGroupMember',
@@ -173,8 +155,10 @@ export enum AuthorizationCredential {
 export type Challenge = {
   /** The activity within this Challenge. */
   activity?: Maybe<Array<Nvp>>;
+  /** The Agent representing this Challenge. */
+  agent?: Maybe<Agent>;
   /** The authorization rules for the entity */
-  authorization: Authorization;
+  authorization?: Maybe<Authorization>;
   /** The set of child Challenges within this challenge. */
   challenges?: Maybe<Array<Challenge>>;
   /** The community for the challenge. */
@@ -213,7 +197,7 @@ export type Community = Groupable & {
   /** Application available for this community. */
   applications: Array<Application>;
   /** The authorization rules for the entity */
-  authorization: Authorization;
+  authorization?: Maybe<Authorization>;
   /** The name of the Community */
   displayName: Scalars['String'];
   /** Groups of users related to a Community. */
@@ -235,7 +219,7 @@ export type Context = {
   /** The Aspects for this Context. */
   aspects?: Maybe<Array<Aspect>>;
   /** The authorization rules for the entity */
-  authorization: Authorization;
+  authorization?: Maybe<Authorization>;
   /** A detailed description of the current situation */
   background?: Maybe<Scalars['String']>;
   /** The EcosystemModel for this Context. */
@@ -271,7 +255,7 @@ export type CreateActorInput = {
 export type CreateApplicationInput = {
   parentID: Scalars['UUID'];
   questions: Array<CreateNvpInput>;
-  userID: Scalars['UUID'];
+  userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
 export type CreateAspectInput = {
@@ -444,7 +428,7 @@ export type DeleteChallengeInput = {
 };
 
 export type DeleteEcoverseInput = {
-  ID: Scalars['UUID'];
+  ID: Scalars['UUID_NAMEID'];
 };
 
 export type DeleteOpportunityInput = {
@@ -475,18 +459,11 @@ export type DeleteUserInput = {
   ID: Scalars['UUID'];
 };
 
-export type DemoAuthProviderConfig = {
-  /** Demo authentication provider issuer endpoint. */
-  issuer: Scalars['String'];
-  /** Demo authentication provider token endpoint. Use json payload in the form of username + password to login and obtain valid jwt token. */
-  tokenEndpoint: Scalars['String'];
-};
-
 export type EcosystemModel = {
   /** A list of ActorGroups */
   actorGroups?: Maybe<Array<ActorGroup>>;
   /** The authorization rules for the entity */
-  authorization: Authorization;
+  authorization?: Maybe<Authorization>;
   /** Overview of this ecosystem model. */
   description?: Maybe<Scalars['String']>;
   /** The ID of the entity */
@@ -496,10 +473,12 @@ export type EcosystemModel = {
 export type Ecoverse = {
   /** The activity within this Ecoverse. */
   activity?: Maybe<Array<Nvp>>;
+  /** The Agent representing this Ecoverse. */
+  agent?: Maybe<Agent>;
   /** All applications to join */
   application: Application;
   /** The authorization rules for the entity */
-  authorization: Authorization;
+  authorization?: Maybe<Authorization>;
   /** A particular Challenge, either by its ID or nameID */
   challenge: Challenge;
   /** The challenges for the ecoverse. */
@@ -639,31 +618,10 @@ export type MembershipResultEntryOrganisation = {
 };
 
 export type Metadata = {
+  /** Metrics about the activity on the platform */
+  activity: Array<Nvp>;
   /** Collection of metadata about Cherrytwist services. */
   services: Array<ServiceMetadata>;
-};
-
-export type MsalAuth = {
-  /** Azure Active Directory OpenID Connect Authority. */
-  authority: Scalars['String'];
-  /** Cherrytwist Web Client App Registration Client Id. */
-  clientId: Scalars['String'];
-  /** Cherrytwist Web Client Login Redirect Uri. */
-  redirectUri: Scalars['String'];
-};
-
-export type MsalCache = {
-  /** Cache location, e.g. localStorage.  */
-  cacheLocation?: Maybe<Scalars['String']>;
-  /** Is the authentication information stored in a cookie? */
-  storeAuthStateInCookie?: Maybe<Scalars['Boolean']>;
-};
-
-export type MsalConfig = {
-  /** Azure Active Directory OpenID Connect endpoint configuration. */
-  auth: MsalAuth;
-  /** Token cache configuration.  */
-  cache: MsalCache;
 };
 
 export type Mutation = {
@@ -1005,7 +963,7 @@ export type Opportunity = {
   /** The activity within this Opportunity. */
   activity?: Maybe<Array<Nvp>>;
   /** The authorization rules for the entity */
-  authorization: Authorization;
+  authorization?: Maybe<Authorization>;
   /** The community for the Opportunity. */
   community?: Maybe<Community>;
   /** The context for the Opportunity. */
@@ -1046,8 +1004,10 @@ export type OpportunityTemplate = {
 
 export type Organisation = Groupable &
   Searchable & {
+    /** The Agent representing this User. */
+    agent?: Maybe<Agent>;
     /** The authorization rules for the entity */
-    authorization: Authorization;
+    authorization?: Maybe<Authorization>;
     /** The display name. */
     displayName: Scalars['String'];
     /** Groups defined on this organisation. */
@@ -1061,9 +1021,16 @@ export type Organisation = Groupable &
     profile: Profile;
   };
 
+export type OryConfig = {
+  /** Ory Issuer. */
+  issuer: Scalars['String'];
+  /** Ory Kratos Public Base URL. Used by all Kratos Public Clients. */
+  kratosPublicBaseURL: Scalars['String'];
+};
+
 export type Profile = {
   /** The authorization rules for the entity */
-  authorization: Authorization;
+  authorization?: Maybe<Authorization>;
   /** A URI that points to the location of an avatar, either on a shared location or a gravatar */
   avatar?: Maybe<Scalars['String']>;
   /** A short description of the entity associated with this profile. */
@@ -1080,7 +1047,7 @@ export type Project = {
   /** The set of aspects for this Project. Note: likley to change. */
   aspects?: Maybe<Array<Aspect>>;
   /** The authorization rules for the entity */
-  authorization: Authorization;
+  authorization?: Maybe<Authorization>;
   description?: Maybe<Scalars['String']>;
   /** The display name. */
   displayName: Scalars['String'];
@@ -1131,7 +1098,7 @@ export type Query = {
 };
 
 export type QueryEcoverseArgs = {
-  ID?: Maybe<Scalars['UUID_NAMEID']>;
+  ID: Scalars['UUID_NAMEID'];
 };
 
 export type QueryMembershipArgs = {
@@ -1174,7 +1141,7 @@ export type QuestionTemplate = {
 
 export type Reference = {
   /** The authorization rules for the entity */
-  authorization: Authorization;
+  authorization?: Maybe<Authorization>;
   description: Scalars['String'];
   /** The ID of the entity */
   id: Scalars['UUID'];
@@ -1187,7 +1154,7 @@ export type Relation = {
   actorRole: Scalars['String'];
   actorType: Scalars['String'];
   /** The authorization rules for the entity */
-  authorization: Authorization;
+  authorization?: Maybe<Authorization>;
   description: Scalars['String'];
   /** The ID of the entity */
   id: Scalars['UUID'];
@@ -1215,11 +1182,6 @@ export type RevokeAuthorizationCredentialInput = {
   type: AuthorizationCredential;
   /** The user from whom the credential is being removed. */
   userID: Scalars['UUID_NAMEID_EMAIL'];
-};
-
-export type Scope = {
-  /** OpenID Scopes. */
-  scopes: Array<Scalars['String']>;
 };
 
 export type SearchInput = {
@@ -1255,7 +1217,7 @@ export type ServiceMetadata = {
 
 export type Tagset = {
   /** The authorization rules for the entity */
-  authorization: Authorization;
+  authorization?: Maybe<Authorization>;
   /** The ID of the entity */
   id: Scalars['UUID'];
   name: Scalars['String'];
@@ -1424,7 +1386,7 @@ export type User = Searchable & {
   /** The agent for this User */
   agent?: Maybe<Agent>;
   /** The authorization rules for the entity */
-  authorization: Authorization;
+  authorization?: Maybe<Authorization>;
   city: Scalars['String'];
   country: Scalars['String'];
   /** The display name. */
@@ -1443,7 +1405,7 @@ export type User = Searchable & {
 
 export type UserGroup = Searchable & {
   /** The authorization rules for the entity */
-  authorization: Authorization;
+  authorization?: Maybe<Authorization>;
   id: Scalars['UUID'];
   /** The Users that are members of this User Group. */
   members?: Maybe<Array<User>>;

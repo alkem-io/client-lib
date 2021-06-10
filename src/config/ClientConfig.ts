@@ -1,4 +1,6 @@
+import { AuthInfo } from 'src/types';
+
 export interface ClientConfig {
   graphqlEndpoint: string;
-  accessToken: string;
+  authInfo?: AuthInfo;
 }

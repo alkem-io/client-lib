@@ -1,6 +1,6 @@
 {
   "name": "@cherrytwist/client-lib",
-  "version": "0.6.6",
+  "version": "0.7.2",
   "description": "Library for interacting with a Cherrytwist server instance",
   "author": "Cherrytwist Foundation",
   "private": false,
@@ -29,7 +29,7 @@
   "homepage": "https://github.com/cherrytwist/Client.Lib#readme",
   "devDependencies": {
     "@graphql-codegen/add": "^2.0.2",
-    "@graphql-codegen/cli": "1.19.3",
+    "@graphql-codegen/cli": "^1.21.5",
     "@graphql-codegen/import-types-preset": "^1.18.1",
     "@graphql-codegen/typed-document-node": "^1.18.1",
     "@graphql-codegen/typescript": "1.18.1",
@@ -46,11 +46,11 @@
     "prettier": "^2.2.1",
     "rimraf": "^3.0.2",
     "supertest": "^4.0.2",
-    "ts-node-dev": "^1.0.0",
+    "ts-node-dev": "^1.1.6",
     "typescript": "^4.1.2"
   },
   "dependencies": {
-    "adal-node": "^0.2.1",
+    "axios": "^0.21.1",
     "dotenv": "^8.2.0",
     "graphql": "^15.4.0",
     "graphql-request": "^3.3.0",
