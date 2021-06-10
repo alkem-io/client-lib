@@ -1,0 +1,25 @@
+query configuration {
+  configuration
+  {
+    authentication
+    {
+      enabled
+      providers
+      {
+        name
+        label
+        icon
+        enabled
+        config
+        {
+          __typename
+          ... on OryConfig
+          {
+            issuer
+            kratosPublicBaseURL
+          }
+        }
+      }
+    }
+  }
+}

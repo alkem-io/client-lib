@@ -1,22 +1,19 @@
+import { AuthInfo } from 'src';
 import { CherrytwistClient } from './CherrytwistClient';
+import * as dotenv from 'dotenv';
 
 const main = async () => {
-  const ctClient = new CherrytwistClient();
-  await ctClient.configureGraphqlClient({
-    graphqlEndpoint: 'http://localhost:4455/graphql',
-    authInfo: {
-      credentials: {
-        email: process.env.AUTH_ADMIN_EMAIL ?? 'admin@cherrytwist.org',
-        password: process.env.AUTH_ADMIN_PASSWORD ?? '!Rn5Ez5FuuyUNc!',
-      },
-      apiEndpointFactory: () => {
-        return (
-          process.env.AUTH_ORY_KRATOS_PUBLIC_BASE_URL ??
-          'http://localhost:4433/'
-        );
-      },
-    },
+  dotenv.config();
+
+  const ctClient = new CherrytwistClient({
+    graphqlEndpoint:
+      process.env.GRAPHQL_ENDPOINT ?? 'http://localhost:4455/graphql',
   });
+  console.log(await ctClient.isAuthenticationEnabled());
+  ctClient.config.authInfo = await getAuthInfo();
+
+  await ctClient.enableAuthentication();
+
   const serverVersion = await ctClient.validateConnection();
   console.log(`Cherrytwist platform version: ${serverVersion}`);
 
@@ -24,6 +21,18 @@ const main = async () => {
   const ecoverseExists = await ctClient.ecoverseExists(ecoverseID);
   console.log(`Ecoverse '${ecoverseID}' exists: ${ecoverseExists}`);
 };
+
+async function getAuthInfo(): Promise<AuthInfo | undefined> {
+  return {
+    credentials: {
+      email: process.env.AUTH_ADMIN_EMAIL ?? 'admin@cherrytwist.org',
+      password: process.env.AUTH_ADMIN_PASSWORD ?? '!Rn5Ez5FuuyUNc!',
+    },
+    apiEndpointFactory: () => {
+      return 'http://localhost:4433/';
+    },
+  };
+}
 
 try {
   main();

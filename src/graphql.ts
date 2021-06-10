@@ -293,6 +293,29 @@ export type ChallengesQuery = {
   };
 };
 
+export type ConfigurationQueryVariables = SchemaTypes.Exact<{
+  [key: string]: never;
+}>;
+
+export type ConfigurationQuery = {
+  configuration: {
+    authentication: {
+      enabled: boolean;
+      providers: Array<{
+        name: string;
+        label: string;
+        icon: string;
+        enabled: boolean;
+        config: {
+          __typename: 'OryConfig';
+          issuer: string;
+          kratosPublicBaseURL: string;
+        };
+      }>;
+    };
+  };
+};
+
 export type EcoverseQueryVariables = SchemaTypes.Exact<{
   id: SchemaTypes.Scalars['UUID_NAMEID'];
 }>;
@@ -819,6 +842,28 @@ export const ChallengesDocument = gql`
         id
         nameID
         displayName
+      }
+    }
+  }
+`;
+export const ConfigurationDocument = gql`
+  query configuration {
+    configuration {
+      authentication {
+        enabled
+        providers {
+          name
+          label
+          icon
+          enabled
+          config {
+            __typename
+            ... on OryConfig {
+              issuer
+              kratosPublicBaseURL
+            }
+          }
+        }
       }
     }
   }
@@ -1433,6 +1478,22 @@ export function getSdk(
     }> {
       return withWrapper(() =>
         client.rawRequest<ChallengesQuery>(print(ChallengesDocument), variables)
+      );
+    },
+    configuration(
+      variables?: ConfigurationQueryVariables
+    ): Promise<{
+      data?: ConfigurationQuery | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<ConfigurationQuery>(
+          print(ConfigurationDocument),
+          variables
+        )
       );
     },
     ecoverse(

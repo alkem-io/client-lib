@@ -15,27 +15,60 @@ import {
 } from './types/cherrytwist-schema';
 import { ErrorHandler, handleErrors } from './util/handleErrors';
 import semver from 'semver';
-import { getApiToken } from './get-api-token';
+import { AuthInfo } from 'src';
+import { KratosPublicApiClient } from './util/kratos.public.api.client';
 
 export class CherrytwistClient {
   public config!: ClientConfig;
   private client!: Sdk;
   private errorHandler: ErrorHandler;
 
-  constructor() {
+  constructor(config: ClientConfig) {
+    this.config = config;
+    const client = new GraphQLClient(this.config.graphqlEndpoint);
+    this.client = getSdk(client);
     this.errorHandler = handleErrors();
   }
 
-  public async configureGraphqlClient(config: ClientConfig) {
-    this.config = config;
-    const apiToken = await getApiToken(config.authInfo);
+  public async enableAuthentication() {
+    if (this.config.authInfo && (await this.isAuthenticationEnabled())) {
+      const kratosPublicEndpoint = await this.getKratosPublicApiEndpoint();
+      this.config.authInfo.apiEndpointFactory = () => {
+        return kratosPublicEndpoint;
+      };
+      const apiToken = await this.getApiToken(this.config.authInfo);
 
-    const client = new GraphQLClient(this.config.graphqlEndpoint, {
-      headers: {
-        authorization: `Bearer ${apiToken}`,
-      },
-    });
-    this.client = getSdk(client);
+      const client = new GraphQLClient(this.config.graphqlEndpoint, {
+        headers: {
+          authorization: `Bearer ${apiToken}`,
+        },
+      });
+      this.client = getSdk(client);
+    }
+  }
+
+  private async getApiToken(authInfo: AuthInfo): Promise<string> {
+    const authClient = new KratosPublicApiClient(authInfo.apiEndpointFactory);
+
+    return await authClient.authenticate(authInfo.credentials);
+  }
+
+  public async getKratosPublicApiEndpoint(): Promise<string> {
+    const configuration = await this.client.configuration();
+    const endpoint =
+      configuration.data?.configuration.authentication.providers[0].config
+        .kratosPublicBaseURL;
+
+    return endpoint ?? 'http://localhost:4433/';
+  }
+
+  public async isAuthenticationEnabled(): Promise<boolean> {
+    const configuration = await this.client.configuration();
+
+    const authenticationEnabled =
+      configuration.data?.configuration.authentication.enabled;
+
+    return authenticationEnabled ? true : false;
   }
 
   public async validateConnection() {
