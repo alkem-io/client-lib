@@ -28,17 +28,5 @@
         ],
         "type": "pwa-node"
     },
-    {
-      "name": "Get Kratos API Token",
-      "request": "launch",
-      "runtimeArgs": [
-          "run", "get-api-token"
-      ],
-      "runtimeExecutable": "npm",
-      "skipFiles": [
-          "<node_internals>/**"
-      ],
-      "type": "pwa-node"
-  },
     ]
 }
