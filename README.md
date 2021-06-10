@@ -25,3 +25,14 @@ The ctClient can then be used to access the Cherrytwist server api using provide
 The capabilities provided by the Cherrytwist server api is continually expanding, so not all capabillities of the server are guaranteed to be exposed by this package. For full details of the graphql api exposed by the Cherrytwist server please browse the schema for the graphql api via our [Dev environment](http://dev.cherrytwist.org/graphql).
 
 The set of wrapper calls provided is based on needs to date; feel free to augment with new ones as the needs arise.
+
+## Authentication
+The default usage for client-lib is against an non-authenticated server, but it can also be run against a server with authentication enabled.
+
+There is a sample program provided, `npm run get-api-token`, that reads in the following environment variables to authenticate:
+* AUTH_ORY_KRATOS_PUBLIC_BASE_URL=http://localhost:4433/
+* AUTH_ADMIN_EMAIL=admin@cherrytwist.org
+* AUTH_ADMIN_PASSWORD=changeMe
+To set these, make a copy of the provided `.env.default` as `.env` and edit to reflect the target server values.
+
+Other usages of client lib, such as from `populator`, are expected to provide the key parameters programmatically.
