@@ -133,6 +133,16 @@ export class CherrytwistClient {
     return result.data?.createEcoverse;
   }
 
+  public async createChallenge(challenge: CreateChallengeInput) {
+    const { data, errors } = await this.client.createChallenge({
+      challengeData: challenge,
+    });
+
+    this.errorHandler(errors);
+
+    return data?.createChallenge;
+  }
+
   public async createChildChallenge(challengeData: CreateChallengeInput) {
     const result = await this.client.createChildChallenge({
       childChallengeData: challengeData,
@@ -482,7 +492,6 @@ export class CherrytwistClient {
     return data?.createAspect;
   }
 
-  // Create a gouup at the ecoverse level with the given name
   async createEcoverseGroup(
     ecoverseID: string,
     groupName: string,
@@ -534,16 +543,6 @@ export class CherrytwistClient {
     this.errorHandler(errors);
 
     return data?.organisation;
-  }
-
-  public async createChallenge(challenge: CreateChallengeInput) {
-    const { data, errors } = await this.client.createChallenge({
-      challengeData: challenge,
-    });
-
-    this.errorHandler(errors);
-
-    return data?.createChallenge;
   }
 
   public async challenges(ecoverseID: string) {
