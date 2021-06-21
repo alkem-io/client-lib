@@ -331,6 +331,11 @@ export type EcoverseQuery = {
       references?: SchemaTypes.Maybe<
         Array<{ id: any; name: string; description: string; uri: string }>
       >;
+      visual?: SchemaTypes.Maybe<{
+        avatar: string;
+        background: string;
+        banner: string;
+      }>;
     }>;
   };
 };
@@ -884,6 +889,11 @@ export const EcoverseDocument = gql`
           name
           description
           uri
+        }
+        visual {
+          avatar
+          background
+          banner
         }
       }
     }

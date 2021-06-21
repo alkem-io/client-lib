@@ -13,16 +13,20 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** A decentralized identifier (DID) as per the W3C standard. */
+  DID: string;
+  /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
+  DateTime: Date;
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSON: any;
   /** A human readable identifier, 3 <= length <= 25. Used for URL paths in clients. Characters allowed: a-z,A-Z,0-9. */
-  NameID: any;
+  NameID: string;
   /** A uuid identifier. Length 36 charachters. */
-  UUID: any;
+  UUID: string;
   /** A UUID or NameID identifier. */
-  UUID_NAMEID: any;
+  UUID_NAMEID: string;
   /** A UUID or Email identifier. */
-  UUID_NAMEID_EMAIL: any;
+  UUID_NAMEID_EMAIL: string;
   /** The `Upload` scalar type represents a file upload. */
   Upload: File;
 };
@@ -54,12 +58,16 @@ export type ActorGroup = {
 };
 
 export type Agent = {
+  /** The authorization rules for the entity */
+  authorization?: Maybe<Authorization>;
   /** The Credentials held by this Agent. */
   credentials?: Maybe<Array<Credential>>;
   /** The Decentralized Identifier (DID) for this Agent. */
-  did?: Maybe<Scalars['String']>;
+  did?: Maybe<Scalars['DID']>;
   /** The ID of the entity */
   id: Scalars['UUID'];
+  /** The Verfied Credentials for this Agent. */
+  verifiedCredentials?: Maybe<Array<VerifiedCredential>>;
 };
 
 export type Application = {
@@ -134,6 +142,9 @@ export type AuthenticationProviderConfigUnion = OryConfig;
 export type Authorization = {
   anonymousReadAccess: Scalars['Boolean'];
   credentialRules: Scalars['String'];
+  /** The ID of the entity */
+  id: Scalars['UUID'];
+  verifiedCredentialRules: Scalars['String'];
 };
 
 export enum AuthorizationCredential {
@@ -150,6 +161,14 @@ export enum AuthorizationCredential {
   OrganisationMember = 'OrganisationMember',
   UserGroupMember = 'UserGroupMember',
   UserSelfManagement = 'UserSelfManagement',
+}
+
+export enum AuthorizationPrivilege {
+  Create = 'CREATE',
+  Delete = 'DELETE',
+  Grant = 'GRANT',
+  Read = 'READ',
+  Update = 'UPDATE',
 }
 
 export type Challenge = {
@@ -193,6 +212,44 @@ export type ChallengeTemplate = {
   name: Scalars['String'];
 };
 
+export type CommunicationMessageResult = {
+  /** The message being sent */
+  message: Scalars['String'];
+  /** The sender email */
+  sender: Scalars['String'];
+  /** The server timestamp in UTC */
+  timestamp: Scalars['Float'];
+};
+
+export type CommunicationRoomDetailsResult = {
+  /** The identifier of the room */
+  id: Scalars['String'];
+  /** Indicates whether this is a DM room */
+  isDirect: Scalars['Boolean'];
+  /** The message being sent */
+  messages: Array<CommunicationMessageResult>;
+  /** The recepient userID */
+  receiverID?: Maybe<Scalars['String']>;
+};
+
+export type CommunicationRoomResult = {
+  /** The identifier of the room */
+  id: Scalars['String'];
+  /** Indicates whether this is a DM room */
+  isDirect: Scalars['Boolean'];
+  /** The recepient userID */
+  receiverID?: Maybe<Scalars['String']>;
+};
+
+export type CommunicationSendMessageInput = {
+  /** The content of the message */
+  message: Scalars['String'];
+  /** The user ID of the receiver if attempting to direct message someone */
+  receiverID: Scalars['ID'];
+  /** The identifier of the room */
+  roomID?: Maybe<Scalars['String']>;
+};
+
 export type Community = Groupable & {
   /** Application available for this community. */
   applications: Array<Application>;
@@ -234,6 +291,8 @@ export type Context = {
   tagline?: Maybe<Scalars['String']>;
   /** The goal that is being pursued */
   vision?: Maybe<Scalars['String']>;
+  /** The Visual assets for this Context. */
+  visual?: Maybe<Visual>;
   /** Who should get involved in this challenge */
   who?: Maybe<Scalars['String']>;
 };
@@ -283,6 +342,8 @@ export type CreateContextInput = {
   references?: Maybe<Array<CreateReferenceInput>>;
   tagline?: Maybe<Scalars['String']>;
   vision?: Maybe<Scalars['String']>;
+  /** The Visual assets for the new Context. */
+  visual?: Maybe<CreateVisualInput>;
   who?: Maybe<Scalars['String']>;
 };
 
@@ -291,7 +352,7 @@ export type CreateEcoverseInput = {
   /** The display name for the entity. */
   displayName?: Maybe<Scalars['String']>;
   /** The host Organisation for the ecoverse */
-  hostID?: Maybe<Scalars['UUID_NAMEID']>;
+  hostID: Scalars['UUID_NAMEID'];
   lifecycleTemplate?: Maybe<Scalars['String']>;
   /** A readable identifier, unique within the containing scope. */
   nameID: Scalars['NameID'];
@@ -379,6 +440,7 @@ export type CreateTagsetOnProfileInput = {
 };
 
 export type CreateUserGroupInput = {
+  /** The name of the UserGroup. Minimum length 2. */
   name: Scalars['String'];
   parentID: Scalars['UUID'];
   profileData?: Maybe<CreateProfileInput>;
@@ -400,11 +462,17 @@ export type CreateUserInput = {
   profileData?: Maybe<CreateProfileInput>;
 };
 
+export type CreateVisualInput = {
+  avatar: Scalars['String'];
+  background?: Maybe<Scalars['String']>;
+  banner?: Maybe<Scalars['String']>;
+};
+
 export type Credential = {
   /** The ID of the entity */
   id: Scalars['UUID'];
   resourceID: Scalars['String'];
-  type: Scalars['String'];
+  type: AuthorizationCredential;
 };
 
 export type DeleteActorGroupInput = {
@@ -552,6 +620,13 @@ export type GrantAuthorizationCredentialInput = {
   userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
+export type GrantStateModificationVcInput = {
+  /** The challenge whose state can be udpated. */
+  challengeID: Scalars['UUID'];
+  /** The user to whom the credential is being granted. */
+  userID: Scalars['UUID_NAMEID_EMAIL'];
+};
+
 export type Groupable = {
   /** The groups contained by this entity. */
   groups?: Maybe<Array<UserGroup>>;
@@ -615,6 +690,14 @@ export type MembershipResultEntryOrganisation = {
   nameID: Scalars['NameID'];
   /** Details of the UserGroups the user is a member of */
   userGroups: Array<MembershipResultEntry>;
+};
+
+export type Message = {
+  id: Scalars['ID'];
+  message: Scalars['String'];
+  reciever: Scalars['String'];
+  sender: Scalars['String'];
+  timestamp: Scalars['Float'];
 };
 
 export type Metadata = {
@@ -703,6 +786,10 @@ export type Mutation = {
   eventOnProject: Project;
   /** Grants an authorization credential to a User. */
   grantCredentialToUser: User;
+  /** Assigns the StateModification credential to a particular user for a particular challenge */
+  grantStateModificationVC: User;
+  /** Sends a message on the specified User`s behalf and returns the room id */
+  message: Scalars['String'];
   /** Remove an organisation as a lead for the Challenge. */
   removeChallengeLead: Challenge;
   /** Removes a User as a member of the specified Community. */
@@ -889,6 +976,14 @@ export type MutationEventOnProjectArgs = {
 
 export type MutationGrantCredentialToUserArgs = {
   grantCredentialData: GrantAuthorizationCredentialInput;
+};
+
+export type MutationGrantStateModificationVcArgs = {
+  grantStateModificationVC: GrantStateModificationVcInput;
+};
+
+export type MutationMessageArgs = {
+  msgData: CommunicationSendMessageInput;
 };
 
 export type MutationRemoveChallengeLeadArgs = {
@@ -1079,6 +1174,7 @@ export type Query = {
   me: User;
   /** Search the ecoverse for terms supplied */
   membership: Membership;
+  messages: Array<Message>;
   /** Cherrytwist Services Metadata */
   metadata: Metadata;
   /** A particular Organisation */
@@ -1089,6 +1185,8 @@ export type Query = {
   search: Array<SearchResultEntry>;
   /** A particular user, identified by the ID or by email */
   user: User;
+  /** Privileges assigned to a User (based on held credentials) given an Authorization defnition. */
+  userAuthorizationPrivileges: Array<AuthorizationPrivilege>;
   /** The users who have profiles on this platform */
   users: Array<User>;
   /** The users filtered by list of IDs. */
@@ -1115,6 +1213,10 @@ export type QuerySearchArgs = {
 
 export type QueryUserArgs = {
   ID: Scalars['UUID_NAMEID_EMAIL'];
+};
+
+export type QueryUserAuthorizationPrivilegesArgs = {
+  userAuthorizationPrivilegesData: UserAuthorizationPrivilegesInput;
 };
 
 export type QueryUsersByIdArgs = {
@@ -1215,6 +1317,11 @@ export type ServiceMetadata = {
   version?: Maybe<Scalars['String']>;
 };
 
+export type Subscription = {
+  avatarUploaded: Profile;
+  messageReceived: Message;
+};
+
 export type Tagset = {
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
@@ -1261,9 +1368,12 @@ export type UpdateAspectInput = {
   title?: Maybe<Scalars['String']>;
 };
 
+export type UpdateAuthorizationDefinitionInput = {
+  anonymousReadAccess: Scalars['Boolean'];
+};
+
 export type UpdateChallengeInput = {
-  /** The ID of the entity to be updated. */
-  ID: Scalars['UUID_NAMEID'];
+  ID: Scalars['UUID'];
   /** Update the contained Context entity. */
   context?: Maybe<UpdateContextInput>;
   /** The display name for this entity. */
@@ -1281,12 +1391,16 @@ export type UpdateContextInput = {
   references?: Maybe<Array<UpdateReferenceInput>>;
   tagline?: Maybe<Scalars['String']>;
   vision?: Maybe<Scalars['String']>;
+  /** Update the Visual assets for the new Context. */
+  visual?: Maybe<UpdateVisualInput>;
   who?: Maybe<Scalars['String']>;
 };
 
 export type UpdateEcoverseInput = {
-  /** The ID of the entity to be updated. */
+  /** The ID or NameID of the Ecoverse. */
   ID: Scalars['UUID_NAMEID'];
+  /** Update anonymous visibility for the Ecoverse. */
+  authorizationDefinition?: Maybe<UpdateAuthorizationDefinitionInput>;
   /** Update the contained Context entity. */
   context?: Maybe<UpdateContextInput>;
   /** The display name for this entity. */
@@ -1300,8 +1414,7 @@ export type UpdateEcoverseInput = {
 };
 
 export type UpdateOpportunityInput = {
-  /** The ID of the entity to be updated. */
-  ID: Scalars['UUID_NAMEID'];
+  ID: Scalars['UUID'];
   /** Update the contained Context entity. */
   context?: Maybe<UpdateContextInput>;
   /** The display name for this entity. */
@@ -1313,7 +1426,7 @@ export type UpdateOpportunityInput = {
 };
 
 export type UpdateOrganisationInput = {
-  /** The ID of the entity to be updated. */
+  /** The ID or NameID of the Organisation to update. */
   ID: Scalars['UUID_NAMEID'];
   /** The display name for this entity. */
   displayName?: Maybe<Scalars['String']>;
@@ -1331,8 +1444,7 @@ export type UpdateProfileInput = {
 };
 
 export type UpdateProjectInput = {
-  /** The ID of the entity to be updated. */
-  ID: Scalars['UUID_NAMEID'];
+  ID: Scalars['UUID'];
   description?: Maybe<Scalars['String']>;
   /** The display name for this entity. */
   displayName?: Maybe<Scalars['String']>;
@@ -1375,6 +1487,12 @@ export type UpdateUserInput = {
   profileData?: Maybe<UpdateProfileInput>;
 };
 
+export type UpdateVisualInput = {
+  avatar?: Maybe<Scalars['String']>;
+  background?: Maybe<Scalars['String']>;
+  banner?: Maybe<Scalars['String']>;
+};
+
 export type UploadProfileAvatarInput = {
   file: Scalars['String'];
   profileID: Scalars['String'];
@@ -1401,6 +1519,21 @@ export type User = Searchable & {
   phone: Scalars['String'];
   /** The profile for this User */
   profile?: Maybe<Profile>;
+  /** An overview of the rooms this user is a member of */
+  room?: Maybe<CommunicationRoomDetailsResult>;
+  /** An overview of the rooms this user is a member of */
+  rooms?: Maybe<Array<CommunicationRoomResult>>;
+};
+
+export type UserRoomArgs = {
+  roomID: Scalars['String'];
+};
+
+export type UserAuthorizationPrivilegesInput = {
+  /** The authorization definition to evaluate the user credentials against. */
+  authorizationID: Scalars['UUID'];
+  /** The user to evaluate privileges granted based on held credentials. */
+  userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
 export type UserGroup = Searchable & {
@@ -1428,4 +1561,26 @@ export type UsersWithAuthorizationCredentialInput = {
   resourceID?: Maybe<Scalars['UUID']>;
   /** The type of credential. */
   type: AuthorizationCredential;
+};
+
+export type VerifiedCredential = {
+  /** JSON for the claim in the credential */
+  claim: Scalars['JSON'];
+  /** The time at which the credential was issued */
+  issued: Scalars['DateTime'];
+  /** The challenge issuing the VC */
+  issuer: Scalars['String'];
+  /** The type of VC */
+  type: Scalars['String'];
+};
+
+export type Visual = {
+  /** The avatar (logo) to be used. */
+  avatar: Scalars['String'];
+  /** The background image to be used, for example when displaying previews. */
+  background: Scalars['String'];
+  /** The banner to be shown at the top of the page. */
+  banner: Scalars['String'];
+  /** The ID of the entity */
+  id: Scalars['UUID'];
 };

@@ -10,7 +10,12 @@ generates:
       maybeValue: T | undefined
       scalars:
         Upload: File
-        TextID: string
+        NameID: string
+        UUID: string
+        UUID_NAMEID: string
+        UUID_NAMEID_EMAIL: string
+        DID: string
+        DateTime: Date
   src/graphql.ts:
     preset: import-types
     presetConfig:
