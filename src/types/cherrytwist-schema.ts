@@ -102,11 +102,6 @@ export type Aspect = {
   title: Scalars['String'];
 };
 
-export type AssignChallengeLeadInput = {
-  challengeID: Scalars['UUID'];
-  organisationID: Scalars['UUID_NAMEID'];
-};
-
 export type AssignCommunityMemberInput = {
   communityID: Scalars['UUID'];
   userID: Scalars['UUID_NAMEID_EMAIL'];
@@ -712,8 +707,6 @@ export type Metadata = {
 };
 
 export type Mutation = {
-  /** Assigns an organisation as a lead for the Challenge. */
-  assignChallengeLead: Challenge;
   /** Assigns a User as a member of the specified Community. */
   assignUserToCommunity: Community;
   /** Assigns a User as a member of the specified User Group. */
@@ -792,8 +785,6 @@ export type Mutation = {
   grantStateModificationVC: User;
   /** Sends a message on the specified User`s behalf and returns the room id */
   message: Scalars['String'];
-  /** Remove an organisation as a lead for the Challenge. */
-  removeChallengeLead: Challenge;
   /** Removes a User as a member of the specified Community. */
   removeUserFromCommunity: Community;
   /** Removes the specified User from specified user group */
@@ -822,10 +813,6 @@ export type Mutation = {
   updateUserGroup: UserGroup;
   /** Uploads and sets an avatar image for the specified Profile. */
   uploadAvatar: Profile;
-};
-
-export type MutationAssignChallengeLeadArgs = {
-  assignInput: AssignChallengeLeadInput;
 };
 
 export type MutationAssignUserToCommunityArgs = {
@@ -982,10 +969,6 @@ export type MutationGrantStateModificationVcArgs = {
 
 export type MutationMessageArgs = {
   msgData: CommunicationSendMessageInput;
-};
-
-export type MutationRemoveChallengeLeadArgs = {
-  removeData: RemoveChallengeLeadInput;
 };
 
 export type MutationRemoveUserFromCommunityArgs = {
@@ -1257,11 +1240,6 @@ export type Relation = {
   /** The ID of the entity */
   id: Scalars['UUID'];
   type: Scalars['String'];
-};
-
-export type RemoveChallengeLeadInput = {
-  challengeID: Scalars['UUID'];
-  organisationID: Scalars['UUID_NAMEID'];
 };
 
 export type RemoveCommunityMemberInput = {

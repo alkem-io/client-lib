@@ -351,19 +351,6 @@ export class CherrytwistClient {
     });
   }
 
-  async addChallengeLead(challengeID: string, organisationID: string) {
-    const { data, errors } = await this.client.addChallengeLead({
-      input: {
-        challengeID: challengeID,
-        organisationID: organisationID,
-      },
-    });
-
-    this.errorHandler(errors);
-
-    return !!data?.assignChallengeLead;
-  }
-
   async updateEcoverseContext(ecoverseID: string, context: UpdateContextInput) {
     const { data, errors } = await this.client.updateEcoverse({
       ecoverseData: {

@@ -1,9 +1,0 @@
-mutation addChallengeLead($input: AssignChallengeLeadInput!) {
-  assignChallengeLead(assignInput: $input) {
-    id
-    leadOrganisations {
-      id
-      nameID
-    }
-  }
-}
