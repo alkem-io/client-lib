@@ -1,6 +1,10 @@
 overwrite: true
 schema: "http://localhost:4000/graphql"
 documents: "graphql/**/*.graphql"
+hooks:
+  afterAllFileWrite:
+    - eslint --fix
+    - prettier --write
 generates:
   src/types/cherrytwist-schema.ts:
     plugins:
@@ -16,6 +20,7 @@ generates:
         UUID_NAMEID_EMAIL: string
         DID: string
         DateTime: Date
+        JSON: string
   src/graphql.ts:
     preset: import-types
     presetConfig:
@@ -23,7 +28,7 @@ generates:
       importTypesNamespace: SchemaTypes
     plugins:
       - add:
-          content: '/* eslint-disable @typescript-eslint/no-explicit-any */'
+          content: "/* eslint-disable @typescript-eslint/no-explicit-any */"
       - typescript-operations
       - typescript-graphql-request
     config:
@@ -31,3 +36,12 @@ generates:
       rawRequest: true
       preResolveTypes: true
       skipTypename: true
+      scalars:
+        Upload: File
+        NameID: string
+        UUID: string
+        UUID_NAMEID: string
+        UUID_NAMEID_EMAIL: string
+        DID: string
+        DateTime: Date
+        JSON: string

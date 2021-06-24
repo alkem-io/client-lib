@@ -81,7 +81,7 @@ export class CherrytwistClient {
   }
 
   public validateServerVersion(serverVersion: string): boolean {
-    const MIN_SERVER_VERSION = '0.11.3';
+    const MIN_SERVER_VERSION = '0.11.5';
     const validVersion = semver.gte(serverVersion, MIN_SERVER_VERSION);
     if (!validVersion)
       throw new Error(
@@ -264,7 +264,7 @@ export class CherrytwistClient {
     });
     const communityID = response.data?.ecoverse.challenge?.community?.id;
 
-    if (!response) return;
+    if (!response || !communityID) return;
 
     return await this.client.addUserToCommunity({
       input: {
@@ -327,6 +327,8 @@ export class CherrytwistClient {
     );
     const communityID = opportunityInfo?.community?.id;
 
+    if (!communityID) return;
+
     return await this.client.addUserToCommunity({
       input: {
         userID: userID,
@@ -339,7 +341,7 @@ export class CherrytwistClient {
     const ecoverseInfo = await this.ecoverseInfo(ecoverseID);
     const communityID = ecoverseInfo?.community?.id;
 
-    if (!ecoverseInfo) return;
+    if (!ecoverseInfo || !communityID) return;
 
     return await this.client.addUserToCommunity({
       input: {
@@ -347,19 +349,6 @@ export class CherrytwistClient {
         communityID,
       },
     });
-  }
-
-  async addChallengeLead(challengeID: string, organisationID: string) {
-    const { data, errors } = await this.client.addChallengeLead({
-      input: {
-        challengeID: challengeID,
-        organisationID: organisationID,
-      },
-    });
-
-    this.errorHandler(errors);
-
-    return !!data?.assignChallengeLead;
   }
 
   async updateEcoverseContext(ecoverseID: string, context: UpdateContextInput) {
@@ -499,6 +488,7 @@ export class CherrytwistClient {
   ) {
     const ecoverseInfo = await this.ecoverseInfo(ecoverseID);
     const communityID = ecoverseInfo?.community?.id;
+    if (!communityID) return;
     const { data, errors } = await this.client.createGroupOnCommunity({
       groupData: {
         name: groupName,

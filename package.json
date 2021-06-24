@@ -1,6 +1,6 @@
 {
   "name": "@cherrytwist/client-lib",
-  "version": "0.7.5",
+  "version": "0.7.7",
   "description": "Library for interacting with a Cherrytwist server instance",
   "author": "Cherrytwist Foundation",
   "private": false,
@@ -16,7 +16,6 @@
     "lint": "tsc --noEmit && eslint src/**/*.ts{,x}",
     "lint:fix": "tsc --noEmit && eslint src/**/*.ts{,x} --fix",
     "validate-connection": "ts-node-dev src/validate-connection.ts",
-    "postcodegen": "prettier --write src/graphql*.ts src/types/*.ts ",
     "prepublishOnly": "npm run build"
   },
   "repository": {
