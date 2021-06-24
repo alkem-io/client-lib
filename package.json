@@ -16,7 +16,6 @@
     "lint": "tsc --noEmit && eslint src/**/*.ts{,x}",
     "lint:fix": "tsc --noEmit && eslint src/**/*.ts{,x} --fix",
     "validate-connection": "ts-node-dev src/validate-connection.ts",
-    "postcodegen": "prettier --write src/graphql*.ts src/types/*.ts ",
     "prepublishOnly": "npm run build"
   },
   "repository": {

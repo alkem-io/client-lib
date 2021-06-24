@@ -7,26 +7,26 @@ import { GraphQLError } from 'graphql-request/dist/types';
 import { Headers } from 'graphql-request/dist/types.dom';
 import gql from 'graphql-tag';
 export type ChallengeDetailsFragment = {
-  id: any;
-  nameID: any;
-  tagset?: SchemaTypes.Maybe<{ tags: Array<string>; id: any; name: string }>;
+  id: string;
+  nameID: string;
+  tagset?: SchemaTypes.Maybe<{ tags: Array<string>; id: string; name: string }>;
   community?: SchemaTypes.Maybe<{
-    groups?: SchemaTypes.Maybe<Array<{ id: any; name: string }>>;
+    groups?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
   }>;
   context?: SchemaTypes.Maybe<{
     ecosystemModel?: SchemaTypes.Maybe<{
-      id: any;
-      actorGroups?: SchemaTypes.Maybe<Array<{ name: string; id: any }>>;
+      id: string;
+      actorGroups?: SchemaTypes.Maybe<Array<{ name: string; id: string }>>;
     }>;
   }>;
 };
 
 export type OpportunityDetailsFragment = {
-  id: any;
-  nameID: any;
-  tagset?: SchemaTypes.Maybe<{ tags: Array<string>; id: any; name: string }>;
+  id: string;
+  nameID: string;
+  tagset?: SchemaTypes.Maybe<{ tags: Array<string>; id: string; name: string }>;
   community?: SchemaTypes.Maybe<{
-    groups?: SchemaTypes.Maybe<Array<{ id: any; name: string }>>;
+    groups?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
   }>;
 };
 
@@ -36,8 +36,8 @@ export type AddChallengeLeadMutationVariables = SchemaTypes.Exact<{
 
 export type AddChallengeLeadMutation = {
   assignChallengeLead: {
-    id: any;
-    leadOrganisations: Array<{ id: any; nameID: any }>;
+    id: string;
+    leadOrganisations: Array<{ id: string; nameID: string }>;
   };
 };
 
@@ -46,7 +46,7 @@ export type AddUserToCommunityMutationVariables = SchemaTypes.Exact<{
 }>;
 
 export type AddUserToCommunityMutation = {
-  assignUserToCommunity: { displayName: string; id: any };
+  assignUserToCommunity: { displayName: string; id: string };
 };
 
 export type AddUserToGroupMutationVariables = SchemaTypes.Exact<{
@@ -55,9 +55,9 @@ export type AddUserToGroupMutationVariables = SchemaTypes.Exact<{
 
 export type AddUserToGroupMutation = {
   assignUserToGroup: {
-    id: any;
+    id: string;
     members?: SchemaTypes.Maybe<
-      Array<{ id: any; email: string; firstName: string; lastName: string }>
+      Array<{ id: string; email: string; firstName: string; lastName: string }>
     >;
   };
 };
@@ -67,7 +67,7 @@ export type CreateActorGroupMutationVariables = SchemaTypes.Exact<{
 }>;
 
 export type CreateActorGroupMutation = {
-  createActorGroup: { id: any; name: string };
+  createActorGroup: { id: string; name: string };
 };
 
 export type CreateActorMutationVariables = SchemaTypes.Exact<{
@@ -76,7 +76,7 @@ export type CreateActorMutationVariables = SchemaTypes.Exact<{
 
 export type CreateActorMutation = {
   createActor: {
-    id: any;
+    id: string;
     name: string;
     description?: SchemaTypes.Maybe<string>;
     value?: SchemaTypes.Maybe<string>;
@@ -97,7 +97,7 @@ export type CreateChallengeMutationVariables = SchemaTypes.Exact<{
 }>;
 
 export type CreateChallengeMutation = {
-  createChallenge: { id: any; nameID: any };
+  createChallenge: { id: string; nameID: string };
 };
 
 export type CreateChildChallengeMutationVariables = SchemaTypes.Exact<{
@@ -105,7 +105,7 @@ export type CreateChildChallengeMutationVariables = SchemaTypes.Exact<{
 }>;
 
 export type CreateChildChallengeMutation = {
-  createChildChallenge: { id: any; nameID: any; displayName: string };
+  createChildChallenge: { id: string; nameID: string; displayName: string };
 };
 
 export type CreateEcoverseMutationVariables = SchemaTypes.Exact<{
@@ -113,7 +113,7 @@ export type CreateEcoverseMutationVariables = SchemaTypes.Exact<{
 }>;
 
 export type CreateEcoverseMutation = {
-  createEcoverse: { id: any; nameID: any };
+  createEcoverse: { id: string; nameID: string };
 };
 
 export type CreateGroupOnCommunityMutationVariables = SchemaTypes.Exact<{
@@ -121,7 +121,7 @@ export type CreateGroupOnCommunityMutationVariables = SchemaTypes.Exact<{
 }>;
 
 export type CreateGroupOnCommunityMutation = {
-  createGroupOnCommunity: { name: string; id: any };
+  createGroupOnCommunity: { name: string; id: string };
 };
 
 export type CreateGroupOnOrganisationMutationVariables = SchemaTypes.Exact<{
@@ -129,7 +129,7 @@ export type CreateGroupOnOrganisationMutationVariables = SchemaTypes.Exact<{
 }>;
 
 export type CreateGroupOnOrganisationMutation = {
-  createGroupOnOrganisation: { id: any; name: string };
+  createGroupOnOrganisation: { id: string; name: string };
 };
 
 export type CreateOpportunityMutationVariables = SchemaTypes.Exact<{
@@ -137,7 +137,7 @@ export type CreateOpportunityMutationVariables = SchemaTypes.Exact<{
 }>;
 
 export type CreateOpportunityMutation = {
-  createOpportunity: { id: any; displayName: string; nameID: any };
+  createOpportunity: { id: string; displayName: string; nameID: string };
 };
 
 export type CreateOrganisationMutationVariables = SchemaTypes.Exact<{
@@ -147,9 +147,9 @@ export type CreateOrganisationMutationVariables = SchemaTypes.Exact<{
 export type CreateOrganisationMutation = {
   createOrganisation: {
     displayName: string;
-    nameID: any;
-    id: any;
-    profile: { id: any };
+    nameID: string;
+    id: string;
+    profile: { id: string };
   };
 };
 
@@ -159,7 +159,7 @@ export type CreateReferenceOnContextMutationVariables = SchemaTypes.Exact<{
 
 export type CreateReferenceOnContextMutation = {
   createReferenceOnContext: {
-    id: any;
+    id: string;
     name: string;
     description: string;
     uri: string;
@@ -185,7 +185,7 @@ export type CreateTagsetOnProfileMutationVariables = SchemaTypes.Exact<{
 }>;
 
 export type CreateTagsetOnProfileMutation = {
-  createTagsetOnProfile: { id: any; tags: Array<string> };
+  createTagsetOnProfile: { id: string; tags: Array<string> };
 };
 
 export type CreateUserMutationVariables = SchemaTypes.Exact<{
@@ -194,9 +194,9 @@ export type CreateUserMutationVariables = SchemaTypes.Exact<{
 
 export type CreateUserMutation = {
   createUser: {
-    nameID: any;
-    id: any;
-    profile?: SchemaTypes.Maybe<{ id: any }>;
+    nameID: string;
+    id: string;
+    profile?: SchemaTypes.Maybe<{ id: string }>;
   };
 };
 
@@ -205,7 +205,12 @@ export type DeleteReferenceMutationVariables = SchemaTypes.Exact<{
 }>;
 
 export type DeleteReferenceMutation = {
-  deleteReference: { id: any; name: string; description: string; uri: string };
+  deleteReference: {
+    id: string;
+    name: string;
+    description: string;
+    uri: string;
+  };
 };
 
 export type UpdateActorMutationVariables = SchemaTypes.Exact<{
@@ -228,8 +233,8 @@ export type UpdateEcoverseMutationVariables = SchemaTypes.Exact<{
 
 export type UpdateEcoverseMutation = {
   updateEcoverse: {
-    nameID: any;
-    host?: SchemaTypes.Maybe<{ nameID: any }>;
+    nameID: string;
+    host?: SchemaTypes.Maybe<{ nameID: string }>;
     context?: SchemaTypes.Maybe<{ tagline?: SchemaTypes.Maybe<string> }>;
   };
 };
@@ -239,7 +244,7 @@ export type UpdateOpportunityMutationVariables = SchemaTypes.Exact<{
 }>;
 
 export type UpdateOpportunityMutation = {
-  updateOpportunity: { id: any; displayName: string; nameID: any };
+  updateOpportunity: { id: string; displayName: string; nameID: string };
 };
 
 export type UpdateOrganisationMutationVariables = SchemaTypes.Exact<{
@@ -248,12 +253,12 @@ export type UpdateOrganisationMutationVariables = SchemaTypes.Exact<{
 
 export type UpdateOrganisationMutation = {
   updateOrganisation: {
-    id: any;
-    nameID: any;
+    id: string;
+    nameID: string;
     profile: {
-      id: any;
+      id: string;
       references?: SchemaTypes.Maybe<
-        Array<{ id: any; name: string; uri: string }>
+        Array<{ id: string; name: string; uri: string }>
       >;
     };
   };
@@ -263,7 +268,7 @@ export type UpdateProfileMutationVariables = SchemaTypes.Exact<{
   profileData: SchemaTypes.UpdateProfileInput;
 }>;
 
-export type UpdateProfileMutation = { updateProfile: { id: any } };
+export type UpdateProfileMutation = { updateProfile: { id: string } };
 
 export type ChallengeQueryVariables = SchemaTypes.Exact<{
   ecoverseID: SchemaTypes.Scalars['UUID_NAMEID'];
@@ -273,11 +278,11 @@ export type ChallengeQueryVariables = SchemaTypes.Exact<{
 export type ChallengeQuery = {
   ecoverse: {
     challenge: {
-      nameID: any;
-      id: any;
+      nameID: string;
+      id: string;
       displayName: string;
-      community?: SchemaTypes.Maybe<{ id: any; displayName: string }>;
-      leadOrganisations: Array<{ nameID: any; id: any }>;
+      community?: SchemaTypes.Maybe<{ id: string; displayName: string }>;
+      leadOrganisations: Array<{ nameID: string; id: string }>;
     };
   };
 };
@@ -289,7 +294,7 @@ export type ChallengesQueryVariables = SchemaTypes.Exact<{
 export type ChallengesQuery = {
   ecoverse: {
     challenges?: SchemaTypes.Maybe<
-      Array<{ id: any; nameID: any; displayName: string }>
+      Array<{ id: string; nameID: string; displayName: string }>
     >;
   };
 };
@@ -323,14 +328,14 @@ export type EcoverseQueryVariables = SchemaTypes.Exact<{
 
 export type EcoverseQuery = {
   ecoverse: {
-    id: any;
-    nameID: any;
+    id: string;
+    nameID: string;
     displayName: string;
-    community?: SchemaTypes.Maybe<{ id: any }>;
+    community?: SchemaTypes.Maybe<{ id: string }>;
     context?: SchemaTypes.Maybe<{
-      id: any;
+      id: string;
       references?: SchemaTypes.Maybe<
-        Array<{ id: any; name: string; description: string; uri: string }>
+        Array<{ id: string; name: string; description: string; uri: string }>
       >;
       visual?: SchemaTypes.Maybe<{
         avatar: string;
@@ -346,7 +351,7 @@ export type EcoversesQueryVariables = SchemaTypes.Exact<{
 }>;
 
 export type EcoversesQuery = {
-  ecoverses: Array<{ displayName: string; id: any; nameID: any }>;
+  ecoverses: Array<{ displayName: string; id: string; nameID: string }>;
 };
 
 export type GroupsQueryVariables = SchemaTypes.Exact<{
@@ -356,7 +361,7 @@ export type GroupsQueryVariables = SchemaTypes.Exact<{
 export type GroupsQuery = {
   ecoverse: {
     community?: SchemaTypes.Maybe<{
-      groups?: SchemaTypes.Maybe<Array<{ id: any; name: string }>>;
+      groups?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
     }>;
   };
 };
@@ -368,13 +373,13 @@ export type HostInfoQueryVariables = SchemaTypes.Exact<{
 export type HostInfoQuery = {
   ecoverse: {
     host?: SchemaTypes.Maybe<{
-      id: any;
-      nameID: any;
+      id: string;
+      nameID: string;
       displayName: string;
       profile: {
-        id: any;
+        id: string;
         tagsets?: SchemaTypes.Maybe<
-          Array<{ id: any; name: string; tags: Array<string> }>
+          Array<{ id: string; name: string; tags: Array<string> }>
         >;
       };
     }>;
@@ -402,10 +407,12 @@ export type OpportunitiesQuery = {
   ecoverse: {
     opportunities: Array<
       {
-        id: any;
+        id: string;
         context?: SchemaTypes.Maybe<{
           ecosystemModel?: SchemaTypes.Maybe<{
-            actorGroups?: SchemaTypes.Maybe<Array<{ id: any; name: string }>>;
+            actorGroups?: SchemaTypes.Maybe<
+              Array<{ id: string; name: string }>
+            >;
           }>;
         }>;
         relations?: SchemaTypes.Maybe<Array<{ actorName: string }>>;
@@ -415,7 +422,7 @@ export type OpportunitiesQuery = {
 };
 
 export type OpportunityProfileFragment = {
-  nameID: any;
+  nameID: string;
   displayName: string;
   lifecycle?: SchemaTypes.Maybe<{ state?: SchemaTypes.Maybe<string> }>;
   context?: SchemaTypes.Maybe<{
@@ -439,16 +446,16 @@ export type OpportunityQuery = {
   ecoverse: {
     opportunity: {
       displayName: string;
-      id: any;
-      nameID: any;
-      community?: SchemaTypes.Maybe<{ id: any; displayName: string }>;
+      id: string;
+      nameID: string;
+      community?: SchemaTypes.Maybe<{ id: string; displayName: string }>;
       context?: SchemaTypes.Maybe<{
-        id: any;
+        id: string;
         ecosystemModel?: SchemaTypes.Maybe<{
-          id: any;
+          id: string;
           actorGroups?: SchemaTypes.Maybe<
             Array<{
-              id: any;
+              id: string;
               name: string;
               actors?: SchemaTypes.Maybe<Array<{ name: string }>>;
             }>
@@ -466,9 +473,9 @@ export type OrganisationQueryVariables = SchemaTypes.Exact<{
 export type OrganisationQuery = {
   organisation: {
     displayName: string;
-    id: any;
-    nameID: any;
-    profile: { id: any };
+    id: string;
+    nameID: string;
+    profile: { id: string };
   };
 };
 
@@ -479,10 +486,10 @@ export type OrganisationsQueryVariables = SchemaTypes.Exact<{
 export type OrganisationsQuery = {
   organisations: Array<{
     displayName: string;
-    id: any;
-    nameID: any;
+    id: string;
+    nameID: string;
     profile: {
-      id: any;
+      id: string;
       avatar?: SchemaTypes.Maybe<string>;
       description?: SchemaTypes.Maybe<string>;
     };
@@ -496,10 +503,10 @@ export type UserQueryVariables = SchemaTypes.Exact<{
 export type UserQuery = {
   user: {
     displayName: string;
-    id: any;
-    nameID: any;
+    id: string;
+    nameID: string;
     profile?: SchemaTypes.Maybe<{
-      id: any;
+      id: string;
       avatar?: SchemaTypes.Maybe<string>;
     }>;
   };
@@ -509,14 +516,14 @@ export type UsersQueryVariables = SchemaTypes.Exact<{ [key: string]: never }>;
 
 export type UsersQuery = {
   users: Array<{
-    id: any;
-    nameID: any;
+    id: string;
+    nameID: string;
     displayName: string;
     firstName: string;
     lastName: string;
     email: string;
     profile?: SchemaTypes.Maybe<{
-      id: any;
+      id: string;
       avatar?: SchemaTypes.Maybe<string>;
       description?: SchemaTypes.Maybe<string>;
     }>;

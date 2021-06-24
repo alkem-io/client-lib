@@ -264,7 +264,7 @@ export class CherrytwistClient {
     });
     const communityID = response.data?.ecoverse.challenge?.community?.id;
 
-    if (!response) return;
+    if (!response || !communityID) return;
 
     return await this.client.addUserToCommunity({
       input: {
@@ -327,6 +327,8 @@ export class CherrytwistClient {
     );
     const communityID = opportunityInfo?.community?.id;
 
+    if (!communityID) return;
+
     return await this.client.addUserToCommunity({
       input: {
         userID: userID,
@@ -339,7 +341,7 @@ export class CherrytwistClient {
     const ecoverseInfo = await this.ecoverseInfo(ecoverseID);
     const communityID = ecoverseInfo?.community?.id;
 
-    if (!ecoverseInfo) return;
+    if (!ecoverseInfo || !communityID) return;
 
     return await this.client.addUserToCommunity({
       input: {
@@ -499,6 +501,7 @@ export class CherrytwistClient {
   ) {
     const ecoverseInfo = await this.ecoverseInfo(ecoverseID);
     const communityID = ecoverseInfo?.community?.id;
+    if (!communityID) return;
     const { data, errors } = await this.client.createGroupOnCommunity({
       groupData: {
         name: groupName,
