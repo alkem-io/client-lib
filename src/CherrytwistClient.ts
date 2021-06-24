@@ -81,7 +81,7 @@ export class CherrytwistClient {
   }
 
   public validateServerVersion(serverVersion: string): boolean {
-    const MIN_SERVER_VERSION = '0.11.3';
+    const MIN_SERVER_VERSION = '0.11.5';
     const validVersion = semver.gte(serverVersion, MIN_SERVER_VERSION);
     if (!validVersion)
       throw new Error(

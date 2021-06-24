@@ -277,6 +277,7 @@ export type ChallengeQuery = {
       id: any;
       displayName: string;
       community?: SchemaTypes.Maybe<{ id: any; displayName: string }>;
+      leadOrganisations: Array<{ nameID: any; id: any }>;
     };
   };
 };
@@ -835,6 +836,10 @@ export const ChallengeDocument = gql`
         community {
           id
           displayName
+        }
+        leadOrganisations {
+          nameID
+          id
         }
       }
     }

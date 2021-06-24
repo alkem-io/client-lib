@@ -149,8 +149,10 @@ export type Authorization = {
 
 export enum AuthorizationCredential {
   ChallengeAdmin = 'ChallengeAdmin',
+  ChallengeLead = 'ChallengeLead',
   ChallengeMember = 'ChallengeMember',
   EcoverseAdmin = 'EcoverseAdmin',
+  EcoverseHost = 'EcoverseHost',
   EcoverseMember = 'EcoverseMember',
   GlobalAdmin = 'GlobalAdmin',
   GlobalAdminChallenges = 'GlobalAdminChallenges',
@@ -328,6 +330,8 @@ export type CreateChallengeInput = {
   context?: Maybe<CreateContextInput>;
   /** The display name for the entity. */
   displayName?: Maybe<Scalars['String']>;
+  /** Set lead Organisations for the Challenge. */
+  leadOrganisations?: Maybe<Array<Scalars['UUID_NAMEID']>>;
   lifecycleTemplate?: Maybe<Scalars['String']>;
   /** A readable identifier, unique within the containing scope. */
   nameID: Scalars['NameID'];
@@ -504,7 +508,7 @@ export type DeleteOpportunityInput = {
 };
 
 export type DeleteOrganisationInput = {
-  ID: Scalars['UUID'];
+  ID: Scalars['UUID_NAMEID'];
 };
 
 export type DeleteProjectInput = {
@@ -524,7 +528,7 @@ export type DeleteUserGroupInput = {
 };
 
 export type DeleteUserInput = {
-  ID: Scalars['UUID'];
+  ID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
 export type EcosystemModel = {
@@ -563,7 +567,7 @@ export type Ecoverse = {
   groups: Array<UserGroup>;
   /** All groups on this Ecoverse that have the provided tag */
   groupsWithTag: Array<UserGroup>;
-  /** The organisation that hosts this Ecoverse instance */
+  /** The Ecoverse host. */
   host?: Maybe<Organisation>;
   /** The ID of the entity */
   id: Scalars['UUID'];
@@ -722,8 +726,6 @@ export type Mutation = {
   createApplication: Application;
   /** Create a new Aspect on the Opportunity. */
   createAspect: Aspect;
-  /** Create a new Aspect on the Project. */
-  createAspectOnProject: Aspect;
   /** Creates a new Challenge within the specified Ecoverse. */
   createChallenge: Challenge;
   /** Creates a new child challenge within the parent Challenge. */
@@ -847,10 +849,6 @@ export type MutationCreateApplicationArgs = {
 };
 
 export type MutationCreateAspectArgs = {
-  aspectData: CreateAspectInput;
-};
-
-export type MutationCreateAspectOnProjectArgs = {
   aspectData: CreateAspectInput;
 };
 
@@ -1139,8 +1137,6 @@ export type Profile = {
 };
 
 export type Project = {
-  /** The set of aspects for this Project. Note: likley to change. */
-  aspects?: Maybe<Array<Aspect>>;
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
   description?: Maybe<Scalars['String']>;
@@ -1378,6 +1374,8 @@ export type UpdateChallengeInput = {
   context?: Maybe<UpdateContextInput>;
   /** The display name for this entity. */
   displayName?: Maybe<Scalars['String']>;
+  /** Update the lead Organisations for the Challenge. */
+  leadOrganisations?: Maybe<Array<Scalars['UUID_NAMEID']>>;
   /** A display identifier, unique within the containing scope. Note: updating the nameID will affect URL on the client. */
   nameID?: Maybe<Scalars['NameID']>;
   /** Update the tags on the Tagset. */
