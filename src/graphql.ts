@@ -30,17 +30,6 @@ export type OpportunityDetailsFragment = {
   }>;
 };
 
-export type AddChallengeLeadMutationVariables = SchemaTypes.Exact<{
-  input: SchemaTypes.AssignChallengeLeadInput;
-}>;
-
-export type AddChallengeLeadMutation = {
-  assignChallengeLead: {
-    id: any;
-    leadOrganisations: Array<{ id: any; nameID: any }>;
-  };
-};
-
 export type AddUserToCommunityMutationVariables = SchemaTypes.Exact<{
   input: SchemaTypes.AssignCommunityMemberInput;
 }>;
@@ -587,17 +576,6 @@ export const OpportunityProfileFragmentDoc = gql`
     }
   }
 `;
-export const AddChallengeLeadDocument = gql`
-  mutation addChallengeLead($input: AssignChallengeLeadInput!) {
-    assignChallengeLead(assignInput: $input) {
-      id
-      leadOrganisations {
-        id
-        nameID
-      }
-    }
-  }
-`;
 export const AddUserToCommunityDocument = gql`
   mutation addUserToCommunity($input: AssignCommunityMemberInput!) {
     assignUserToCommunity(membershipData: $input) {
@@ -1069,22 +1047,6 @@ export function getSdk(
   withWrapper: SdkFunctionWrapper = defaultWrapper
 ) {
   return {
-    addChallengeLead(
-      variables: AddChallengeLeadMutationVariables
-    ): Promise<{
-      data?: AddChallengeLeadMutation | undefined;
-      extensions?: any;
-      headers: Headers;
-      status: number;
-      errors?: GraphQLError[] | undefined;
-    }> {
-      return withWrapper(() =>
-        client.rawRequest<AddChallengeLeadMutation>(
-          print(AddChallengeLeadDocument),
-          variables
-        )
-      );
-    },
     addUserToCommunity(
       variables: AddUserToCommunityMutationVariables
     ): Promise<{
