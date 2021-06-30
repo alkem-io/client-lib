@@ -1,13 +1,17 @@
+<p align="center">
+  <a href="http://alkem.io/" target="blank"><img src="https://alkem.io/uploads/logos/alkemio-logo.svg" width="400" alt="Alkemio Logo" /></a>
+</p>
+<p align="center"><i>Enabling society to collaborate. Building a better future, together.</i></p>
+
 # Alkemio Client Library
-The alkemio-lib package is for working directly with the Alkemio server, primarily using the graphql based api. For more details about Alkemio please visit either the [webiste](http://alkem.io) or [repo](http://github.com/alkemio/coordination).
+The alkemio-lib package is for working directly with the Alkemio server, primarily using the graphql based api. For more details about Alkemio please visit either the [webiste](http://alkem.io) or [repo](http://github.com/alkem-io/alkemio).
 
 The key capabilities of this package include:
 * Managing connections to the Alkemio api
 * Wrapping key Alkemio api capabilities in convenient local javascript calls, taking care of generating the graphql query / mutation and filling in parameters as appropriate
-* Command line authentication with AAD, which is the Identity Provider supported out of the box by Alkemio platform
-* Using the authentication to obtain a Token to allow command line interaction with Alkemio api elements that require authorisation (and thus authentication)
+* Command line authentication
 
-This package also provides a sample script, `src/test-connection.ts`, to demonstrate the usage of the package.
+This package also provides a sample script, `src/validate-connection.ts`, to demonstrate the usage of the package.
 
 Finally, this package provides a utility for carrying out performance test data population for a Alkemio server.
 
