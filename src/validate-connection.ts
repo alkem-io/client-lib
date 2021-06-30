@@ -1,11 +1,11 @@
 import { AuthInfo } from 'src';
-import { CherrytwistClient } from './CherrytwistClient';
+import { AlkemioClient } from './AlkemioClient';
 import * as dotenv from 'dotenv';
 
 const main = async () => {
   dotenv.config();
 
-  const ctClient = new CherrytwistClient({
+  const ctClient = new AlkemioClient({
     graphqlEndpoint:
       process.env.GRAPHQL_ENDPOINT ?? 'http://localhost:4455/graphql',
   });
@@ -15,7 +15,7 @@ const main = async () => {
   await ctClient.enableAuthentication();
 
   const serverVersion = await ctClient.validateConnection();
-  console.log(`Cherrytwist platform version: ${serverVersion}`);
+  console.log(`Alkemio platform version: ${serverVersion}`);
 
   const ecoverseID = 'Test';
   const ecoverseExists = await ctClient.ecoverseExists(ecoverseID);
@@ -25,7 +25,7 @@ const main = async () => {
 async function getAuthInfo(): Promise<AuthInfo | undefined> {
   return {
     credentials: {
-      email: process.env.AUTH_ADMIN_EMAIL ?? 'admin@cherrytwist.org',
+      email: process.env.AUTH_ADMIN_EMAIL ?? 'admin@alkem.io',
       password: process.env.AUTH_ADMIN_PASSWORD ?? '!Rn5Ez5FuuyUNc!',
     },
     apiEndpointFactory: () => {

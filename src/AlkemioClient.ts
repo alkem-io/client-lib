@@ -12,13 +12,13 @@ import {
   CreateEcoverseInput,
   CreateOpportunityInput,
   UpdateOpportunityInput,
-} from './types/cherrytwist-schema';
+} from './types/alkemio-schema';
 import { ErrorHandler, handleErrors } from './util/handleErrors';
 import semver from 'semver';
 import { AuthInfo } from 'src';
 import { KratosPublicApiClient } from './util/kratos.public.api.client';
 
-export class CherrytwistClient {
+export class AlkemioClient {
   public apiToken: string;
   public config!: ClientConfig;
   private client!: Sdk;

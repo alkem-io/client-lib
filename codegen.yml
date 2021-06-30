@@ -6,7 +6,7 @@ hooks:
     - eslint --fix
     - prettier --write
 generates:
-  src/types/cherrytwist-schema.ts:
+  src/types/alkemio-schema.ts:
     plugins:
       - typescript
     config:
@@ -24,7 +24,7 @@ generates:
   src/graphql.ts:
     preset: import-types
     presetConfig:
-      typesPath: ./types/cherrytwist-schema
+      typesPath: ./types/alkemio-schema
       importTypesNamespace: SchemaTypes
     plugins:
       - add:
