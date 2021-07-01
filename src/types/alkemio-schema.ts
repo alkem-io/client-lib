@@ -115,7 +115,7 @@ export type AssignUserGroupMemberInput = {
 export type AuthenticationConfig = {
   /** Is authentication enabled? */
   enabled: Scalars['Boolean'];
-  /** Cherrytwist Authentication Providers Config. */
+  /** Alkemio Authentication Providers Config. */
   providers: Array<AuthenticationProviderConfig>;
 };
 
@@ -263,9 +263,9 @@ export type Community = Groupable & {
 };
 
 export type Config = {
-  /** Cherrytwist authentication configuration. */
+  /** Alkemio authentication configuration. */
   authentication: AuthenticationConfig;
-  /** Cherrytwist template configuration. */
+  /** Alkemio template configuration. */
   template: Template;
 };
 
@@ -702,7 +702,7 @@ export type Message = {
 export type Metadata = {
   /** Metrics about the activity on the platform */
   activity: Array<Nvp>;
-  /** Collection of metadata about Cherrytwist services. */
+  /** Collection of metadata about Alkemio services. */
   services: Array<ServiceMetadata>;
 };
 
@@ -1143,7 +1143,7 @@ export type ProjectEventInput = {
 };
 
 export type Query = {
-  /** Cherrytwist configuration. Provides configuration to external services in the Cherrytwist ecosystem. */
+  /** Alkemio configuration. Provides configuration to external services in the Alkemio ecosystem. */
   configuration: Config;
   /** An ecoverse. If no ID is specified then the first Ecoverse is returned. */
   ecoverse: Ecoverse;
@@ -1154,7 +1154,7 @@ export type Query = {
   /** Search the ecoverse for terms supplied */
   membership: Membership;
   messages: Array<Message>;
-  /** Cherrytwist Services Metadata */
+  /** Alkemio Services Metadata */
   metadata: Metadata;
   /** A particular Organisation */
   organisation: Organisation;

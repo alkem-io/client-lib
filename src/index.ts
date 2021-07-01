@@ -1,2 +1,2 @@
-export * from './CherrytwistClient';
+export * from './AlkemioClient';
 export * from './types';

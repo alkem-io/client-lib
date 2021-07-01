@@ -1,2 +1,2 @@
-export * from './cherrytwist-schema';
+export * from './alkemio-schema';
 export * from './auth.types';

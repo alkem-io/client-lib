@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import request from 'supertest';
 
-const baseUrlDev = 'https://dev.cherrytwist.org/graphql';
-const baseUrlTest = 'https://test.cherrytwist.org/graphql';
+const baseUrlDev = 'https://dev.alkem.io/graphql';
+const baseUrlTest = 'https://test.alkem.io/graphql';
 const baseUrlLocalhost = 'http://localhost:4000/graphql';
 
 //,

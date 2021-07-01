@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as SchemaTypes from './types/cherrytwist-schema';
+import * as SchemaTypes from './types/alkemio-schema';
 
 import { GraphQLClient } from 'graphql-request';
 import { print } from 'graphql';

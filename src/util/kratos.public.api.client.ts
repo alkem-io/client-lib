@@ -22,7 +22,7 @@ import { HttpClient } from './http.client';
  *
  * const token = await getApiToken({
  *   credentials: {
- *     email: process.env.AUTH_ADMIN_EMAIL ?? 'admin@cherrytwist.org',
+ *     email: process.env.AUTH_ADMIN_EMAIL ?? 'admin@alkem.io',
  *     password: process.env.AUTH_ADMIN_PASSWORD ?? '!Rn5Ez5FuuyUNc!',
  *   },
  *   apiEndpointFactory: apiEndpointConfig,
