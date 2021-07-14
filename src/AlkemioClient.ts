@@ -13,7 +13,6 @@ import {
   CreateOpportunityInput,
   UpdateOpportunityInput,
   UserAuthorizationResetInput,
-  User,
   EcoverseAuthorizationResetInput,
 } from './types/alkemio-schema';
 import { ErrorHandler, handleErrors } from './util/handleErrors';
