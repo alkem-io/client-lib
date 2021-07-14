@@ -12,6 +12,9 @@ import {
   CreateEcoverseInput,
   CreateOpportunityInput,
   UpdateOpportunityInput,
+  UserAuthorizationResetInput,
+  User,
+  EcoverseAuthorizationResetInput,
 } from './types/alkemio-schema';
 import { ErrorHandler, handleErrors } from './util/handleErrors';
 import semver from 'semver';
@@ -81,7 +84,7 @@ export class AlkemioClient {
   }
 
   public validateServerVersion(serverVersion: string): boolean {
-    const MIN_SERVER_VERSION = '0.11.5';
+    const MIN_SERVER_VERSION = '0.11.6';
     const validVersion = semver.gte(serverVersion, MIN_SERVER_VERSION);
     if (!validVersion)
       throw new Error(
@@ -124,6 +127,30 @@ export class AlkemioClient {
       id: ecoverseID,
     });
     return response.data?.ecoverse;
+  }
+
+  public async authorizationResetUser(
+    authorizationResetData: UserAuthorizationResetInput
+  ) {
+    const result = await this.client.authorizationDefinitionResetOnUser({
+      authorizationResetData: authorizationResetData,
+    });
+
+    this.errorHandler(result.errors);
+
+    return result.data;
+  }
+
+  public async authorizationResetEcoverse(
+    authorizationResetData: EcoverseAuthorizationResetInput
+  ) {
+    const result = await this.client.authorizationDefinitionResetOnEcoverse({
+      authorizationResetData: authorizationResetData,
+    });
+
+    this.errorHandler(result.errors);
+
+    return result.data;
   }
 
   public async createEcoverse(ecoverseData: CreateEcoverseInput) {

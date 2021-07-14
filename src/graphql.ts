@@ -51,6 +51,22 @@ export type AddUserToGroupMutation = {
   };
 };
 
+export type AuthorizationDefinitionResetOnEcoverseMutationVariables = SchemaTypes.Exact<{
+  authorizationResetData: SchemaTypes.EcoverseAuthorizationResetInput;
+}>;
+
+export type AuthorizationDefinitionResetOnEcoverseMutation = {
+  authorizationDefinitionResetOnEcoverse: { nameID: string };
+};
+
+export type AuthorizationDefinitionResetOnUserMutationVariables = SchemaTypes.Exact<{
+  authorizationResetData: SchemaTypes.UserAuthorizationResetInput;
+}>;
+
+export type AuthorizationDefinitionResetOnUserMutation = {
+  authorizationDefinitionResetOnUser: { nameID: string };
+};
+
 export type CreateActorGroupMutationVariables = SchemaTypes.Exact<{
   actorGroupData: SchemaTypes.CreateActorGroupInput;
 }>;
@@ -417,8 +433,8 @@ export type OpportunityProfileFragment = {
   context?: SchemaTypes.Maybe<{
     tagline?: SchemaTypes.Maybe<string>;
     background?: SchemaTypes.Maybe<string>;
-    vision?: SchemaTypes.Maybe<string>;
-    impact?: SchemaTypes.Maybe<string>;
+    vision?: SchemaTypes.Maybe<any>;
+    impact?: SchemaTypes.Maybe<any>;
     who?: SchemaTypes.Maybe<string>;
     references?: SchemaTypes.Maybe<
       Array<{ name: string; uri: string; description: string }>
@@ -601,6 +617,28 @@ export const AddUserToGroupDocument = gql`
         firstName
         lastName
       }
+    }
+  }
+`;
+export const AuthorizationDefinitionResetOnEcoverseDocument = gql`
+  mutation authorizationDefinitionResetOnEcoverse(
+    $authorizationResetData: EcoverseAuthorizationResetInput!
+  ) {
+    authorizationDefinitionResetOnEcoverse(
+      authorizationResetData: $authorizationResetData
+    ) {
+      nameID
+    }
+  }
+`;
+export const AuthorizationDefinitionResetOnUserDocument = gql`
+  mutation authorizationDefinitionResetOnUser(
+    $authorizationResetData: UserAuthorizationResetInput!
+  ) {
+    authorizationDefinitionResetOnUser(
+      authorizationResetData: $authorizationResetData
+    ) {
+      nameID
     }
   }
 `;
@@ -1082,6 +1120,38 @@ export function getSdk(
       return withWrapper(() =>
         client.rawRequest<AddUserToGroupMutation>(
           print(AddUserToGroupDocument),
+          variables
+        )
+      );
+    },
+    authorizationDefinitionResetOnEcoverse(
+      variables: AuthorizationDefinitionResetOnEcoverseMutationVariables
+    ): Promise<{
+      data?: AuthorizationDefinitionResetOnEcoverseMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<AuthorizationDefinitionResetOnEcoverseMutation>(
+          print(AuthorizationDefinitionResetOnEcoverseDocument),
+          variables
+        )
+      );
+    },
+    authorizationDefinitionResetOnUser(
+      variables: AuthorizationDefinitionResetOnUserMutationVariables
+    ): Promise<{
+      data?: AuthorizationDefinitionResetOnUserMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<AuthorizationDefinitionResetOnUserMutation>(
+          print(AuthorizationDefinitionResetOnUserDocument),
           variables
         )
       );
