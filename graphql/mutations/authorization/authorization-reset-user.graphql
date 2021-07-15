@@ -1,0 +1,8 @@
+mutation authorizationDefinitionResetOnUser($authorizationResetData: UserAuthorizationResetInput!) {
+  authorizationDefinitionResetOnUser(authorizationResetData: $authorizationResetData) {
+    nameID
+  }
+}
+
+
+
