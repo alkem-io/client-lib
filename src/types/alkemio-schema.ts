@@ -743,10 +743,12 @@ export type Mutation = {
   assignUserToCommunity: Community;
   /** Assigns a User as a member of the specified User Group. */
   assignUserToGroup: UserGroup;
-  /** Reset the AuthorizationDefinition on the specified Ecoverse. */
-  authorizationDefinitionResetOnEcoverse: Ecoverse;
-  /** Reset the AuthorizationDefinition on the specified User. */
-  authorizationDefinitionResetOnUser: User;
+  /** Reset the Authorization Policy on the specified Ecoverse. */
+  authorizationPolicyResetOnEcoverse: Ecoverse;
+  /** Reset the Authorization Policy on the specified Organisation. */
+  authorizationPolicyResetOnOrganisation: Organisation;
+  /** Reset the Authorization policy on the specified User. */
+  authorizationPolicyResetOnUser: User;
   /** Authorizes a User to be able to modify the state on the specified Challenge. */
   authorizeStateModificationOnChallenge: User;
   /** Creates a new Actor in the specified ActorGroup. */
@@ -865,11 +867,15 @@ export type MutationAssignUserToGroupArgs = {
   membershipData: AssignUserGroupMemberInput;
 };
 
-export type MutationAuthorizationDefinitionResetOnEcoverseArgs = {
+export type MutationAuthorizationPolicyResetOnEcoverseArgs = {
   authorizationResetData: EcoverseAuthorizationResetInput;
 };
 
-export type MutationAuthorizationDefinitionResetOnUserArgs = {
+export type MutationAuthorizationPolicyResetOnOrganisationArgs = {
+  authorizationResetData: OrganisationAuthorizationResetInput;
+};
+
+export type MutationAuthorizationPolicyResetOnUserArgs = {
   authorizationResetData: UserAuthorizationResetInput;
 };
 
@@ -1159,6 +1165,11 @@ export type Organisation = Groupable &
 
 export type OrganisationGroupArgs = {
   ID: Scalars['UUID'];
+};
+
+export type OrganisationAuthorizationResetInput = {
+  /** The identifier of the Organisation whose AuthorizationDefinition should be reset. */
+  organisationID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
 export type OrganisationMembership = {

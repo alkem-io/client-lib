@@ -51,20 +51,28 @@ export type AddUserToGroupMutation = {
   };
 };
 
-export type AuthorizationDefinitionResetOnEcoverseMutationVariables = SchemaTypes.Exact<{
+export type AuthorizationPolicyResetOnEcoverseMutationVariables = SchemaTypes.Exact<{
   authorizationResetData: SchemaTypes.EcoverseAuthorizationResetInput;
 }>;
 
-export type AuthorizationDefinitionResetOnEcoverseMutation = {
-  authorizationDefinitionResetOnEcoverse: { nameID: string };
+export type AuthorizationPolicyResetOnEcoverseMutation = {
+  authorizationPolicyResetOnEcoverse: { nameID: string };
 };
 
-export type AuthorizationDefinitionResetOnUserMutationVariables = SchemaTypes.Exact<{
+export type AuthorizationPolicyResetOnOrganisationMutationVariables = SchemaTypes.Exact<{
+  authorizationResetData: SchemaTypes.OrganisationAuthorizationResetInput;
+}>;
+
+export type AuthorizationPolicyResetOnOrganisationMutation = {
+  authorizationPolicyResetOnOrganisation: { nameID: string };
+};
+
+export type AuthorizationPolicyResetOnUserMutationVariables = SchemaTypes.Exact<{
   authorizationResetData: SchemaTypes.UserAuthorizationResetInput;
 }>;
 
-export type AuthorizationDefinitionResetOnUserMutation = {
-  authorizationDefinitionResetOnUser: { nameID: string };
+export type AuthorizationPolicyResetOnUserMutation = {
+  authorizationPolicyResetOnUser: { nameID: string };
 };
 
 export type CreateActorGroupMutationVariables = SchemaTypes.Exact<{
@@ -620,22 +628,33 @@ export const AddUserToGroupDocument = gql`
     }
   }
 `;
-export const AuthorizationDefinitionResetOnEcoverseDocument = gql`
-  mutation authorizationDefinitionResetOnEcoverse(
+export const AuthorizationPolicyResetOnEcoverseDocument = gql`
+  mutation authorizationPolicyResetOnEcoverse(
     $authorizationResetData: EcoverseAuthorizationResetInput!
   ) {
-    authorizationDefinitionResetOnEcoverse(
+    authorizationPolicyResetOnEcoverse(
       authorizationResetData: $authorizationResetData
     ) {
       nameID
     }
   }
 `;
-export const AuthorizationDefinitionResetOnUserDocument = gql`
-  mutation authorizationDefinitionResetOnUser(
+export const AuthorizationPolicyResetOnOrganisationDocument = gql`
+  mutation authorizationPolicyResetOnOrganisation(
+    $authorizationResetData: OrganisationAuthorizationResetInput!
+  ) {
+    authorizationPolicyResetOnOrganisation(
+      authorizationResetData: $authorizationResetData
+    ) {
+      nameID
+    }
+  }
+`;
+export const AuthorizationPolicyResetOnUserDocument = gql`
+  mutation authorizationPolicyResetOnUser(
     $authorizationResetData: UserAuthorizationResetInput!
   ) {
-    authorizationDefinitionResetOnUser(
+    authorizationPolicyResetOnUser(
       authorizationResetData: $authorizationResetData
     ) {
       nameID
@@ -1124,34 +1143,50 @@ export function getSdk(
         )
       );
     },
-    authorizationDefinitionResetOnEcoverse(
-      variables: AuthorizationDefinitionResetOnEcoverseMutationVariables
+    authorizationPolicyResetOnEcoverse(
+      variables: AuthorizationPolicyResetOnEcoverseMutationVariables
     ): Promise<{
-      data?: AuthorizationDefinitionResetOnEcoverseMutation | undefined;
+      data?: AuthorizationPolicyResetOnEcoverseMutation | undefined;
       extensions?: any;
       headers: Headers;
       status: number;
       errors?: GraphQLError[] | undefined;
     }> {
       return withWrapper(() =>
-        client.rawRequest<AuthorizationDefinitionResetOnEcoverseMutation>(
-          print(AuthorizationDefinitionResetOnEcoverseDocument),
+        client.rawRequest<AuthorizationPolicyResetOnEcoverseMutation>(
+          print(AuthorizationPolicyResetOnEcoverseDocument),
           variables
         )
       );
     },
-    authorizationDefinitionResetOnUser(
-      variables: AuthorizationDefinitionResetOnUserMutationVariables
+    authorizationPolicyResetOnOrganisation(
+      variables: AuthorizationPolicyResetOnOrganisationMutationVariables
     ): Promise<{
-      data?: AuthorizationDefinitionResetOnUserMutation | undefined;
+      data?: AuthorizationPolicyResetOnOrganisationMutation | undefined;
       extensions?: any;
       headers: Headers;
       status: number;
       errors?: GraphQLError[] | undefined;
     }> {
       return withWrapper(() =>
-        client.rawRequest<AuthorizationDefinitionResetOnUserMutation>(
-          print(AuthorizationDefinitionResetOnUserDocument),
+        client.rawRequest<AuthorizationPolicyResetOnOrganisationMutation>(
+          print(AuthorizationPolicyResetOnOrganisationDocument),
+          variables
+        )
+      );
+    },
+    authorizationPolicyResetOnUser(
+      variables: AuthorizationPolicyResetOnUserMutationVariables
+    ): Promise<{
+      data?: AuthorizationPolicyResetOnUserMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<AuthorizationPolicyResetOnUserMutation>(
+          print(AuthorizationPolicyResetOnUserDocument),
           variables
         )
       );
