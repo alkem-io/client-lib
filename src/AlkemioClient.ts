@@ -153,7 +153,7 @@ export class AlkemioClient {
     return result.data;
   }
 
-  public async authorizationResetOrganistion(
+  public async authorizationResetOrganisation(
     authorizationResetData: OrganisationAuthorizationResetInput
   ) {
     const result = await this.client.authorizationPolicyResetOnOrganisation({

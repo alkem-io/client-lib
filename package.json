@@ -1,6 +1,6 @@
 {
   "name": "@alkemio/client-lib",
-  "version": "0.7.10",
+  "version": "0.7.11",
   "description": "Library for interacting with a Alkemio server instance",
   "author": "Cherrytwist Foundation",
   "private": false,
