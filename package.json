@@ -1,6 +1,6 @@
 {
   "name": "@alkemio/client-lib",
-  "version": "0.7.11",
+  "version": "0.7.12",
   "description": "Library for interacting with a Alkemio server instance",
   "author": "Cherrytwist Foundation",
   "private": false,
@@ -60,5 +60,8 @@
   },
   "files": [
     "dist/**/*"
-  ]
+  ],
+  "engines": {
+    "node": ">=14.17.3"
+  }
 }
