@@ -29,7 +29,7 @@ async function getAuthInfo(): Promise<AuthInfo | undefined> {
       password: process.env.AUTH_ADMIN_PASSWORD ?? '!Rn5Ez5FuuyUNc!',
     },
     apiEndpointFactory: () => {
-      return 'http://localhost:3000/ory/kratos/public/';
+      return 'http://localhost:3000/identity/ory/kratos/public/';
     },
   };
 }
