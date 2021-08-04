@@ -3,7 +3,7 @@ import request from 'supertest';
 
 const baseUrlDev = 'https://dev.alkem.io/graphql';
 const baseUrlTest = 'https://test.alkem.io/graphql';
-const baseUrlLocalhost = 'http://localhost:4000/graphql';
+const baseUrlLocalhost = 'http://localhost:3000/graphql';
 
 //,
 const authorizationToken = 'Bearer {token}';

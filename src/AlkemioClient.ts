@@ -64,7 +64,7 @@ export class AlkemioClient {
       configuration.data?.configuration.authentication.providers[0].config
         .kratosPublicBaseURL;
 
-    return endpoint ?? 'http://localhost:4433/';
+    return endpoint ?? 'http://localhost:3000/identity/ory/kratos/public/';
   }
 
   public async isAuthenticationEnabled(): Promise<boolean> {
@@ -101,12 +101,14 @@ export class AlkemioClient {
       );
     }
     const serverMetaData = data?.metadata.services.find(
-      service => service.name === 'ct-server'
+      service => service.name === 'alkemio-server'
     );
     if (!serverMetaData) throw new Error('Unable to locate server meta data');
     const serverVersion = serverMetaData.version;
     if (!serverVersion)
-      throw new Error(`Unable to retrive CT server version: ${serverVersion}`);
+      throw new Error(
+        `Unable to retrive Alkemio server version: ${serverVersion}`
+      );
     return serverVersion;
   }
 
