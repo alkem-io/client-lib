@@ -115,8 +115,28 @@ export type Aspect = {
   title: Scalars['String'];
 };
 
+export type AssignChallengeAdminInput = {
+  challengeID: Scalars['UUID'];
+  userID: Scalars['UUID_NAMEID_EMAIL'];
+};
+
 export type AssignCommunityMemberInput = {
   communityID: Scalars['UUID'];
+  userID: Scalars['UUID_NAMEID_EMAIL'];
+};
+
+export type AssignEcoverseAdminInput = {
+  ecoverseID: Scalars['UUID_NAMEID'];
+  userID: Scalars['UUID_NAMEID_EMAIL'];
+};
+
+export type AssignOrganisationAdminInput = {
+  organisationID: Scalars['UUID_NAMEID'];
+  userID: Scalars['UUID_NAMEID_EMAIL'];
+};
+
+export type AssignOrganisationMemberInput = {
+  organisationID: Scalars['UUID_NAMEID'];
   userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
@@ -149,11 +169,11 @@ export type AuthenticationProviderConfigUnion = OryConfig;
 
 export type Authorization = {
   anonymousReadAccess: Scalars['Boolean'];
-  /** The set of credential rules that are contained by this AuthorizationDefinition. */
+  /** The set of credential rules that are contained by this Authorization Policy. */
   credentialRules?: Maybe<Array<AuthorizationRuleCredential>>;
   /** The ID of the entity */
   id: Scalars['UUID'];
-  /** The set of verified credential rules that are contained by this AuthorizationDefinition. */
+  /** The set of verified credential rules that are contained by this Authorization Policy. */
   verifiedCredentialRules?: Maybe<Array<AuthorizationRuleCredential>>;
 };
 
@@ -355,7 +375,7 @@ export type CreateChallengeInput = {
 };
 
 export type CreateContextInput = {
-  background?: Maybe<Scalars['String']>;
+  background?: Maybe<Scalars['Markdown']>;
   impact?: Maybe<Scalars['Markdown']>;
   /** Set of References for the new Context. */
   references?: Maybe<Array<CreateReferenceInput>>;
@@ -363,7 +383,7 @@ export type CreateContextInput = {
   vision?: Maybe<Scalars['Markdown']>;
   /** The Visual assets for the new Context. */
   visual?: Maybe<CreateVisualInput>;
-  who?: Maybe<Scalars['String']>;
+  who?: Maybe<Scalars['Markdown']>;
 };
 
 export type CreateEcoverseInput = {
@@ -634,7 +654,7 @@ export type EcoverseProjectArgs = {
 };
 
 export type EcoverseAuthorizationResetInput = {
-  /** The identifier of the Ecoverse whose AuthorizationDefinition should be reset. */
+  /** The identifier of the Ecoverse whose Authorization Policy should be reset. */
   ecoverseID: Scalars['UUID_NAMEID'];
 };
 
@@ -739,10 +759,18 @@ export type Metadata = {
 };
 
 export type Mutation = {
+  /** Assigns a User as an Challenge Admin. */
+  assignUserAsChallengeAdmin: User;
+  /** Assigns a User as an Ecoverse Admin. */
+  assignUserAsEcoverseAdmin: User;
+  /** Assigns a User as an Organisation Admin. */
+  assignUserAsOrganisationAdmin: User;
   /** Assigns a User as a member of the specified Community. */
   assignUserToCommunity: Community;
   /** Assigns a User as a member of the specified User Group. */
   assignUserToGroup: UserGroup;
+  /** Assigns a User as a member of the specified Organisation. */
+  assignUserToOrganisation: Organisation;
   /** Reset the Authorization Policy on the specified Ecoverse. */
   authorizationPolicyResetOnEcoverse: Ecoverse;
   /** Reset the Authorization Policy on the specified Organisation. */
@@ -829,10 +857,16 @@ export type Mutation = {
   messageUpdateCommunity: Scalars['String'];
   /** Sends a message on the specified User`s behalf and returns the room id */
   messageUser: Scalars['String'];
+  /** Removes a User from being an Ecoverse Admin. */
+  removeUserAsChallengeAdmin: User;
+  /** Removes a User from being an Organisation Admin. */
+  removeUserAsOrganisationAdmin: User;
   /** Removes a User as a member of the specified Community. */
   removeUserFromCommunity: Community;
   /** Removes the specified User from specified user group */
   removeUserFromGroup: UserGroup;
+  /** Removes a User as a member of the specified Organisation. */
+  removeUserFromOrganisation: Organisation;
   /** Removes an authorization credential from a User. */
   revokeCredentialFromUser: User;
   /** Updates the specified Actor. */
@@ -859,12 +893,28 @@ export type Mutation = {
   uploadAvatar: Profile;
 };
 
+export type MutationAssignUserAsChallengeAdminArgs = {
+  membershipData: AssignChallengeAdminInput;
+};
+
+export type MutationAssignUserAsEcoverseAdminArgs = {
+  membershipData: AssignEcoverseAdminInput;
+};
+
+export type MutationAssignUserAsOrganisationAdminArgs = {
+  membershipData: AssignOrganisationAdminInput;
+};
+
 export type MutationAssignUserToCommunityArgs = {
   membershipData: AssignCommunityMemberInput;
 };
 
 export type MutationAssignUserToGroupArgs = {
   membershipData: AssignUserGroupMemberInput;
+};
+
+export type MutationAssignUserToOrganisationArgs = {
+  membershipData: AssignOrganisationMemberInput;
 };
 
 export type MutationAuthorizationPolicyResetOnEcoverseArgs = {
@@ -1035,12 +1085,24 @@ export type MutationMessageUserArgs = {
   msgData: UserSendMessageInput;
 };
 
+export type MutationRemoveUserAsChallengeAdminArgs = {
+  membershipData: RemoveEcoverseAdminInput;
+};
+
+export type MutationRemoveUserAsOrganisationAdminArgs = {
+  membershipData: RemoveOrganisationAdminInput;
+};
+
 export type MutationRemoveUserFromCommunityArgs = {
   membershipData: RemoveCommunityMemberInput;
 };
 
 export type MutationRemoveUserFromGroupArgs = {
   membershipData: RemoveUserGroupMemberInput;
+};
+
+export type MutationRemoveUserFromOrganisationArgs = {
+  membershipData: RemoveOrganisationMemberInput;
 };
 
 export type MutationRevokeCredentialFromUserArgs = {
@@ -1168,7 +1230,7 @@ export type OrganisationGroupArgs = {
 };
 
 export type OrganisationAuthorizationResetInput = {
-  /** The identifier of the Organisation whose AuthorizationDefinition should be reset. */
+  /** The identifier of the Organisation whose Authorization Policy should be reset. */
   organisationID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
@@ -1354,6 +1416,21 @@ export type RemoveCommunityMemberInput = {
   userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
+export type RemoveEcoverseAdminInput = {
+  ecoverseID: Scalars['UUID_NAMEID'];
+  userID: Scalars['UUID_NAMEID_EMAIL'];
+};
+
+export type RemoveOrganisationAdminInput = {
+  organisationID: Scalars['UUID_NAMEID'];
+  userID: Scalars['UUID_NAMEID_EMAIL'];
+};
+
+export type RemoveOrganisationMemberInput = {
+  organisationID: Scalars['UUID_NAMEID'];
+  userID: Scalars['UUID_NAMEID_EMAIL'];
+};
+
 export type RemoveUserGroupMemberInput = {
   groupID: Scalars['UUID'];
   userID: Scalars['UUID_NAMEID_EMAIL'];
@@ -1449,7 +1526,7 @@ export type UpdateAspectInput = {
   title?: Maybe<Scalars['String']>;
 };
 
-export type UpdateAuthorizationDefinitionInput = {
+export type UpdateAuthorizationPolicyInput = {
   anonymousReadAccess: Scalars['Boolean'];
 };
 
@@ -1468,7 +1545,7 @@ export type UpdateChallengeInput = {
 };
 
 export type UpdateContextInput = {
-  background?: Maybe<Scalars['String']>;
+  background?: Maybe<Scalars['Markdown']>;
   impact?: Maybe<Scalars['Markdown']>;
   /** Update the set of References for the Context. */
   references?: Maybe<Array<UpdateReferenceInput>>;
@@ -1476,14 +1553,14 @@ export type UpdateContextInput = {
   vision?: Maybe<Scalars['Markdown']>;
   /** Update the Visual assets for the new Context. */
   visual?: Maybe<UpdateVisualInput>;
-  who?: Maybe<Scalars['String']>;
+  who?: Maybe<Scalars['Markdown']>;
 };
 
 export type UpdateEcoverseInput = {
   /** The ID or NameID of the Ecoverse. */
   ID: Scalars['UUID_NAMEID'];
   /** Update anonymous visibility for the Ecoverse. */
-  authorizationDefinition?: Maybe<UpdateAuthorizationDefinitionInput>;
+  authorizationPolicy?: Maybe<UpdateAuthorizationPolicyInput>;
   /** Update the contained Context entity. */
   context?: Maybe<UpdateContextInput>;
   /** The display name for this entity. */
@@ -1618,7 +1695,7 @@ export type UserAuthorizationPrivilegesInput = {
 };
 
 export type UserAuthorizationResetInput = {
-  /** The identifier of the User whose AuthorizationDefinition should be reset. */
+  /** The identifier of the User whose Authorization Policy should be reset. */
   userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
