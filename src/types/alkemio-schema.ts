@@ -256,6 +256,13 @@ export type ChallengeTemplate = {
   name: Scalars['String'];
 };
 
+export type CommunicationMessageReceived = {
+  /** The update message that has been sent. */
+  message: CommunicationMessageResult;
+  /** The identifier of the room */
+  roomId: Scalars['String'];
+};
+
 export type CommunicationMessageResult = {
   /** The id for the message event (Matrix) */
   id: Scalars['String'];
@@ -741,14 +748,6 @@ export type MembershipUserResultEntryOrganisation = {
   nameID: Scalars['NameID'];
   /** Details of the Organisations the user is a member of */
   userGroups: Array<MembershipResultEntry>;
-};
-
-export type Message = {
-  id: Scalars['ID'];
-  message: Scalars['String'];
-  reciever: Scalars['String'];
-  sender: Scalars['String'];
-  timestamp: Scalars['Float'];
 };
 
 export type Metadata = {
@@ -1318,7 +1317,6 @@ export type Query = {
   membershipOrganisation: OrganisationMembership;
   /** Search the ecoverse for terms supplied */
   membershipUser: UserMembership;
-  messages: Array<Message>;
   /** Alkemio Services Metadata */
   metadata: Metadata;
   /** A particular Organisation */
@@ -1444,6 +1442,11 @@ export type RevokeAuthorizationCredentialInput = {
   userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
+export type RoomInvitationReceived = {
+  /** The roomId that the user has been added to */
+  roomId?: Maybe<Scalars['String']>;
+};
+
 export type SearchInput = {
   /** Restrict the search to only the specified challenges. Default is all Challenges. */
   challengesFilter?: Maybe<Array<Scalars['Float']>>;
@@ -1477,7 +1480,8 @@ export type ServiceMetadata = {
 
 export type Subscription = {
   avatarUploaded: Profile;
-  messageReceived: Message;
+  messageReceived: CommunicationMessageReceived;
+  roomNotificationReceived: RoomInvitationReceived;
 };
 
 export type Tagset = {

@@ -1,0 +1,5 @@
+mutation assignUserAsOrganisationAdmin($membershipData: AssignOrganisationAdminInput!) {
+  assignUserAsOrganisationAdmin(membershipData: $membershipData) {
+    id,
+  }
+}

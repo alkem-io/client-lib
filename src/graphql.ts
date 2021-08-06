@@ -51,6 +51,30 @@ export type AddUserToGroupMutation = {
   };
 };
 
+export type AssignUserAsChallengeAdminMutationVariables = SchemaTypes.Exact<{
+  membershipData: SchemaTypes.AssignChallengeAdminInput;
+}>;
+
+export type AssignUserAsChallengeAdminMutation = {
+  assignUserAsChallengeAdmin: { id: string };
+};
+
+export type AssignUserAsEcoverseAdminMutationVariables = SchemaTypes.Exact<{
+  membershipData: SchemaTypes.AssignEcoverseAdminInput;
+}>;
+
+export type AssignUserAsEcoverseAdminMutation = {
+  assignUserAsEcoverseAdmin: { id: string };
+};
+
+export type AssignUserAsOrganisationAdminMutationVariables = SchemaTypes.Exact<{
+  membershipData: SchemaTypes.AssignOrganisationAdminInput;
+}>;
+
+export type AssignUserAsOrganisationAdminMutation = {
+  assignUserAsOrganisationAdmin: { id: string };
+};
+
 export type AuthorizationPolicyResetOnEcoverseMutationVariables = SchemaTypes.Exact<{
   authorizationResetData: SchemaTypes.EcoverseAuthorizationResetInput;
 }>;
@@ -73,6 +97,46 @@ export type AuthorizationPolicyResetOnUserMutationVariables = SchemaTypes.Exact<
 
 export type AuthorizationPolicyResetOnUserMutation = {
   authorizationPolicyResetOnUser: { nameID: string };
+};
+
+export type AgrantCredentialToUserMutationVariables = SchemaTypes.Exact<{
+  grantCredentialData: SchemaTypes.GrantAuthorizationCredentialInput;
+}>;
+
+export type AgrantCredentialToUserMutation = {
+  grantCredentialToUser: {
+    displayName: string;
+    id: string;
+    agent?: SchemaTypes.Maybe<{
+      credentials?: SchemaTypes.Maybe<
+        Array<{
+          id: string;
+          resourceID: string;
+          type: SchemaTypes.AuthorizationCredential;
+        }>
+      >;
+    }>;
+  };
+};
+
+export type RevokeCredentialFromUserMutationVariables = SchemaTypes.Exact<{
+  revokeCredentialData: SchemaTypes.RevokeAuthorizationCredentialInput;
+}>;
+
+export type RevokeCredentialFromUserMutation = {
+  revokeCredentialFromUser: {
+    displayName: string;
+    id: string;
+    agent?: SchemaTypes.Maybe<{
+      credentials?: SchemaTypes.Maybe<
+        Array<{
+          id: string;
+          resourceID: string;
+          type: SchemaTypes.AuthorizationCredential;
+        }>
+      >;
+    }>;
+  };
 };
 
 export type CreateActorGroupMutationVariables = SchemaTypes.Exact<{
@@ -543,6 +607,23 @@ export type UsersQuery = {
   }>;
 };
 
+export type UsersWithAgentQueryVariables = SchemaTypes.Exact<{
+  [key: string]: never;
+}>;
+
+export type UsersWithAgentQuery = {
+  users: Array<{
+    id: string;
+    nameID: string;
+    agent?: SchemaTypes.Maybe<{
+      id: string;
+      credentials?: SchemaTypes.Maybe<
+        Array<{ type: SchemaTypes.AuthorizationCredential; resourceID: string }>
+      >;
+    }>;
+  }>;
+};
+
 export const ChallengeDetailsFragmentDoc = gql`
   fragment ChallengeDetails on Challenge {
     id
@@ -628,6 +709,33 @@ export const AddUserToGroupDocument = gql`
     }
   }
 `;
+export const AssignUserAsChallengeAdminDocument = gql`
+  mutation assignUserAsChallengeAdmin(
+    $membershipData: AssignChallengeAdminInput!
+  ) {
+    assignUserAsChallengeAdmin(membershipData: $membershipData) {
+      id
+    }
+  }
+`;
+export const AssignUserAsEcoverseAdminDocument = gql`
+  mutation assignUserAsEcoverseAdmin(
+    $membershipData: AssignEcoverseAdminInput!
+  ) {
+    assignUserAsEcoverseAdmin(membershipData: $membershipData) {
+      id
+    }
+  }
+`;
+export const AssignUserAsOrganisationAdminDocument = gql`
+  mutation assignUserAsOrganisationAdmin(
+    $membershipData: AssignOrganisationAdminInput!
+  ) {
+    assignUserAsOrganisationAdmin(membershipData: $membershipData) {
+      id
+    }
+  }
+`;
 export const AuthorizationPolicyResetOnEcoverseDocument = gql`
   mutation authorizationPolicyResetOnEcoverse(
     $authorizationResetData: EcoverseAuthorizationResetInput!
@@ -658,6 +766,40 @@ export const AuthorizationPolicyResetOnUserDocument = gql`
       authorizationResetData: $authorizationResetData
     ) {
       nameID
+    }
+  }
+`;
+export const AgrantCredentialToUserDocument = gql`
+  mutation agrantCredentialToUser(
+    $grantCredentialData: GrantAuthorizationCredentialInput!
+  ) {
+    grantCredentialToUser(grantCredentialData: $grantCredentialData) {
+      displayName
+      id
+      agent {
+        credentials {
+          id
+          resourceID
+          type
+        }
+      }
+    }
+  }
+`;
+export const RevokeCredentialFromUserDocument = gql`
+  mutation revokeCredentialFromUser(
+    $revokeCredentialData: RevokeAuthorizationCredentialInput!
+  ) {
+    revokeCredentialFromUser(revokeCredentialData: $revokeCredentialData) {
+      displayName
+      id
+      agent {
+        credentials {
+          id
+          resourceID
+          type
+        }
+      }
     }
   }
 `;
@@ -1102,6 +1244,21 @@ export const UsersDocument = gql`
     }
   }
 `;
+export const UsersWithAgentDocument = gql`
+  query usersWithAgent {
+    users {
+      id
+      nameID
+      agent {
+        id
+        credentials {
+          type
+          resourceID
+        }
+      }
+    }
+  }
+`;
 
 export type SdkFunctionWrapper = <T>(action: () => Promise<T>) => Promise<T>;
 
@@ -1139,6 +1296,54 @@ export function getSdk(
       return withWrapper(() =>
         client.rawRequest<AddUserToGroupMutation>(
           print(AddUserToGroupDocument),
+          variables
+        )
+      );
+    },
+    assignUserAsChallengeAdmin(
+      variables: AssignUserAsChallengeAdminMutationVariables
+    ): Promise<{
+      data?: AssignUserAsChallengeAdminMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<AssignUserAsChallengeAdminMutation>(
+          print(AssignUserAsChallengeAdminDocument),
+          variables
+        )
+      );
+    },
+    assignUserAsEcoverseAdmin(
+      variables: AssignUserAsEcoverseAdminMutationVariables
+    ): Promise<{
+      data?: AssignUserAsEcoverseAdminMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<AssignUserAsEcoverseAdminMutation>(
+          print(AssignUserAsEcoverseAdminDocument),
+          variables
+        )
+      );
+    },
+    assignUserAsOrganisationAdmin(
+      variables: AssignUserAsOrganisationAdminMutationVariables
+    ): Promise<{
+      data?: AssignUserAsOrganisationAdminMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<AssignUserAsOrganisationAdminMutation>(
+          print(AssignUserAsOrganisationAdminDocument),
           variables
         )
       );
@@ -1187,6 +1392,38 @@ export function getSdk(
       return withWrapper(() =>
         client.rawRequest<AuthorizationPolicyResetOnUserMutation>(
           print(AuthorizationPolicyResetOnUserDocument),
+          variables
+        )
+      );
+    },
+    agrantCredentialToUser(
+      variables: AgrantCredentialToUserMutationVariables
+    ): Promise<{
+      data?: AgrantCredentialToUserMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<AgrantCredentialToUserMutation>(
+          print(AgrantCredentialToUserDocument),
+          variables
+        )
+      );
+    },
+    revokeCredentialFromUser(
+      variables: RevokeCredentialFromUserMutationVariables
+    ): Promise<{
+      data?: RevokeCredentialFromUserMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<RevokeCredentialFromUserMutation>(
+          print(RevokeCredentialFromUserDocument),
           variables
         )
       );
@@ -1738,6 +1975,22 @@ export function getSdk(
     }> {
       return withWrapper(() =>
         client.rawRequest<UsersQuery>(print(UsersDocument), variables)
+      );
+    },
+    usersWithAgent(
+      variables?: UsersWithAgentQueryVariables
+    ): Promise<{
+      data?: UsersWithAgentQuery | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<UsersWithAgentQuery>(
+          print(UsersWithAgentDocument),
+          variables
+        )
       );
     },
   };
