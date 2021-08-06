@@ -51,6 +51,30 @@ export type AddUserToGroupMutation = {
   };
 };
 
+export type AuthorizationPolicyResetOnEcoverseMutationVariables = SchemaTypes.Exact<{
+  authorizationResetData: SchemaTypes.EcoverseAuthorizationResetInput;
+}>;
+
+export type AuthorizationPolicyResetOnEcoverseMutation = {
+  authorizationPolicyResetOnEcoverse: { nameID: string };
+};
+
+export type AuthorizationPolicyResetOnOrganisationMutationVariables = SchemaTypes.Exact<{
+  authorizationResetData: SchemaTypes.OrganisationAuthorizationResetInput;
+}>;
+
+export type AuthorizationPolicyResetOnOrganisationMutation = {
+  authorizationPolicyResetOnOrganisation: { nameID: string };
+};
+
+export type AuthorizationPolicyResetOnUserMutationVariables = SchemaTypes.Exact<{
+  authorizationResetData: SchemaTypes.UserAuthorizationResetInput;
+}>;
+
+export type AuthorizationPolicyResetOnUserMutation = {
+  authorizationPolicyResetOnUser: { nameID: string };
+};
+
 export type CreateActorGroupMutationVariables = SchemaTypes.Exact<{
   actorGroupData: SchemaTypes.CreateActorGroupInput;
 }>;
@@ -417,8 +441,8 @@ export type OpportunityProfileFragment = {
   context?: SchemaTypes.Maybe<{
     tagline?: SchemaTypes.Maybe<string>;
     background?: SchemaTypes.Maybe<string>;
-    vision?: SchemaTypes.Maybe<string>;
-    impact?: SchemaTypes.Maybe<string>;
+    vision?: SchemaTypes.Maybe<any>;
+    impact?: SchemaTypes.Maybe<any>;
     who?: SchemaTypes.Maybe<string>;
     references?: SchemaTypes.Maybe<
       Array<{ name: string; uri: string; description: string }>
@@ -601,6 +625,39 @@ export const AddUserToGroupDocument = gql`
         firstName
         lastName
       }
+    }
+  }
+`;
+export const AuthorizationPolicyResetOnEcoverseDocument = gql`
+  mutation authorizationPolicyResetOnEcoverse(
+    $authorizationResetData: EcoverseAuthorizationResetInput!
+  ) {
+    authorizationPolicyResetOnEcoverse(
+      authorizationResetData: $authorizationResetData
+    ) {
+      nameID
+    }
+  }
+`;
+export const AuthorizationPolicyResetOnOrganisationDocument = gql`
+  mutation authorizationPolicyResetOnOrganisation(
+    $authorizationResetData: OrganisationAuthorizationResetInput!
+  ) {
+    authorizationPolicyResetOnOrganisation(
+      authorizationResetData: $authorizationResetData
+    ) {
+      nameID
+    }
+  }
+`;
+export const AuthorizationPolicyResetOnUserDocument = gql`
+  mutation authorizationPolicyResetOnUser(
+    $authorizationResetData: UserAuthorizationResetInput!
+  ) {
+    authorizationPolicyResetOnUser(
+      authorizationResetData: $authorizationResetData
+    ) {
+      nameID
     }
   }
 `;
@@ -1082,6 +1139,54 @@ export function getSdk(
       return withWrapper(() =>
         client.rawRequest<AddUserToGroupMutation>(
           print(AddUserToGroupDocument),
+          variables
+        )
+      );
+    },
+    authorizationPolicyResetOnEcoverse(
+      variables: AuthorizationPolicyResetOnEcoverseMutationVariables
+    ): Promise<{
+      data?: AuthorizationPolicyResetOnEcoverseMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<AuthorizationPolicyResetOnEcoverseMutation>(
+          print(AuthorizationPolicyResetOnEcoverseDocument),
+          variables
+        )
+      );
+    },
+    authorizationPolicyResetOnOrganisation(
+      variables: AuthorizationPolicyResetOnOrganisationMutationVariables
+    ): Promise<{
+      data?: AuthorizationPolicyResetOnOrganisationMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<AuthorizationPolicyResetOnOrganisationMutation>(
+          print(AuthorizationPolicyResetOnOrganisationDocument),
+          variables
+        )
+      );
+    },
+    authorizationPolicyResetOnUser(
+      variables: AuthorizationPolicyResetOnUserMutationVariables
+    ): Promise<{
+      data?: AuthorizationPolicyResetOnUserMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<AuthorizationPolicyResetOnUserMutation>(
+          print(AuthorizationPolicyResetOnUserDocument),
           variables
         )
       );

@@ -12,6 +12,9 @@ import {
   CreateEcoverseInput,
   CreateOpportunityInput,
   UpdateOpportunityInput,
+  UserAuthorizationResetInput,
+  EcoverseAuthorizationResetInput,
+  OrganisationAuthorizationResetInput,
 } from './types/alkemio-schema';
 import { ErrorHandler, handleErrors } from './util/handleErrors';
 import semver from 'semver';
@@ -61,7 +64,7 @@ export class AlkemioClient {
       configuration.data?.configuration.authentication.providers[0].config
         .kratosPublicBaseURL;
 
-    return endpoint ?? 'http://localhost:4433/';
+    return endpoint ?? 'http://localhost:3000/identity/ory/kratos/public/';
   }
 
   public async isAuthenticationEnabled(): Promise<boolean> {
@@ -81,7 +84,7 @@ export class AlkemioClient {
   }
 
   public validateServerVersion(serverVersion: string): boolean {
-    const MIN_SERVER_VERSION = '0.11.5';
+    const MIN_SERVER_VERSION = '0.11.7';
     const validVersion = semver.gte(serverVersion, MIN_SERVER_VERSION);
     if (!validVersion)
       throw new Error(
@@ -98,12 +101,14 @@ export class AlkemioClient {
       );
     }
     const serverMetaData = data?.metadata.services.find(
-      service => service.name === 'ct-server'
+      service => service.name === 'alkemio-server'
     );
     if (!serverMetaData) throw new Error('Unable to locate server meta data');
     const serverVersion = serverMetaData.version;
     if (!serverVersion)
-      throw new Error(`Unable to retrive CT server version: ${serverVersion}`);
+      throw new Error(
+        `Unable to retrive Alkemio server version: ${serverVersion}`
+      );
     return serverVersion;
   }
 
@@ -124,6 +129,42 @@ export class AlkemioClient {
       id: ecoverseID,
     });
     return response.data?.ecoverse;
+  }
+
+  public async authorizationResetUser(
+    authorizationResetData: UserAuthorizationResetInput
+  ) {
+    const result = await this.client.authorizationPolicyResetOnUser({
+      authorizationResetData: authorizationResetData,
+    });
+
+    this.errorHandler(result.errors);
+
+    return result.data;
+  }
+
+  public async authorizationResetEcoverse(
+    authorizationResetData: EcoverseAuthorizationResetInput
+  ) {
+    const result = await this.client.authorizationPolicyResetOnEcoverse({
+      authorizationResetData: authorizationResetData,
+    });
+
+    this.errorHandler(result.errors);
+
+    return result.data;
+  }
+
+  public async authorizationResetOrganisation(
+    authorizationResetData: OrganisationAuthorizationResetInput
+  ) {
+    const result = await this.client.authorizationPolicyResetOnOrganisation({
+      authorizationResetData: authorizationResetData,
+    });
+
+    this.errorHandler(result.errors);
+
+    return result.data;
   }
 
   public async createEcoverse(ecoverseData: CreateEcoverseInput) {

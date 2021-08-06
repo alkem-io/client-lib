@@ -7,7 +7,7 @@ const main = async () => {
 
   const ctClient = new AlkemioClient({
     graphqlEndpoint:
-      process.env.GRAPHQL_ENDPOINT ?? 'http://localhost:4455/graphql',
+      process.env.GRAPHQL_ENDPOINT ?? 'http://localhost:3000/graphql',
   });
   console.log(await ctClient.isAuthenticationEnabled());
   ctClient.config.authInfo = await getAuthInfo();
@@ -29,7 +29,7 @@ async function getAuthInfo(): Promise<AuthInfo | undefined> {
       password: process.env.AUTH_ADMIN_PASSWORD ?? '!Rn5Ez5FuuyUNc!',
     },
     apiEndpointFactory: () => {
-      return 'http://localhost:4433/';
+      return 'http://localhost:3000/identity/ory/kratos/public/';
     },
   };
 }

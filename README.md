@@ -19,7 +19,7 @@ Finally, this package provides a utility for carrying out performance test data 
 To use this package, first instantiate an instance of the AlkemioClient class, passing in the Alkemio server end point:
 ```
   const ctClient = new AlkemioClient({
-    graphqlEndpoint: 'http://localhost:4000/graphql',
+    graphqlEndpoint: 'http://localhost:3000/graphql',
   });
   ```
 The ctClient can then be used to access the Alkemio server api using provided wrapper methods e.g.
@@ -34,7 +34,7 @@ The set of wrapper calls provided is based on needs to date; feel free to augmen
 The default usage for client-lib is against an non-authenticated server, but it can also be run against a server with authentication enabled.
 
 There is a sample program provided, `npm run get-api-token`, that reads in the following environment variables to authenticate:
-* AUTH_ORY_KRATOS_PUBLIC_BASE_URL=http://localhost:4433/
+* AUTH_ORY_KRATOS_PUBLIC_BASE_URL=http://localhost:3000/identity/ory/kratos/public
 * AUTH_ADMIN_EMAIL=admin@alkem.io
 * AUTH_ADMIN_PASSWORD=changeMe
 To set these, make a copy of the provided `.env.default` as `.env` and edit to reflect the target server values.

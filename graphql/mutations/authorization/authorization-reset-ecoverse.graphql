@@ -1,0 +1,8 @@
+mutation authorizationPolicyResetOnEcoverse($authorizationResetData: EcoverseAuthorizationResetInput!) {
+  authorizationPolicyResetOnEcoverse(authorizationResetData: $authorizationResetData) {
+    nameID
+  }
+}
+
+
+
