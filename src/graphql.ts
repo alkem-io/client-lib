@@ -570,6 +570,12 @@ export type OrganisationsQuery = {
       avatar?: SchemaTypes.Maybe<string>;
       description?: SchemaTypes.Maybe<string>;
     };
+    agent?: SchemaTypes.Maybe<{
+      id: string;
+      credentials?: SchemaTypes.Maybe<
+        Array<{ type: SchemaTypes.AuthorizationCredential; resourceID: string }>
+      >;
+    }>;
   }>;
 };
 
@@ -604,17 +610,6 @@ export type UsersQuery = {
       avatar?: SchemaTypes.Maybe<string>;
       description?: SchemaTypes.Maybe<string>;
     }>;
-  }>;
-};
-
-export type UsersWithAgentQueryVariables = SchemaTypes.Exact<{
-  [key: string]: never;
-}>;
-
-export type UsersWithAgentQuery = {
-  users: Array<{
-    id: string;
-    nameID: string;
     agent?: SchemaTypes.Maybe<{
       id: string;
       credentials?: SchemaTypes.Maybe<
@@ -1211,6 +1206,13 @@ export const OrganisationsDocument = gql`
         avatar
         description
       }
+      agent {
+        id
+        credentials {
+          type
+          resourceID
+        }
+      }
     }
   }
 `;
@@ -1241,14 +1243,6 @@ export const UsersDocument = gql`
         avatar
         description
       }
-    }
-  }
-`;
-export const UsersWithAgentDocument = gql`
-  query usersWithAgent {
-    users {
-      id
-      nameID
       agent {
         id
         credentials {
@@ -1975,22 +1969,6 @@ export function getSdk(
     }> {
       return withWrapper(() =>
         client.rawRequest<UsersQuery>(print(UsersDocument), variables)
-      );
-    },
-    usersWithAgent(
-      variables?: UsersWithAgentQueryVariables
-    ): Promise<{
-      data?: UsersWithAgentQuery | undefined;
-      extensions?: any;
-      headers: Headers;
-      status: number;
-      errors?: GraphQLError[] | undefined;
-    }> {
-      return withWrapper(() =>
-        client.rawRequest<UsersWithAgentQuery>(
-          print(UsersWithAgentDocument),
-          variables
-        )
       );
     },
   };
