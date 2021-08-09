@@ -8,5 +8,12 @@ query organisations {
       avatar
       description
     }
+    agent {
+      id
+      credentials {
+        type
+        resourceID
+      }
+    }
   }
 }

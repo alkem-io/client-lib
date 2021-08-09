@@ -11,5 +11,12 @@ query users {
       avatar
       description
     }
+    agent {
+      id
+      credentials {
+        type
+        resourceID
+      }
+    }
   }
 }

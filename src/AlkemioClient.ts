@@ -24,7 +24,7 @@ import { KratosPublicApiClient } from './util/kratos.public.api.client';
 export class AlkemioClient {
   public apiToken: string;
   public config!: ClientConfig;
-  private client!: Sdk;
+  public client!: Sdk;
   private errorHandler: ErrorHandler;
 
   constructor(config: ClientConfig) {

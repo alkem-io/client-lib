@@ -1,0 +1,5 @@
+mutation assignUserAsEcoverseAdmin($membershipData: AssignEcoverseAdminInput!) {
+  assignUserAsEcoverseAdmin(membershipData: $membershipData) {
+    id,
+  }
+}
