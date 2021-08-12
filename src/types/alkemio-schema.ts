@@ -368,7 +368,8 @@ export type CreateAspectInput = {
   title: Scalars['String'];
 };
 
-export type CreateChallengeInput = {
+export type CreateChallengeOnChallengeInput = {
+  challengeID: Scalars['UUID'];
   context?: Maybe<CreateContextInput>;
   /** The display name for the entity. */
   displayName?: Maybe<Scalars['String']>;
@@ -377,7 +378,19 @@ export type CreateChallengeInput = {
   lifecycleTemplate?: Maybe<Scalars['String']>;
   /** A readable identifier, unique within the containing scope. */
   nameID: Scalars['NameID'];
-  parentID: Scalars['UUID_NAMEID'];
+  tags?: Maybe<Array<Scalars['String']>>;
+};
+
+export type CreateChallengeOnEcoverseInput = {
+  context?: Maybe<CreateContextInput>;
+  /** The display name for the entity. */
+  displayName?: Maybe<Scalars['String']>;
+  ecoverseID: Scalars['UUID_NAMEID'];
+  /** Set lead Organisations for the Challenge. */
+  leadOrganisations?: Maybe<Array<Scalars['UUID_NAMEID']>>;
+  lifecycleTemplate?: Maybe<Scalars['String']>;
+  /** A readable identifier, unique within the containing scope. */
+  nameID: Scalars['NameID'];
   tags?: Maybe<Array<Scalars['String']>>;
 };
 
@@ -411,7 +424,7 @@ export type CreateNvpInput = {
 };
 
 export type CreateOpportunityInput = {
-  challengeID: Scalars['UUID_NAMEID'];
+  challengeID: Scalars['UUID'];
   context?: Maybe<CreateContextInput>;
   /** The display name for the entity. */
   displayName?: Maybe<Scalars['String']>;
@@ -856,8 +869,10 @@ export type Mutation = {
   messageUpdateCommunity: Scalars['String'];
   /** Sends a message on the specified User`s behalf and returns the room id */
   messageUser: Scalars['String'];
-  /** Removes a User from being an Ecoverse Admin. */
+  /** Removes a User from being an Challenge Admin. */
   removeUserAsChallengeAdmin: User;
+  /** Removes a User from being an Ecoverse Admin. */
+  removeUserAsEcoverseAdmin: User;
   /** Removes a User from being an Organisation Admin. */
   removeUserAsOrganisationAdmin: User;
   /** Removes a User as a member of the specified Community. */
@@ -949,11 +964,11 @@ export type MutationCreateAspectArgs = {
 };
 
 export type MutationCreateChallengeArgs = {
-  challengeData: CreateChallengeInput;
+  challengeData: CreateChallengeOnEcoverseInput;
 };
 
 export type MutationCreateChildChallengeArgs = {
-  challengeData: CreateChallengeInput;
+  challengeData: CreateChallengeOnChallengeInput;
 };
 
 export type MutationCreateEcoverseArgs = {
@@ -1085,6 +1100,10 @@ export type MutationMessageUserArgs = {
 };
 
 export type MutationRemoveUserAsChallengeAdminArgs = {
+  membershipData: RemoveChallengeAdminInput;
+};
+
+export type MutationRemoveUserAsEcoverseAdminArgs = {
   membershipData: RemoveEcoverseAdminInput;
 };
 
@@ -1160,7 +1179,7 @@ export type Nvp = {
   value: Scalars['String'];
 };
 
-export type Opportunity = {
+export type Opportunity = Searchable & {
   /** The activity within this Opportunity. */
   activity?: Maybe<Array<Nvp>>;
   /** The authorization rules for the entity */
@@ -1171,7 +1190,6 @@ export type Opportunity = {
   context?: Maybe<Context>;
   /** The display name. */
   displayName: Scalars['String'];
-  /** The ID of the entity */
   id: Scalars['UUID'];
   /** The lifeycle for the Opportunity. */
   lifecycle?: Maybe<Lifecycle>;
@@ -1407,6 +1425,11 @@ export type Relation = {
   /** The ID of the entity */
   id: Scalars['UUID'];
   type: Scalars['String'];
+};
+
+export type RemoveChallengeAdminInput = {
+  challengeID: Scalars['UUID'];
+  userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
 export type RemoveCommunityMemberInput = {
