@@ -170,7 +170,7 @@ export type CreateAspectMutation = {
 };
 
 export type CreateChallengeMutationVariables = SchemaTypes.Exact<{
-  challengeData: SchemaTypes.CreateChallengeInput;
+  challengeData: SchemaTypes.CreateChallengeOnEcoverseInput;
 }>;
 
 export type CreateChallengeMutation = {
@@ -178,7 +178,7 @@ export type CreateChallengeMutation = {
 };
 
 export type CreateChildChallengeMutationVariables = SchemaTypes.Exact<{
-  childChallengeData: SchemaTypes.CreateChallengeInput;
+  childChallengeData: SchemaTypes.CreateChallengeOnChallengeInput;
 }>;
 
 export type CreateChildChallengeMutation = {
@@ -827,7 +827,7 @@ export const CreateAspectDocument = gql`
   }
 `;
 export const CreateChallengeDocument = gql`
-  mutation createChallenge($challengeData: CreateChallengeInput!) {
+  mutation createChallenge($challengeData: CreateChallengeOnEcoverseInput!) {
     createChallenge(challengeData: $challengeData) {
       id
       nameID
@@ -835,7 +835,9 @@ export const CreateChallengeDocument = gql`
   }
 `;
 export const CreateChildChallengeDocument = gql`
-  mutation createChildChallenge($childChallengeData: CreateChallengeInput!) {
+  mutation createChildChallenge(
+    $childChallengeData: CreateChallengeOnChallengeInput!
+  ) {
     createChildChallenge(challengeData: $childChallengeData) {
       id
       nameID

@@ -2,7 +2,7 @@ import { GraphQLClient } from 'graphql-request';
 import { ClientConfig } from './config/ClientConfig';
 import { getSdk, Sdk } from './graphql';
 import {
-  CreateChallengeInput,
+  CreateChallengeOnEcoverseInput,
   UpdateEcoverseInput,
   UpdateChallengeInput,
   UpdateOrganisationInput,
@@ -15,6 +15,7 @@ import {
   UserAuthorizationResetInput,
   EcoverseAuthorizationResetInput,
   OrganisationAuthorizationResetInput,
+  CreateChallengeOnChallengeInput,
 } from './types/alkemio-schema';
 import { ErrorHandler, handleErrors } from './util/handleErrors';
 import semver from 'semver';
@@ -84,7 +85,7 @@ export class AlkemioClient {
   }
 
   public validateServerVersion(serverVersion: string): boolean {
-    const MIN_SERVER_VERSION = '0.11.7';
+    const MIN_SERVER_VERSION = '0.12.3';
     const validVersion = semver.gte(serverVersion, MIN_SERVER_VERSION);
     if (!validVersion)
       throw new Error(
@@ -174,7 +175,7 @@ export class AlkemioClient {
     return result.data?.createEcoverse;
   }
 
-  public async createChallenge(challenge: CreateChallengeInput) {
+  public async createChallenge(challenge: CreateChallengeOnEcoverseInput) {
     const { data, errors } = await this.client.createChallenge({
       challengeData: challenge,
     });
@@ -184,7 +185,9 @@ export class AlkemioClient {
     return data?.createChallenge;
   }
 
-  public async createChildChallenge(challengeData: CreateChallengeInput) {
+  public async createChildChallenge(
+    challengeData: CreateChallengeOnChallengeInput
+  ) {
     const result = await this.client.createChildChallenge({
       childChallengeData: challengeData,
     });
