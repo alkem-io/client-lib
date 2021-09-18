@@ -67,12 +67,12 @@ export type AssignUserAsEcoverseAdminMutation = {
   assignUserAsEcoverseAdmin: { id: string };
 };
 
-export type AssignUserAsOrganisationAdminMutationVariables = SchemaTypes.Exact<{
-  membershipData: SchemaTypes.AssignOrganisationAdminInput;
+export type AssignUserAsOrganizationAdminMutationVariables = SchemaTypes.Exact<{
+  membershipData: SchemaTypes.AssignOrganizationAdminInput;
 }>;
 
-export type AssignUserAsOrganisationAdminMutation = {
-  assignUserAsOrganisationAdmin: { id: string };
+export type AssignUserAsOrganizationAdminMutation = {
+  assignUserAsOrganizationAdmin: { id: string };
 };
 
 export type AuthorizationPolicyResetOnEcoverseMutationVariables = SchemaTypes.Exact<{
@@ -83,12 +83,12 @@ export type AuthorizationPolicyResetOnEcoverseMutation = {
   authorizationPolicyResetOnEcoverse: { nameID: string };
 };
 
-export type AuthorizationPolicyResetOnOrganisationMutationVariables = SchemaTypes.Exact<{
-  authorizationResetData: SchemaTypes.OrganisationAuthorizationResetInput;
+export type AuthorizationPolicyResetOnOrganizationMutationVariables = SchemaTypes.Exact<{
+  authorizationResetData: SchemaTypes.OrganizationAuthorizationResetInput;
 }>;
 
-export type AuthorizationPolicyResetOnOrganisationMutation = {
-  authorizationPolicyResetOnOrganisation: { nameID: string };
+export type AuthorizationPolicyResetOnOrganizationMutation = {
+  authorizationPolicyResetOnOrganization: { nameID: string };
 };
 
 export type AuthorizationPolicyResetOnUserMutationVariables = SchemaTypes.Exact<{
@@ -201,12 +201,12 @@ export type CreateGroupOnCommunityMutation = {
   createGroupOnCommunity: { name: string; id: string };
 };
 
-export type CreateGroupOnOrganisationMutationVariables = SchemaTypes.Exact<{
+export type CreateGroupOnOrganizationMutationVariables = SchemaTypes.Exact<{
   groupData: SchemaTypes.CreateUserGroupInput;
 }>;
 
-export type CreateGroupOnOrganisationMutation = {
-  createGroupOnOrganisation: { id: string; name: string };
+export type CreateGroupOnOrganizationMutation = {
+  createGroupOnOrganization: { id: string; name: string };
 };
 
 export type CreateOpportunityMutationVariables = SchemaTypes.Exact<{
@@ -217,12 +217,12 @@ export type CreateOpportunityMutation = {
   createOpportunity: { id: string; displayName: string; nameID: string };
 };
 
-export type CreateOrganisationMutationVariables = SchemaTypes.Exact<{
-  organisationData: SchemaTypes.CreateOrganisationInput;
+export type CreateOrganizationMutationVariables = SchemaTypes.Exact<{
+  organizationData: SchemaTypes.CreateOrganizationInput;
 }>;
 
-export type CreateOrganisationMutation = {
-  createOrganisation: {
+export type CreateOrganizationMutation = {
+  createOrganization: {
     displayName: string;
     nameID: string;
     id: string;
@@ -324,12 +324,12 @@ export type UpdateOpportunityMutation = {
   updateOpportunity: { id: string; displayName: string; nameID: string };
 };
 
-export type UpdateOrganisationMutationVariables = SchemaTypes.Exact<{
-  organisationData: SchemaTypes.UpdateOrganisationInput;
+export type UpdateOrganizationMutationVariables = SchemaTypes.Exact<{
+  organizationData: SchemaTypes.UpdateOrganizationInput;
 }>;
 
-export type UpdateOrganisationMutation = {
-  updateOrganisation: {
+export type UpdateOrganizationMutation = {
+  updateOrganization: {
     id: string;
     nameID: string;
     profile: {
@@ -359,7 +359,7 @@ export type ChallengeQuery = {
       id: string;
       displayName: string;
       community?: SchemaTypes.Maybe<{ id: string; displayName: string }>;
-      leadOrganisations: Array<{ nameID: string; id: string }>;
+      leadOrganizations: Array<{ nameID: string; id: string }>;
     };
   };
 };
@@ -543,12 +543,12 @@ export type OpportunityQuery = {
   };
 };
 
-export type OrganisationQueryVariables = SchemaTypes.Exact<{
+export type OrganizationQueryVariables = SchemaTypes.Exact<{
   id: SchemaTypes.Scalars['UUID_NAMEID'];
 }>;
 
-export type OrganisationQuery = {
-  organisation: {
+export type OrganizationQuery = {
+  organization: {
     displayName: string;
     id: string;
     nameID: string;
@@ -556,12 +556,12 @@ export type OrganisationQuery = {
   };
 };
 
-export type OrganisationsQueryVariables = SchemaTypes.Exact<{
+export type OrganizationsQueryVariables = SchemaTypes.Exact<{
   [key: string]: never;
 }>;
 
-export type OrganisationsQuery = {
-  organisations: Array<{
+export type OrganizationsQuery = {
+  organizations: Array<{
     displayName: string;
     id: string;
     nameID: string;
@@ -722,11 +722,11 @@ export const AssignUserAsEcoverseAdminDocument = gql`
     }
   }
 `;
-export const AssignUserAsOrganisationAdminDocument = gql`
-  mutation assignUserAsOrganisationAdmin(
-    $membershipData: AssignOrganisationAdminInput!
+export const AssignUserAsOrganizationAdminDocument = gql`
+  mutation assignUserAsOrganizationAdmin(
+    $membershipData: AssignOrganizationAdminInput!
   ) {
-    assignUserAsOrganisationAdmin(membershipData: $membershipData) {
+    assignUserAsOrganizationAdmin(membershipData: $membershipData) {
       id
     }
   }
@@ -742,11 +742,11 @@ export const AuthorizationPolicyResetOnEcoverseDocument = gql`
     }
   }
 `;
-export const AuthorizationPolicyResetOnOrganisationDocument = gql`
-  mutation authorizationPolicyResetOnOrganisation(
-    $authorizationResetData: OrganisationAuthorizationResetInput!
+export const AuthorizationPolicyResetOnOrganizationDocument = gql`
+  mutation authorizationPolicyResetOnOrganization(
+    $authorizationResetData: OrganizationAuthorizationResetInput!
   ) {
-    authorizationPolicyResetOnOrganisation(
+    authorizationPolicyResetOnOrganization(
       authorizationResetData: $authorizationResetData
     ) {
       nameID
@@ -861,9 +861,9 @@ export const CreateGroupOnCommunityDocument = gql`
     }
   }
 `;
-export const CreateGroupOnOrganisationDocument = gql`
-  mutation createGroupOnOrganisation($groupData: CreateUserGroupInput!) {
-    createGroupOnOrganisation(groupData: $groupData) {
+export const CreateGroupOnOrganizationDocument = gql`
+  mutation createGroupOnOrganization($groupData: CreateUserGroupInput!) {
+    createGroupOnOrganization(groupData: $groupData) {
       id
       name
     }
@@ -878,9 +878,9 @@ export const CreateOpportunityDocument = gql`
     }
   }
 `;
-export const CreateOrganisationDocument = gql`
-  mutation createOrganisation($organisationData: CreateOrganisationInput!) {
-    createOrganisation(organisationData: $organisationData) {
+export const CreateOrganizationDocument = gql`
+  mutation createOrganization($organizationData: CreateOrganizationInput!) {
+    createOrganization(organizationData: $organizationData) {
       displayName
       nameID
       id
@@ -984,9 +984,9 @@ export const UpdateOpportunityDocument = gql`
     }
   }
 `;
-export const UpdateOrganisationDocument = gql`
-  mutation updateOrganisation($organisationData: UpdateOrganisationInput!) {
-    updateOrganisation(organisationData: $organisationData) {
+export const UpdateOrganizationDocument = gql`
+  mutation updateOrganization($organizationData: UpdateOrganizationInput!) {
+    updateOrganization(organizationData: $organizationData) {
       id
       nameID
       profile {
@@ -1018,7 +1018,7 @@ export const ChallengeDocument = gql`
           id
           displayName
         }
-        leadOrganisations {
+        leadOrganizations {
           nameID
           id
         }
@@ -1185,9 +1185,9 @@ export const OpportunityDocument = gql`
     }
   }
 `;
-export const OrganisationDocument = gql`
-  query organisation($id: UUID_NAMEID!) {
-    organisation(ID: $id) {
+export const OrganizationDocument = gql`
+  query organization($id: UUID_NAMEID!) {
+    organization(ID: $id) {
       displayName
       id
       nameID
@@ -1197,9 +1197,9 @@ export const OrganisationDocument = gql`
     }
   }
 `;
-export const OrganisationsDocument = gql`
-  query organisations {
-    organisations {
+export const OrganizationsDocument = gql`
+  query organizations {
+    organizations {
       displayName
       id
       nameID
@@ -1328,18 +1328,18 @@ export function getSdk(
         )
       );
     },
-    assignUserAsOrganisationAdmin(
-      variables: AssignUserAsOrganisationAdminMutationVariables
+    assignUserAsOrganizationAdmin(
+      variables: AssignUserAsOrganizationAdminMutationVariables
     ): Promise<{
-      data?: AssignUserAsOrganisationAdminMutation | undefined;
+      data?: AssignUserAsOrganizationAdminMutation | undefined;
       extensions?: any;
       headers: Headers;
       status: number;
       errors?: GraphQLError[] | undefined;
     }> {
       return withWrapper(() =>
-        client.rawRequest<AssignUserAsOrganisationAdminMutation>(
-          print(AssignUserAsOrganisationAdminDocument),
+        client.rawRequest<AssignUserAsOrganizationAdminMutation>(
+          print(AssignUserAsOrganizationAdminDocument),
           variables
         )
       );
@@ -1360,18 +1360,18 @@ export function getSdk(
         )
       );
     },
-    authorizationPolicyResetOnOrganisation(
-      variables: AuthorizationPolicyResetOnOrganisationMutationVariables
+    authorizationPolicyResetOnOrganization(
+      variables: AuthorizationPolicyResetOnOrganizationMutationVariables
     ): Promise<{
-      data?: AuthorizationPolicyResetOnOrganisationMutation | undefined;
+      data?: AuthorizationPolicyResetOnOrganizationMutation | undefined;
       extensions?: any;
       headers: Headers;
       status: number;
       errors?: GraphQLError[] | undefined;
     }> {
       return withWrapper(() =>
-        client.rawRequest<AuthorizationPolicyResetOnOrganisationMutation>(
-          print(AuthorizationPolicyResetOnOrganisationDocument),
+        client.rawRequest<AuthorizationPolicyResetOnOrganizationMutation>(
+          print(AuthorizationPolicyResetOnOrganizationDocument),
           variables
         )
       );
@@ -1536,18 +1536,18 @@ export function getSdk(
         )
       );
     },
-    createGroupOnOrganisation(
-      variables: CreateGroupOnOrganisationMutationVariables
+    createGroupOnOrganization(
+      variables: CreateGroupOnOrganizationMutationVariables
     ): Promise<{
-      data?: CreateGroupOnOrganisationMutation | undefined;
+      data?: CreateGroupOnOrganizationMutation | undefined;
       extensions?: any;
       headers: Headers;
       status: number;
       errors?: GraphQLError[] | undefined;
     }> {
       return withWrapper(() =>
-        client.rawRequest<CreateGroupOnOrganisationMutation>(
-          print(CreateGroupOnOrganisationDocument),
+        client.rawRequest<CreateGroupOnOrganizationMutation>(
+          print(CreateGroupOnOrganizationDocument),
           variables
         )
       );
@@ -1568,18 +1568,18 @@ export function getSdk(
         )
       );
     },
-    createOrganisation(
-      variables: CreateOrganisationMutationVariables
+    createOrganization(
+      variables: CreateOrganizationMutationVariables
     ): Promise<{
-      data?: CreateOrganisationMutation | undefined;
+      data?: CreateOrganizationMutation | undefined;
       extensions?: any;
       headers: Headers;
       status: number;
       errors?: GraphQLError[] | undefined;
     }> {
       return withWrapper(() =>
-        client.rawRequest<CreateOrganisationMutation>(
-          print(CreateOrganisationDocument),
+        client.rawRequest<CreateOrganizationMutation>(
+          print(CreateOrganizationDocument),
           variables
         )
       );
@@ -1744,18 +1744,18 @@ export function getSdk(
         )
       );
     },
-    updateOrganisation(
-      variables: UpdateOrganisationMutationVariables
+    updateOrganization(
+      variables: UpdateOrganizationMutationVariables
     ): Promise<{
-      data?: UpdateOrganisationMutation | undefined;
+      data?: UpdateOrganizationMutation | undefined;
       extensions?: any;
       headers: Headers;
       status: number;
       errors?: GraphQLError[] | undefined;
     }> {
       return withWrapper(() =>
-        client.rawRequest<UpdateOrganisationMutation>(
-          print(UpdateOrganisationDocument),
+        client.rawRequest<UpdateOrganizationMutation>(
+          print(UpdateOrganizationDocument),
           variables
         )
       );
@@ -1915,34 +1915,34 @@ export function getSdk(
         )
       );
     },
-    organisation(
-      variables: OrganisationQueryVariables
+    organization(
+      variables: OrganizationQueryVariables
     ): Promise<{
-      data?: OrganisationQuery | undefined;
+      data?: OrganizationQuery | undefined;
       extensions?: any;
       headers: Headers;
       status: number;
       errors?: GraphQLError[] | undefined;
     }> {
       return withWrapper(() =>
-        client.rawRequest<OrganisationQuery>(
-          print(OrganisationDocument),
+        client.rawRequest<OrganizationQuery>(
+          print(OrganizationDocument),
           variables
         )
       );
     },
-    organisations(
-      variables?: OrganisationsQueryVariables
+    organizations(
+      variables?: OrganizationsQueryVariables
     ): Promise<{
-      data?: OrganisationsQuery | undefined;
+      data?: OrganizationsQuery | undefined;
       extensions?: any;
       headers: Headers;
       status: number;
       errors?: GraphQLError[] | undefined;
     }> {
       return withWrapper(() =>
-        client.rawRequest<OrganisationsQuery>(
-          print(OrganisationsDocument),
+        client.rawRequest<OrganizationsQuery>(
+          print(OrganizationsDocument),
           variables
         )
       );

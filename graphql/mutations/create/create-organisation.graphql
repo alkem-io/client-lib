@@ -1,5 +1,5 @@
-mutation createOrganisation($organisationData: CreateOrganisationInput!) {
-  createOrganisation(organisationData: $organisationData) {
+mutation createOrganization($organizationData: CreateOrganizationInput!) {
+  createOrganization(organizationData: $organizationData) {
     displayName
     nameID
     id

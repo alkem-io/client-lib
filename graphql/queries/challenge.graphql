@@ -8,7 +8,7 @@ query challenge($ecoverseID: UUID_NAMEID!, $challengeID: UUID_NAMEID!) {
         id
         displayName
       }
-      leadOrganisations {
+      leadOrganizations {
         nameID
         id
       }

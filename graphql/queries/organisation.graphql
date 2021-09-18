@@ -1,5 +1,5 @@
-query organisation($id: UUID_NAMEID!) {
-  organisation(ID: $id) {
+query organization($id: UUID_NAMEID!) {
+  organization(ID: $id) {
     displayName
     id
     nameID
