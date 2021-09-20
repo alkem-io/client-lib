@@ -5,7 +5,7 @@ import {
   CreateChallengeOnEcoverseInput,
   UpdateEcoverseInput,
   UpdateChallengeInput,
-  UpdateOrganisationInput,
+  UpdateOrganizationInput,
   CreateUserInput,
   UpdateContextInput,
   UpdateReferenceInput,
@@ -14,7 +14,7 @@ import {
   UpdateOpportunityInput,
   UserAuthorizationResetInput,
   EcoverseAuthorizationResetInput,
-  OrganisationAuthorizationResetInput,
+  OrganizationAuthorizationResetInput,
   CreateChallengeOnChallengeInput,
 } from './types/alkemio-schema';
 import { ErrorHandler, handleErrors } from './util/handleErrors';
@@ -156,10 +156,10 @@ export class AlkemioClient {
     return result.data;
   }
 
-  public async authorizationResetOrganisation(
-    authorizationResetData: OrganisationAuthorizationResetInput
+  public async authorizationResetOrganization(
+    authorizationResetData: OrganizationAuthorizationResetInput
   ) {
-    const result = await this.client.authorizationPolicyResetOnOrganisation({
+    const result = await this.client.authorizationPolicyResetOnOrganization({
       authorizationResetData: authorizationResetData,
     });
 
@@ -548,9 +548,9 @@ export class AlkemioClient {
     return data?.createGroupOnCommunity;
   }
 
-  public async createOrganisation(displayName: string, nameID: string) {
-    const { data, errors } = await this.client.createOrganisation({
-      organisationData: {
+  public async createOrganization(displayName: string, nameID: string) {
+    const { data, errors } = await this.client.createOrganization({
+      organizationData: {
         nameID: nameID,
         displayName: displayName,
       },
@@ -558,25 +558,25 @@ export class AlkemioClient {
 
     this.errorHandler(errors);
 
-    return data?.createOrganisation;
+    return data?.createOrganization;
   }
 
-  public async organisations() {
-    const { data, errors } = await this.client.organisations();
+  public async organizations() {
+    const { data, errors } = await this.client.organizations();
 
     this.errorHandler(errors);
 
-    return data?.organisations;
+    return data?.organizations;
   }
 
-  public async organisation(orgID: string) {
-    const { data, errors } = await this.client.organisation({
+  public async organization(orgID: string) {
+    const { data, errors } = await this.client.organization({
       id: orgID,
     });
 
     this.errorHandler(errors);
 
-    return data?.organisation;
+    return data?.organization;
   }
 
   public async challenges(ecoverseID: string) {
@@ -609,14 +609,14 @@ export class AlkemioClient {
     return data?.updateOpportunity;
   }
 
-  public async updateOrganisation(organisation: UpdateOrganisationInput) {
-    const { data, errors } = await this.client.updateOrganisation({
-      organisationData: organisation,
+  public async updateOrganization(organization: UpdateOrganizationInput) {
+    const { data, errors } = await this.client.updateOrganization({
+      organizationData: organization,
     });
 
     this.errorHandler(errors);
 
-    return data?.updateOrganisation;
+    return data?.updateOrganization;
   }
 
   public async createUser(user: CreateUserInput) {

@@ -1,5 +1,5 @@
-query organisations {
-  organisations {
+query organizations {
+  organizations {
     displayName
     id
     nameID

@@ -1,5 +1,5 @@
-mutation authorizationPolicyResetOnOrganisation($authorizationResetData: OrganisationAuthorizationResetInput!) {
-  authorizationPolicyResetOnOrganisation(authorizationResetData: $authorizationResetData) {
+mutation authorizationPolicyResetOnOrganization($authorizationResetData: OrganizationAuthorizationResetInput!) {
+  authorizationPolicyResetOnOrganization(authorizationResetData: $authorizationResetData) {
     nameID
   }
 }
