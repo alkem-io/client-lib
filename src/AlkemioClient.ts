@@ -652,6 +652,14 @@ export class AlkemioClient {
     return data?.users;
   }
 
+  public async ecoverses() {
+    const { data, errors } = await this.client.ecoverses();
+
+    this.errorHandler(errors);
+
+    return data?.ecoverses;
+  }
+
   public async opportunities(ecoverseID: string) {
     const { data, errors } = await this.client.opportunities({
       ecoverseID: ecoverseID,
