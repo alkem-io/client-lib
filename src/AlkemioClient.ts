@@ -85,7 +85,7 @@ export class AlkemioClient {
   }
 
   public validateServerVersion(serverVersion: string): boolean {
-    const MIN_SERVER_VERSION = '0.12.3';
+    const MIN_SERVER_VERSION = '0.13.0';
     const validVersion = semver.gte(serverVersion, MIN_SERVER_VERSION);
     if (!validVersion)
       throw new Error(
