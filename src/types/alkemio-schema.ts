@@ -138,6 +138,11 @@ export type AssignGlobalCommunityAdminInput = {
   userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
+export type AssignOpportunityAdminInput = {
+  opportunityID: Scalars['UUID'];
+  userID: Scalars['UUID_NAMEID_EMAIL'];
+};
+
 export type AssignOrganizationAdminInput = {
   organizationID: Scalars['UUID_NAMEID'];
   userID: Scalars['UUID_NAMEID_EMAIL'];
@@ -191,21 +196,22 @@ export type Authorization = {
 };
 
 export enum AuthorizationCredential {
-  ChallengeAdmin = 'ChallengeAdmin',
-  ChallengeLead = 'ChallengeLead',
-  ChallengeMember = 'ChallengeMember',
-  EcoverseAdmin = 'EcoverseAdmin',
-  EcoverseHost = 'EcoverseHost',
-  EcoverseMember = 'EcoverseMember',
-  GlobalAdmin = 'GlobalAdmin',
-  GlobalAdminCommunity = 'GlobalAdminCommunity',
-  GlobalRegistered = 'GlobalRegistered',
-  OpportunityMember = 'OpportunityMember',
-  OrganizationAdmin = 'OrganizationAdmin',
-  OrganizationMember = 'OrganizationMember',
-  OrganizationOwner = 'OrganizationOwner',
-  UserGroupMember = 'UserGroupMember',
-  UserSelfManagement = 'UserSelfManagement',
+  ChallengeAdmin = 'CHALLENGE_ADMIN',
+  ChallengeLead = 'CHALLENGE_LEAD',
+  ChallengeMember = 'CHALLENGE_MEMBER',
+  EcoverseAdmin = 'ECOVERSE_ADMIN',
+  EcoverseHost = 'ECOVERSE_HOST',
+  EcoverseMember = 'ECOVERSE_MEMBER',
+  GlobalAdmin = 'GLOBAL_ADMIN',
+  GlobalAdminCommunity = 'GLOBAL_ADMIN_COMMUNITY',
+  GlobalRegistered = 'GLOBAL_REGISTERED',
+  OpportunityAdmin = 'OPPORTUNITY_ADMIN',
+  OpportunityMember = 'OPPORTUNITY_MEMBER',
+  OrganizationAdmin = 'ORGANIZATION_ADMIN',
+  OrganizationMember = 'ORGANIZATION_MEMBER',
+  OrganizationOwner = 'ORGANIZATION_OWNER',
+  UserGroupMember = 'USER_GROUP_MEMBER',
+  UserSelfManagement = 'USER_SELF_MANAGEMENT',
 }
 
 export enum AuthorizationPrivilege {
@@ -825,6 +831,8 @@ export type Mutation = {
   assignUserAsGlobalAdmin: User;
   /** Assigns a User as a Global Community Admin. */
   assignUserAsGlobalCommunityAdmin: User;
+  /** Assigns a User as an Opportunity Admin. */
+  assignUserAsOpportunityAdmin: User;
   /** Assigns a User as an Organization Admin. */
   assignUserAsOrganizationAdmin: User;
   /** Assigns a User as an Organization Owner. */
@@ -911,6 +919,8 @@ export type Mutation = {
   eventOnChallenge: Challenge;
   /** Trigger an event on the Opportunity. */
   eventOnOpportunity: Opportunity;
+  /** Trigger an event on the Organization Verification. */
+  eventOnOrganizationVerification: OrganizationVerification;
   /** Trigger an event on the Project. */
   eventOnProject: Project;
   /** Grants an authorization credential to a User. */
@@ -929,6 +939,8 @@ export type Mutation = {
   removeUserAsGlobalAdmin: User;
   /** Removes a User from being a Global Community Admin. */
   removeUserAsGlobalCommunityAdmin: User;
+  /** Removes a User from being an Opportunity Admin. */
+  removeUserAsOpportunityAdmin: User;
   /** Removes a User from being an Organization Admin. */
   removeUserAsOrganizationAdmin: User;
   /** Removes a User from being an Organization Owner. */
@@ -981,6 +993,10 @@ export type MutationAssignUserAsGlobalAdminArgs = {
 
 export type MutationAssignUserAsGlobalCommunityAdminArgs = {
   membershipData: AssignGlobalCommunityAdminInput;
+};
+
+export type MutationAssignUserAsOpportunityAdminArgs = {
+  membershipData: AssignOpportunityAdminInput;
 };
 
 export type MutationAssignUserAsOrganizationAdminArgs = {
@@ -1151,6 +1167,10 @@ export type MutationEventOnOpportunityArgs = {
   opportunityEventData: OpportunityEventInput;
 };
 
+export type MutationEventOnOrganizationVerificationArgs = {
+  organizationVerificationEventData: OrganizationVerificationEventInput;
+};
+
 export type MutationEventOnProjectArgs = {
   projectEventData: ProjectEventInput;
 };
@@ -1185,6 +1205,10 @@ export type MutationRemoveUserAsGlobalAdminArgs = {
 
 export type MutationRemoveUserAsGlobalCommunityAdminArgs = {
   membershipData: RemoveGlobalCommunityAdminInput;
+};
+
+export type MutationRemoveUserAsOpportunityAdminArgs = {
+  membershipData: RemoveOpportunityAdminInput;
 };
 
 export type MutationRemoveUserAsOrganizationAdminArgs = {
@@ -1336,8 +1360,7 @@ export type Organization = Groupable &
     nameID: Scalars['NameID'];
     /** The profile for this organization. */
     profile: Profile;
-    /** Organization verification type */
-    verified: OrganizationVerificationEnum;
+    verification: OrganizationVerification;
     /** Organization website */
     website?: Maybe<Scalars['String']>;
   };
@@ -1359,10 +1382,25 @@ export type OrganizationMembership = {
   id: Scalars['UUID'];
 };
 
+export type OrganizationVerification = {
+  /** The authorization rules for the entity */
+  authorization?: Maybe<Authorization>;
+  /** The ID of the entity */
+  id: Scalars['UUID'];
+  lifecycle: Lifecycle;
+  /** Organization verification type */
+  status: OrganizationVerificationEnum;
+};
+
 export enum OrganizationVerificationEnum {
-  ManualAttestation = 'MANUAL_ATTESTATION',
   NotVerified = 'NOT_VERIFIED',
+  VerifiedManualAttestation = 'VERIFIED_MANUAL_ATTESTATION',
 }
+
+export type OrganizationVerificationEventInput = {
+  eventName: Scalars['String'];
+  organizationVerificationID: Scalars['UUID'];
+};
 
 export type OryConfig = {
   /** Ory Issuer. */
@@ -1559,6 +1597,11 @@ export type RemoveGlobalAdminInput = {
 };
 
 export type RemoveGlobalCommunityAdminInput = {
+  userID: Scalars['UUID_NAMEID_EMAIL'];
+};
+
+export type RemoveOpportunityAdminInput = {
+  opportunityID: Scalars['UUID'];
   userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 

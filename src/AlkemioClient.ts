@@ -85,7 +85,7 @@ export class AlkemioClient {
   }
 
   public validateServerVersion(serverVersion: string): boolean {
-    const MIN_SERVER_VERSION = '0.12.3';
+    const MIN_SERVER_VERSION = '0.13.0';
     const validVersion = semver.gte(serverVersion, MIN_SERVER_VERSION);
     if (!validVersion)
       throw new Error(
@@ -650,6 +650,14 @@ export class AlkemioClient {
     this.errorHandler(errors);
 
     return data?.users;
+  }
+
+  public async ecoverses() {
+    const { data, errors } = await this.client.ecoverses();
+
+    this.errorHandler(errors);
+
+    return data?.ecoverses;
   }
 
   public async opportunities(ecoverseID: string) {
