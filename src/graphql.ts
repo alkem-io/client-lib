@@ -1008,8 +1008,8 @@ export const UpdateProfileDocument = gql`
   }
 `;
 export const ChallengeDocument = gql`
-  query challenge($ecoverseID: UUID_NAMEID!, $challengeID: UUID_NAMEID!) {
-    ecoverse(ID: $ecoverseID) {
+  query challenge($hubID: UUID_NAMEID!, $challengeID: UUID_NAMEID!) {
+    ecoverse(ID: $hubID) {
       challenge(ID: $challengeID) {
         nameID
         id
