@@ -1,5 +1,5 @@
-query hostInfo($ecoverseID: UUID_NAMEID!) {
-  ecoverse(ID: $ecoverseID) {
+query hostInfo($hubID: UUID_NAMEID!) {
+  ecoverse(ID: $hubID) {
     host {
       id
       nameID

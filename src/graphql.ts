@@ -59,11 +59,11 @@ export type AssignUserAsChallengeAdminMutation = {
   assignUserAsChallengeAdmin: { id: string };
 };
 
-export type AssignUserAsEcoverseAdminMutationVariables = SchemaTypes.Exact<{
+export type AssignUserAsHubAdminMutationVariables = SchemaTypes.Exact<{
   membershipData: SchemaTypes.AssignEcoverseAdminInput;
 }>;
 
-export type AssignUserAsEcoverseAdminMutation = {
+export type AssignUserAsHubAdminMutation = {
   assignUserAsEcoverseAdmin: { id: string };
 };
 
@@ -75,11 +75,11 @@ export type AssignUserAsOrganizationAdminMutation = {
   assignUserAsOrganizationAdmin: { id: string };
 };
 
-export type AuthorizationPolicyResetOnEcoverseMutationVariables = SchemaTypes.Exact<{
+export type AuthorizationPolicyResetOnHubMutationVariables = SchemaTypes.Exact<{
   authorizationResetData: SchemaTypes.EcoverseAuthorizationResetInput;
 }>;
 
-export type AuthorizationPolicyResetOnEcoverseMutation = {
+export type AuthorizationPolicyResetOnHubMutation = {
   authorizationPolicyResetOnEcoverse: { nameID: string };
 };
 
@@ -185,14 +185,6 @@ export type CreateChildChallengeMutation = {
   createChildChallenge: { id: string; nameID: string; displayName: string };
 };
 
-export type CreateEcoverseMutationVariables = SchemaTypes.Exact<{
-  ecoverseData: SchemaTypes.CreateEcoverseInput;
-}>;
-
-export type CreateEcoverseMutation = {
-  createEcoverse: { id: string; nameID: string };
-};
-
 export type CreateGroupOnCommunityMutationVariables = SchemaTypes.Exact<{
   groupData: SchemaTypes.CreateUserGroupInput;
 }>;
@@ -207,6 +199,14 @@ export type CreateGroupOnOrganizationMutationVariables = SchemaTypes.Exact<{
 
 export type CreateGroupOnOrganizationMutation = {
   createGroupOnOrganization: { id: string; name: string };
+};
+
+export type CreateHubMutationVariables = SchemaTypes.Exact<{
+  hubData: SchemaTypes.CreateEcoverseInput;
+}>;
+
+export type CreateHubMutation = {
+  createEcoverse: { id: string; nameID: string };
 };
 
 export type CreateOpportunityMutationVariables = SchemaTypes.Exact<{
@@ -304,11 +304,11 @@ export type UpdateChallengeMutation = {
   updateChallenge: ChallengeDetailsFragment;
 };
 
-export type UpdateEcoverseMutationVariables = SchemaTypes.Exact<{
-  ecoverseData: SchemaTypes.UpdateEcoverseInput;
+export type UpdateHubMutationVariables = SchemaTypes.Exact<{
+  hubData: SchemaTypes.UpdateEcoverseInput;
 }>;
 
-export type UpdateEcoverseMutation = {
+export type UpdateHubMutation = {
   updateEcoverse: {
     nameID: string;
     host?: SchemaTypes.Maybe<{ nameID: string }>;
@@ -348,7 +348,7 @@ export type UpdateProfileMutationVariables = SchemaTypes.Exact<{
 export type UpdateProfileMutation = { updateProfile: { id: string } };
 
 export type ChallengeQueryVariables = SchemaTypes.Exact<{
-  ecoverseID: SchemaTypes.Scalars['UUID_NAMEID'];
+  hubID: SchemaTypes.Scalars['UUID_NAMEID'];
   challengeID: SchemaTypes.Scalars['UUID_NAMEID'];
 }>;
 
@@ -365,7 +365,7 @@ export type ChallengeQuery = {
 };
 
 export type ChallengesQueryVariables = SchemaTypes.Exact<{
-  ecoverseID: SchemaTypes.Scalars['UUID_NAMEID'];
+  hubID: SchemaTypes.Scalars['UUID_NAMEID'];
 }>;
 
 export type ChallengesQuery = {
@@ -399,11 +399,43 @@ export type ConfigurationQuery = {
   };
 };
 
-export type EcoverseQueryVariables = SchemaTypes.Exact<{
+export type GroupsQueryVariables = SchemaTypes.Exact<{
+  hubID: SchemaTypes.Scalars['UUID_NAMEID'];
+}>;
+
+export type GroupsQuery = {
+  ecoverse: {
+    community?: SchemaTypes.Maybe<{
+      groups?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
+    }>;
+  };
+};
+
+export type HostInfoQueryVariables = SchemaTypes.Exact<{
+  hubID: SchemaTypes.Scalars['UUID_NAMEID'];
+}>;
+
+export type HostInfoQuery = {
+  ecoverse: {
+    host?: SchemaTypes.Maybe<{
+      id: string;
+      nameID: string;
+      displayName: string;
+      profile: {
+        id: string;
+        tagsets?: SchemaTypes.Maybe<
+          Array<{ id: string; name: string; tags: Array<string> }>
+        >;
+      };
+    }>;
+  };
+};
+
+export type HubQueryVariables = SchemaTypes.Exact<{
   id: SchemaTypes.Scalars['UUID_NAMEID'];
 }>;
 
-export type EcoverseQuery = {
+export type HubQuery = {
   ecoverse: {
     id: string;
     nameID: string;
@@ -423,44 +455,10 @@ export type EcoverseQuery = {
   };
 };
 
-export type EcoversesQueryVariables = SchemaTypes.Exact<{
-  [key: string]: never;
-}>;
+export type HubsQueryVariables = SchemaTypes.Exact<{ [key: string]: never }>;
 
-export type EcoversesQuery = {
+export type HubsQuery = {
   ecoverses: Array<{ displayName: string; id: string; nameID: string }>;
-};
-
-export type GroupsQueryVariables = SchemaTypes.Exact<{
-  ecoverseID: SchemaTypes.Scalars['UUID_NAMEID'];
-}>;
-
-export type GroupsQuery = {
-  ecoverse: {
-    community?: SchemaTypes.Maybe<{
-      groups?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
-    }>;
-  };
-};
-
-export type HostInfoQueryVariables = SchemaTypes.Exact<{
-  ecoverseID: SchemaTypes.Scalars['UUID_NAMEID'];
-}>;
-
-export type HostInfoQuery = {
-  ecoverse: {
-    host?: SchemaTypes.Maybe<{
-      id: string;
-      nameID: string;
-      displayName: string;
-      profile: {
-        id: string;
-        tagsets?: SchemaTypes.Maybe<
-          Array<{ id: string; name: string; tags: Array<string> }>
-        >;
-      };
-    }>;
-  };
 };
 
 export type MetadataQueryVariables = SchemaTypes.Exact<{
@@ -477,7 +475,7 @@ export type MetadataQuery = {
 };
 
 export type OpportunitiesQueryVariables = SchemaTypes.Exact<{
-  ecoverseID: SchemaTypes.Scalars['UUID_NAMEID'];
+  hubID: SchemaTypes.Scalars['UUID_NAMEID'];
 }>;
 
 export type OpportunitiesQuery = {
@@ -515,7 +513,7 @@ export type OpportunityProfileFragment = {
 };
 
 export type OpportunityQueryVariables = SchemaTypes.Exact<{
-  ecoverseID: SchemaTypes.Scalars['UUID_NAMEID'];
+  hubID: SchemaTypes.Scalars['UUID_NAMEID'];
   opportunityID: SchemaTypes.Scalars['UUID_NAMEID'];
 }>;
 
@@ -713,10 +711,8 @@ export const AssignUserAsChallengeAdminDocument = gql`
     }
   }
 `;
-export const AssignUserAsEcoverseAdminDocument = gql`
-  mutation assignUserAsEcoverseAdmin(
-    $membershipData: AssignEcoverseAdminInput!
-  ) {
+export const AssignUserAsHubAdminDocument = gql`
+  mutation assignUserAsHubAdmin($membershipData: AssignEcoverseAdminInput!) {
     assignUserAsEcoverseAdmin(membershipData: $membershipData) {
       id
     }
@@ -731,8 +727,8 @@ export const AssignUserAsOrganizationAdminDocument = gql`
     }
   }
 `;
-export const AuthorizationPolicyResetOnEcoverseDocument = gql`
-  mutation authorizationPolicyResetOnEcoverse(
+export const AuthorizationPolicyResetOnHubDocument = gql`
+  mutation authorizationPolicyResetOnHub(
     $authorizationResetData: EcoverseAuthorizationResetInput!
   ) {
     authorizationPolicyResetOnEcoverse(
@@ -845,14 +841,6 @@ export const CreateChildChallengeDocument = gql`
     }
   }
 `;
-export const CreateEcoverseDocument = gql`
-  mutation createEcoverse($ecoverseData: CreateEcoverseInput!) {
-    createEcoverse(ecoverseData: $ecoverseData) {
-      id
-      nameID
-    }
-  }
-`;
 export const CreateGroupOnCommunityDocument = gql`
   mutation createGroupOnCommunity($groupData: CreateUserGroupInput!) {
     createGroupOnCommunity(groupData: $groupData) {
@@ -866,6 +854,14 @@ export const CreateGroupOnOrganizationDocument = gql`
     createGroupOnOrganization(groupData: $groupData) {
       id
       name
+    }
+  }
+`;
+export const CreateHubDocument = gql`
+  mutation createHub($hubData: CreateEcoverseInput!) {
+    createEcoverse(ecoverseData: $hubData) {
+      id
+      nameID
     }
   }
 `;
@@ -962,9 +958,9 @@ export const UpdateChallengeDocument = gql`
   }
   ${ChallengeDetailsFragmentDoc}
 `;
-export const UpdateEcoverseDocument = gql`
-  mutation updateEcoverse($ecoverseData: UpdateEcoverseInput!) {
-    updateEcoverse(ecoverseData: $ecoverseData) {
+export const UpdateHubDocument = gql`
+  mutation updateHub($hubData: UpdateEcoverseInput!) {
+    updateEcoverse(ecoverseData: $hubData) {
       nameID
       host {
         nameID
@@ -1008,8 +1004,8 @@ export const UpdateProfileDocument = gql`
   }
 `;
 export const ChallengeDocument = gql`
-  query challenge($ecoverseID: UUID_NAMEID!, $challengeID: UUID_NAMEID!) {
-    ecoverse(ID: $ecoverseID) {
+  query challenge($hubID: UUID_NAMEID!, $challengeID: UUID_NAMEID!) {
+    ecoverse(ID: $hubID) {
       challenge(ID: $challengeID) {
         nameID
         id
@@ -1027,8 +1023,8 @@ export const ChallengeDocument = gql`
   }
 `;
 export const ChallengesDocument = gql`
-  query challenges($ecoverseID: UUID_NAMEID!) {
-    ecoverse(ID: $ecoverseID) {
+  query challenges($hubID: UUID_NAMEID!) {
+    ecoverse(ID: $hubID) {
       challenges {
         id
         nameID
@@ -1059,8 +1055,39 @@ export const ConfigurationDocument = gql`
     }
   }
 `;
-export const EcoverseDocument = gql`
-  query ecoverse($id: UUID_NAMEID!) {
+export const GroupsDocument = gql`
+  query groups($hubID: UUID_NAMEID!) {
+    ecoverse(ID: $hubID) {
+      community {
+        groups {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+export const HostInfoDocument = gql`
+  query hostInfo($hubID: UUID_NAMEID!) {
+    ecoverse(ID: $hubID) {
+      host {
+        id
+        nameID
+        displayName
+        profile {
+          id
+          tagsets {
+            id
+            name
+            tags
+          }
+        }
+      }
+    }
+  }
+`;
+export const HubDocument = gql`
+  query hub($id: UUID_NAMEID!) {
     ecoverse(ID: $id) {
       id
       nameID
@@ -1085,43 +1112,12 @@ export const EcoverseDocument = gql`
     }
   }
 `;
-export const EcoversesDocument = gql`
-  query ecoverses {
+export const HubsDocument = gql`
+  query hubs {
     ecoverses {
       displayName
       id
       nameID
-    }
-  }
-`;
-export const GroupsDocument = gql`
-  query groups($ecoverseID: UUID_NAMEID!) {
-    ecoverse(ID: $ecoverseID) {
-      community {
-        groups {
-          id
-          name
-        }
-      }
-    }
-  }
-`;
-export const HostInfoDocument = gql`
-  query hostInfo($ecoverseID: UUID_NAMEID!) {
-    ecoverse(ID: $ecoverseID) {
-      host {
-        id
-        nameID
-        displayName
-        profile {
-          id
-          tagsets {
-            id
-            name
-            tags
-          }
-        }
-      }
     }
   }
 `;
@@ -1136,8 +1132,8 @@ export const MetadataDocument = gql`
   }
 `;
 export const OpportunitiesDocument = gql`
-  query opportunities($ecoverseID: UUID_NAMEID!) {
-    ecoverse(ID: $ecoverseID) {
+  query opportunities($hubID: UUID_NAMEID!) {
+    ecoverse(ID: $hubID) {
       opportunities {
         id
         ...OpportunityProfile
@@ -1158,8 +1154,8 @@ export const OpportunitiesDocument = gql`
   ${OpportunityProfileFragmentDoc}
 `;
 export const OpportunityDocument = gql`
-  query opportunity($ecoverseID: UUID_NAMEID!, $opportunityID: UUID_NAMEID!) {
-    ecoverse(ID: $ecoverseID) {
+  query opportunity($hubID: UUID_NAMEID!, $opportunityID: UUID_NAMEID!) {
+    ecoverse(ID: $hubID) {
       opportunity(ID: $opportunityID) {
         displayName
         id
@@ -1312,18 +1308,18 @@ export function getSdk(
         )
       );
     },
-    assignUserAsEcoverseAdmin(
-      variables: AssignUserAsEcoverseAdminMutationVariables
+    assignUserAsHubAdmin(
+      variables: AssignUserAsHubAdminMutationVariables
     ): Promise<{
-      data?: AssignUserAsEcoverseAdminMutation | undefined;
+      data?: AssignUserAsHubAdminMutation | undefined;
       extensions?: any;
       headers: Headers;
       status: number;
       errors?: GraphQLError[] | undefined;
     }> {
       return withWrapper(() =>
-        client.rawRequest<AssignUserAsEcoverseAdminMutation>(
-          print(AssignUserAsEcoverseAdminDocument),
+        client.rawRequest<AssignUserAsHubAdminMutation>(
+          print(AssignUserAsHubAdminDocument),
           variables
         )
       );
@@ -1344,18 +1340,18 @@ export function getSdk(
         )
       );
     },
-    authorizationPolicyResetOnEcoverse(
-      variables: AuthorizationPolicyResetOnEcoverseMutationVariables
+    authorizationPolicyResetOnHub(
+      variables: AuthorizationPolicyResetOnHubMutationVariables
     ): Promise<{
-      data?: AuthorizationPolicyResetOnEcoverseMutation | undefined;
+      data?: AuthorizationPolicyResetOnHubMutation | undefined;
       extensions?: any;
       headers: Headers;
       status: number;
       errors?: GraphQLError[] | undefined;
     }> {
       return withWrapper(() =>
-        client.rawRequest<AuthorizationPolicyResetOnEcoverseMutation>(
-          print(AuthorizationPolicyResetOnEcoverseDocument),
+        client.rawRequest<AuthorizationPolicyResetOnHubMutation>(
+          print(AuthorizationPolicyResetOnHubDocument),
           variables
         )
       );
@@ -1504,22 +1500,6 @@ export function getSdk(
         )
       );
     },
-    createEcoverse(
-      variables: CreateEcoverseMutationVariables
-    ): Promise<{
-      data?: CreateEcoverseMutation | undefined;
-      extensions?: any;
-      headers: Headers;
-      status: number;
-      errors?: GraphQLError[] | undefined;
-    }> {
-      return withWrapper(() =>
-        client.rawRequest<CreateEcoverseMutation>(
-          print(CreateEcoverseDocument),
-          variables
-        )
-      );
-    },
     createGroupOnCommunity(
       variables: CreateGroupOnCommunityMutationVariables
     ): Promise<{
@@ -1548,6 +1528,22 @@ export function getSdk(
       return withWrapper(() =>
         client.rawRequest<CreateGroupOnOrganizationMutation>(
           print(CreateGroupOnOrganizationDocument),
+          variables
+        )
+      );
+    },
+    createHub(
+      variables: CreateHubMutationVariables
+    ): Promise<{
+      data?: CreateHubMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<CreateHubMutation>(
+          print(CreateHubDocument),
           variables
         )
       );
@@ -1712,18 +1708,18 @@ export function getSdk(
         )
       );
     },
-    updateEcoverse(
-      variables: UpdateEcoverseMutationVariables
+    updateHub(
+      variables: UpdateHubMutationVariables
     ): Promise<{
-      data?: UpdateEcoverseMutation | undefined;
+      data?: UpdateHubMutation | undefined;
       extensions?: any;
       headers: Headers;
       status: number;
       errors?: GraphQLError[] | undefined;
     }> {
       return withWrapper(() =>
-        client.rawRequest<UpdateEcoverseMutation>(
-          print(UpdateEcoverseDocument),
+        client.rawRequest<UpdateHubMutation>(
+          print(UpdateHubDocument),
           variables
         )
       );
@@ -1818,32 +1814,6 @@ export function getSdk(
         )
       );
     },
-    ecoverse(
-      variables: EcoverseQueryVariables
-    ): Promise<{
-      data?: EcoverseQuery | undefined;
-      extensions?: any;
-      headers: Headers;
-      status: number;
-      errors?: GraphQLError[] | undefined;
-    }> {
-      return withWrapper(() =>
-        client.rawRequest<EcoverseQuery>(print(EcoverseDocument), variables)
-      );
-    },
-    ecoverses(
-      variables?: EcoversesQueryVariables
-    ): Promise<{
-      data?: EcoversesQuery | undefined;
-      extensions?: any;
-      headers: Headers;
-      status: number;
-      errors?: GraphQLError[] | undefined;
-    }> {
-      return withWrapper(() =>
-        client.rawRequest<EcoversesQuery>(print(EcoversesDocument), variables)
-      );
-    },
     groups(
       variables: GroupsQueryVariables
     ): Promise<{
@@ -1868,6 +1838,32 @@ export function getSdk(
     }> {
       return withWrapper(() =>
         client.rawRequest<HostInfoQuery>(print(HostInfoDocument), variables)
+      );
+    },
+    hub(
+      variables: HubQueryVariables
+    ): Promise<{
+      data?: HubQuery | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<HubQuery>(print(HubDocument), variables)
+      );
+    },
+    hubs(
+      variables?: HubsQueryVariables
+    ): Promise<{
+      data?: HubsQuery | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<HubsQuery>(print(HubsDocument), variables)
       );
     },
     metadata(

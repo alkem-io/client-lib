@@ -17,9 +17,9 @@ const main = async () => {
   const serverVersion = await ctClient.validateConnection();
   console.log(`Alkemio platform version: ${serverVersion}`);
 
-  const ecoverseID = 'Test';
-  const ecoverseExists = await ctClient.ecoverseExists(ecoverseID);
-  console.log(`Ecoverse '${ecoverseID}' exists: ${ecoverseExists}`);
+  const hubID = 'Test';
+  const hubExists = await ctClient.hubExists(hubID);
+  console.log(`Hub '${hubID}' exists: ${hubExists}`);
 };
 
 async function getAuthInfo(): Promise<AuthInfo | undefined> {

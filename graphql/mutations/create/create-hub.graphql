@@ -1,0 +1,6 @@
+mutation createHub($hubData: CreateEcoverseInput!) {
+  createEcoverse(ecoverseData: $hubData) {
+    id
+    nameID
+  }
+}

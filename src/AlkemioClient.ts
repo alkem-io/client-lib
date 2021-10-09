@@ -85,7 +85,7 @@ export class AlkemioClient {
   }
 
   public validateServerVersion(serverVersion: string): boolean {
-    const MIN_SERVER_VERSION = '0.13.0';
+    const MIN_SERVER_VERSION = '0.14.1';
     const validVersion = semver.gte(serverVersion, MIN_SERVER_VERSION);
     if (!validVersion)
       throw new Error(
@@ -113,10 +113,10 @@ export class AlkemioClient {
     return serverVersion;
   }
 
-  public async ecoverseExists(ecoverseID: string): Promise<boolean> {
+  public async hubExists(hubID: string): Promise<boolean> {
     try {
-      const result = await this.client.ecoverse({
-        id: ecoverseID,
+      const result = await this.client.hub({
+        id: hubID,
       });
       if (!result.errors) return true;
     } catch (error) {
@@ -125,9 +125,9 @@ export class AlkemioClient {
     return true;
   }
 
-  async ecoverseInfo(ecoverseID: string) {
-    const response = await this.client.ecoverse({
-      id: ecoverseID,
+  async hubInfo(hubID: string) {
+    const response = await this.client.hub({
+      id: hubID,
     });
     return response.data?.ecoverse;
   }
@@ -144,10 +144,10 @@ export class AlkemioClient {
     return result.data;
   }
 
-  public async authorizationResetEcoverse(
+  public async authorizationResetHub(
     authorizationResetData: EcoverseAuthorizationResetInput
   ) {
-    const result = await this.client.authorizationPolicyResetOnEcoverse({
+    const result = await this.client.authorizationPolicyResetOnHub({
       authorizationResetData: authorizationResetData,
     });
 
@@ -168,9 +168,9 @@ export class AlkemioClient {
     return result.data;
   }
 
-  public async createEcoverse(ecoverseData: CreateEcoverseInput) {
-    const result = await this.client.createEcoverse({
-      ecoverseData: ecoverseData,
+  public async createHub(hubData: CreateEcoverseInput) {
+    const result = await this.client.createHub({
+      hubData: hubData,
     });
     return result.data?.createEcoverse;
   }
@@ -298,12 +298,12 @@ export class AlkemioClient {
   }
 
   async addUserToChallenge(
-    ecoverseID: string,
+    hubID: string,
     challengeName: string,
     userID: string
   ) {
     const response = await this.client.challenge({
-      ecoverseID: ecoverseID,
+      hubID: hubID,
       challengeID: challengeName,
     });
     const communityID = response.data?.ecoverse.challenge?.community?.id;
@@ -318,13 +318,10 @@ export class AlkemioClient {
     });
   }
 
-  public async opportunityByNameID(
-    ecoverseID: string,
-    opportunityNameID: string
-  ) {
+  public async opportunityByNameID(hubID: string, opportunityNameID: string) {
     try {
       const result = await this.client.opportunity({
-        ecoverseID: ecoverseID,
+        hubID: hubID,
         opportunityID: opportunityNameID,
       });
       if (!result.errors) return result.data?.ecoverse.opportunity;
@@ -333,10 +330,10 @@ export class AlkemioClient {
     }
   }
 
-  async challengeByNameID(ecoverseNameID: string, challengeNameID: string) {
+  async challengeByNameID(hubNameID: string, challengeNameID: string) {
     try {
       const response = await this.client.challenge({
-        ecoverseID: ecoverseNameID,
+        hubID: hubNameID,
         challengeID: challengeNameID,
       });
 
@@ -381,11 +378,11 @@ export class AlkemioClient {
     });
   }
 
-  async addUserToEcoverse(ecoverseID: string, userID: string) {
-    const ecoverseInfo = await this.ecoverseInfo(ecoverseID);
-    const communityID = ecoverseInfo?.community?.id;
+  async addUserToHub(hubID: string, userID: string) {
+    const hubInfo = await this.hubInfo(hubID);
+    const communityID = hubInfo?.community?.id;
 
-    if (!ecoverseInfo || !communityID) return;
+    if (!hubInfo || !communityID) return;
 
     return await this.client.addUserToCommunity({
       input: {
@@ -395,10 +392,10 @@ export class AlkemioClient {
     });
   }
 
-  async updateEcoverseContext(ecoverseID: string, context: UpdateContextInput) {
-    const { data, errors } = await this.client.updateEcoverse({
-      ecoverseData: {
-        ID: ecoverseID,
+  async updateHubContext(hubID: string, context: UpdateContextInput) {
+    const { data, errors } = await this.client.updateHub({
+      hubData: {
+        ID: hubID,
         context: context,
       },
     });
@@ -408,9 +405,9 @@ export class AlkemioClient {
     return data?.updateEcoverse;
   }
 
-  async updateEcoverse(ecoverse: UpdateEcoverseInput) {
-    const { data, errors } = await this.client.updateEcoverse({
-      ecoverseData: ecoverse,
+  async updateHub(hubData: UpdateEcoverseInput) {
+    const { data, errors } = await this.client.updateHub({
+      hubData: hubData,
     });
 
     this.errorHandler(errors);
@@ -525,12 +522,12 @@ export class AlkemioClient {
     return data?.createAspect;
   }
 
-  async createEcoverseGroup(
-    ecoverseID: string,
+  async createUserGroupOnHub(
+    hubID: string,
     groupName: string,
     groupDesc: string
   ) {
-    const ecoverseInfo = await this.ecoverseInfo(ecoverseID);
+    const ecoverseInfo = await this.hubInfo(hubID);
     const communityID = ecoverseInfo?.community?.id;
     if (!communityID) return;
     const { data, errors } = await this.client.createGroupOnCommunity({
@@ -579,9 +576,9 @@ export class AlkemioClient {
     return data?.organization;
   }
 
-  public async challenges(ecoverseID: string) {
+  public async challenges(hubID: string) {
     const { data, errors } = await this.client.challenges({
-      ecoverseID: ecoverseID,
+      hubID: hubID,
     });
 
     this.errorHandler(errors);
@@ -629,9 +626,9 @@ export class AlkemioClient {
     return data?.createUser;
   }
 
-  public async groups(ecoverseID: string) {
+  public async groups(hubID: string) {
     const { data, errors } = await this.client.groups({
-      ecoverseID: ecoverseID,
+      hubID: hubID,
     });
 
     this.errorHandler(errors);
@@ -639,8 +636,8 @@ export class AlkemioClient {
     return data?.ecoverse.community?.groups;
   }
 
-  public async groupByName(ecoverseID: string, name: string) {
-    const groups = await this.groups(ecoverseID);
+  public async groupByName(hubID: string, name: string) {
+    const groups = await this.groups(hubID);
     return groups?.find(x => x.name === name);
   }
 
@@ -652,17 +649,17 @@ export class AlkemioClient {
     return data?.users;
   }
 
-  public async ecoverses() {
-    const { data, errors } = await this.client.ecoverses();
+  public async hubs() {
+    const { data, errors } = await this.client.hubs();
 
     this.errorHandler(errors);
 
     return data?.ecoverses;
   }
 
-  public async opportunities(ecoverseID: string) {
+  public async opportunities(hubID: string) {
     const { data, errors } = await this.client.opportunities({
-      ecoverseID: ecoverseID,
+      hubID: hubID,
     });
 
     this.errorHandler(errors);
@@ -688,16 +685,16 @@ export class AlkemioClient {
     return data?.assignUserToCommunity;
   }
 
-  async updateReferencesOnEcoverse(
-    ecoverseID: string,
+  async updateReferencesOnHub(
+    hubID: string,
     references: Omit<UpdateReferenceInput, 'ID'>[]
   ) {
-    const ecoverseInfo = await this.ecoverseInfo(ecoverseID);
-    const contextId = ecoverseInfo?.context?.id;
+    const hubInfo = await this.hubInfo(hubID);
+    const contextId = hubInfo?.context?.id;
     if (!contextId) {
-      throw new Error('Ecoverse context id does not exist.');
+      throw new Error('Hub context id does not exist.');
     }
-    const existingReferences = ecoverseInfo?.context?.references || [];
+    const existingReferences = hubInfo?.context?.references || [];
     const newReferences = references.filter(r =>
       existingReferences.every(x => x.name !== r.name)
     );
@@ -716,8 +713,8 @@ export class AlkemioClient {
       updateRefsInput.push(newRefInput);
     }
     if (updateRefsInput.length > 0) {
-      await this.updateEcoverse({
-        ID: ecoverseID,
+      await this.updateHub({
+        ID: hubID,
         context: {
           references: updateRefsInput,
         },

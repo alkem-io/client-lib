@@ -1,5 +1,5 @@
-query opportunity($ecoverseID: UUID_NAMEID!, $opportunityID: UUID_NAMEID!) {
-  ecoverse(ID: $ecoverseID) {
+query opportunity($hubID: UUID_NAMEID!, $opportunityID: UUID_NAMEID!) {
+  ecoverse(ID: $hubID) {
     opportunity(ID: $opportunityID) {
       displayName
       id

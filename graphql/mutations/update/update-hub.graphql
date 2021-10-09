@@ -1,0 +1,11 @@
+mutation updateHub($hubData: UpdateEcoverseInput!) {
+  updateEcoverse(ecoverseData: $hubData) {
+    nameID
+    host {
+      nameID
+    }
+    context {
+      tagline
+    }
+  }
+}
