@@ -1,4 +1,4 @@
-query ecoverse($id: UUID_NAMEID!) {
+query hub($id: UUID_NAMEID!) {
   ecoverse(ID: $id) {
     id
     nameID

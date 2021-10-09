@@ -1,4 +1,4 @@
-query ecoverses {
+query hubs {
   ecoverses {
     displayName
     id

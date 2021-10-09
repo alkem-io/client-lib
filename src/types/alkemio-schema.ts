@@ -75,10 +75,14 @@ export type Agent = {
 export type Application = {
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
+  createdDate: Scalars['DateTime'];
   /** The ID of the entity */
   id: Scalars['UUID'];
   lifecycle: Lifecycle;
+  /** The Questions for this application. */
   questions: Array<Question>;
+  updatedDate: Scalars['DateTime'];
+  /** The User for this Application. */
   user: User;
 };
 
@@ -87,15 +91,34 @@ export type ApplicationEventInput = {
   eventName: Scalars['String'];
 };
 
+export type ApplicationReceived = {
+  /** The identifier of the application */
+  applicationId: Scalars['String'];
+  /** The community that was applied to */
+  communityID: Scalars['String'];
+  /** The nameID of the user that applied. */
+  userNameID: Scalars['String'];
+};
+
 export type ApplicationResultEntry = {
+  /** ID for the Challenge being applied to, if any. Or the Challenge containing the Opportunity being applied to. */
+  challengeID?: Maybe<Scalars['UUID']>;
   /** ID for the community */
   communityID: Scalars['UUID'];
+  /** Date of creation */
+  createdDate: Scalars['DateTime'];
   /** Display name of the community */
   displayName: Scalars['String'];
+  /** ID for the ultimate containing Hub */
+  ecoverseID: Scalars['UUID'];
   /** ID for the application */
   id: Scalars['UUID'];
+  /** ID for the Opportunity being applied to, if any. */
+  opportunityID?: Maybe<Scalars['UUID']>;
   /** The current state of the application. */
   state: Scalars['String'];
+  /** Date of last update */
+  updatedDate: Scalars['DateTime'];
 };
 
 export type ApplicationTemplate = {
@@ -188,11 +211,13 @@ export type AuthenticationProviderConfigUnion = OryConfig;
 export type Authorization = {
   anonymousReadAccess: Scalars['Boolean'];
   /** The set of credential rules that are contained by this Authorization Policy. */
-  credentialRules?: Maybe<Array<AuthorizationRuleCredential>>;
+  credentialRules?: Maybe<Array<AuthorizationPolicyRuleCredential>>;
   /** The ID of the entity */
   id: Scalars['UUID'];
+  /** The privileges granted to the current user based on this Authorization Policy. */
+  myPrivileges?: Maybe<Array<AuthorizationPrivilege>>;
   /** The set of verified credential rules that are contained by this Authorization Policy. */
-  verifiedCredentialRules?: Maybe<Array<AuthorizationRuleCredential>>;
+  verifiedCredentialRules?: Maybe<Array<AuthorizationPolicyRuleCredential>>;
 };
 
 export enum AuthorizationCredential {
@@ -214,6 +239,12 @@ export enum AuthorizationCredential {
   UserSelfManagement = 'USER_SELF_MANAGEMENT',
 }
 
+export type AuthorizationPolicyRuleCredential = {
+  grantedPrivileges: Array<Scalars['String']>;
+  resourceID: Scalars['String'];
+  type: Scalars['String'];
+};
+
 export enum AuthorizationPrivilege {
   Create = 'CREATE',
   Delete = 'DELETE',
@@ -221,12 +252,6 @@ export enum AuthorizationPrivilege {
   Read = 'READ',
   Update = 'UPDATE',
 }
-
-export type AuthorizationRuleCredential = {
-  grantedPrivileges: Array<Scalars['String']>;
-  resourceID: Scalars['String'];
-  type: Scalars['String'];
-};
 
 export type Canvas = {
   /** The ID of the entity */
@@ -286,10 +311,16 @@ export type ChallengeTemplate = {
 };
 
 export type CommunicationMessageReceived = {
+  /** The community to which this message corresponds */
+  communityId?: Maybe<Scalars['String']>;
   /** The update message that has been sent. */
   message: CommunicationMessageResult;
   /** The identifier of the room */
   roomId: Scalars['String'];
+  /** The public name of the room */
+  roomName: Scalars['String'];
+  /** The user email that should receive the message */
+  userEmail: Scalars['String'];
 };
 
 export type CommunicationMessageResult = {
@@ -320,6 +351,13 @@ export type Community = Groupable & {
   members?: Maybe<Array<User>>;
   /** Room with messages for this community. */
   updatesRoom?: Maybe<CommunityRoom>;
+};
+
+export type CommunityRemoveMessageInput = {
+  /** The community the message is being sent to */
+  communityID: Scalars['String'];
+  /** The message id that should be removed */
+  messageId: Scalars['String'];
 };
 
 export type CommunityRoom = {
@@ -451,6 +489,7 @@ export type CreateEcoverseInput = {
 
 export type CreateNvpInput = {
   name: Scalars['String'];
+  sortOrder: Scalars['Float'];
   value: Scalars['String'];
 };
 
@@ -656,7 +695,7 @@ export type Ecoverse = {
   challenge: Challenge;
   /** The challenges for the ecoverse. */
   challenges?: Maybe<Array<Challenge>>;
-  /** The community for the ecoverse. */
+  /** Get a Community within the Ecoverse. Defaults to the Community for the Ecoverse itself. */
   community?: Maybe<Community>;
   /** The context for the ecoverse. */
   context?: Maybe<Context>;
@@ -692,6 +731,10 @@ export type EcoverseApplicationArgs = {
 
 export type EcoverseChallengeArgs = {
   ID: Scalars['UUID_NAMEID'];
+};
+
+export type EcoverseCommunityArgs = {
+  ID?: Maybe<Scalars['UUID']>;
 };
 
 export type EcoverseGroupArgs = {
@@ -751,8 +794,17 @@ export type Lifecycle = {
   nextEvents?: Maybe<Array<Scalars['String']>>;
   /** The current state of this Lifecycle. */
   state?: Maybe<Scalars['String']>;
+  /** Is this lifecycle in a final state (done). */
+  stateIsFinal: Scalars['Boolean'];
   /** The Lifecycle template name. */
   templateName?: Maybe<Scalars['String']>;
+};
+
+export type MembershipCommunityResultEntry = {
+  /** Display name of the community */
+  displayName: Scalars['String'];
+  /** The ID of the community the user is a member of. */
+  id: Scalars['UUID'];
 };
 
 export type MembershipOrganizationInput = {
@@ -925,12 +977,12 @@ export type Mutation = {
   eventOnProject: Project;
   /** Grants an authorization credential to a User. */
   grantCredentialToUser: User;
-  /** Sends an update message on the specified community */
-  messageDiscussionCommunity: Scalars['String'];
-  /** Sends an update message on the specified community */
-  messageUpdateCommunity: Scalars['String'];
   /** Sends a message on the specified User`s behalf and returns the room id */
   messageUser: Scalars['String'];
+  /** Removes a discussion message from the specified community */
+  removeMessageFromCommunityDiscussions: Scalars['String'];
+  /** Removes an update message from the specified community */
+  removeMessageFromCommunityUpdates: Scalars['String'];
   /** Removes a User from being an Challenge Admin. */
   removeUserAsChallengeAdmin: User;
   /** Removes a User from being an Ecoverse Admin. */
@@ -953,6 +1005,10 @@ export type Mutation = {
   removeUserFromOrganization: Organization;
   /** Removes an authorization credential from a User. */
   revokeCredentialFromUser: User;
+  /** Sends a message to the discussions room on the community */
+  sendMessageToCommunityDiscussions: Scalars['String'];
+  /** Sends an update message on the specified community */
+  sendMessageToCommunityUpdates: Scalars['String'];
   /** Updates the specified Actor. */
   updateActor: Actor;
   /** Updates the specified Aspect. */
@@ -1179,16 +1235,16 @@ export type MutationGrantCredentialToUserArgs = {
   grantCredentialData: GrantAuthorizationCredentialInput;
 };
 
-export type MutationMessageDiscussionCommunityArgs = {
-  msgData: CommunitySendMessageInput;
-};
-
-export type MutationMessageUpdateCommunityArgs = {
-  msgData: CommunitySendMessageInput;
-};
-
 export type MutationMessageUserArgs = {
-  msgData: UserSendMessageInput;
+  messageData: UserSendMessageInput;
+};
+
+export type MutationRemoveMessageFromCommunityDiscussionsArgs = {
+  messageData: CommunityRemoveMessageInput;
+};
+
+export type MutationRemoveMessageFromCommunityUpdatesArgs = {
+  messageData: CommunityRemoveMessageInput;
 };
 
 export type MutationRemoveUserAsChallengeAdminArgs = {
@@ -1233,6 +1289,14 @@ export type MutationRemoveUserFromOrganizationArgs = {
 
 export type MutationRevokeCredentialFromUserArgs = {
   revokeCredentialData: RevokeAuthorizationCredentialInput;
+};
+
+export type MutationSendMessageToCommunityDiscussionsArgs = {
+  messageData: CommunitySendMessageInput;
+};
+
+export type MutationSendMessageToCommunityUpdatesArgs = {
+  messageData: CommunitySendMessageInput;
 };
 
 export type MutationUpdateActorArgs = {
@@ -1553,6 +1617,8 @@ export type QuestionTemplate = {
   question: Scalars['String'];
   /** Is question required? */
   required: Scalars['Boolean'];
+  /** Sorting order for the question. Lower is first. */
+  sortOrder?: Maybe<Scalars['Float']>;
 };
 
 export type Reference = {
@@ -1679,9 +1745,16 @@ export type ServiceMetadata = {
 };
 
 export type Subscription = {
-  avatarUploaded: Profile;
+  /** Receive new applications with filtering. */
+  applicationReceived: ApplicationReceived;
+  /** Receive new messages for rooms the currently authenticated User is a member of. */
   messageReceived: CommunicationMessageReceived;
+  /** Receive new room invitations. */
   roomNotificationReceived: RoomInvitationReceived;
+};
+
+export type SubscriptionApplicationReceivedArgs = {
+  communityID: Scalars['String'];
 };
 
 export type Tagset = {
@@ -1935,6 +2008,8 @@ export type UserGroup = Searchable & {
 export type UserMembership = {
   /** Open applications for this user. */
   applications?: Maybe<Array<ApplicationResultEntry>>;
+  /** All the communitites the user is a part of. */
+  communities: Array<MembershipCommunityResultEntry>;
   /** Details of Ecoverses the user is a member of, with child memberships */
   ecoverses: Array<MembershipUserResultEntryEcoverse>;
   id: Scalars['UUID'];

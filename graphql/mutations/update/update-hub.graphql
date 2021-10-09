@@ -1,5 +1,5 @@
-mutation updateEcoverse($ecoverseData: UpdateEcoverseInput!) {
-  updateEcoverse(ecoverseData: $ecoverseData) {
+mutation updateHub($hubData: UpdateEcoverseInput!) {
+  updateEcoverse(ecoverseData: $hubData) {
     nameID
     host {
       nameID

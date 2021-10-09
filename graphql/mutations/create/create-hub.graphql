@@ -1,5 +1,5 @@
-mutation createEcoverse($ecoverseData: CreateEcoverseInput!) {
-  createEcoverse(ecoverseData: $ecoverseData) {
+mutation createHub($hubData: CreateEcoverseInput!) {
+  createEcoverse(ecoverseData: $hubData) {
     id
     nameID
   }
