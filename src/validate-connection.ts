@@ -9,7 +9,6 @@ const main = async () => {
     graphqlEndpoint:
       process.env.GRAPHQL_ENDPOINT ?? 'http://localhost:3000/graphql',
   });
-  console.log(await ctClient.isAuthenticationEnabled());
   ctClient.config.authInfo = await getAuthInfo();
 
   await ctClient.enableAuthentication();

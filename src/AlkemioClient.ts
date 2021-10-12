@@ -37,7 +37,7 @@ export class AlkemioClient {
   }
 
   public async enableAuthentication() {
-    if (this.config.authInfo && (await this.isAuthenticationEnabled())) {
+    if (this.config.authInfo) {
       const kratosPublicEndpoint = await this.getKratosPublicApiEndpoint();
       this.config.authInfo.apiEndpointFactory = () => {
         return kratosPublicEndpoint;
@@ -66,15 +66,6 @@ export class AlkemioClient {
         .kratosPublicBaseURL;
 
     return endpoint ?? 'http://localhost:3000/identity/ory/kratos/public/';
-  }
-
-  public async isAuthenticationEnabled(): Promise<boolean> {
-    const configuration = await this.client.configuration();
-
-    const authenticationEnabled =
-      configuration.data?.configuration.authentication.enabled;
-
-    return authenticationEnabled ? true : false;
   }
 
   public async validateConnection() {
