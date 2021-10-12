@@ -31,12 +31,13 @@ The capabilities provided by the Alkemio server api is continually expanding, so
 The set of wrapper calls provided is based on needs to date; feel free to augment with new ones as the needs arise.
 
 ## Authentication
-The default usage for client-lib is against an non-authenticated server, but it can also be run against a server with authentication enabled.
 
-There is a sample program provided, `npm run get-api-token`, that reads in the following environment variables to authenticate:
+To set the authentication environment variables is:
+
 * AUTH_ORY_KRATOS_PUBLIC_BASE_URL=http://localhost:3000/identity/ory/kratos/public
 * AUTH_ADMIN_EMAIL=admin@alkem.io
 * AUTH_ADMIN_PASSWORD=changeMe
-To set these, make a copy of the provided `.env.default` as `.env` and edit to reflect the target server values.
+*
+To set them, make a copy of the provided `.env.default` as `.env` and edit to reflect the target server values.
 
 Other usages of client lib, such as from `populator`, are expected to provide the key parameters programmatically.
