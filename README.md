@@ -7,9 +7,9 @@
 The alkemio-lib package is for working directly with the Alkemio server, primarily using the graphql based api. For more details about Alkemio please visit either the [webiste](http://alkem.io) or [repo](http://github.com/alkem-io/alkemio).
 
 The key capabilities of this package include:
+* Authentication to the Alkemio platform
 * Managing connections to the Alkemio api
 * Wrapping key Alkemio api capabilities in convenient local javascript calls, taking care of generating the graphql query / mutation and filling in parameters as appropriate
-* Command line authentication
 
 This package also provides a sample script, `src/validate-connection.ts`, to demonstrate the usage of the package.
 
@@ -31,12 +31,12 @@ The capabilities provided by the Alkemio server api is continually expanding, so
 The set of wrapper calls provided is based on needs to date; feel free to augment with new ones as the needs arise.
 
 ## Authentication
-The default usage for client-lib is against an non-authenticated server, but it can also be run against a server with authentication enabled.
+The following environment variables are used to specify the authentication parameters:
 
-There is a sample program provided, `npm run get-api-token`, that reads in the following environment variables to authenticate:
 * AUTH_ORY_KRATOS_PUBLIC_BASE_URL=http://localhost:3000/identity/ory/kratos/public
 * AUTH_ADMIN_EMAIL=admin@alkem.io
 * AUTH_ADMIN_PASSWORD=changeMe
-To set these, make a copy of the provided `.env.default` as `.env` and edit to reflect the target server values.
+*
+To set them, make a copy of the provided `.env.default` as `.env` and edit to reflect the target server values.
 
 Other usages of client lib, such as from `populator`, are expected to provide the key parameters programmatically.
