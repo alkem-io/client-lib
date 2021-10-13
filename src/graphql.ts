@@ -383,7 +383,6 @@ export type ConfigurationQueryVariables = SchemaTypes.Exact<{
 export type ConfigurationQuery = {
   configuration: {
     authentication: {
-      enabled: boolean;
       providers: Array<{
         name: string;
         label: string;
@@ -1037,7 +1036,6 @@ export const ConfigurationDocument = gql`
   query configuration {
     configuration {
       authentication {
-        enabled
         providers {
           name
           label

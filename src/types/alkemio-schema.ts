@@ -187,8 +187,6 @@ export type AssignUserGroupMemberInput = {
 };
 
 export type AuthenticationConfig = {
-  /** Is authentication enabled? */
-  enabled: Scalars['Boolean'];
   /** Alkemio Authentication Providers Config. */
   providers: Array<AuthenticationProviderConfig>;
 };
