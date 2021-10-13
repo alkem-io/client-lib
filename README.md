@@ -7,9 +7,9 @@
 The alkemio-lib package is for working directly with the Alkemio server, primarily using the graphql based api. For more details about Alkemio please visit either the [webiste](http://alkem.io) or [repo](http://github.com/alkem-io/alkemio).
 
 The key capabilities of this package include:
+* Authentication to the Alkemio platform
 * Managing connections to the Alkemio api
 * Wrapping key Alkemio api capabilities in convenient local javascript calls, taking care of generating the graphql query / mutation and filling in parameters as appropriate
-* Command line authentication
 
 This package also provides a sample script, `src/validate-connection.ts`, to demonstrate the usage of the package.
 
@@ -31,8 +31,7 @@ The capabilities provided by the Alkemio server api is continually expanding, so
 The set of wrapper calls provided is based on needs to date; feel free to augment with new ones as the needs arise.
 
 ## Authentication
-
-To set the authentication environment variables is:
+The following environment variables are used to specify the authentication parameters:
 
 * AUTH_ORY_KRATOS_PUBLIC_BASE_URL=http://localhost:3000/identity/ory/kratos/public
 * AUTH_ADMIN_EMAIL=admin@alkem.io
