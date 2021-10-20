@@ -311,22 +311,22 @@ export type ChallengeTemplate = {
 export type CommunicationMessageReceived = {
   /** The community to which this message corresponds */
   communityId?: Maybe<Scalars['String']>;
-  /** The update message that has been sent. */
+  /** The message that has been sent. */
   message: CommunicationMessageResult;
   /** The identifier of the room */
   roomId: Scalars['String'];
   /** The public name of the room */
   roomName: Scalars['String'];
-  /** The user email that should receive the message */
-  userEmail: Scalars['String'];
+  /** The User that should receive the message */
+  userID: Scalars['String'];
 };
 
 export type CommunicationMessageResult = {
-  /** The id for the message event (Matrix) */
+  /** The id for the message event. */
   id: Scalars['String'];
   /** The message being sent */
   message: Scalars['String'];
-  /** The sender email */
+  /** The sender user ID */
   sender: Scalars['String'];
   /** The server timestamp in UTC */
   timestamp: Scalars['Float'];
@@ -659,9 +659,9 @@ export type DeleteUserInput = {
 };
 
 export type DirectRoom = {
-  /** The identifier of the room */
+  /** The identifier of the direct room */
   id: Scalars['String'];
-  /** The messages that have been sent to the Room. */
+  /** The messages that have been sent to the Direct Room. */
   messages: Array<CommunicationMessageResult>;
   /** The recepient userID */
   receiverID?: Maybe<Scalars['String']>;
@@ -685,7 +685,7 @@ export type Ecoverse = {
   activity?: Maybe<Array<Nvp>>;
   /** The Agent representing this Ecoverse. */
   agent?: Maybe<Agent>;
-  /** All applications to join */
+  /** A particular User Application within this Hub. */
   application: Application;
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
@@ -1444,6 +1444,13 @@ export type OrganizationMembership = {
   id: Scalars['UUID'];
 };
 
+export type OrganizationTemplate = {
+  /** Organization template name. */
+  name: Scalars['String'];
+  /** Tagset templates. */
+  tagsets?: Maybe<Array<TagsetTemplate>>;
+};
+
 export type OrganizationVerification = {
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
@@ -1782,6 +1789,8 @@ export type Template = {
   name: Scalars['String'];
   /** Opportunity templates. */
   opportunities: Array<OpportunityTemplate>;
+  /** Challenge templates. */
+  organizations: Array<OrganizationTemplate>;
   /** User templates. */
   users: Array<UserTemplate>;
 };
@@ -1936,6 +1945,8 @@ export type UpdateUserInput = {
   nameID?: Maybe<Scalars['NameID']>;
   phone?: Maybe<Scalars['String']>;
   profileData?: Maybe<UpdateProfileInput>;
+  /** Set this user profile as being used as a service account or not. */
+  serviceProfile?: Maybe<Scalars['Boolean']>;
 };
 
 export type UpdateVisualInput = {

@@ -616,6 +616,26 @@ export type UsersQuery = {
   }>;
 };
 
+export type UsersWithAuthorizationCredentialQueryVariables = SchemaTypes.Exact<{
+  credentialsCriteriaData: SchemaTypes.UsersWithAuthorizationCredentialInput;
+}>;
+
+export type UsersWithAuthorizationCredentialQuery = {
+  usersWithAuthorizationCredential: Array<{
+    displayName: string;
+    id: string;
+    agent?: SchemaTypes.Maybe<{
+      credentials?: SchemaTypes.Maybe<
+        Array<{
+          id: string;
+          resourceID: string;
+          type: SchemaTypes.AuthorizationCredential;
+        }>
+      >;
+    }>;
+  }>;
+};
+
 export const ChallengeDetailsFragmentDoc = gql`
   fragment ChallengeDetails on Challenge {
     id
@@ -1244,6 +1264,25 @@ export const UsersDocument = gql`
         credentials {
           type
           resourceID
+        }
+      }
+    }
+  }
+`;
+export const UsersWithAuthorizationCredentialDocument = gql`
+  query usersWithAuthorizationCredential(
+    $credentialsCriteriaData: UsersWithAuthorizationCredentialInput!
+  ) {
+    usersWithAuthorizationCredential(
+      credentialsCriteriaData: $credentialsCriteriaData
+    ) {
+      displayName
+      id
+      agent {
+        credentials {
+          id
+          resourceID
+          type
         }
       }
     }
@@ -1965,6 +2004,22 @@ export function getSdk(
     }> {
       return withWrapper(() =>
         client.rawRequest<UsersQuery>(print(UsersDocument), variables)
+      );
+    },
+    usersWithAuthorizationCredential(
+      variables: UsersWithAuthorizationCredentialQueryVariables
+    ): Promise<{
+      data?: UsersWithAuthorizationCredentialQuery | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<UsersWithAuthorizationCredentialQuery>(
+          print(UsersWithAuthorizationCredentialDocument),
+          variables
+        )
       );
     },
   };

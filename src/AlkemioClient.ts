@@ -16,6 +16,7 @@ import {
   EcoverseAuthorizationResetInput,
   OrganizationAuthorizationResetInput,
   CreateChallengeOnChallengeInput,
+  AuthorizationCredential,
 } from './types/alkemio-schema';
 import { ErrorHandler, handleErrors } from './util/handleErrors';
 import semver from 'semver';
@@ -638,6 +639,24 @@ export class AlkemioClient {
     this.errorHandler(errors);
 
     return data?.users;
+  }
+
+  public async usersWithAuthorizationCredential(
+    credentialType: AuthorizationCredential,
+    resourceID?: string
+  ) {
+    const { data, errors } = await this.client.usersWithAuthorizationCredential(
+      {
+        credentialsCriteriaData: {
+          type: credentialType,
+          resourceID: resourceID,
+        },
+      }
+    );
+
+    this.errorHandler(errors);
+
+    return data?.usersWithAuthorizationCredential;
   }
 
   public async hubs() {
