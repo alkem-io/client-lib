@@ -649,7 +649,7 @@ export class AlkemioClient {
       {
         credentialsCriteriaData: {
           type: credentialType,
-          resourceID: resourceID,
+          resourceID: resourceID ?? undefined,
         },
       }
     );
