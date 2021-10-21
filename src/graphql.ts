@@ -583,6 +583,8 @@ export type UserQueryVariables = SchemaTypes.Exact<{
 export type UserQuery = {
   user: {
     email: string;
+    firstName: string;
+    lastName: string;
     displayName: string;
     id: string;
     nameID: string;
@@ -1237,6 +1239,8 @@ export const UserDocument = gql`
   query user($userID: UUID_NAMEID_EMAIL!) {
     user(ID: $userID) {
       email
+      firstName
+      lastName
       displayName
       id
       nameID

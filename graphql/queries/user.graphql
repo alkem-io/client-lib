@@ -1,6 +1,8 @@
 query user($userID: UUID_NAMEID_EMAIL!) {
   user(ID: $userID) {
     email
+    firstName
+    lastName
     displayName
     id
     nameID
