@@ -1,22 +1,5 @@
 query users {
   users {
-    id
-    nameID
-    displayName
-    firstName
-    lastName
-    email
-    profile {
-      id
-      avatar
-      description
-    }
-    agent {
-      id
-      credentials {
-        type
-        resourceID
-      }
-    }
+    ...UserDetails
   }
 }

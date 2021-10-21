@@ -1,0 +1,20 @@
+fragment UserDetails on User {
+  id
+  nameID
+  displayName
+  firstName
+  lastName
+  email
+  profile {
+    id
+    avatar
+    description
+  }
+  agent {
+    id
+    credentials {
+      type
+      resourceID
+    }
+  }
+}

@@ -30,6 +30,26 @@ export type OpportunityDetailsFragment = {
   }>;
 };
 
+export type UserDetailsFragment = {
+  id: string;
+  nameID: string;
+  displayName: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  profile?: SchemaTypes.Maybe<{
+    id: string;
+    avatar?: SchemaTypes.Maybe<string>;
+    description?: SchemaTypes.Maybe<string>;
+  }>;
+  agent?: SchemaTypes.Maybe<{
+    id: string;
+    credentials?: SchemaTypes.Maybe<
+      Array<{ type: SchemaTypes.AuthorizationCredential; resourceID: string }>
+    >;
+  }>;
+};
+
 export type AddUserToCommunityMutationVariables = SchemaTypes.Exact<{
   input: SchemaTypes.AssignCommunityMemberInput;
 }>;
@@ -580,63 +600,18 @@ export type UserQueryVariables = SchemaTypes.Exact<{
   userID: SchemaTypes.Scalars['UUID_NAMEID_EMAIL'];
 }>;
 
-export type UserQuery = {
-  user: {
-    email: string;
-    firstName: string;
-    lastName: string;
-    displayName: string;
-    id: string;
-    nameID: string;
-    profile?: SchemaTypes.Maybe<{
-      id: string;
-      avatar?: SchemaTypes.Maybe<string>;
-    }>;
-  };
-};
+export type UserQuery = { user: UserDetailsFragment };
 
 export type UsersQueryVariables = SchemaTypes.Exact<{ [key: string]: never }>;
 
-export type UsersQuery = {
-  users: Array<{
-    id: string;
-    nameID: string;
-    displayName: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    profile?: SchemaTypes.Maybe<{
-      id: string;
-      avatar?: SchemaTypes.Maybe<string>;
-      description?: SchemaTypes.Maybe<string>;
-    }>;
-    agent?: SchemaTypes.Maybe<{
-      id: string;
-      credentials?: SchemaTypes.Maybe<
-        Array<{ type: SchemaTypes.AuthorizationCredential; resourceID: string }>
-      >;
-    }>;
-  }>;
-};
+export type UsersQuery = { users: Array<UserDetailsFragment> };
 
 export type UsersWithAuthorizationCredentialQueryVariables = SchemaTypes.Exact<{
   credentialsCriteriaData: SchemaTypes.UsersWithAuthorizationCredentialInput;
 }>;
 
 export type UsersWithAuthorizationCredentialQuery = {
-  usersWithAuthorizationCredential: Array<{
-    displayName: string;
-    id: string;
-    agent?: SchemaTypes.Maybe<{
-      credentials?: SchemaTypes.Maybe<
-        Array<{
-          id: string;
-          resourceID: string;
-          type: SchemaTypes.AuthorizationCredential;
-        }>
-      >;
-    }>;
-  }>;
+  usersWithAuthorizationCredential: Array<UserDetailsFragment>;
 };
 
 export const ChallengeDetailsFragmentDoc = gql`
@@ -678,6 +653,28 @@ export const OpportunityDetailsFragmentDoc = gql`
       groups {
         id
         name
+      }
+    }
+  }
+`;
+export const UserDetailsFragmentDoc = gql`
+  fragment UserDetails on User {
+    id
+    nameID
+    displayName
+    firstName
+    lastName
+    email
+    profile {
+      id
+      avatar
+      description
+    }
+    agent {
+      id
+      credentials {
+        type
+        resourceID
       }
     }
   }
@@ -1238,42 +1235,18 @@ export const OrganizationsDocument = gql`
 export const UserDocument = gql`
   query user($userID: UUID_NAMEID_EMAIL!) {
     user(ID: $userID) {
-      email
-      firstName
-      lastName
-      displayName
-      id
-      nameID
-      profile {
-        id
-        avatar
-      }
+      ...UserDetails
     }
   }
+  ${UserDetailsFragmentDoc}
 `;
 export const UsersDocument = gql`
   query users {
     users {
-      id
-      nameID
-      displayName
-      firstName
-      lastName
-      email
-      profile {
-        id
-        avatar
-        description
-      }
-      agent {
-        id
-        credentials {
-          type
-          resourceID
-        }
-      }
+      ...UserDetails
     }
   }
+  ${UserDetailsFragmentDoc}
 `;
 export const UsersWithAuthorizationCredentialDocument = gql`
   query usersWithAuthorizationCredential(
@@ -1282,17 +1255,10 @@ export const UsersWithAuthorizationCredentialDocument = gql`
     usersWithAuthorizationCredential(
       credentialsCriteriaData: $credentialsCriteriaData
     ) {
-      displayName
-      id
-      agent {
-        credentials {
-          id
-          resourceID
-          type
-        }
-      }
+      ...UserDetails
     }
   }
+  ${UserDetailsFragmentDoc}
 `;
 
 export type SdkFunctionWrapper = <T>(action: () => Promise<T>) => Promise<T>;
