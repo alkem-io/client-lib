@@ -30,6 +30,26 @@ export type OpportunityDetailsFragment = {
   }>;
 };
 
+export type UserDetailsFragment = {
+  id: string;
+  nameID: string;
+  displayName: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  profile?: SchemaTypes.Maybe<{
+    id: string;
+    avatar?: SchemaTypes.Maybe<string>;
+    description?: SchemaTypes.Maybe<string>;
+  }>;
+  agent?: SchemaTypes.Maybe<{
+    id: string;
+    credentials?: SchemaTypes.Maybe<
+      Array<{ type: SchemaTypes.AuthorizationCredential; resourceID: string }>
+    >;
+  }>;
+};
+
 export type AddUserToCommunityMutationVariables = SchemaTypes.Exact<{
   input: SchemaTypes.AssignCommunityMemberInput;
 }>;
@@ -580,40 +600,18 @@ export type UserQueryVariables = SchemaTypes.Exact<{
   userID: SchemaTypes.Scalars['UUID_NAMEID_EMAIL'];
 }>;
 
-export type UserQuery = {
-  user: {
-    displayName: string;
-    id: string;
-    nameID: string;
-    profile?: SchemaTypes.Maybe<{
-      id: string;
-      avatar?: SchemaTypes.Maybe<string>;
-    }>;
-  };
-};
+export type UserQuery = { user: UserDetailsFragment };
 
 export type UsersQueryVariables = SchemaTypes.Exact<{ [key: string]: never }>;
 
-export type UsersQuery = {
-  users: Array<{
-    id: string;
-    nameID: string;
-    displayName: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    profile?: SchemaTypes.Maybe<{
-      id: string;
-      avatar?: SchemaTypes.Maybe<string>;
-      description?: SchemaTypes.Maybe<string>;
-    }>;
-    agent?: SchemaTypes.Maybe<{
-      id: string;
-      credentials?: SchemaTypes.Maybe<
-        Array<{ type: SchemaTypes.AuthorizationCredential; resourceID: string }>
-      >;
-    }>;
-  }>;
+export type UsersQuery = { users: Array<UserDetailsFragment> };
+
+export type UsersWithAuthorizationCredentialQueryVariables = SchemaTypes.Exact<{
+  credentialsCriteriaData: SchemaTypes.UsersWithAuthorizationCredentialInput;
+}>;
+
+export type UsersWithAuthorizationCredentialQuery = {
+  usersWithAuthorizationCredential: Array<UserDetailsFragment>;
 };
 
 export const ChallengeDetailsFragmentDoc = gql`
@@ -655,6 +653,28 @@ export const OpportunityDetailsFragmentDoc = gql`
       groups {
         id
         name
+      }
+    }
+  }
+`;
+export const UserDetailsFragmentDoc = gql`
+  fragment UserDetails on User {
+    id
+    nameID
+    displayName
+    firstName
+    lastName
+    email
+    profile {
+      id
+      avatar
+      description
+    }
+    agent {
+      id
+      credentials {
+        type
+        resourceID
       }
     }
   }
@@ -1215,39 +1235,30 @@ export const OrganizationsDocument = gql`
 export const UserDocument = gql`
   query user($userID: UUID_NAMEID_EMAIL!) {
     user(ID: $userID) {
-      displayName
-      id
-      nameID
-      profile {
-        id
-        avatar
-      }
+      ...UserDetails
     }
   }
+  ${UserDetailsFragmentDoc}
 `;
 export const UsersDocument = gql`
   query users {
     users {
-      id
-      nameID
-      displayName
-      firstName
-      lastName
-      email
-      profile {
-        id
-        avatar
-        description
-      }
-      agent {
-        id
-        credentials {
-          type
-          resourceID
-        }
-      }
+      ...UserDetails
     }
   }
+  ${UserDetailsFragmentDoc}
+`;
+export const UsersWithAuthorizationCredentialDocument = gql`
+  query usersWithAuthorizationCredential(
+    $credentialsCriteriaData: UsersWithAuthorizationCredentialInput!
+  ) {
+    usersWithAuthorizationCredential(
+      credentialsCriteriaData: $credentialsCriteriaData
+    ) {
+      ...UserDetails
+    }
+  }
+  ${UserDetailsFragmentDoc}
 `;
 
 export type SdkFunctionWrapper = <T>(action: () => Promise<T>) => Promise<T>;
@@ -1965,6 +1976,22 @@ export function getSdk(
     }> {
       return withWrapper(() =>
         client.rawRequest<UsersQuery>(print(UsersDocument), variables)
+      );
+    },
+    usersWithAuthorizationCredential(
+      variables: UsersWithAuthorizationCredentialQueryVariables
+    ): Promise<{
+      data?: UsersWithAuthorizationCredentialQuery | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<UsersWithAuthorizationCredentialQuery>(
+          print(UsersWithAuthorizationCredentialDocument),
+          variables
+        )
       );
     },
   };
