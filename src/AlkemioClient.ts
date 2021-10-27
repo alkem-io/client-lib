@@ -70,7 +70,14 @@ export class AlkemioClient {
   }
 
   public async featureFlags() {
-    return await this.client.featureFlags();
+    const { data, errors } = await this.client.featureFlags();
+
+    if (errors) {
+      throw new Error(
+        `Unable to query feature flags from: ${this.config.graphqlEndpoint}`
+      );
+    }
+    return data?.configuration.platform.featureFlags;
   }
 
   public async validateConnection() {
