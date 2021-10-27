@@ -69,6 +69,17 @@ export class AlkemioClient {
     return endpoint ?? 'http://localhost:3000/identity/ory/kratos/public/';
   }
 
+  public async featureFlags() {
+    const { data, errors } = await this.client.featureFlags();
+
+    if (errors) {
+      throw new Error(
+        `Unable to query feature flags from: ${this.config.graphqlEndpoint}`
+      );
+    }
+    return data?.configuration.platform.featureFlags;
+  }
+
   public async validateConnection() {
     const serverVersion = await this.serverVersion();
 
