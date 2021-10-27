@@ -69,6 +69,10 @@ export class AlkemioClient {
     return endpoint ?? 'http://localhost:3000/identity/ory/kratos/public/';
   }
 
+  public async featureFlags() {
+    return await this.client.featureFlags();
+  }
+
   public async validateConnection() {
     const serverVersion = await this.serverVersion();
 

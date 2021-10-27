@@ -418,6 +418,16 @@ export type ConfigurationQuery = {
   };
 };
 
+export type FeatureFlagsQueryVariables = SchemaTypes.Exact<{
+  [key: string]: never;
+}>;
+
+export type FeatureFlagsQuery = {
+  configuration: {
+    platform: { featureFlags: Array<{ name: string; enabled: boolean }> };
+  };
+};
+
 export type GroupsQueryVariables = SchemaTypes.Exact<{
   hubID: SchemaTypes.Scalars['UUID_NAMEID'];
 }>;
@@ -1068,6 +1078,18 @@ export const ConfigurationDocument = gql`
               kratosPublicBaseURL
             }
           }
+        }
+      }
+    }
+  }
+`;
+export const FeatureFlagsDocument = gql`
+  query featureFlags {
+    configuration {
+      platform {
+        featureFlags {
+          name
+          enabled
         }
       }
     }
@@ -1819,6 +1841,22 @@ export function getSdk(
       return withWrapper(() =>
         client.rawRequest<ConfigurationQuery>(
           print(ConfigurationDocument),
+          variables
+        )
+      );
+    },
+    featureFlags(
+      variables?: FeatureFlagsQueryVariables
+    ): Promise<{
+      data?: FeatureFlagsQuery | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<FeatureFlagsQuery>(
+          print(FeatureFlagsDocument),
           variables
         )
       );
