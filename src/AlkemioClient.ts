@@ -54,7 +54,7 @@ export class AlkemioClient {
         this.client = getSdk(client);
       } catch (error) {
         throw new Error(
-          `Unable to authenticate to Alkemio (Kratos) endpoint: ${error}`
+          `Unable to authenticate to Alkemio (Kratos) endpoint (${kratosPublicEndpoint}): ${error}`
         );
       }
     }
