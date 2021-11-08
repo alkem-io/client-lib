@@ -43,14 +43,20 @@ export class AlkemioClient {
       this.config.authInfo.apiEndpointFactory = () => {
         return kratosPublicEndpoint;
       };
-      const apiToken = await this.getApiToken(this.config.authInfo);
+      try {
+        const apiToken = await this.getApiToken(this.config.authInfo);
 
-      const client = new GraphQLClient(this.config.graphqlEndpoint, {
-        headers: {
-          authorization: `Bearer ${apiToken}`,
-        },
-      });
-      this.client = getSdk(client);
+        const client = new GraphQLClient(this.config.graphqlEndpoint, {
+          headers: {
+            authorization: `Bearer ${apiToken}`,
+          },
+        });
+        this.client = getSdk(client);
+      } catch (error) {
+        throw new Error(
+          `Unable to authenticate to Alkemio (Kratos) endpoint (${kratosPublicEndpoint}): ${error}`
+        );
+      }
     }
   }
 
