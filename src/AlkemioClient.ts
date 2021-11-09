@@ -38,31 +38,61 @@ export class AlkemioClient {
   }
 
   public async enableAuthentication() {
-    if (this.config.authInfo) {
-      const kratosPublicEndpoint = await this.getKratosPublicApiEndpoint();
-      this.config.authInfo.apiEndpointFactory = () => {
-        return kratosPublicEndpoint;
-      };
-      try {
-        const apiToken = await this.getApiToken(this.config.authInfo);
+    if (!this.config || !this.config.authInfo)
+      throw new Error(
+        'Can not enable authentication. Missing authentication credentials.'
+      );
 
-        const client = new GraphQLClient(this.config.graphqlEndpoint, {
-          headers: {
-            authorization: `Bearer ${apiToken}`,
-          },
-        });
-        this.client = getSdk(client);
-      } catch (error) {
-        throw new Error(
-          `Unable to authenticate to Alkemio (Kratos) endpoint (${kratosPublicEndpoint}): ${error}`
-        );
-      }
+    let kratosPublicEndpoint = undefined;
+
+    if (
+      this.config.authInfo &&
+      !this.config.authInfo?.kratosPublicApiEndpoint
+    ) {
+      kratosPublicEndpoint = await this.getKratosPublicApiEndpoint();
+      this.config.authInfo.kratosPublicApiEndpoint = kratosPublicEndpoint;
+    }
+    try {
+      kratosPublicEndpoint = this.config.authInfo.kratosPublicApiEndpoint;
+      console.log(
+        `Getting API token with config ${JSON.stringify(this.config.authInfo)}`
+      );
+      const apiToken = await this.getApiToken(
+        this.config?.authInfo as AuthInfo
+      );
+      console.log(`API token: ${apiToken}`);
+      const client = new GraphQLClient(this.config.graphqlEndpoint, {
+        headers: {
+          authorization: `Bearer ${apiToken}`,
+        },
+      });
+      this.client = getSdk(client);
+    } catch (error) {
+      throw new Error(
+        `Unable to authenticate to Alkemio (Kratos) endpoint (${kratosPublicEndpoint}): ${error}`
+      );
     }
   }
 
   private async getApiToken(authInfo: AuthInfo): Promise<string> {
-    const authClient = new KratosPublicApiClient(authInfo.apiEndpointFactory);
-    this.apiToken = await authClient.authenticate(authInfo.credentials);
+    if (!authInfo || !authInfo.kratosPublicApiEndpoint)
+      throw new Error('Kratos Public API endpoint is not defined!');
+
+    try {
+      const authClient = new KratosPublicApiClient(
+        authInfo.kratosPublicApiEndpoint
+      );
+
+      this.apiToken = await authClient.authenticate(authInfo.credentials);
+    } catch (error) {
+      throw new Error(`API authentication error! ${error}`);
+    }
+
+    if (!this.apiToken)
+      throw new Error(
+        'API token could not be acquired! Check your configuration and whether the Kratos Public API endpoint is accessible!'
+      );
+
     return this.apiToken;
   }
 
