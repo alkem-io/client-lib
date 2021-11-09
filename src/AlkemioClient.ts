@@ -43,24 +43,25 @@ export class AlkemioClient {
         'Can not enable authentication. Missing authentication credentials.'
       );
 
-    let kratosPublicEndpoint = undefined;
-
-    if (
-      this.config.authInfo &&
-      !this.config.authInfo?.kratosPublicApiEndpoint
-    ) {
-      kratosPublicEndpoint = await this.getKratosPublicApiEndpoint();
-      this.config.authInfo.kratosPublicApiEndpoint = kratosPublicEndpoint;
-    }
-    try {
-      kratosPublicEndpoint = this.config.authInfo.kratosPublicApiEndpoint;
-      console.log(
-        `Getting API token with config ${JSON.stringify(this.config.authInfo)}`
+    // If Kratos public api end point is not set then get it from the Alkemio server config
+    if (!this.config.authInfo?.kratosPublicApiEndpoint) {
+      this.logMessage(
+        'Kratos end point not set in config, obtaining from server'
       );
+
+      const serverKratosPublicEndpoint = await this.getKratosPublicApiEndpoint();
+      this.config.authInfo.kratosPublicApiEndpoint = serverKratosPublicEndpoint;
+    }
+
+    const kratosPublicEndpoint = this.config.authInfo.kratosPublicApiEndpoint;
+    this.logMessage(
+      `Getting API token with config ${JSON.stringify(this.config.authInfo)}`
+    );
+    try {
       const apiToken = await this.getApiToken(
         this.config?.authInfo as AuthInfo
       );
-      console.log(`API token: ${apiToken}`);
+      this.logMessage(`API token: ${apiToken}`);
       const client = new GraphQLClient(this.config.graphqlEndpoint, {
         headers: {
           authorization: `Bearer ${apiToken}`,
@@ -72,6 +73,10 @@ export class AlkemioClient {
         `Unable to authenticate to Alkemio (Kratos) endpoint (${kratosPublicEndpoint}): ${error}`
       );
     }
+  }
+
+  private logMessage(msg: string) {
+    console.log(msg);
   }
 
   private async getApiToken(authInfo: AuthInfo): Promise<string> {
