@@ -1,16 +1,18 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
-import { ApiEndpointFactory } from 'src';
 
 export abstract class HttpClient {
   protected readonly instance: AxiosInstance;
+  protected readonly apiBaseURL: string;
+
   protected readonly config = {
     headers: {
       Accept: 'application/json',
     },
   };
 
-  public constructor(apiEndpoint: ApiEndpointFactory) {
-    const baseURL = apiEndpoint();
+  public constructor(apiEndpoint: string) {
+    this.apiBaseURL = apiEndpoint;
+    const baseURL = apiEndpoint;
     this.instance = axios.create({
       baseURL,
     });
