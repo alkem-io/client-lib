@@ -79,7 +79,14 @@ export class KratosPublicApiClient extends HttpClient {
     if (!found)
       throw new Error('Could not get Kratos Action URI for API flow!');
 
-    const actionURI = `${this.apiBaseURL}self-service/login?${found[0]}`;
+    // const actionURI = `${this.apiBaseURL}self-service/login?${found[0]}`;
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const urljoin = require('url-join');
+
+    const actionURI = urljoin(
+      this.apiBaseURL,
+      `self-service/login?${found[0]}`
+    );
     console.log(`Action URI: ${actionURI}`);
     return actionURI;
   }
