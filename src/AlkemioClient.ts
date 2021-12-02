@@ -695,20 +695,28 @@ export class AlkemioClient {
 
   public async usersWithAuthorizationCredential(
     credentialType: AuthorizationCredential,
-    resourceID?: string
+    resourceID?: string,
+    includeUserPreferences?: boolean
   ) {
-    const { data, errors } = await this.client.usersWithAuthorizationCredential(
-      {
-        credentialsCriteriaData: {
-          type: credentialType,
-          resourceID: resourceID ?? undefined,
-        },
-      }
-    );
+    let queryResult;
+    const payload = {
+      credentialsCriteriaData: {
+        type: credentialType,
+        resourceID: resourceID ?? undefined,
+      },
+    };
 
-    this.errorHandler(errors);
+    if (!includeUserPreferences) {
+      queryResult = await this.client.usersWithAuthorizationCredential(payload);
+    } else {
+      queryResult = await this.client.usersWithAuthorizationCredentialWithPreferences(
+        payload
+      );
+    }
 
-    return data?.usersWithAuthorizationCredential;
+    this.errorHandler(queryResult.errors);
+
+    return queryResult.data?.usersWithAuthorizationCredential;
   }
 
   public async hubs() {

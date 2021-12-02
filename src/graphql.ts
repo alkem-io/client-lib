@@ -624,6 +624,27 @@ export type UsersWithAuthorizationCredentialQuery = {
   usersWithAuthorizationCredential: Array<UserDetailsFragment>;
 };
 
+export type UsersWithAuthorizationCredentialWithPreferencesQueryVariables = SchemaTypes.Exact<{
+  credentialsCriteriaData: SchemaTypes.UsersWithAuthorizationCredentialInput;
+}>;
+
+export type UsersWithAuthorizationCredentialWithPreferencesQuery = {
+  usersWithAuthorizationCredential: Array<
+    {
+      preferences: Array<{
+        value: string;
+        definition: {
+          group: string;
+          displayName: string;
+          description: string;
+          valueType: SchemaTypes.UserPreferenceValueType;
+          type: SchemaTypes.UserPreferenceType;
+        };
+      }>;
+    } & UserDetailsFragment
+  >;
+};
+
 export const ChallengeDetailsFragmentDoc = gql`
   fragment ChallengeDetails on Challenge {
     id
@@ -1278,6 +1299,28 @@ export const UsersWithAuthorizationCredentialDocument = gql`
       credentialsCriteriaData: $credentialsCriteriaData
     ) {
       ...UserDetails
+    }
+  }
+  ${UserDetailsFragmentDoc}
+`;
+export const UsersWithAuthorizationCredentialWithPreferencesDocument = gql`
+  query usersWithAuthorizationCredentialWithPreferences(
+    $credentialsCriteriaData: UsersWithAuthorizationCredentialInput!
+  ) {
+    usersWithAuthorizationCredential(
+      credentialsCriteriaData: $credentialsCriteriaData
+    ) {
+      ...UserDetails
+      preferences {
+        definition {
+          group
+          displayName
+          description
+          valueType
+          type
+        }
+        value
+      }
     }
   }
   ${UserDetailsFragmentDoc}
@@ -2028,6 +2071,22 @@ export function getSdk(
       return withWrapper(() =>
         client.rawRequest<UsersWithAuthorizationCredentialQuery>(
           print(UsersWithAuthorizationCredentialDocument),
+          variables
+        )
+      );
+    },
+    usersWithAuthorizationCredentialWithPreferences(
+      variables: UsersWithAuthorizationCredentialWithPreferencesQueryVariables
+    ): Promise<{
+      data?: UsersWithAuthorizationCredentialWithPreferencesQuery | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<UsersWithAuthorizationCredentialWithPreferencesQuery>(
+          print(UsersWithAuthorizationCredentialWithPreferencesDocument),
           variables
         )
       );
