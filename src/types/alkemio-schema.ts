@@ -21,6 +21,8 @@ export type Scalars = {
   JSON: string;
   /** A decentralized identifier (DID) as per the W3C standard. */
   Markdown: any;
+  /** An identifier that originates from the underlying messaging platform. */
+  MessageID: any;
   /** A human readable identifier, 3 <= length <= 25. Used for URL paths in clients. Characters allowed: a-z,A-Z,0-9. */
   NameID: string;
   /** A uuid identifier. Length 36 charachters. */
@@ -93,11 +95,11 @@ export type ApplicationEventInput = {
 
 export type ApplicationReceived = {
   /** The identifier of the application */
-  applicationId: Scalars['String'];
+  applicationID: Scalars['String'];
   /** The community that was applied to */
   communityID: Scalars['String'];
-  /** The nameID of the user that applied. */
-  userNameID: Scalars['String'];
+  /** The ID of the user that applied. */
+  userID: Scalars['String'];
 };
 
 export type ApplicationResultEntry = {
@@ -252,13 +254,41 @@ export enum AuthorizationPrivilege {
 }
 
 export type Canvas = {
+  /** The authorization rules for the entity */
+  authorization?: Maybe<Authorization>;
+  /** The checked out status of the Canvas. */
+  checkout: CanvasCheckout;
   /** The ID of the entity */
   id: Scalars['UUID'];
+  /** Is the Canvas a template? */
+  isTemplate: Scalars['Boolean'];
   /** The name of the Canvas. */
   name: Scalars['String'];
   /** The JSON representation of the Canvas. */
   value: Scalars['JSON'];
 };
+
+export type CanvasCheckout = {
+  /** The authorization rules for the entity */
+  authorization?: Maybe<Authorization>;
+  /** The ID of the entity */
+  id: Scalars['UUID'];
+  lifecycle: Lifecycle;
+  /** The id of the user that has checked the entity out. */
+  lockedBy: Scalars['UUID'];
+  /** Checked out status of the Canvas */
+  status: CanvasCheckoutStateEnum;
+};
+
+export type CanvasCheckoutEventInput = {
+  canvasCheckoutID: Scalars['UUID'];
+  eventName: Scalars['String'];
+};
+
+export enum CanvasCheckoutStateEnum {
+  Available = 'AVAILABLE',
+  CheckedOut = 'CHECKED_OUT',
+}
 
 export type Challenge = Searchable & {
   /** The activity within this Challenge. */
@@ -308,11 +338,89 @@ export type ChallengeTemplate = {
   name: Scalars['String'];
 };
 
+export type Communication = {
+  /** The authorization rules for the entity */
+  authorization?: Maybe<Authorization>;
+  /** A particular Discussions active in this Communication. */
+  discussion?: Maybe<Discussion>;
+  /** The Discussions active in this Communication. */
+  discussions?: Maybe<Array<Discussion>>;
+  /** The ID of the entity */
+  id: Scalars['UUID'];
+  /** Updates for this Communication. */
+  updates?: Maybe<Updates>;
+};
+
+export type CommunicationDiscussionArgs = {
+  ID: Scalars['String'];
+};
+
+export type CommunicationAdminEnsureAccessInput = {
+  communityID: Scalars['UUID'];
+};
+
+export type CommunicationAdminMembershipInput = {
+  communityID: Scalars['UUID'];
+};
+
+export type CommunicationAdminMembershipResult = {
+  /** Display name of the result */
+  displayName: Scalars['String'];
+  /** A unique identifier for this comunication room membership result. */
+  id: Scalars['String'];
+  /** Rooms in this Communication */
+  rooms: Array<CommunicationAdminRoomMembershipResult>;
+};
+
+export type CommunicationAdminOrphanedUsageResult = {
+  /** Rooms in the Communication platform that are not used */
+  rooms: Array<CommunicationAdminRoomResult>;
+};
+
+export type CommunicationAdminRemoveOrphanedRoomInput = {
+  roomID: Scalars['String'];
+};
+
+export type CommunicationAdminRoomMembershipResult = {
+  /** Display name of the entity */
+  displayName: Scalars['String'];
+  /** Members of the room that are not members of the Community. */
+  extraMembers: Array<Scalars['String']>;
+  /** A unique identifier for this membership result. */
+  id: Scalars['String'];
+  /** Name of the room */
+  members: Array<Scalars['String']>;
+  /** Members of the community that are missing from the room */
+  missingMembers: Array<Scalars['String']>;
+  /** The matrix room ID */
+  roomID: Scalars['String'];
+};
+
+export type CommunicationAdminRoomResult = {
+  /** Display name of the result */
+  displayName: Scalars['String'];
+  /** The identifier for the orphaned room. */
+  id: Scalars['String'];
+  /** The members of the orphaned room */
+  members: Array<Scalars['String']>;
+};
+
+export type CommunicationCreateDiscussionInput = {
+  /** The category for the Discussion */
+  category: DiscussionCategory;
+  /** The identifier for the Communication entity the Discussion is being created on. */
+  communicationID: Scalars['UUID'];
+  /** The description for the Discussion */
+  description?: Maybe<Scalars['String']>;
+  /** The title for the Discussion */
+  title: Scalars['String'];
+};
+
 export type CommunicationMessageReceived = {
   /** The community to which this message corresponds */
   communityId?: Maybe<Scalars['String']>;
   /** The message that has been sent. */
-  message: CommunicationMessageResult;
+  message: Message;
   /** The identifier of the room */
   roomId: Scalars['String'];
   /** The public name of the room */
@@ -321,15 +429,13 @@ export type CommunicationMessageReceived = {
   userID: Scalars['String'];
 };
 
-export type CommunicationMessageResult = {
-  /** The id for the message event. */
+export type CommunicationRoom = {
+  /** The display name of the room */
+  displayName: Scalars['String'];
+  /** The identifier of the room */
   id: Scalars['String'];
-  /** The message being sent */
-  message: Scalars['String'];
-  /** The sender user ID */
-  sender: Scalars['String'];
-  /** The server timestamp in UTC */
-  timestamp: Scalars['Float'];
+  /** The messages that have been sent to the Room. */
+  messages: Array<Message>;
 };
 
 export type Community = Groupable & {
@@ -337,8 +443,8 @@ export type Community = Groupable & {
   applications?: Maybe<Array<Application>>;
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
-  /** Room with messages for this community. */
-  discussionRoom?: Maybe<CommunityRoom>;
+  /** The Communications for this Community. */
+  communication?: Maybe<Communication>;
   /** The name of the Community */
   displayName: Scalars['String'];
   /** Groups of users related to a Community. */
@@ -347,29 +453,6 @@ export type Community = Groupable & {
   id: Scalars['UUID'];
   /** All users that are contributing to this Community. */
   members?: Maybe<Array<User>>;
-  /** Room with messages for this community. */
-  updatesRoom?: Maybe<CommunityRoom>;
-};
-
-export type CommunityRemoveMessageInput = {
-  /** The community the message is being sent to */
-  communityID: Scalars['String'];
-  /** The message id that should be removed */
-  messageId: Scalars['String'];
-};
-
-export type CommunityRoom = {
-  /** The identifier of the room */
-  id: Scalars['String'];
-  /** The messages that have been sent to the Room. */
-  messages: Array<CommunicationMessageResult>;
-};
-
-export type CommunitySendMessageInput = {
-  /** The community the message is being sent to */
-  communityID: Scalars['String'];
-  /** The message being sent */
-  message: Scalars['String'];
 };
 
 export type Config = {
@@ -390,6 +473,8 @@ export type Context = {
   authorization?: Maybe<Authorization>;
   /** A detailed description of the current situation */
   background?: Maybe<Scalars['String']>;
+  /** The Canvas entities for this Context. */
+  canvases?: Maybe<Array<Canvas>>;
   /** The EcosystemModel for this Context. */
   ecosystemModel?: Maybe<EcosystemModel>;
   /** The ID of the entity */
@@ -433,6 +518,12 @@ export type CreateAspectInput = {
   framing: Scalars['String'];
   parentID: Scalars['UUID'];
   title: Scalars['String'];
+};
+
+export type CreateCanvasOnContextInput = {
+  contextID: Scalars['UUID'];
+  name: Scalars['String'];
+  value?: Maybe<Scalars['String']>;
 };
 
 export type CreateChallengeOnChallengeInput = {
@@ -626,6 +717,10 @@ export type DeleteChallengeInput = {
   ID: Scalars['UUID'];
 };
 
+export type DeleteDiscussionInput = {
+  ID: Scalars['UUID'];
+};
+
 export type DeleteEcoverseInput = {
   ID: Scalars['UUID_NAMEID'];
 };
@@ -659,12 +754,56 @@ export type DeleteUserInput = {
 };
 
 export type DirectRoom = {
+  /** The display name of the room */
+  displayName: Scalars['String'];
   /** The identifier of the direct room */
   id: Scalars['String'];
   /** The messages that have been sent to the Direct Room. */
-  messages: Array<CommunicationMessageResult>;
+  messages: Array<Message>;
   /** The recepient userID */
   receiverID?: Maybe<Scalars['String']>;
+};
+
+export type Discussion = {
+  /** The authorization rules for the entity */
+  authorization?: Maybe<Authorization>;
+  /** The category assigned to this Discussion. */
+  category: DiscussionCategory;
+  /** The number of comments. */
+  commentsCount: Scalars['Float'];
+  /** The id of the user that created this discussion. */
+  createdBy: Scalars['UUID'];
+  /** The description of this Discussion. */
+  description: Scalars['String'];
+  /** The ID of the entity */
+  id: Scalars['UUID'];
+  /** Messages for this Discussion. */
+  messages?: Maybe<Array<Message>>;
+  /** The timestamp for the creation of this Discussion. */
+  timestamp?: Maybe<Scalars['Float']>;
+  /** The title of the Discussion. */
+  title: Scalars['String'];
+};
+
+export enum DiscussionCategory {
+  General = 'GENERAL',
+  Ideas = 'IDEAS',
+  Questions = 'QUESTIONS',
+  Sharing = 'SHARING',
+}
+
+export type DiscussionRemoveMessageInput = {
+  /** The Discussion to remove a message from. */
+  discussionID: Scalars['UUID'];
+  /** The message id that should be removed */
+  messageID: Scalars['MessageID'];
+};
+
+export type DiscussionSendMessageInput = {
+  /** The Discussion the message is being sent to */
+  discussionID: Scalars['UUID'];
+  /** The message being sent */
+  message: Scalars['String'];
 };
 
 export type EcosystemModel = {
@@ -865,6 +1004,18 @@ export type MembershipUserResultEntryOrganization = {
   userGroups: Array<MembershipResultEntry>;
 };
 
+/** A message that was sent either as an Update or as part of a Discussion. */
+export type Message = {
+  /** The id for the message event. */
+  id: Scalars['MessageID'];
+  /** The message being sent */
+  message: Scalars['Markdown'];
+  /** The sender user ID */
+  sender: Scalars['UUID'];
+  /** The server timestamp in UTC */
+  timestamp: Scalars['Float'];
+};
+
 export type Metadata = {
   /** Metrics about the activity on the platform */
   activity: Array<Nvp>;
@@ -873,6 +1024,10 @@ export type Metadata = {
 };
 
 export type Mutation = {
+  /** Ensure all community members are registered for communications. */
+  adminCommunicationEnsureAccessToCommunications: Scalars['Boolean'];
+  /** Remove an orphaned room from messaging platform. */
+  adminCommunicationRemoveOrphanedRoom: Scalars['Boolean'];
   /** Assigns a User as an Challenge Admin. */
   assignUserAsChallengeAdmin: User;
   /** Assigns a User as an Ecoverse Admin. */
@@ -907,12 +1062,16 @@ export type Mutation = {
   createActorGroup: ActorGroup;
   /** Creates Application for a User to join this Community. */
   createApplication: Application;
-  /** Create a new Aspect on the Opportunity. */
+  /** Create a new Aspect on the Context. */
   createAspect: Aspect;
+  /** Create a new Canvas on the Context. */
+  createCanvasOnContext: Canvas;
   /** Creates a new Challenge within the specified Ecoverse. */
   createChallenge: Challenge;
   /** Creates a new child challenge within the parent Challenge. */
   createChildChallenge: Challenge;
+  /** Creates a new Discussion as part of this Communication. */
+  createDiscussion: Discussion;
   /** Creates a new Ecoverse. */
   createEcoverse: Ecoverse;
   /** Creates a new User Group in the specified Community. */
@@ -945,6 +1104,8 @@ export type Mutation = {
   deleteAspect: Aspect;
   /** Deletes the specified Challenge. */
   deleteChallenge: Challenge;
+  /** Deletes the specified Discussion. */
+  deleteDiscussion: Discussion;
   /** Deletes the specified Ecoverse. */
   deleteEcoverse: Ecoverse;
   /** Deletes the specified Opportunity. */
@@ -965,6 +1126,8 @@ export type Mutation = {
   deleteUserGroup: UserGroup;
   /** Trigger an event on the Application. */
   eventOnApplication: Application;
+  /** Trigger an event on the Organization Verification. */
+  eventOnCanvasCheckout: CanvasCheckout;
   /** Trigger an event on the Challenge. */
   eventOnChallenge: Challenge;
   /** Trigger an event on the Opportunity. */
@@ -977,10 +1140,10 @@ export type Mutation = {
   grantCredentialToUser: User;
   /** Sends a message on the specified User`s behalf and returns the room id */
   messageUser: Scalars['String'];
-  /** Removes a discussion message from the specified community */
-  removeMessageFromCommunityDiscussions: Scalars['String'];
-  /** Removes an update message from the specified community */
-  removeMessageFromCommunityUpdates: Scalars['String'];
+  /** Removes a message from the specified Discussion. */
+  removeMessageFromDiscussion: Scalars['MessageID'];
+  /** Removes an update message. */
+  removeUpdate: Scalars['MessageID'];
   /** Removes a User from being an Challenge Admin. */
   removeUserAsChallengeAdmin: User;
   /** Removes a User from being an Ecoverse Admin. */
@@ -1003,16 +1166,20 @@ export type Mutation = {
   removeUserFromOrganization: Organization;
   /** Removes an authorization credential from a User. */
   revokeCredentialFromUser: User;
-  /** Sends a message to the discussions room on the community */
-  sendMessageToCommunityDiscussions: Scalars['String'];
-  /** Sends an update message on the specified community */
-  sendMessageToCommunityUpdates: Scalars['String'];
+  /** Sends a message to the specified Discussion.  */
+  sendMessageToDiscussion: Message;
+  /** Sends an update message. Returns the id of the new Update message. */
+  sendUpdate: Message;
   /** Updates the specified Actor. */
   updateActor: Actor;
   /** Updates the specified Aspect. */
   updateAspect: Aspect;
+  /** Updates the specified Canvas. */
+  updateCanvas: Canvas;
   /** Updates the specified Challenge. */
   updateChallenge: Challenge;
+  /** Updates the specified Discussion. */
+  updateDiscussion: Discussion;
   /** Updates the specified EcosystemModel. */
   updateEcosystemModel: EcosystemModel;
   /** Updates the Ecoverse. */
@@ -1029,8 +1196,18 @@ export type Mutation = {
   updateUser: User;
   /** Updates the specified User Group. */
   updateUserGroup: UserGroup;
+  /** Updates an user preference */
+  updateUserPreference: UserPreference;
   /** Uploads and sets an avatar image for the specified Profile. */
   uploadAvatar: Profile;
+};
+
+export type MutationAdminCommunicationEnsureAccessToCommunicationsArgs = {
+  communicationData: CommunicationAdminEnsureAccessInput;
+};
+
+export type MutationAdminCommunicationRemoveOrphanedRoomArgs = {
+  orphanedRoomData: CommunicationAdminRemoveOrphanedRoomInput;
 };
 
 export type MutationAssignUserAsChallengeAdminArgs = {
@@ -1105,12 +1282,20 @@ export type MutationCreateAspectArgs = {
   aspectData: CreateAspectInput;
 };
 
+export type MutationCreateCanvasOnContextArgs = {
+  canvasData: CreateCanvasOnContextInput;
+};
+
 export type MutationCreateChallengeArgs = {
   challengeData: CreateChallengeOnEcoverseInput;
 };
 
 export type MutationCreateChildChallengeArgs = {
   challengeData: CreateChallengeOnChallengeInput;
+};
+
+export type MutationCreateDiscussionArgs = {
+  createData: CommunicationCreateDiscussionInput;
 };
 
 export type MutationCreateEcoverseArgs = {
@@ -1173,6 +1358,10 @@ export type MutationDeleteChallengeArgs = {
   deleteData: DeleteChallengeInput;
 };
 
+export type MutationDeleteDiscussionArgs = {
+  deleteData: DeleteDiscussionInput;
+};
+
 export type MutationDeleteEcoverseArgs = {
   deleteData: DeleteEcoverseInput;
 };
@@ -1213,6 +1402,10 @@ export type MutationEventOnApplicationArgs = {
   applicationEventData: ApplicationEventInput;
 };
 
+export type MutationEventOnCanvasCheckoutArgs = {
+  canvasCheckoutEventData: CanvasCheckoutEventInput;
+};
+
 export type MutationEventOnChallengeArgs = {
   challengeEventData: ChallengeEventInput;
 };
@@ -1237,12 +1430,12 @@ export type MutationMessageUserArgs = {
   messageData: UserSendMessageInput;
 };
 
-export type MutationRemoveMessageFromCommunityDiscussionsArgs = {
-  messageData: CommunityRemoveMessageInput;
+export type MutationRemoveMessageFromDiscussionArgs = {
+  messageData: DiscussionRemoveMessageInput;
 };
 
-export type MutationRemoveMessageFromCommunityUpdatesArgs = {
-  messageData: CommunityRemoveMessageInput;
+export type MutationRemoveUpdateArgs = {
+  messageData: UpdatesRemoveMessageInput;
 };
 
 export type MutationRemoveUserAsChallengeAdminArgs = {
@@ -1289,12 +1482,12 @@ export type MutationRevokeCredentialFromUserArgs = {
   revokeCredentialData: RevokeAuthorizationCredentialInput;
 };
 
-export type MutationSendMessageToCommunityDiscussionsArgs = {
-  messageData: CommunitySendMessageInput;
+export type MutationSendMessageToDiscussionArgs = {
+  messageData: DiscussionSendMessageInput;
 };
 
-export type MutationSendMessageToCommunityUpdatesArgs = {
-  messageData: CommunitySendMessageInput;
+export type MutationSendUpdateArgs = {
+  messageData: UpdatesSendMessageInput;
 };
 
 export type MutationUpdateActorArgs = {
@@ -1305,8 +1498,16 @@ export type MutationUpdateAspectArgs = {
   aspectData: UpdateAspectInput;
 };
 
+export type MutationUpdateCanvasArgs = {
+  canvasData: UpdateCanvasDirectInput;
+};
+
 export type MutationUpdateChallengeArgs = {
   challengeData: UpdateChallengeInput;
+};
+
+export type MutationUpdateDiscussionArgs = {
+  updateData: UpdateDiscussionInput;
 };
 
 export type MutationUpdateEcosystemModelArgs = {
@@ -1341,6 +1542,10 @@ export type MutationUpdateUserGroupArgs = {
   userGroupData: UpdateUserGroupInput;
 };
 
+export type MutationUpdateUserPreferenceArgs = {
+  userPreferenceData: UpdateUserPreferenceInput;
+};
+
 export type MutationUploadAvatarArgs = {
   file: Scalars['Upload'];
   uploadData: UploadProfileAvatarInput;
@@ -1371,6 +1576,10 @@ export type Opportunity = Searchable & {
   lifecycle?: Maybe<Lifecycle>;
   /** A name identifier of the entity, unique within a given scope. */
   nameID: Scalars['NameID'];
+  /** The parent entity (challenge) ID. */
+  parentId?: Maybe<Scalars['String']>;
+  /** The parent entity name (challenge) ID. */
+  parentNameID?: Maybe<Scalars['String']>;
   /** The set of projects within the context of this Opportunity */
   projects?: Maybe<Array<Project>>;
   /** The set of Relations within the context of this Opportunity. */
@@ -1534,8 +1743,10 @@ export type ProjectEventInput = {
 };
 
 export type Query = {
-  /** A community. A valid community ID needs to be specified. */
-  community: Community;
+  /** All Users that are members of a given room */
+  adminCommunicationMembership: CommunicationAdminMembershipResult;
+  /** Usage of the messaging platform that are not tied to the domain model. */
+  adminCommunicationOrphanedUsage: CommunicationAdminOrphanedUsageResult;
   /** Alkemio configuration. Provides configuration to external services in the Alkemio ecosystem. */
   configuration: Config;
   /** An ecoverse. If no ID is specified then the first Ecoverse is returned. */
@@ -1570,8 +1781,8 @@ export type Query = {
   usersWithAuthorizationCredential: Array<User>;
 };
 
-export type QueryCommunityArgs = {
-  ID: Scalars['UUID'];
+export type QueryAdminCommunicationMembershipArgs = {
+  communicationData: CommunicationAdminMembershipInput;
 };
 
 export type QueryEcoverseArgs = {
@@ -1814,7 +2025,15 @@ export type UpdateAuthorizationPolicyInput = {
   anonymousReadAccess: Scalars['Boolean'];
 };
 
+export type UpdateCanvasDirectInput = {
+  ID: Scalars['UUID'];
+  isTemplate?: Maybe<Scalars['Boolean']>;
+  name?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['String']>;
+};
+
 export type UpdateCanvasInput = {
+  isTemplate?: Maybe<Scalars['Boolean']>;
   name?: Maybe<Scalars['String']>;
   value?: Maybe<Scalars['String']>;
 };
@@ -1843,6 +2062,15 @@ export type UpdateContextInput = {
   /** Update the Visual assets for the new Context. */
   visual?: Maybe<UpdateVisualInput>;
   who?: Maybe<Scalars['Markdown']>;
+};
+
+export type UpdateDiscussionInput = {
+  ID: Scalars['UUID'];
+  /** The category for the Discussion */
+  category?: Maybe<DiscussionCategory>;
+  /** The description for the Discussion */
+  description?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
 };
 
 export type UpdateEcosystemModelInput = {
@@ -1949,10 +2177,41 @@ export type UpdateUserInput = {
   serviceProfile?: Maybe<Scalars['Boolean']>;
 };
 
+export type UpdateUserPreferenceInput = {
+  /** Type of the user preference */
+  type: UserPreferenceType;
+  /** ID of the user */
+  userID: Scalars['UUID'];
+  value: Scalars['String'];
+};
+
 export type UpdateVisualInput = {
   avatar?: Maybe<Scalars['String']>;
   background?: Maybe<Scalars['String']>;
   banner?: Maybe<Scalars['String']>;
+};
+
+export type Updates = {
+  /** The authorization rules for the entity */
+  authorization?: Maybe<Authorization>;
+  /** The ID of the entity */
+  id: Scalars['UUID'];
+  /** Messages in this Updates. */
+  messages?: Maybe<Array<Message>>;
+};
+
+export type UpdatesRemoveMessageInput = {
+  /** The message id that should be removed */
+  messageID: Scalars['String'];
+  /** The Updates the message is being removed from. */
+  updatesID: Scalars['UUID'];
+};
+
+export type UpdatesSendMessageInput = {
+  /** The message being sent */
+  message: Scalars['String'];
+  /** The Updates the message is being sent to */
+  updatesID: Scalars['UUID'];
 };
 
 export type UploadProfileAvatarInput = {
@@ -1969,7 +2228,7 @@ export type User = Searchable & {
   authorization?: Maybe<Authorization>;
   city: Scalars['String'];
   /** The Community rooms this user is a member of */
-  communityRooms?: Maybe<Array<CommunityRoom>>;
+  communityRooms?: Maybe<Array<CommunicationRoom>>;
   country: Scalars['String'];
   /** The direct rooms this user is a member of */
   directRooms?: Maybe<Array<DirectRoom>>;
@@ -1985,6 +2244,8 @@ export type User = Searchable & {
   nameID: Scalars['NameID'];
   /** The phone number for this User. */
   phone: Scalars['String'];
+  /** The preferences for this user */
+  preferences: Array<UserPreference>;
   /** The profile for this User */
   profile?: Maybe<Profile>;
 };
@@ -2025,6 +2286,48 @@ export type UserMembership = {
   /** Details of the Organizations the user is a member of, with child memberships. */
   organizations: Array<MembershipUserResultEntryOrganization>;
 };
+
+export type UserPreference = {
+  /** The authorization rules for the entity */
+  authorization?: Maybe<Authorization>;
+  /** The definition for the Preference */
+  definition: UserPreferenceDefinition;
+  /** The ID of the entity */
+  id: Scalars['UUID'];
+  /** Value of the preference */
+  value: Scalars['String'];
+};
+
+export type UserPreferenceDefinition = {
+  /** Preference description */
+  description: Scalars['String'];
+  /** The name */
+  displayName: Scalars['String'];
+  /** The group */
+  group: Scalars['String'];
+  /** The ID of the entity */
+  id: Scalars['UUID'];
+  /** Type of preference */
+  type: UserPreferenceType;
+  /** Preference value type */
+  valueType: UserPreferenceValueType;
+};
+
+export enum UserPreferenceType {
+  NotificationApplicationReceived = 'NOTIFICATION_APPLICATION_RECEIVED',
+  NotificationApplicationSubmitted = 'NOTIFICATION_APPLICATION_SUBMITTED',
+  NotificationCommunicationDiscussionCreated = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED',
+  NotificationCommunicationDiscussionResponse = 'NOTIFICATION_COMMUNICATION_DISCUSSION_RESPONSE',
+  NotificationCommunicationUpdates = 'NOTIFICATION_COMMUNICATION_UPDATES',
+  NotificationUserSignUp = 'NOTIFICATION_USER_SIGN_UP',
+}
+
+export enum UserPreferenceValueType {
+  Boolean = 'BOOLEAN',
+  Float = 'FLOAT',
+  Int = 'INT',
+  String = 'STRING',
+}
 
 export type UserSendMessageInput = {
   /** The message being sent */
