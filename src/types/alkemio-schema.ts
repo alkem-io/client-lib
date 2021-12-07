@@ -256,8 +256,8 @@ export enum AuthorizationPrivilege {
 export type Canvas = {
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
-  /** The checked out status of the Canvas. */
-  checkout: CanvasCheckout;
+  /** The checkout out state of this Canvas. */
+  checkout?: Maybe<CanvasCheckout>;
   /** The ID of the entity */
   id: Scalars['UUID'];
   /** Is the Canvas a template? */
@@ -713,6 +713,10 @@ export type DeleteAspectInput = {
   ID: Scalars['UUID'];
 };
 
+export type DeleteCanvasInput = {
+  ID: Scalars['UUID'];
+};
+
 export type DeleteChallengeInput = {
   ID: Scalars['UUID'];
 };
@@ -1102,6 +1106,8 @@ export type Mutation = {
   deleteActorGroup: ActorGroup;
   /** Deletes the specified Aspect. */
   deleteAspect: Aspect;
+  /** Deletes the specified Canvas. */
+  deleteCanvas: Canvas;
   /** Deletes the specified Challenge. */
   deleteChallenge: Challenge;
   /** Deletes the specified Discussion. */
@@ -1352,6 +1358,10 @@ export type MutationDeleteActorGroupArgs = {
 
 export type MutationDeleteAspectArgs = {
   deleteData: DeleteAspectInput;
+};
+
+export type MutationDeleteCanvasArgs = {
+  deleteData: DeleteCanvasInput;
 };
 
 export type MutationDeleteChallengeArgs = {
@@ -2246,7 +2256,7 @@ export type User = Searchable & {
   phone: Scalars['String'];
   /** The preferences for this user */
   preferences: Array<UserPreference>;
-  /** The profile for this User */
+  /** The Profile for this User. */
   profile?: Maybe<Profile>;
 };
 

@@ -341,6 +341,25 @@ export class AlkemioClient {
     return !!data?.assignUserToGroup;
   }
 
+  async addUserToOrganization(
+    userID: string,
+    organizationID: string
+  ): Promise<boolean> {
+    const uID = userID;
+    const gID = organizationID;
+
+    const { data, errors } = await this.client.assignUserToOrganization({
+      input: {
+        userID: uID,
+        organizationID: gID,
+      },
+    });
+
+    this.errorHandler(errors);
+
+    return !!data?.assignUserToOrganization;
+  }
+
   async addUserToChallenge(
     hubID: string,
     challengeName: string,

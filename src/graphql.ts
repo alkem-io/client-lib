@@ -71,6 +71,14 @@ export type AddUserToGroupMutation = {
   };
 };
 
+export type AssignUserToOrganizationMutationVariables = SchemaTypes.Exact<{
+  input: SchemaTypes.AssignOrganizationMemberInput;
+}>;
+
+export type AssignUserToOrganizationMutation = {
+  assignUserToOrganization: { displayName: string; id: string };
+};
+
 export type AssignUserAsChallengeAdminMutationVariables = SchemaTypes.Exact<{
   membershipData: SchemaTypes.AssignChallengeAdminInput;
 }>;
@@ -752,6 +760,14 @@ export const AddUserToGroupDocument = gql`
     }
   }
 `;
+export const AssignUserToOrganizationDocument = gql`
+  mutation assignUserToOrganization($input: AssignOrganizationMemberInput!) {
+    assignUserToOrganization(membershipData: $input) {
+      displayName
+      id
+    }
+  }
+`;
 export const AssignUserAsChallengeAdminDocument = gql`
   mutation assignUserAsChallengeAdmin(
     $membershipData: AssignChallengeAdminInput!
@@ -1362,6 +1378,22 @@ export function getSdk(
       return withWrapper(() =>
         client.rawRequest<AddUserToGroupMutation>(
           print(AddUserToGroupDocument),
+          variables
+        )
+      );
+    },
+    assignUserToOrganization(
+      variables: AssignUserToOrganizationMutationVariables
+    ): Promise<{
+      data?: AssignUserToOrganizationMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<AssignUserToOrganizationMutation>(
+          print(AssignUserToOrganizationDocument),
           variables
         )
       );
