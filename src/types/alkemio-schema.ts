@@ -493,6 +493,10 @@ export type Context = {
   who?: Maybe<Scalars['String']>;
 };
 
+export type ContextCanvasesArgs = {
+  IDs?: Maybe<Array<Scalars['UUID']>>;
+};
+
 export type CreateActorGroupInput = {
   description?: Maybe<Scalars['String']>;
   ecosystemModelID: Scalars['UUID'];
@@ -713,8 +717,9 @@ export type DeleteAspectInput = {
   ID: Scalars['UUID'];
 };
 
-export type DeleteCanvasInput = {
-  ID: Scalars['UUID'];
+export type DeleteCanvasOnContextInput = {
+  canvasID: Scalars['UUID'];
+  contextID: Scalars['UUID'];
 };
 
 export type DeleteChallengeInput = {
@@ -1107,7 +1112,7 @@ export type Mutation = {
   /** Deletes the specified Aspect. */
   deleteAspect: Aspect;
   /** Deletes the specified Canvas. */
-  deleteCanvas: Canvas;
+  deleteCanvasOnContext: Canvas;
   /** Deletes the specified Challenge. */
   deleteChallenge: Challenge;
   /** Deletes the specified Discussion. */
@@ -1360,8 +1365,8 @@ export type MutationDeleteAspectArgs = {
   deleteData: DeleteAspectInput;
 };
 
-export type MutationDeleteCanvasArgs = {
-  deleteData: DeleteCanvasInput;
+export type MutationDeleteCanvasOnContextArgs = {
+  deleteData: DeleteCanvasOnContextInput;
 };
 
 export type MutationDeleteChallengeArgs = {
@@ -1618,6 +1623,8 @@ export type OpportunityTemplate = {
 
 export type Organization = Groupable &
   Searchable & {
+    /** The activity within this Organization. */
+    activity?: Maybe<Array<Nvp>>;
     /** The Agent representing this User. */
     agent?: Maybe<Agent>;
     /** The authorization rules for the entity */
@@ -2327,8 +2334,10 @@ export enum UserPreferenceType {
   NotificationApplicationReceived = 'NOTIFICATION_APPLICATION_RECEIVED',
   NotificationApplicationSubmitted = 'NOTIFICATION_APPLICATION_SUBMITTED',
   NotificationCommunicationDiscussionCreated = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED',
+  NotificationCommunicationDiscussionCreatedAdmin = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED_ADMIN',
   NotificationCommunicationDiscussionResponse = 'NOTIFICATION_COMMUNICATION_DISCUSSION_RESPONSE',
   NotificationCommunicationUpdates = 'NOTIFICATION_COMMUNICATION_UPDATES',
+  NotificationCommunicationUpdateSentAdmin = 'NOTIFICATION_COMMUNICATION_UPDATE_SENT_ADMIN',
   NotificationUserSignUp = 'NOTIFICATION_USER_SIGN_UP',
 }
 
