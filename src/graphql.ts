@@ -14,6 +14,7 @@ export type ChallengeDetailsFragment = {
     groups?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
   }>;
   context?: SchemaTypes.Maybe<{
+    visuals?: SchemaTypes.Maybe<Array<{ name: string; id: string }>>;
     ecosystemModel?: SchemaTypes.Maybe<{
       id: string;
       actorGroups?: SchemaTypes.Maybe<Array<{ name: string; id: string }>>;
@@ -39,8 +40,8 @@ export type UserDetailsFragment = {
   email: string;
   profile?: SchemaTypes.Maybe<{
     id: string;
-    avatar?: SchemaTypes.Maybe<string>;
     description?: SchemaTypes.Maybe<string>;
+    avatar?: SchemaTypes.Maybe<{ id: string; uri: string }>;
   }>;
   agent?: SchemaTypes.Maybe<{
     id: string;
@@ -202,7 +203,13 @@ export type CreateChallengeMutationVariables = SchemaTypes.Exact<{
 }>;
 
 export type CreateChallengeMutation = {
-  createChallenge: { id: string; nameID: string };
+  createChallenge: {
+    id: string;
+    nameID: string;
+    context?: SchemaTypes.Maybe<{
+      visuals?: SchemaTypes.Maybe<Array<{ name: string; id: string }>>;
+    }>;
+  };
 };
 
 export type CreateChildChallengeMutationVariables = SchemaTypes.Exact<{
@@ -210,7 +217,14 @@ export type CreateChildChallengeMutationVariables = SchemaTypes.Exact<{
 }>;
 
 export type CreateChildChallengeMutation = {
-  createChildChallenge: { id: string; nameID: string; displayName: string };
+  createChildChallenge: {
+    id: string;
+    nameID: string;
+    displayName: string;
+    context?: SchemaTypes.Maybe<{
+      visuals?: SchemaTypes.Maybe<Array<{ name: string; id: string }>>;
+    }>;
+  };
 };
 
 export type CreateGroupOnCommunityMutationVariables = SchemaTypes.Exact<{
@@ -218,7 +232,14 @@ export type CreateGroupOnCommunityMutationVariables = SchemaTypes.Exact<{
 }>;
 
 export type CreateGroupOnCommunityMutation = {
-  createGroupOnCommunity: { name: string; id: string };
+  createGroupOnCommunity: {
+    name: string;
+    id: string;
+    profile?: SchemaTypes.Maybe<{
+      id: string;
+      avatar?: SchemaTypes.Maybe<{ id: string }>;
+    }>;
+  };
 };
 
 export type CreateGroupOnOrganizationMutationVariables = SchemaTypes.Exact<{
@@ -226,7 +247,14 @@ export type CreateGroupOnOrganizationMutationVariables = SchemaTypes.Exact<{
 }>;
 
 export type CreateGroupOnOrganizationMutation = {
-  createGroupOnOrganization: { id: string; name: string };
+  createGroupOnOrganization: {
+    id: string;
+    name: string;
+    profile?: SchemaTypes.Maybe<{
+      id: string;
+      avatar?: SchemaTypes.Maybe<{ id: string }>;
+    }>;
+  };
 };
 
 export type CreateHubMutationVariables = SchemaTypes.Exact<{
@@ -234,7 +262,13 @@ export type CreateHubMutationVariables = SchemaTypes.Exact<{
 }>;
 
 export type CreateHubMutation = {
-  createEcoverse: { id: string; nameID: string };
+  createEcoverse: {
+    id: string;
+    nameID: string;
+    context?: SchemaTypes.Maybe<{
+      visuals?: SchemaTypes.Maybe<Array<{ name: string; id: string }>>;
+    }>;
+  };
 };
 
 export type CreateOpportunityMutationVariables = SchemaTypes.Exact<{
@@ -242,7 +276,14 @@ export type CreateOpportunityMutationVariables = SchemaTypes.Exact<{
 }>;
 
 export type CreateOpportunityMutation = {
-  createOpportunity: { id: string; displayName: string; nameID: string };
+  createOpportunity: {
+    id: string;
+    displayName: string;
+    nameID: string;
+    context?: SchemaTypes.Maybe<{
+      visuals?: SchemaTypes.Maybe<Array<{ name: string; id: string }>>;
+    }>;
+  };
 };
 
 export type CreateOrganizationMutationVariables = SchemaTypes.Exact<{
@@ -254,7 +295,7 @@ export type CreateOrganizationMutation = {
     displayName: string;
     nameID: string;
     id: string;
-    profile: { id: string };
+    profile: { id: string; avatar?: SchemaTypes.Maybe<{ id: string }> };
   };
 };
 
@@ -301,7 +342,10 @@ export type CreateUserMutation = {
   createUser: {
     nameID: string;
     id: string;
-    profile?: SchemaTypes.Maybe<{ id: string }>;
+    profile?: SchemaTypes.Maybe<{
+      id: string;
+      avatar?: SchemaTypes.Maybe<{ id: string }>;
+    }>;
   };
 };
 
@@ -340,7 +384,10 @@ export type UpdateHubMutation = {
   updateEcoverse: {
     nameID: string;
     host?: SchemaTypes.Maybe<{ nameID: string }>;
-    context?: SchemaTypes.Maybe<{ tagline?: SchemaTypes.Maybe<string> }>;
+    context?: SchemaTypes.Maybe<{
+      tagline?: SchemaTypes.Maybe<string>;
+      visuals?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
+    }>;
   };
 };
 
@@ -349,7 +396,14 @@ export type UpdateOpportunityMutationVariables = SchemaTypes.Exact<{
 }>;
 
 export type UpdateOpportunityMutation = {
-  updateOpportunity: { id: string; displayName: string; nameID: string };
+  updateOpportunity: {
+    id: string;
+    displayName: string;
+    nameID: string;
+    context?: SchemaTypes.Maybe<{
+      visuals?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
+    }>;
+  };
 };
 
 export type UpdateOrganizationMutationVariables = SchemaTypes.Exact<{
@@ -375,6 +429,12 @@ export type UpdateProfileMutationVariables = SchemaTypes.Exact<{
 
 export type UpdateProfileMutation = { updateProfile: { id: string } };
 
+export type UpdateVisualMutationVariables = SchemaTypes.Exact<{
+  updateData: SchemaTypes.UpdateVisualInput;
+}>;
+
+export type UpdateVisualMutation = { updateVisual: { id: string } };
+
 export type ChallengeQueryVariables = SchemaTypes.Exact<{
   hubID: SchemaTypes.Scalars['UUID_NAMEID'];
   challengeID: SchemaTypes.Scalars['UUID_NAMEID'];
@@ -399,7 +459,14 @@ export type ChallengesQueryVariables = SchemaTypes.Exact<{
 export type ChallengesQuery = {
   ecoverse: {
     challenges?: SchemaTypes.Maybe<
-      Array<{ id: string; nameID: string; displayName: string }>
+      Array<{
+        id: string;
+        nameID: string;
+        displayName: string;
+        context?: SchemaTypes.Maybe<{
+          visuals?: SchemaTypes.Maybe<Array<{ name: string; id: string }>>;
+        }>;
+      }>
     >;
   };
 };
@@ -483,11 +550,7 @@ export type HubQuery = {
       references?: SchemaTypes.Maybe<
         Array<{ id: string; name: string; description: string; uri: string }>
       >;
-      visual?: SchemaTypes.Maybe<{
-        avatar: string;
-        background: string;
-        banner: string;
-      }>;
+      visuals?: SchemaTypes.Maybe<Array<{ name: string; uri: string }>>;
     }>;
   };
 };
@@ -495,7 +558,14 @@ export type HubQuery = {
 export type HubsQueryVariables = SchemaTypes.Exact<{ [key: string]: never }>;
 
 export type HubsQuery = {
-  ecoverses: Array<{ displayName: string; id: string; nameID: string }>;
+  ecoverses: Array<{
+    displayName: string;
+    id: string;
+    nameID: string;
+    context?: SchemaTypes.Maybe<{
+      visuals?: SchemaTypes.Maybe<Array<{ name: string; id: string }>>;
+    }>;
+  }>;
 };
 
 export type MetadataQueryVariables = SchemaTypes.Exact<{
@@ -543,6 +613,7 @@ export type OpportunityProfileFragment = {
     vision?: SchemaTypes.Maybe<any>;
     impact?: SchemaTypes.Maybe<any>;
     who?: SchemaTypes.Maybe<string>;
+    visuals?: SchemaTypes.Maybe<Array<{ name: string; id: string }>>;
     references?: SchemaTypes.Maybe<
       Array<{ name: string; uri: string; description: string }>
     >;
@@ -563,6 +634,7 @@ export type OpportunityQuery = {
       community?: SchemaTypes.Maybe<{ id: string; displayName: string }>;
       context?: SchemaTypes.Maybe<{
         id: string;
+        visuals?: SchemaTypes.Maybe<Array<{ name: string; id: string }>>;
         ecosystemModel?: SchemaTypes.Maybe<{
           id: string;
           actorGroups?: SchemaTypes.Maybe<
@@ -602,8 +674,8 @@ export type OrganizationsQuery = {
     nameID: string;
     profile: {
       id: string;
-      avatar?: SchemaTypes.Maybe<string>;
       description?: SchemaTypes.Maybe<string>;
+      avatar?: SchemaTypes.Maybe<{ id: string; uri: string }>;
     };
     agent?: SchemaTypes.Maybe<{
       id: string;
@@ -669,6 +741,10 @@ export const ChallengeDetailsFragmentDoc = gql`
       }
     }
     context {
+      visuals {
+        name
+        id
+      }
       ecosystemModel {
         id
         actorGroups {
@@ -706,7 +782,10 @@ export const UserDetailsFragmentDoc = gql`
     email
     profile {
       id
-      avatar
+      avatar {
+        id
+        uri
+      }
       description
     }
     agent {
@@ -731,6 +810,10 @@ export const OpportunityProfileFragmentDoc = gql`
       vision
       impact
       who
+      visuals {
+        name
+        id
+      }
       references {
         name
         uri
@@ -893,6 +976,12 @@ export const CreateChallengeDocument = gql`
     createChallenge(challengeData: $challengeData) {
       id
       nameID
+      context {
+        visuals {
+          name
+          id
+        }
+      }
     }
   }
 `;
@@ -904,6 +993,12 @@ export const CreateChildChallengeDocument = gql`
       id
       nameID
       displayName
+      context {
+        visuals {
+          name
+          id
+        }
+      }
     }
   }
 `;
@@ -912,6 +1007,12 @@ export const CreateGroupOnCommunityDocument = gql`
     createGroupOnCommunity(groupData: $groupData) {
       name
       id
+      profile {
+        id
+        avatar {
+          id
+        }
+      }
     }
   }
 `;
@@ -920,6 +1021,12 @@ export const CreateGroupOnOrganizationDocument = gql`
     createGroupOnOrganization(groupData: $groupData) {
       id
       name
+      profile {
+        id
+        avatar {
+          id
+        }
+      }
     }
   }
 `;
@@ -928,6 +1035,12 @@ export const CreateHubDocument = gql`
     createEcoverse(ecoverseData: $hubData) {
       id
       nameID
+      context {
+        visuals {
+          name
+          id
+        }
+      }
     }
   }
 `;
@@ -937,6 +1050,12 @@ export const CreateOpportunityDocument = gql`
       id
       displayName
       nameID
+      context {
+        visuals {
+          name
+          id
+        }
+      }
     }
   }
 `;
@@ -948,6 +1067,9 @@ export const CreateOrganizationDocument = gql`
       id
       profile {
         id
+        avatar {
+          id
+        }
       }
     }
   }
@@ -995,6 +1117,9 @@ export const CreateUserDocument = gql`
       id
       profile {
         id
+        avatar {
+          id
+        }
       }
     }
   }
@@ -1033,6 +1158,10 @@ export const UpdateHubDocument = gql`
       }
       context {
         tagline
+        visuals {
+          id
+          name
+        }
       }
     }
   }
@@ -1043,6 +1172,12 @@ export const UpdateOpportunityDocument = gql`
       id
       displayName
       nameID
+      context {
+        visuals {
+          id
+          name
+        }
+      }
     }
   }
 `;
@@ -1065,6 +1200,13 @@ export const UpdateOrganizationDocument = gql`
 export const UpdateProfileDocument = gql`
   mutation updateProfile($profileData: UpdateProfileInput!) {
     updateProfile(profileData: $profileData) {
+      id
+    }
+  }
+`;
+export const UpdateVisualDocument = gql`
+  mutation updateVisual($updateData: UpdateVisualInput!) {
+    updateVisual(updateData: $updateData) {
       id
     }
   }
@@ -1095,6 +1237,12 @@ export const ChallengesDocument = gql`
         id
         nameID
         displayName
+        context {
+          visuals {
+            name
+            id
+          }
+        }
       }
     }
   }
@@ -1180,10 +1328,9 @@ export const HubDocument = gql`
           description
           uri
         }
-        visual {
-          avatar
-          background
-          banner
+        visuals {
+          name
+          uri
         }
       }
     }
@@ -1195,6 +1342,12 @@ export const HubsDocument = gql`
       displayName
       id
       nameID
+      context {
+        visuals {
+          name
+          id
+        }
+      }
     }
   }
 `;
@@ -1243,6 +1396,10 @@ export const OpportunityDocument = gql`
         }
         context {
           id
+          visuals {
+            name
+            id
+          }
           ecosystemModel {
             id
             actorGroups {
@@ -1278,7 +1435,10 @@ export const OrganizationsDocument = gql`
       nameID
       profile {
         id
-        avatar
+        avatar {
+          id
+          uri
+        }
         description
       }
       agent {
@@ -1874,6 +2034,22 @@ export function getSdk(
       return withWrapper(() =>
         client.rawRequest<UpdateProfileMutation>(
           print(UpdateProfileDocument),
+          variables
+        )
+      );
+    },
+    updateVisual(
+      variables: UpdateVisualMutationVariables
+    ): Promise<{
+      data?: UpdateVisualMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<UpdateVisualMutation>(
+          print(UpdateVisualDocument),
           variables
         )
       );

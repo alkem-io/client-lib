@@ -6,6 +6,10 @@ mutation updateHub($hubData: UpdateEcoverseInput!) {
     }
     context {
       tagline
+      visuals {
+        id
+        name
+      }
     }
   }
 }

@@ -3,5 +3,11 @@ mutation createChildChallenge($childChallengeData: CreateChallengeOnChallengeInp
     id
     nameID
     displayName
+    context {
+      visuals {
+        name
+        id
+      }
+    }
   }
 }

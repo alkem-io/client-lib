@@ -2,5 +2,11 @@ mutation createGroupOnCommunity($groupData: CreateUserGroupInput!) {
   createGroupOnCommunity(groupData: $groupData) {
     name
     id
+    profile {
+      id
+      avatar {
+         id
+      }
+    }
   }
 }

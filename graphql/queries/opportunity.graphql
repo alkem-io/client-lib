@@ -10,6 +10,10 @@ query opportunity($hubID: UUID_NAMEID!, $opportunityID: UUID_NAMEID!) {
       }
       context {
         id
+        visuals {
+          name
+          id
+        }
         ecosystemModel {
           id
           actorGroups {

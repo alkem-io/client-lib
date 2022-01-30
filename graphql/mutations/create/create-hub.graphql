@@ -2,5 +2,11 @@ mutation createHub($hubData: CreateEcoverseInput!) {
   createEcoverse(ecoverseData: $hubData) {
     id
     nameID
+    context {
+      visuals {
+        name
+        id
+      }
+    }
   }
 }

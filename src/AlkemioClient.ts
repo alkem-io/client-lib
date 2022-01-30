@@ -17,6 +17,7 @@ import {
   OrganizationAuthorizationResetInput,
   CreateChallengeOnChallengeInput,
   AuthorizationCredential,
+  Visual,
 } from './types/alkemio-schema';
 import { ErrorHandler, handleErrors } from './util/handleErrors';
 import semver from 'semver';
@@ -282,29 +283,65 @@ export class AlkemioClient {
 
     const profileID = data?.user.profile?.id;
 
+    const avatarID = data?.user.profile?.avatar?.id || '';
+
     this.errorHandler(errors);
 
     if (profileID) {
-      return !!(await this.updateProfile(profileID, avatarURI, description));
+      const profileUpdated = await this.updateProfile(profileID, description);
+      if (avatarURI) {
+        await this.updateVisual(avatarID, avatarURI);
+      }
+      return !!profileUpdated;
     }
 
     return false;
   }
 
-  async updateProfile(
-    profileID: string,
-    avatarURI?: string,
-    description?: string
-  ) {
+  async updateProfile(profileID: string, description?: string) {
     const { data, errors } = await this.client.updateProfile({
       profileData: {
         ID: profileID,
-        avatar: avatarURI,
         description: description,
       },
     });
     this.errorHandler(errors);
     return data?.updateProfile;
+  }
+
+  async updateVisual(visualID: string, uri: string) {
+    const { data, errors } = await this.client.updateVisual({
+      updateData: {
+        visualID: visualID,
+        uri: uri,
+      },
+    });
+    this.errorHandler(errors);
+    return data?.updateVisual;
+  }
+
+  private async updateVisualOnContext(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    visuals: any[],
+    visualName: string,
+    uri: string
+  ) {
+    const visual = visuals.find(v => v.name === visualName);
+    if (visual) {
+      return await this.updateVisual(visual.id, uri);
+    }
+  }
+
+  async updateVisualsOnContext(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    visuals: any[],
+    banner: string,
+    background: string,
+    avatar: string
+  ) {
+    await this.updateVisualOnContext(visuals, 'banner', banner);
+    await this.updateVisualOnContext(visuals, 'background', background);
+    await this.updateVisualOnContext(visuals, 'avatar', avatar);
   }
 
   async createTagsetOnProfile(
