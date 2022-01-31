@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { GraphQLClient } from 'graphql-request';
 import { ClientConfig } from './config/ClientConfig';
 import { getSdk, Sdk } from './graphql';
@@ -26,14 +27,16 @@ import { KratosPublicApiClient } from './util/kratos.public.api.client';
 export class AlkemioClient {
   public apiToken: string;
   public config!: ClientConfig;
-  public client!: Sdk;
+  public privateClient!: Sdk;
   private errorHandler: ErrorHandler;
 
   constructor(config: ClientConfig) {
     this.apiToken = '';
     this.config = config;
-    const client = new GraphQLClient(this.config.graphqlEndpoint);
-    this.client = getSdk(client);
+    const privateClient = new GraphQLClient(
+      this.config.apiEndpointPrivateGraphql
+    );
+    this.privateClient = getSdk(privateClient);
     this.errorHandler = handleErrors();
   }
 
@@ -62,12 +65,12 @@ export class AlkemioClient {
         this.config?.authInfo as AuthInfo
       );
       this.logMessage(`API token: ${apiToken}`);
-      const client = new GraphQLClient(this.config.graphqlEndpoint, {
+      const client = new GraphQLClient(this.config.apiEndpointPrivateGraphql, {
         headers: {
           authorization: `Bearer ${apiToken}`,
         },
       });
-      this.client = getSdk(client);
+      this.privateClient = getSdk(client);
     } catch (error) {
       throw new Error(
         `Unable to authenticate to Alkemio (Kratos) endpoint (${kratosPublicEndpoint}): ${error}`
@@ -102,7 +105,7 @@ export class AlkemioClient {
   }
 
   public async getKratosPublicApiEndpoint(): Promise<string> {
-    const configuration = await this.client.configuration();
+    const configuration = await this.privateClient.configuration();
     const endpoint =
       configuration.data?.configuration.authentication.providers[0].config
         .kratosPublicBaseURL;
@@ -111,21 +114,28 @@ export class AlkemioClient {
   }
 
   public async featureFlags() {
-    const { data, errors } = await this.client.featureFlags();
+    const { data, errors } = await this.privateClient.featureFlags();
 
     if (errors) {
       throw new Error(
-        `Unable to query feature flags from: ${this.config.graphqlEndpoint}`
+        `Unable to query feature flags from: ${this.config.apiEndpointPrivateGraphql}`
       );
     }
     return data?.configuration.platform.featureFlags;
   }
 
   public async validateConnection() {
-    const serverVersion = await this.serverVersion();
+    try {
+      const serverVersion = await this.serverVersion();
 
-    this.validateServerVersion(serverVersion);
-    return serverVersion;
+      this.validateServerVersion(serverVersion);
+      return serverVersion;
+    } catch (error: any) {
+      this.logMessage(
+        `unable to validate the connection, error: ${error.toString()}`
+      );
+    }
+    return 'server version not returned';
   }
 
   public validateServerVersion(serverVersion: string): boolean {
@@ -139,10 +149,13 @@ export class AlkemioClient {
   }
 
   public async serverVersion(): Promise<string> {
-    const { data, errors } = await this.client.metadata();
+    this.logMessage(
+      `Obtaining server version using api endpoint: ${this.config.apiEndpointPrivateGraphql}`
+    );
+    const { data, errors } = await this.privateClient.metadata();
     if (errors) {
       throw new Error(
-        `Unable to query meta data from: ${this.config.graphqlEndpoint}`
+        `Unable to query meta data from: ${this.config.apiEndpointPrivateGraphql}`
       );
     }
     const serverMetaData = data?.metadata.services.find(
@@ -159,18 +172,21 @@ export class AlkemioClient {
 
   public async hubExists(hubID: string): Promise<boolean> {
     try {
-      const result = await this.client.hub({
+      const result = await this.privateClient.hub({
         id: hubID,
       });
       if (!result.errors) return true;
-    } catch (error) {
+    } catch (error: any) {
+      this.logMessage(
+        `unable to check if hub exists, error: ${error.toString()}`
+      );
       return false;
     }
     return true;
   }
 
   async hubInfo(hubID: string) {
-    const response = await this.client.hub({
+    const response = await this.privateClient.hub({
       id: hubID,
     });
     return response.data?.ecoverse;
@@ -179,7 +195,7 @@ export class AlkemioClient {
   public async authorizationResetUser(
     authorizationResetData: UserAuthorizationResetInput
   ) {
-    const result = await this.client.authorizationPolicyResetOnUser({
+    const result = await this.privateClient.authorizationPolicyResetOnUser({
       authorizationResetData: authorizationResetData,
     });
 
@@ -191,7 +207,7 @@ export class AlkemioClient {
   public async authorizationResetHub(
     authorizationResetData: EcoverseAuthorizationResetInput
   ) {
-    const result = await this.client.authorizationPolicyResetOnHub({
+    const result = await this.privateClient.authorizationPolicyResetOnHub({
       authorizationResetData: authorizationResetData,
     });
 
@@ -203,9 +219,11 @@ export class AlkemioClient {
   public async authorizationResetOrganization(
     authorizationResetData: OrganizationAuthorizationResetInput
   ) {
-    const result = await this.client.authorizationPolicyResetOnOrganization({
-      authorizationResetData: authorizationResetData,
-    });
+    const result = await this.privateClient.authorizationPolicyResetOnOrganization(
+      {
+        authorizationResetData: authorizationResetData,
+      }
+    );
 
     this.errorHandler(result.errors);
 
@@ -213,14 +231,14 @@ export class AlkemioClient {
   }
 
   public async createHub(hubData: CreateEcoverseInput) {
-    const result = await this.client.createHub({
+    const result = await this.privateClient.createHub({
       hubData: hubData,
     });
     return result.data?.createEcoverse;
   }
 
   public async createChallenge(challenge: CreateChallengeOnEcoverseInput) {
-    const { data, errors } = await this.client.createChallenge({
+    const { data, errors } = await this.privateClient.createChallenge({
       challengeData: challenge,
     });
 
@@ -232,7 +250,7 @@ export class AlkemioClient {
   public async createChildChallenge(
     challengeData: CreateChallengeOnChallengeInput
   ) {
-    const result = await this.client.createChildChallenge({
+    const result = await this.privateClient.createChildChallenge({
       childChallengeData: challengeData,
     });
 
@@ -242,7 +260,7 @@ export class AlkemioClient {
   }
 
   public async createOpportunity(opportunityData: CreateOpportunityInput) {
-    const result = await this.client.createOpportunity({
+    const result = await this.privateClient.createOpportunity({
       opportunityData: opportunityData,
     });
 
@@ -257,7 +275,7 @@ export class AlkemioClient {
     referenceURI: string,
     referenceDesc: string
   ) {
-    const { data, errors } = await this.client.createReferenceOnProfile({
+    const { data, errors } = await this.privateClient.createReferenceOnProfile({
       referenceInput: {
         profileID: profileID,
         uri: referenceURI,
@@ -276,7 +294,7 @@ export class AlkemioClient {
     description?: string,
     avatarURI?: string
   ): Promise<boolean> {
-    const { data, errors } = await this.client.user({
+    const { data, errors } = await this.privateClient.user({
       userID: userEmail,
     });
 
@@ -298,7 +316,7 @@ export class AlkemioClient {
   }
 
   async updateProfile(profileID: string, description?: string) {
-    const { data, errors } = await this.client.updateProfile({
+    const { data, errors } = await this.privateClient.updateProfile({
       profileData: {
         ID: profileID,
         description: description,
@@ -309,7 +327,7 @@ export class AlkemioClient {
   }
 
   async updateVisual(visualID: string, uri: string) {
-    const { data, errors } = await this.client.updateVisual({
+    const { data, errors } = await this.privateClient.updateVisual({
       updateData: {
         visualID: visualID,
         uri: uri,
@@ -339,7 +357,7 @@ export class AlkemioClient {
     avatar: string
   ) {
     await this.updateVisualOnContext(visuals, 'banner', banner);
-    await this.updateVisualOnContext(visuals, 'background', background);
+    await this.updateVisualOnContext(visuals, 'bannerNarrow', background);
     await this.updateVisualOnContext(visuals, 'avatar', avatar);
   }
 
@@ -349,7 +367,7 @@ export class AlkemioClient {
     tags: string[]
   ): Promise<boolean> {
     if (tags) {
-      const { errors } = await this.client.createTagsetOnProfile({
+      const { errors } = await this.privateClient.createTagsetOnProfile({
         tagsetData: {
           profileID: profileID,
           name: tagsetName,
@@ -365,7 +383,7 @@ export class AlkemioClient {
     const uID = userID;
     const gID = groupID;
 
-    const { data, errors } = await this.client.addUserToGroup({
+    const { data, errors } = await this.privateClient.addUserToGroup({
       input: {
         userID: uID,
         groupID: gID,
@@ -384,7 +402,7 @@ export class AlkemioClient {
     const uID = userID;
     const gID = organizationID;
 
-    const { data, errors } = await this.client.assignUserToOrganization({
+    const { data, errors } = await this.privateClient.assignUserToOrganization({
       input: {
         userID: uID,
         organizationID: gID,
@@ -401,7 +419,7 @@ export class AlkemioClient {
     challengeName: string,
     userID: string
   ) {
-    const response = await this.client.challenge({
+    const response = await this.privateClient.challenge({
       hubID: hubID,
       challengeID: challengeName,
     });
@@ -409,7 +427,7 @@ export class AlkemioClient {
 
     if (!response || !communityID) return;
 
-    return await this.client.addUserToCommunity({
+    return await this.privateClient.addUserToCommunity({
       input: {
         userID: userID,
         communityID: communityID,
@@ -419,7 +437,7 @@ export class AlkemioClient {
 
   public async opportunityByNameID(hubID: string, opportunityNameID: string) {
     try {
-      const result = await this.client.opportunity({
+      const result = await this.privateClient.opportunity({
         hubID: hubID,
         opportunityID: opportunityNameID,
       });
@@ -431,7 +449,7 @@ export class AlkemioClient {
 
   async challengeByNameID(hubNameID: string, challengeNameID: string) {
     try {
-      const response = await this.client.challenge({
+      const response = await this.privateClient.challenge({
         hubID: hubNameID,
         challengeID: challengeNameID,
       });
@@ -445,7 +463,7 @@ export class AlkemioClient {
 
   async user(userID: string) {
     try {
-      const response = await this.client.user({
+      const response = await this.privateClient.user({
         userID: userID,
       });
 
@@ -469,7 +487,7 @@ export class AlkemioClient {
 
     if (!communityID) return;
 
-    return await this.client.addUserToCommunity({
+    return await this.privateClient.addUserToCommunity({
       input: {
         userID: userID,
         communityID,
@@ -483,7 +501,7 @@ export class AlkemioClient {
 
     if (!hubInfo || !communityID) return;
 
-    return await this.client.addUserToCommunity({
+    return await this.privateClient.addUserToCommunity({
       input: {
         userID: userID,
         communityID,
@@ -492,7 +510,7 @@ export class AlkemioClient {
   }
 
   async updateHubContext(hubID: string, context: UpdateContextInput) {
-    const { data, errors } = await this.client.updateHub({
+    const { data, errors } = await this.privateClient.updateHub({
       hubData: {
         ID: hubID,
         context: context,
@@ -505,7 +523,7 @@ export class AlkemioClient {
   }
 
   async updateHub(hubData: UpdateEcoverseInput) {
-    const { data, errors } = await this.client.updateHub({
+    const { data, errors } = await this.privateClient.updateHub({
       hubData: hubData,
     });
 
@@ -522,7 +540,7 @@ export class AlkemioClient {
     actorRole: string,
     actorType: string
   ) {
-    const { data, errors } = await this.client.createRelation({
+    const { data, errors } = await this.privateClient.createRelation({
       relationData: {
         parentID: opportunityID,
         type,
@@ -543,7 +561,7 @@ export class AlkemioClient {
     actorGroupName: string,
     description: string
   ) {
-    const { data, errors } = await this.client.createActorGroup({
+    const { data, errors } = await this.privateClient.createActorGroup({
       actorGroupData: {
         ecosystemModelID: ecosystemModelID,
         name: actorGroupName,
@@ -563,7 +581,7 @@ export class AlkemioClient {
     impact?: string,
     description = ''
   ) {
-    const { data, errors } = await this.client.createActor({
+    const { data, errors } = await this.privateClient.createActor({
       actorData: {
         actorGroupID: actorGroupID,
         name: actorName,
@@ -585,7 +603,7 @@ export class AlkemioClient {
     impact = '',
     description = ''
   ) {
-    const { data, errors } = await this.client.updateActor({
+    const { data, errors } = await this.privateClient.updateActor({
       actorData: {
         ID: actorID,
         name: actorName,
@@ -607,7 +625,7 @@ export class AlkemioClient {
     framing: string,
     explanation: string
   ) {
-    const { data, errors } = await this.client.createAspect({
+    const { data, errors } = await this.privateClient.createAspect({
       aspectData: {
         parentID: contextID,
         title,
@@ -629,7 +647,7 @@ export class AlkemioClient {
     const ecoverseInfo = await this.hubInfo(hubID);
     const communityID = ecoverseInfo?.community?.id;
     if (!communityID) return;
-    const { data, errors } = await this.client.createGroupOnCommunity({
+    const { data, errors } = await this.privateClient.createGroupOnCommunity({
       groupData: {
         name: groupName,
         parentID: communityID,
@@ -645,7 +663,7 @@ export class AlkemioClient {
   }
 
   public async createOrganization(displayName: string, nameID: string) {
-    const { data, errors } = await this.client.createOrganization({
+    const { data, errors } = await this.privateClient.createOrganization({
       organizationData: {
         nameID: nameID,
         displayName: displayName,
@@ -658,7 +676,7 @@ export class AlkemioClient {
   }
 
   public async organizations() {
-    const { data, errors } = await this.client.organizations();
+    const { data, errors } = await this.privateClient.organizations();
 
     this.errorHandler(errors);
 
@@ -666,7 +684,7 @@ export class AlkemioClient {
   }
 
   public async organization(orgID: string) {
-    const { data, errors } = await this.client.organization({
+    const { data, errors } = await this.privateClient.organization({
       id: orgID,
     });
 
@@ -676,7 +694,7 @@ export class AlkemioClient {
   }
 
   public async challenges(hubID: string) {
-    const { data, errors } = await this.client.challenges({
+    const { data, errors } = await this.privateClient.challenges({
       hubID: hubID,
     });
 
@@ -686,7 +704,7 @@ export class AlkemioClient {
   }
 
   public async updateChallenge(challenge: UpdateChallengeInput) {
-    const { data, errors } = await this.client.updateChallenge({
+    const { data, errors } = await this.privateClient.updateChallenge({
       challengeData: challenge,
     });
 
@@ -696,7 +714,7 @@ export class AlkemioClient {
   }
 
   public async updateOpportunity(opportunity: UpdateOpportunityInput) {
-    const { data, errors } = await this.client.updateOpportunity({
+    const { data, errors } = await this.privateClient.updateOpportunity({
       opportunityData: opportunity,
     });
 
@@ -706,7 +724,7 @@ export class AlkemioClient {
   }
 
   public async updateOrganization(organization: UpdateOrganizationInput) {
-    const { data, errors } = await this.client.updateOrganization({
+    const { data, errors } = await this.privateClient.updateOrganization({
       organizationData: organization,
     });
 
@@ -716,7 +734,7 @@ export class AlkemioClient {
   }
 
   public async createUser(user: CreateUserInput) {
-    const { data, errors } = await this.client.createUser({
+    const { data, errors } = await this.privateClient.createUser({
       userData: user,
     });
 
@@ -726,7 +744,7 @@ export class AlkemioClient {
   }
 
   public async groups(hubID: string) {
-    const { data, errors } = await this.client.groups({
+    const { data, errors } = await this.privateClient.groups({
       hubID: hubID,
     });
 
@@ -741,7 +759,7 @@ export class AlkemioClient {
   }
 
   public async users() {
-    const { data, errors } = await this.client.users();
+    const { data, errors } = await this.privateClient.users();
 
     this.errorHandler(errors);
 
@@ -762,9 +780,11 @@ export class AlkemioClient {
     };
 
     if (!includeUserPreferences) {
-      queryResult = await this.client.usersWithAuthorizationCredential(payload);
+      queryResult = await this.privateClient.usersWithAuthorizationCredential(
+        payload
+      );
     } else {
-      queryResult = await this.client.usersWithAuthorizationCredentialWithPreferences(
+      queryResult = await this.privateClient.usersWithAuthorizationCredentialWithPreferences(
         payload
       );
     }
@@ -775,7 +795,7 @@ export class AlkemioClient {
   }
 
   public async hubs() {
-    const { data, errors } = await this.client.hubs();
+    const { data, errors } = await this.privateClient.hubs();
 
     this.errorHandler(errors);
 
@@ -783,7 +803,7 @@ export class AlkemioClient {
   }
 
   public async opportunities(hubID: string) {
-    const { data, errors } = await this.client.opportunities({
+    const { data, errors } = await this.privateClient.opportunities({
       hubID: hubID,
     });
 
@@ -798,7 +818,7 @@ export class AlkemioClient {
       throw new Error(`Unable to locate community: ${communityID}`);
     const cID = communityID;
 
-    const { data, errors } = await this.client.addUserToCommunity({
+    const { data, errors } = await this.privateClient.addUserToCommunity({
       input: {
         userID: uID,
         communityID: cID,
@@ -847,7 +867,7 @@ export class AlkemioClient {
     }
 
     for (const newRef of newReferences) {
-      this.client.createReferenceOnContext({
+      this.privateClient.createReferenceOnContext({
         input: {
           contextID: contextId,
           name: newRef.name || '',

@@ -18,21 +18,22 @@ Finally, this package provides a utility for carrying out performance test data 
 ## Connecting to the Alkemio platform api
 To use this package, first instantiate an instance of the AlkemioClient class, passing in the Alkemio server end point:
 ```
-  const ctClient = new AlkemioClient({
-    graphqlEndpoint: 'http://localhost:3000/graphql',
+  const alkemioClient = new AlkemioClient({
+    apiEndpointPrivateGraphql: 'http://localhost:3000/api/private/non-interactive/graphql',
   });
   ```
 The ctClient can then be used to access the Alkemio server api using provided wrapper methods e.g.
 ```
-  await ctClient.testConnection();
+  await alkemioClient.testConnection();
 ```
 The capabilities provided by the Alkemio server api is continually expanding, so not all capabillities of the server are guaranteed to be exposed by this package. For full details of the graphql api exposed by the Alkemio server please browse the schema for the graphql api via our [Dev environment](http://dev.alkem.io/graphql).
 
 The set of wrapper calls provided is based on needs to date; feel free to augment with new ones as the needs arise.
 
 ## Authentication
-The following environment variables are used to specify the authentication parameters:
+The following environment variables are used to specify the api endpoint and authentication parameters:
 
+* API_ENDPOINT_PRIVATE_GRAPHQL=http://localhost:3000/api/private/non-interactive/graphql
 * AUTH_ORY_KRATOS_PUBLIC_BASE_URL=http://localhost:3000/identity/ory/kratos/public
 * AUTH_ADMIN_EMAIL=admin@alkem.io
 * AUTH_ADMIN_PASSWORD=changeMe

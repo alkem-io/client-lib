@@ -1,6 +1,6 @@
 import { AuthInfo } from 'src/types';
 
 export interface ClientConfig {
-  graphqlEndpoint: string;
+  apiEndpointPrivateGraphql: string;
   authInfo?: AuthInfo;
 }
