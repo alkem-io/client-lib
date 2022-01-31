@@ -30,6 +30,10 @@ fragment OpportunityProfile on Opportunity {
     vision
     impact
     who
+    visuals {
+      name
+      id
+    }
     references {
       name
       uri

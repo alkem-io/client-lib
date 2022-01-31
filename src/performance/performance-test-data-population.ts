@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import request from 'supertest';
 
 const baseUrlDev = 'https://dev.alkem.io/graphql';
 const baseUrlTest = 'https://test.alkem.io/graphql';
-const baseUrlLocalhost = 'http://localhost:3000/graphql';
+const baseUrlLocalhost =
+  'http://localhost:3000/api/private/non-interactive/graphql';
 
 //,
 const authorizationToken = 'Bearer {token}';

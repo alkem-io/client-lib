@@ -6,8 +6,9 @@ const main = async () => {
   dotenv.config();
 
   const ctClient = new AlkemioClient({
-    graphqlEndpoint:
-      process.env.GRAPHQL_ENDPOINT ?? 'http://localhost:3000/graphql',
+    apiEndpointPrivateGraphql:
+      process.env.API_ENDPOINT_PRIVATE_GRAPHQL ??
+      'http://localhost:3000/api/private/non-interactive/graphql',
   });
   ctClient.config.authInfo = {
     credentials: {
@@ -23,7 +24,7 @@ const main = async () => {
   const serverVersion = await ctClient.validateConnection();
   console.log(`Alkemio platform version: ${serverVersion}`);
 
-  const hubID = 'Test';
+  const hubID = 'eco1';
   const hubExists = await ctClient.hubExists(hubID);
   console.log(`Hub '${hubID}' exists: ${hubExists}`);
 };

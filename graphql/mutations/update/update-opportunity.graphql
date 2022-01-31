@@ -5,5 +5,11 @@ mutation updateOpportunity(
     id
     displayName
     nameID
+    context {
+      visuals {
+        id
+        name
+      }
+    }
   }
 }

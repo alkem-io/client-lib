@@ -14,10 +14,9 @@ query hub($id: UUID_NAMEID!) {
         description
         uri
       }
-      visual {
-        avatar
-        background
-        banner
+      visuals {
+        name
+        uri
       }
     }
   }

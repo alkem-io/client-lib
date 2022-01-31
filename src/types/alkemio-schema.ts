@@ -93,15 +93,6 @@ export type ApplicationEventInput = {
   eventName: Scalars['String'];
 };
 
-export type ApplicationReceived = {
-  /** The identifier of the application */
-  applicationID: Scalars['String'];
-  /** The community that was applied to */
-  communityID: Scalars['String'];
-  /** The ID of the user that applied. */
-  userID: Scalars['String'];
-};
-
 export type ApplicationResultEntry = {
   /** ID for the Challenge being applied to, if any. Or the Challenge containing the Opportunity being applied to. */
   challengeID?: Maybe<Scalars['UUID']>;
@@ -247,10 +238,15 @@ export type AuthorizationPolicyRuleCredential = {
 
 export enum AuthorizationPrivilege {
   Create = 'CREATE',
+  CreateCanvas = 'CREATE_CANVAS',
+  CreateHub = 'CREATE_HUB',
+  CreateOrganization = 'CREATE_ORGANIZATION',
   Delete = 'DELETE',
   Grant = 'GRANT',
   Read = 'READ',
+  ReadUsers = 'READ_USERS',
   Update = 'UPDATE',
+  UpdateCanvas = 'UPDATE_CANVAS',
 }
 
 export type Canvas = {
@@ -289,6 +285,13 @@ export enum CanvasCheckoutStateEnum {
   Available = 'AVAILABLE',
   CheckedOut = 'CHECKED_OUT',
 }
+
+export type CanvasContentUpdated = {
+  /** The identifier for the Canvas. */
+  canvasID: Scalars['String'];
+  /** The updated content. */
+  value: Scalars['String'];
+};
 
 export type Challenge = Searchable & {
   /** The activity within this Challenge. */
@@ -388,6 +391,8 @@ export type CommunicationAdminRoomMembershipResult = {
   extraMembers: Array<Scalars['String']>;
   /** A unique identifier for this membership result. */
   id: Scalars['String'];
+  /** The access mode for the room. */
+  joinRule: Scalars['String'];
   /** Name of the room */
   members: Array<Scalars['String']>;
   /** Members of the community that are missing from the room */
@@ -403,6 +408,10 @@ export type CommunicationAdminRoomResult = {
   id: Scalars['String'];
   /** The members of the orphaned room */
   members: Array<Scalars['String']>;
+};
+
+export type CommunicationAdminUpdateRoomsJoinRuleInput = {
+  isPublic: Scalars['Boolean'];
 };
 
 export type CommunicationCreateDiscussionInput = {
@@ -489,7 +498,7 @@ export type Context = {
   /** The goal that is being pursued */
   vision?: Maybe<Scalars['Markdown']>;
   /** The Visual assets for this Context. */
-  visual?: Maybe<Visual>;
+  visuals?: Maybe<Array<Visual>>;
   /** Who should get involved in this challenge */
   who?: Maybe<Scalars['String']>;
 };
@@ -564,8 +573,6 @@ export type CreateContextInput = {
   references?: Maybe<Array<CreateReferenceInput>>;
   tagline?: Maybe<Scalars['String']>;
   vision?: Maybe<Scalars['Markdown']>;
-  /** The Visual assets for the new Context. */
-  visual?: Maybe<CreateVisualInput>;
   who?: Maybe<Scalars['Markdown']>;
 };
 
@@ -611,7 +618,6 @@ export type CreateOrganizationInput = {
 };
 
 export type CreateProfileInput = {
-  avatar?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   referencesData?: Maybe<Array<CreateReferenceInput>>;
   tagsetsData?: Maybe<Array<CreateTagsetInput>>;
@@ -687,12 +693,6 @@ export type CreateUserInput = {
   nameID: Scalars['NameID'];
   phone?: Maybe<Scalars['String']>;
   profileData?: Maybe<CreateProfileInput>;
-};
-
-export type CreateVisualInput = {
-  avatar: Scalars['String'];
-  background?: Maybe<Scalars['String']>;
-  banner?: Maybe<Scalars['String']>;
 };
 
 export type Credential = {
@@ -781,7 +781,7 @@ export type Discussion = {
   category: DiscussionCategory;
   /** The number of comments. */
   commentsCount: Scalars['Float'];
-  /** The id of the user that created this discussion. */
+  /** The id of the user that created this discussion */
   createdBy: Scalars['UUID'];
   /** The description of this Discussion. */
   description: Scalars['String'];
@@ -1038,6 +1038,8 @@ export type Mutation = {
   adminCommunicationEnsureAccessToCommunications: Scalars['Boolean'];
   /** Remove an orphaned room from messaging platform. */
   adminCommunicationRemoveOrphanedRoom: Scalars['Boolean'];
+  /** Allow updating the rule for joining rooms: public or invite. */
+  adminCommunicationUpdateRoomsJoinRule: Scalars['Boolean'];
   /** Assigns a User as an Challenge Admin. */
   assignUserAsChallengeAdmin: User;
   /** Assigns a User as an Ecoverse Admin. */
@@ -1064,8 +1066,6 @@ export type Mutation = {
   authorizationPolicyResetOnOrganization: Organization;
   /** Reset the Authorization policy on the specified User. */
   authorizationPolicyResetOnUser: User;
-  /** Authorizes a User to be able to modify the state on the specified Challenge. */
-  authorizeStateModificationOnChallenge: User;
   /** Creates a new Actor in the specified ActorGroup. */
   createActor: Actor;
   /** Create a new Actor Group on the EcosystemModel. */
@@ -1150,6 +1150,8 @@ export type Mutation = {
   eventOnProject: Project;
   /** Grants an authorization credential to a User. */
   grantCredentialToUser: User;
+  /** Authorizes a User to be able to modify the state on the specified Challenge. */
+  grantStateModificationOnChallenge: User;
   /** Sends a message on the specified User`s behalf and returns the room id */
   messageUser: Scalars['String'];
   /** Removes a message from the specified Discussion. */
@@ -1210,8 +1212,10 @@ export type Mutation = {
   updateUserGroup: UserGroup;
   /** Updates an user preference */
   updateUserPreference: UserPreference;
-  /** Uploads and sets an avatar image for the specified Profile. */
-  uploadAvatar: Profile;
+  /** Updates the image URI for the specified Visual. */
+  updateVisual: Visual;
+  /** Uploads and sets an image for the specified Visual. */
+  uploadImageOnVisual: Visual;
 };
 
 export type MutationAdminCommunicationEnsureAccessToCommunicationsArgs = {
@@ -1220,6 +1224,10 @@ export type MutationAdminCommunicationEnsureAccessToCommunicationsArgs = {
 
 export type MutationAdminCommunicationRemoveOrphanedRoomArgs = {
   orphanedRoomData: CommunicationAdminRemoveOrphanedRoomInput;
+};
+
+export type MutationAdminCommunicationUpdateRoomsJoinRuleArgs = {
+  changeRoomAccessData: CommunicationAdminUpdateRoomsJoinRuleInput;
 };
 
 export type MutationAssignUserAsChallengeAdminArgs = {
@@ -1272,10 +1280,6 @@ export type MutationAuthorizationPolicyResetOnOrganizationArgs = {
 
 export type MutationAuthorizationPolicyResetOnUserArgs = {
   authorizationResetData: UserAuthorizationResetInput;
-};
-
-export type MutationAuthorizeStateModificationOnChallengeArgs = {
-  grantStateModificationVC: ChallengeAuthorizeStateModificationInput;
 };
 
 export type MutationCreateActorArgs = {
@@ -1442,6 +1446,10 @@ export type MutationGrantCredentialToUserArgs = {
   grantCredentialData: GrantAuthorizationCredentialInput;
 };
 
+export type MutationGrantStateModificationOnChallengeArgs = {
+  grantStateModificationVCData: ChallengeAuthorizeStateModificationInput;
+};
+
 export type MutationMessageUserArgs = {
   messageData: UserSendMessageInput;
 };
@@ -1562,9 +1570,13 @@ export type MutationUpdateUserPreferenceArgs = {
   userPreferenceData: UpdateUserPreferenceInput;
 };
 
-export type MutationUploadAvatarArgs = {
+export type MutationUpdateVisualArgs = {
+  updateData: UpdateVisualInput;
+};
+
+export type MutationUploadImageOnVisualArgs = {
   file: Scalars['Upload'];
-  uploadData: UploadProfileAvatarInput;
+  uploadData: VisualUploadImageInput;
 };
 
 export type Nvp = {
@@ -1725,8 +1737,8 @@ export type Platform = {
 export type Profile = {
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
-  /** A URI that points to the location of an avatar, either on a shared location or a gravatar */
-  avatar?: Maybe<Scalars['String']>;
+  /** The Visual avatar for this Profile. */
+  avatar?: Maybe<Visual>;
   /** A short description of the entity associated with this profile. */
   description?: Maybe<Scalars['String']>;
   /** The ID of the entity */
@@ -1765,6 +1777,8 @@ export type Query = {
   adminCommunicationMembership: CommunicationAdminMembershipResult;
   /** Usage of the messaging platform that are not tied to the domain model. */
   adminCommunicationOrphanedUsage: CommunicationAdminOrphanedUsageResult;
+  /** The authorization policy for the platform */
+  authorization: Authorization;
   /** Alkemio configuration. Provides configuration to external services in the Alkemio ecosystem. */
   configuration: Config;
   /** An ecoverse. If no ID is specified then the first Ecoverse is returned. */
@@ -1974,16 +1988,24 @@ export type ServiceMetadata = {
 };
 
 export type Subscription = {
-  /** Receive new applications with filtering. */
-  applicationReceived: ApplicationReceived;
-  /** Receive new Discussion messages on Communities the currently authenticated User is a member of. */
+  /** Receive updated content of a canvas */
+  canvasContentUpdated: CanvasContentUpdated;
+  /** Receive new Discussion messages */
   communicationDiscussionMessageReceived: CommunicationDiscussionMessageReceived;
   /** Receive new Update messages on Communities the currently authenticated User is a member of. */
   communicationUpdateMessageReceived: CommunicationUpdateMessageReceived;
 };
 
-export type SubscriptionApplicationReceivedArgs = {
-  communityID: Scalars['String'];
+export type SubscriptionCanvasContentUpdatedArgs = {
+  canvasIDs?: Maybe<Array<Scalars['UUID']>>;
+};
+
+export type SubscriptionCommunicationDiscussionMessageReceivedArgs = {
+  discussionIDs?: Maybe<Array<Scalars['UUID']>>;
+};
+
+export type SubscriptionCommunicationUpdateMessageReceivedArgs = {
+  updatesIDs?: Maybe<Array<Scalars['UUID']>>;
 };
 
 export type Tagset = {
@@ -2072,8 +2094,6 @@ export type UpdateContextInput = {
   references?: Maybe<Array<UpdateReferenceInput>>;
   tagline?: Maybe<Scalars['String']>;
   vision?: Maybe<Scalars['Markdown']>;
-  /** Update the Visual assets for the new Context. */
-  visual?: Maybe<UpdateVisualInput>;
   who?: Maybe<Scalars['Markdown']>;
 };
 
@@ -2138,7 +2158,6 @@ export type UpdateOrganizationInput = {
 
 export type UpdateProfileInput = {
   ID: Scalars['UUID'];
-  avatar?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   references?: Maybe<Array<UpdateReferenceInput>>;
   tagsets?: Maybe<Array<UpdateTagsetInput>>;
@@ -2199,9 +2218,8 @@ export type UpdateUserPreferenceInput = {
 };
 
 export type UpdateVisualInput = {
-  avatar?: Maybe<Scalars['String']>;
-  background?: Maybe<Scalars['String']>;
-  banner?: Maybe<Scalars['String']>;
+  uri: Scalars['String'];
+  visualID: Scalars['String'];
 };
 
 export type Updates = {
@@ -2225,11 +2243,6 @@ export type UpdatesSendMessageInput = {
   message: Scalars['String'];
   /** The Updates the message is being sent to */
   updatesID: Scalars['UUID'];
-};
-
-export type UploadProfileAvatarInput = {
-  file: Scalars['String'];
-  profileID: Scalars['String'];
 };
 
 export type User = Searchable & {
@@ -2369,7 +2382,7 @@ export type VerifiedCredential = {
   /** JSON for the claim in the credential */
   claim: Scalars['JSON'];
   /** The time at which the credential was issued */
-  issued: Scalars['DateTime'];
+  issued: Scalars['String'];
   /** The challenge issuing the VC */
   issuer: Scalars['String'];
   /** The type of VC */
@@ -2377,12 +2390,25 @@ export type VerifiedCredential = {
 };
 
 export type Visual = {
-  /** The avatar (logo) to be used. */
-  avatar: Scalars['String'];
-  /** The background image to be used, for example when displaying previews. */
-  background: Scalars['String'];
-  /** The banner to be shown at the top of the page. */
-  banner: Scalars['String'];
+  allowedTypes: Array<Scalars['String']>;
+  /** Aspect ratio width / height. */
+  aspectRatio: Scalars['Float'];
+  /** The authorization rules for the entity */
+  authorization?: Maybe<Authorization>;
   /** The ID of the entity */
   id: Scalars['UUID'];
+  /** Maximum height resolution. */
+  maxHeight: Scalars['Float'];
+  /** Maximum width resolution. */
+  maxWidth: Scalars['Float'];
+  /** Minimum height resolution. */
+  minHeight: Scalars['Float'];
+  /** Minimum width resolution. */
+  minWidth: Scalars['Float'];
+  name: Scalars['String'];
+  uri: Scalars['String'];
+};
+
+export type VisualUploadImageInput = {
+  visualID: Scalars['String'];
 };

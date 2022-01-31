@@ -5,6 +5,9 @@ mutation createOrganization($organizationData: CreateOrganizationInput!) {
     id
     profile {
       id
+      avatar {
+        id
+      }
     }
   }
 }

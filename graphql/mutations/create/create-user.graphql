@@ -4,6 +4,9 @@ mutation createUser($userData: CreateUserInput!) {
     id
     profile {
       id
+      avatar {
+        id
+      }
     }
   }
 }

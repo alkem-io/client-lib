@@ -3,6 +3,12 @@ query hubs {
     displayName
     id
     nameID
+    context {
+      visuals {
+        name
+        id
+      }
+    }
 
   }
 }

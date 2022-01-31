@@ -3,5 +3,11 @@ mutation createOpportunity($opportunityData: CreateOpportunityInput!) {
     id
     displayName
     nameID
+    context {
+      visuals {
+        name
+        id
+      }
+    }
   }
 }

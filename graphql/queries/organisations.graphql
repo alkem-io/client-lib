@@ -5,7 +5,10 @@ query organizations {
     nameID
     profile {
       id
-      avatar
+      avatar {
+        id
+        uri
+      }
       description
     }
     agent {
