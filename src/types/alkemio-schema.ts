@@ -124,11 +124,26 @@ export type ApplicationTemplate = {
 export type Aspect = {
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
-  explanation: Scalars['String'];
-  framing: Scalars['String'];
+  /** The banner Visual for this Aspect. */
+  banner?: Maybe<Visual>;
+  /** The narrow banner visual for this Aspect. */
+  bannerNarrow?: Maybe<Visual>;
+  /** The comments for this Aspect. */
+  comments?: Maybe<Comments>;
+  /** The id of the user that created this Aspect */
+  createdBy: Scalars['UUID'];
+  description: Scalars['String'];
+  /** The display name. */
+  displayName: Scalars['String'];
   /** The ID of the entity */
   id: Scalars['UUID'];
-  title: Scalars['String'];
+  /** A name identifier of the entity, unique within a given scope. */
+  nameID: Scalars['NameID'];
+  /** The References for this Aspect. */
+  references?: Maybe<Array<Reference>>;
+  /** The set of tags for the Aspect */
+  tagset?: Maybe<Tagset>;
+  type: Scalars['String'];
 };
 
 export type AssignChallengeAdminInput = {
@@ -238,6 +253,7 @@ export type AuthorizationPolicyRuleCredential = {
 
 export enum AuthorizationPrivilege {
   Create = 'CREATE',
+  CreateAspect = 'CREATE_ASPECT',
   CreateCanvas = 'CREATE_CANVAS',
   CreateHub = 'CREATE_HUB',
   CreateOrganization = 'CREATE_ORGANIZATION',
@@ -339,6 +355,36 @@ export type ChallengeTemplate = {
   applications?: Maybe<Array<ApplicationTemplate>>;
   /** Challenge template name. */
   name: Scalars['String'];
+};
+
+export type Comments = {
+  /** The authorization rules for the entity */
+  authorization?: Maybe<Authorization>;
+  /** The ID of the entity */
+  id: Scalars['UUID'];
+  /** Messages in this Comments. */
+  messages?: Maybe<Array<Message>>;
+};
+
+export type CommentsMessageReceived = {
+  /** The identifier for the Comments on which the message was sent. */
+  commentsID: Scalars['String'];
+  /** The message that has been sent. */
+  message: Message;
+};
+
+export type CommentsRemoveMessageInput = {
+  /** The Comments the message is being removed from. */
+  commentsID: Scalars['UUID'];
+  /** The message id that should be removed */
+  messageID: Scalars['String'];
+};
+
+export type CommentsSendMessageInput = {
+  /** The Comments the message is being sent to */
+  commentsID: Scalars['UUID'];
+  /** The message being sent */
+  message: Scalars['String'];
 };
 
 export type Communication = {
@@ -491,7 +537,7 @@ export type Context = {
   id: Scalars['UUID'];
   /** What is the potential impact? */
   impact?: Maybe<Scalars['Markdown']>;
-  /** A list of URLs to relevant information. */
+  /** The References for this Context. */
   references?: Maybe<Array<Reference>>;
   /** A one line description */
   tagline?: Maybe<Scalars['String']>;
@@ -528,10 +574,14 @@ export type CreateApplicationInput = {
 };
 
 export type CreateAspectInput = {
-  explanation: Scalars['String'];
-  framing: Scalars['String'];
-  parentID: Scalars['UUID'];
-  title: Scalars['String'];
+  contextID: Scalars['UUID'];
+  description: Scalars['String'];
+  /** The display name for the entity. */
+  displayName?: Maybe<Scalars['String']>;
+  /** A readable identifier, unique within the containing scope. */
+  nameID: Scalars['NameID'];
+  tags?: Maybe<Array<Scalars['String']>>;
+  type: Scalars['String'];
 };
 
 export type CreateCanvasOnContextInput = {
@@ -633,6 +683,13 @@ export type CreateProjectInput = {
 };
 
 export type CreateReferenceInput = {
+  description?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  uri?: Maybe<Scalars['String']>;
+};
+
+export type CreateReferenceOnAspectInput = {
+  aspectID: Scalars['UUID'];
   description?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   uri?: Maybe<Scalars['String']>;
@@ -1073,7 +1130,7 @@ export type Mutation = {
   /** Creates Application for a User to join this Community. */
   createApplication: Application;
   /** Create a new Aspect on the Context. */
-  createAspect: Aspect;
+  createAspectOnContext: Aspect;
   /** Create a new Canvas on the Context. */
   createCanvasOnContext: Canvas;
   /** Creates a new Challenge within the specified Ecoverse. */
@@ -1094,6 +1151,8 @@ export type Mutation = {
   createOrganization: Organization;
   /** Create a new Project on the Opportunity */
   createProject: Project;
+  /** Creates a new Reference on the specified Aspect. */
+  createReferenceOnAspect: Reference;
   /** Creates a new Reference on the specified Context. */
   createReferenceOnContext: Reference;
   /** Creates a new Reference on the specified Profile. */
@@ -1154,6 +1213,8 @@ export type Mutation = {
   grantStateModificationOnChallenge: User;
   /** Sends a message on the specified User`s behalf and returns the room id */
   messageUser: Scalars['String'];
+  /** Removes a comment message. */
+  removeComment: Scalars['MessageID'];
   /** Removes a message from the specified Discussion. */
   removeMessageFromDiscussion: Scalars['MessageID'];
   /** Removes an update message. */
@@ -1180,6 +1241,8 @@ export type Mutation = {
   removeUserFromOrganization: Organization;
   /** Removes an authorization credential from a User. */
   revokeCredentialFromUser: User;
+  /** Sends an comment message. Returns the id of the new Update message. */
+  sendComment: Message;
   /** Sends a message to the specified Discussion.  */
   sendMessageToDiscussion: Message;
   /** Sends an update message. Returns the id of the new Update message. */
@@ -1294,7 +1357,7 @@ export type MutationCreateApplicationArgs = {
   applicationData: CreateApplicationInput;
 };
 
-export type MutationCreateAspectArgs = {
+export type MutationCreateAspectOnContextArgs = {
   aspectData: CreateAspectInput;
 };
 
@@ -1336,6 +1399,10 @@ export type MutationCreateOrganizationArgs = {
 
 export type MutationCreateProjectArgs = {
   projectData: CreateProjectInput;
+};
+
+export type MutationCreateReferenceOnAspectArgs = {
+  referenceData: CreateReferenceOnAspectInput;
 };
 
 export type MutationCreateReferenceOnContextArgs = {
@@ -1454,6 +1521,10 @@ export type MutationMessageUserArgs = {
   messageData: UserSendMessageInput;
 };
 
+export type MutationRemoveCommentArgs = {
+  messageData: CommentsRemoveMessageInput;
+};
+
 export type MutationRemoveMessageFromDiscussionArgs = {
   messageData: DiscussionRemoveMessageInput;
 };
@@ -1504,6 +1575,10 @@ export type MutationRemoveUserFromOrganizationArgs = {
 
 export type MutationRevokeCredentialFromUserArgs = {
   revokeCredentialData: RevokeAuthorizationCredentialInput;
+};
+
+export type MutationSendCommentArgs = {
+  messageData: CommentsSendMessageInput;
 };
 
 export type MutationSendMessageToDiscussionArgs = {
@@ -1833,6 +1908,11 @@ export type QueryOrganizationArgs = {
   ID: Scalars['UUID_NAMEID'];
 };
 
+export type QueryOrganizationsArgs = {
+  limit?: Maybe<Scalars['Float']>;
+  shuffle?: Maybe<Scalars['Boolean']>;
+};
+
 export type QuerySearchArgs = {
   searchData: SearchInput;
 };
@@ -1843,6 +1923,11 @@ export type QueryUserArgs = {
 
 export type QueryUserAuthorizationPrivilegesArgs = {
   userAuthorizationPrivilegesData: UserAuthorizationPrivilegesInput;
+};
+
+export type QueryUsersArgs = {
+  limit?: Maybe<Scalars['Float']>;
+  shuffle?: Maybe<Scalars['Boolean']>;
 };
 
 export type QueryUsersByIdArgs = {
@@ -1992,6 +2077,10 @@ export type Subscription = {
   canvasContentUpdated: CanvasContentUpdated;
   /** Receive new Discussion messages */
   communicationDiscussionMessageReceived: CommunicationDiscussionMessageReceived;
+  /** Receive new Discussion messages */
+  communicationDiscussionMessageReceived2: CommunicationDiscussionMessageReceived;
+  /** Receive updates on Discussions */
+  communicationDiscussionUpdated: Discussion;
   /** Receive new Update messages on Communities the currently authenticated User is a member of. */
   communicationUpdateMessageReceived: CommunicationUpdateMessageReceived;
 };
@@ -2002,6 +2091,14 @@ export type SubscriptionCanvasContentUpdatedArgs = {
 
 export type SubscriptionCommunicationDiscussionMessageReceivedArgs = {
   discussionIDs?: Maybe<Array<Scalars['UUID']>>;
+};
+
+export type SubscriptionCommunicationDiscussionMessageReceived2Args = {
+  discussionID: Scalars['UUID'];
+};
+
+export type SubscriptionCommunicationDiscussionUpdatedArgs = {
+  communicationID: Scalars['UUID'];
 };
 
 export type SubscriptionCommunicationUpdateMessageReceivedArgs = {
@@ -2051,9 +2148,13 @@ export type UpdateActorInput = {
 
 export type UpdateAspectInput = {
   ID: Scalars['UUID'];
-  explanation?: Maybe<Scalars['String']>;
-  framing?: Maybe<Scalars['String']>;
-  title?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  /** The display name for this entity. */
+  displayName?: Maybe<Scalars['String']>;
+  /** A display identifier, unique within the containing scope. Note: updating the nameID will affect URL on the client. */
+  nameID?: Maybe<Scalars['NameID']>;
+  /** Update the tags on the Aspect. */
+  tags?: Maybe<Array<Scalars['String']>>;
 };
 
 export type UpdateAuthorizationPolicyInput = {

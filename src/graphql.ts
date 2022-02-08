@@ -190,12 +190,20 @@ export type CreateActorMutation = {
   };
 };
 
-export type CreateAspectMutationVariables = SchemaTypes.Exact<{
+export type CreateAspectOnContextMutationVariables = SchemaTypes.Exact<{
   aspectData: SchemaTypes.CreateAspectInput;
 }>;
 
-export type CreateAspectMutation = {
-  createAspect: { title: string; framing: string; explanation: string };
+export type CreateAspectOnContextMutation = {
+  createAspectOnContext: {
+    id: string;
+    nameID: string;
+    displayName: string;
+    description: string;
+    tagset?: SchemaTypes.Maybe<{ tags: Array<string> }>;
+    banner?: SchemaTypes.Maybe<{ id: string }>;
+    bannerNarrow?: SchemaTypes.Maybe<{ id: string }>;
+  };
 };
 
 export type CreateChallengeMutationVariables = SchemaTypes.Exact<{
@@ -448,6 +456,7 @@ export type ChallengeQuery = {
       displayName: string;
       community?: SchemaTypes.Maybe<{ id: string; displayName: string }>;
       leadOrganizations: Array<{ nameID: string; id: string }>;
+      context?: SchemaTypes.Maybe<{ id: string }>;
     };
   };
 };
@@ -962,12 +971,22 @@ export const CreateActorDocument = gql`
     }
   }
 `;
-export const CreateAspectDocument = gql`
-  mutation createAspect($aspectData: CreateAspectInput!) {
-    createAspect(aspectData: $aspectData) {
-      title
-      framing
-      explanation
+export const CreateAspectOnContextDocument = gql`
+  mutation createAspectOnContext($aspectData: CreateAspectInput!) {
+    createAspectOnContext(aspectData: $aspectData) {
+      id
+      nameID
+      displayName
+      tagset {
+        tags
+      }
+      description
+      banner {
+        id
+      }
+      bannerNarrow {
+        id
+      }
     }
   }
 `;
@@ -1224,6 +1243,9 @@ export const ChallengeDocument = gql`
         }
         leadOrganizations {
           nameID
+          id
+        }
+        context {
           id
         }
       }
@@ -1718,18 +1740,18 @@ export function getSdk(
         )
       );
     },
-    createAspect(
-      variables: CreateAspectMutationVariables
+    createAspectOnContext(
+      variables: CreateAspectOnContextMutationVariables
     ): Promise<{
-      data?: CreateAspectMutation | undefined;
+      data?: CreateAspectOnContextMutation | undefined;
       extensions?: any;
       headers: Headers;
       status: number;
       errors?: GraphQLError[] | undefined;
     }> {
       return withWrapper(() =>
-        client.rawRequest<CreateAspectMutation>(
-          print(CreateAspectDocument),
+        client.rawRequest<CreateAspectOnContextMutation>(
+          print(CreateAspectOnContextDocument),
           variables
         )
       );
