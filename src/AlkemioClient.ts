@@ -18,6 +18,7 @@ import {
   OrganizationAuthorizationResetInput,
   CreateChallengeOnChallengeInput,
   AuthorizationCredential,
+  CreateAspectInput,
 } from './types/alkemio-schema';
 import { ErrorHandler, handleErrors } from './util/handleErrors';
 import semver from 'semver';
@@ -619,24 +620,29 @@ export class AlkemioClient {
   }
 
   // Create a aspect for the given context
-  async createAspect(
+  async createAspectOnContext(
     contextID: string,
-    title: string,
-    framing: string,
-    explanation: string
+    type: string,
+    displayName: string,
+    nameID: string,
+    description: string,
+    tags?: string[]
   ) {
-    const { data, errors } = await this.privateClient.createAspect({
-      aspectData: {
-        parentID: contextID,
-        title,
-        framing,
-        explanation,
-      },
+    const aspectData: CreateAspectInput = {
+      type,
+      contextID,
+      displayName,
+      nameID,
+      description,
+      tags,
+    };
+    const { data, errors } = await this.privateClient.createAspectOnContext({
+      aspectData: aspectData,
     });
 
     this.errorHandler(errors);
 
-    return data?.createAspect;
+    return data?.createAspectOnContext;
   }
 
   async createUserGroupOnHub(

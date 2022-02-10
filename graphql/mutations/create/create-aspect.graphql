@@ -1,7 +1,17 @@
-mutation createAspect($aspectData: CreateAspectInput!) {
-  createAspect(aspectData: $aspectData) {
-    title
-    framing
-    explanation
+mutation createAspectOnContext($aspectData: CreateAspectInput!) {
+  createAspectOnContext(aspectData: $aspectData) {
+    id
+    nameID
+    displayName
+    tagset {
+       tags
+    }
+    description
+    banner {
+      id
+    }
+    bannerNarrow {
+      id
+    }
   }
 }
