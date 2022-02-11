@@ -18,7 +18,7 @@ import {
   OrganizationAuthorizationResetInput,
   CreateChallengeOnChallengeInput,
   AuthorizationCredential,
-  CreateAspectInput,
+  CreateAspectOnContextInput,
 } from './types/alkemio-schema';
 import { ErrorHandler, handleErrors } from './util/handleErrors';
 import semver from 'semver';
@@ -628,7 +628,7 @@ export class AlkemioClient {
     description: string,
     tags?: string[]
   ) {
-    const aspectData: CreateAspectInput = {
+    const aspectData: CreateAspectOnContextInput = {
       type,
       contextID,
       displayName,

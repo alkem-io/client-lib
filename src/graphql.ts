@@ -191,7 +191,7 @@ export type CreateActorMutation = {
 };
 
 export type CreateAspectOnContextMutationVariables = SchemaTypes.Exact<{
-  aspectData: SchemaTypes.CreateAspectInput;
+  aspectData: SchemaTypes.CreateAspectOnContextInput;
 }>;
 
 export type CreateAspectOnContextMutation = {
