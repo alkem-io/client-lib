@@ -972,7 +972,7 @@ export const CreateActorDocument = gql`
   }
 `;
 export const CreateAspectOnContextDocument = gql`
-  mutation createAspectOnContext($aspectData: CreateAspectInput!) {
+  mutation createAspectOnContext($aspectData: CreateAspectOnContextInput!) {
     createAspectOnContext(aspectData: $aspectData) {
       id
       nameID
