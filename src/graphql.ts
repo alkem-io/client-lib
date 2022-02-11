@@ -191,7 +191,7 @@ export type CreateActorMutation = {
 };
 
 export type CreateAspectOnContextMutationVariables = SchemaTypes.Exact<{
-  aspectData: SchemaTypes.CreateAspectInput;
+  aspectData: SchemaTypes.CreateAspectOnContextInput;
 }>;
 
 export type CreateAspectOnContextMutation = {
@@ -972,7 +972,7 @@ export const CreateActorDocument = gql`
   }
 `;
 export const CreateAspectOnContextDocument = gql`
-  mutation createAspectOnContext($aspectData: CreateAspectInput!) {
+  mutation createAspectOnContext($aspectData: CreateAspectOnContextInput!) {
     createAspectOnContext(aspectData: $aspectData) {
       id
       nameID
