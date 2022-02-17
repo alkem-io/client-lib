@@ -23,17 +23,17 @@ const numberOfUsers = 2;
 // Specify the number of Challenges to be created
 const numberOfChallenges = 1;
 
-// Specify the number of Groups to be created on Ecoverse
-const numberOfGroupsOnEcoverse = 1;
+// Specify the number of Groups to be created on Hub
+const numberOfGroupsOnHub = 1;
 
-// Specify the Ecoverse Group Id to which you want to add Users
-const ecoverseGroupId = 2;
+// Specify the Hub Group Id to which you want to add Users
+const hubGroupId = 2;
 
 // Specify the Challenge Id to which you want to add Users
 const challangeId = 1;
 
 // Specify the range of Users from - to which to be added on a Challenge or a Group
-// Utilized in functions: 'addUsersToEcoverseGroups()' and 'addUsersToChallengePopulation()'
+// Utilized in functions: 'addUsersToHubGroups()' and 'addUsersToChallengePopulation()'
 const fromUserId = 1;
 const toUserId = 2;
 
@@ -121,11 +121,11 @@ export const createChallangeMutation = async (challengeName: string) => {
   return await graphqlRequest(requestParams);
 };
 
-export const createGroupOnEcoverseMutation = async (testGroup: string) => {
+export const createGroupOnHubMutation = async (testGroup: string) => {
   const requestParams = {
-    operationName: 'CreateGroupOnEcoverse',
-    query: `mutation CreateGroupOnEcoverse($groupName: String!) {
-          createGroupOnEcoverse(groupName: $groupName) {
+    operationName: 'CreateGroupOnHub',
+    query: `mutation CreateGroupOnHub($groupName: String!) {
+          createGroupOnHub(groupName: $groupName) {
             name,
             id,
           }
@@ -275,21 +275,21 @@ const createPerformanceTestData = async () => {
   }
 };
 
-// This function creates Ecoverse Groups
-const createGroupSOnEcoverse = async () => {
-  for (let i = 1; i <= numberOfGroupsOnEcoverse; i++) {
+// This function creates Hub Groups
+const createGroupSOnHub = async () => {
+  for (let i = 1; i <= numberOfGroupsOnHub; i++) {
     groupName = 'groupName ' + ID().toString();
-    const response = await createGroupOnEcoverseMutation(groupName);
+    const response = await createGroupOnHubMutation(groupName);
     console.log(
-      `Ecoverse Group with name: ${response.body.data.createGroupOnEcoverse.name} and id: ${response.body.data.createGroupOnEcoverse.id} is created`
+      `Hub Group with name: ${response.body.data.createGroupOnHub.name} and id: ${response.body.data.createGroupOnHub.id} is created`
     );
   }
 };
 
-// This function adds the Users to a EcoverseGroup with known groupId
-const addUsersToEcoverseGroups = async () => {
+// This function adds the Users to a HubGroup with known groupId
+const addUsersToHubGroups = async () => {
   for (let i = fromUserId; i <= toUserId; i++) {
-    const response = await addUserToGroupMutation([i], ecoverseGroupId);
+    const response = await addUserToGroupMutation([i], hubGroupId);
     const responseUserAddedToGroup = response.body.data.addUserToGroup;
     console.log(
       `User with id: '${[i]}' is added to Group: '${responseUserAddedToGroup}'`
@@ -316,7 +316,7 @@ const addUsersToChallengePopulation = async () => {
 
 //createUsers();
 //createChallenges();
-//createGroupSOnEcoverse();
-//addUsersToEcoverseGroups();
+//createGroupSOnHub();
+//addUsersToHubGroups();
 //addUsersToChallengePopulation();
 createPerformanceTestData();

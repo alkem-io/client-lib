@@ -1,5 +1,5 @@
-mutation assignUserAsHubAdmin($membershipData: AssignEcoverseAdminInput!) {
-  assignUserAsEcoverseAdmin(membershipData: $membershipData) {
+mutation assignUserAsHubAdmin($membershipData: AssignHubAdminInput!) {
+  assignUserAsHubAdmin(membershipData: $membershipData) {
     id,
   }
 }

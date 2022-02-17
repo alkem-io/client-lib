@@ -89,11 +89,11 @@ export type AssignUserAsChallengeAdminMutation = {
 };
 
 export type AssignUserAsHubAdminMutationVariables = SchemaTypes.Exact<{
-  membershipData: SchemaTypes.AssignEcoverseAdminInput;
+  membershipData: SchemaTypes.AssignHubAdminInput;
 }>;
 
 export type AssignUserAsHubAdminMutation = {
-  assignUserAsEcoverseAdmin: { id: string };
+  assignUserAsHubAdmin: { id: string };
 };
 
 export type AssignUserAsOrganizationAdminMutationVariables = SchemaTypes.Exact<{
@@ -105,11 +105,11 @@ export type AssignUserAsOrganizationAdminMutation = {
 };
 
 export type AuthorizationPolicyResetOnHubMutationVariables = SchemaTypes.Exact<{
-  authorizationResetData: SchemaTypes.EcoverseAuthorizationResetInput;
+  authorizationResetData: SchemaTypes.HubAuthorizationResetInput;
 }>;
 
 export type AuthorizationPolicyResetOnHubMutation = {
-  authorizationPolicyResetOnEcoverse: { nameID: string };
+  authorizationPolicyResetOnHub: { nameID: string };
 };
 
 export type AuthorizationPolicyResetOnOrganizationMutationVariables = SchemaTypes.Exact<{
@@ -207,7 +207,7 @@ export type CreateAspectOnContextMutation = {
 };
 
 export type CreateChallengeMutationVariables = SchemaTypes.Exact<{
-  challengeData: SchemaTypes.CreateChallengeOnEcoverseInput;
+  challengeData: SchemaTypes.CreateChallengeOnHubInput;
 }>;
 
 export type CreateChallengeMutation = {
@@ -266,11 +266,11 @@ export type CreateGroupOnOrganizationMutation = {
 };
 
 export type CreateHubMutationVariables = SchemaTypes.Exact<{
-  hubData: SchemaTypes.CreateEcoverseInput;
+  hubData: SchemaTypes.CreateHubInput;
 }>;
 
 export type CreateHubMutation = {
-  createEcoverse: {
+  createHub: {
     id: string;
     nameID: string;
     context?: SchemaTypes.Maybe<{
@@ -385,11 +385,11 @@ export type UpdateChallengeMutation = {
 };
 
 export type UpdateHubMutationVariables = SchemaTypes.Exact<{
-  hubData: SchemaTypes.UpdateEcoverseInput;
+  hubData: SchemaTypes.UpdateHubInput;
 }>;
 
 export type UpdateHubMutation = {
-  updateEcoverse: {
+  updateHub: {
     nameID: string;
     host?: SchemaTypes.Maybe<{ nameID: string }>;
     context?: SchemaTypes.Maybe<{
@@ -449,7 +449,7 @@ export type ChallengeQueryVariables = SchemaTypes.Exact<{
 }>;
 
 export type ChallengeQuery = {
-  ecoverse: {
+  hub: {
     challenge: {
       nameID: string;
       id: string;
@@ -466,7 +466,7 @@ export type ChallengesQueryVariables = SchemaTypes.Exact<{
 }>;
 
 export type ChallengesQuery = {
-  ecoverse: {
+  hub: {
     challenges?: SchemaTypes.Maybe<
       Array<{
         id: string;
@@ -517,7 +517,7 @@ export type GroupsQueryVariables = SchemaTypes.Exact<{
 }>;
 
 export type GroupsQuery = {
-  ecoverse: {
+  hub: {
     community?: SchemaTypes.Maybe<{
       groups?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
     }>;
@@ -529,7 +529,7 @@ export type HostInfoQueryVariables = SchemaTypes.Exact<{
 }>;
 
 export type HostInfoQuery = {
-  ecoverse: {
+  hub: {
     host?: SchemaTypes.Maybe<{
       id: string;
       nameID: string;
@@ -549,7 +549,7 @@ export type HubQueryVariables = SchemaTypes.Exact<{
 }>;
 
 export type HubQuery = {
-  ecoverse: {
+  hub: {
     id: string;
     nameID: string;
     displayName: string;
@@ -567,7 +567,7 @@ export type HubQuery = {
 export type HubsQueryVariables = SchemaTypes.Exact<{ [key: string]: never }>;
 
 export type HubsQuery = {
-  ecoverses: Array<{
+  hubs: Array<{
     displayName: string;
     id: string;
     nameID: string;
@@ -595,7 +595,7 @@ export type OpportunitiesQueryVariables = SchemaTypes.Exact<{
 }>;
 
 export type OpportunitiesQuery = {
-  ecoverse: {
+  hub: {
     opportunities: Array<
       {
         id: string;
@@ -635,7 +635,7 @@ export type OpportunityQueryVariables = SchemaTypes.Exact<{
 }>;
 
 export type OpportunityQuery = {
-  ecoverse: {
+  hub: {
     opportunity: {
       displayName: string;
       id: string;
@@ -870,8 +870,8 @@ export const AssignUserAsChallengeAdminDocument = gql`
   }
 `;
 export const AssignUserAsHubAdminDocument = gql`
-  mutation assignUserAsHubAdmin($membershipData: AssignEcoverseAdminInput!) {
-    assignUserAsEcoverseAdmin(membershipData: $membershipData) {
+  mutation assignUserAsHubAdmin($membershipData: AssignHubAdminInput!) {
+    assignUserAsHubAdmin(membershipData: $membershipData) {
       id
     }
   }
@@ -887,9 +887,9 @@ export const AssignUserAsOrganizationAdminDocument = gql`
 `;
 export const AuthorizationPolicyResetOnHubDocument = gql`
   mutation authorizationPolicyResetOnHub(
-    $authorizationResetData: EcoverseAuthorizationResetInput!
+    $authorizationResetData: HubAuthorizationResetInput!
   ) {
-    authorizationPolicyResetOnEcoverse(
+    authorizationPolicyResetOnHub(
       authorizationResetData: $authorizationResetData
     ) {
       nameID
@@ -991,7 +991,7 @@ export const CreateAspectOnContextDocument = gql`
   }
 `;
 export const CreateChallengeDocument = gql`
-  mutation createChallenge($challengeData: CreateChallengeOnEcoverseInput!) {
+  mutation createChallenge($challengeData: CreateChallengeOnHubInput!) {
     createChallenge(challengeData: $challengeData) {
       id
       nameID
@@ -1050,8 +1050,8 @@ export const CreateGroupOnOrganizationDocument = gql`
   }
 `;
 export const CreateHubDocument = gql`
-  mutation createHub($hubData: CreateEcoverseInput!) {
-    createEcoverse(ecoverseData: $hubData) {
+  mutation createHub($hubData: CreateHubInput!) {
+    createHub(hubData: $hubData) {
       id
       nameID
       context {
@@ -1169,8 +1169,8 @@ export const UpdateChallengeDocument = gql`
   ${ChallengeDetailsFragmentDoc}
 `;
 export const UpdateHubDocument = gql`
-  mutation updateHub($hubData: UpdateEcoverseInput!) {
-    updateEcoverse(ecoverseData: $hubData) {
+  mutation updateHub($hubData: UpdateHubInput!) {
+    updateHub(hubData: $hubData) {
       nameID
       host {
         nameID
@@ -1232,7 +1232,7 @@ export const UpdateVisualDocument = gql`
 `;
 export const ChallengeDocument = gql`
   query challenge($hubID: UUID_NAMEID!, $challengeID: UUID_NAMEID!) {
-    ecoverse(ID: $hubID) {
+    hub(ID: $hubID) {
       challenge(ID: $challengeID) {
         nameID
         id
@@ -1254,7 +1254,7 @@ export const ChallengeDocument = gql`
 `;
 export const ChallengesDocument = gql`
   query challenges($hubID: UUID_NAMEID!) {
-    ecoverse(ID: $hubID) {
+    hub(ID: $hubID) {
       challenges {
         id
         nameID
@@ -1304,7 +1304,7 @@ export const FeatureFlagsDocument = gql`
 `;
 export const GroupsDocument = gql`
   query groups($hubID: UUID_NAMEID!) {
-    ecoverse(ID: $hubID) {
+    hub(ID: $hubID) {
       community {
         groups {
           id
@@ -1316,7 +1316,7 @@ export const GroupsDocument = gql`
 `;
 export const HostInfoDocument = gql`
   query hostInfo($hubID: UUID_NAMEID!) {
-    ecoverse(ID: $hubID) {
+    hub(ID: $hubID) {
       host {
         id
         nameID
@@ -1335,7 +1335,7 @@ export const HostInfoDocument = gql`
 `;
 export const HubDocument = gql`
   query hub($id: UUID_NAMEID!) {
-    ecoverse(ID: $id) {
+    hub(ID: $id) {
       id
       nameID
       displayName
@@ -1360,7 +1360,7 @@ export const HubDocument = gql`
 `;
 export const HubsDocument = gql`
   query hubs {
-    ecoverses {
+    hubs {
       displayName
       id
       nameID
@@ -1385,7 +1385,7 @@ export const MetadataDocument = gql`
 `;
 export const OpportunitiesDocument = gql`
   query opportunities($hubID: UUID_NAMEID!) {
-    ecoverse(ID: $hubID) {
+    hub(ID: $hubID) {
       opportunities {
         id
         ...OpportunityProfile
@@ -1407,7 +1407,7 @@ export const OpportunitiesDocument = gql`
 `;
 export const OpportunityDocument = gql`
   query opportunity($hubID: UUID_NAMEID!, $opportunityID: UUID_NAMEID!) {
-    ecoverse(ID: $hubID) {
+    hub(ID: $hubID) {
       opportunity(ID: $opportunityID) {
         displayName
         id

@@ -6,8 +6,8 @@ The functions defined in `performance-test-data-population.ts` allows you to aut
   ```
   //createUsers();
   //createChallenges();
-  //createGroupSOnEcoverse();
-  //addUsersToEcoverseGroups();
+  //createGroupSOnHub();
+  //addUsersToHubGroups();
   //addUsersToChallengePopulation();
   createPerformanceTestData();
   ```
@@ -18,9 +18,9 @@ The functions defined in `performance-test-data-population.ts` allows you to aut
     - `let numberOfUsers = 2;`
   - `createChallenges();` - adds `n` number of **Challenges** specified in parameter:
     - `let numberOfChallenges = 1;`
-  - `createGroupSOnEcoverse();` - creates `n` number of **Group on Ecoverse** level
-  - `addUsersToEcoverseGroups();` - adds `n` number of already created **Users** on specific **EcoverseGroup** with the following parameters for groupId and userIds:
-    - `let ecoverseGroupId = 2;`
+  - `createGroupSOnHub();` - creates `n` number of **Group on Hub** level
+  - `addUsersToHubGroups();` - adds `n` number of already created **Users** on specific **HubGroup** with the following parameters for groupId and userIds:
+    - `let hubGroupId = 2;`
     - `let fromUserId = 1;`
     - `let toUserId = 2;`
   - `addUsersToChallengePopulation();` - adds `n` number of already created **Users** on specific **Challenege** with the following parameters for challengeId and userIds:

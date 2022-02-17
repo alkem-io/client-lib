@@ -1,5 +1,5 @@
 query hubs {
-  ecoverses {
+  hubs {
     displayName
     id
     nameID

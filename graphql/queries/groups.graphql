@@ -1,5 +1,5 @@
 query groups($hubID: UUID_NAMEID!) {
-  ecoverse(ID: $hubID) {
+  hub(ID: $hubID) {
     community {
       groups {
         id
