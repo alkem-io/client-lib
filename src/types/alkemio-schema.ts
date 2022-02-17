@@ -132,6 +132,7 @@ export type Aspect = {
   comments?: Maybe<Comments>;
   /** The id of the user that created this Aspect */
   createdBy: Scalars['UUID'];
+  createdDate: Scalars['DateTime'];
   description: Scalars['String'];
   /** The display name. */
   displayName: Scalars['String'];
@@ -146,6 +147,11 @@ export type Aspect = {
   type: Scalars['String'];
 };
 
+export type AspectTemplate = {
+  description: Scalars['String'];
+  type: Scalars['String'];
+};
+
 export type AssignChallengeAdminInput = {
   challengeID: Scalars['UUID'];
   userID: Scalars['UUID_NAMEID_EMAIL'];
@@ -156,16 +162,16 @@ export type AssignCommunityMemberInput = {
   userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
-export type AssignHubAdminInput = {
-  hubID: Scalars['UUID_NAMEID'];
-  userID: Scalars['UUID_NAMEID_EMAIL'];
-};
-
 export type AssignGlobalAdminInput = {
   userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
 export type AssignGlobalCommunityAdminInput = {
+  userID: Scalars['UUID_NAMEID_EMAIL'];
+};
+
+export type AssignHubAdminInput = {
+  hubID: Scalars['UUID_NAMEID'];
   userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
@@ -230,12 +236,12 @@ export enum AuthorizationCredential {
   ChallengeAdmin = 'CHALLENGE_ADMIN',
   ChallengeLead = 'CHALLENGE_LEAD',
   ChallengeMember = 'CHALLENGE_MEMBER',
-  HubAdmin = 'HUB_ADMIN',
-  HubHost = 'HUB_HOST',
-  HubMember = 'HUB_MEMBER',
   GlobalAdmin = 'GLOBAL_ADMIN',
   GlobalAdminCommunity = 'GLOBAL_ADMIN_COMMUNITY',
   GlobalRegistered = 'GLOBAL_REGISTERED',
+  HubAdmin = 'HUB_ADMIN',
+  HubHost = 'HUB_HOST',
+  HubMember = 'HUB_MEMBER',
   OpportunityAdmin = 'OPPORTUNITY_ADMIN',
   OpportunityMember = 'OPPORTUNITY_MEMBER',
   OrganizationAdmin = 'ORGANIZATION_ADMIN',
@@ -255,6 +261,7 @@ export enum AuthorizationPrivilege {
   Create = 'CREATE',
   CreateAspect = 'CREATE_ASPECT',
   CreateCanvas = 'CREATE_CANVAS',
+  CreateComment = 'CREATE_COMMENT',
   CreateHub = 'CREATE_HUB',
   CreateOrganization = 'CREATE_ORGANIZATION',
   Delete = 'DELETE',
@@ -549,6 +556,10 @@ export type Context = {
   who?: Maybe<Scalars['String']>;
 };
 
+export type ContextAspectsArgs = {
+  IDs?: Maybe<Array<Scalars['UUID_NAMEID']>>;
+};
+
 export type ContextCanvasesArgs = {
   IDs?: Maybe<Array<Scalars['UUID']>>;
 };
@@ -577,9 +588,9 @@ export type CreateAspectOnContextInput = {
   contextID: Scalars['UUID'];
   description: Scalars['String'];
   /** The display name for the entity. */
-  displayName?: Maybe<Scalars['String']>;
-  /** A readable identifier, unique within the containing scope. */
-  nameID: Scalars['NameID'];
+  displayName: Scalars['String'];
+  /** A readable identifier, unique within the containing scope. If not provided generate based on the displayName */
+  nameID?: Maybe<Scalars['NameID']>;
   tags?: Maybe<Array<Scalars['String']>>;
   type: Scalars['String'];
 };
@@ -886,6 +897,26 @@ export type EcosystemModel = {
   id: Scalars['UUID'];
 };
 
+export type FeatureFlag = {
+  /** Whether the feature flag is enabled / disabled. */
+  enabled: Scalars['Boolean'];
+  /** The name of the feature flag */
+  name: Scalars['String'];
+};
+
+export type GrantAuthorizationCredentialInput = {
+  /** The resource to which this credential is tied. */
+  resourceID?: Maybe<Scalars['UUID']>;
+  type: AuthorizationCredential;
+  /** The user to whom the credential is being granted. */
+  userID: Scalars['UUID_NAMEID_EMAIL'];
+};
+
+export type Groupable = {
+  /** The groups contained by this entity. */
+  groups?: Maybe<Array<UserGroup>>;
+};
+
 export type Hub = {
   /** The activity within this Hub. */
   activity?: Maybe<Array<Nvp>>;
@@ -927,6 +958,8 @@ export type Hub = {
   projects: Array<Project>;
   /** The set of tags for the  hub. */
   tagset?: Maybe<Tagset>;
+  /** The template for this Hub. */
+  template: HubTemplate;
 };
 
 export type HubApplicationArgs = {
@@ -963,30 +996,7 @@ export type HubAuthorizationResetInput = {
 };
 
 export type HubTemplate = {
-  /** Application templates. */
-  applications?: Maybe<Array<ApplicationTemplate>>;
-  /** Hub template name. */
-  name: Scalars['String'];
-};
-
-export type FeatureFlag = {
-  /** Whether the feature flag is enabled / disabled. */
-  enabled: Scalars['Boolean'];
-  /** The name of the feature flag */
-  name: Scalars['String'];
-};
-
-export type GrantAuthorizationCredentialInput = {
-  /** The resource to which this credential is tied. */
-  resourceID?: Maybe<Scalars['UUID']>;
-  type: AuthorizationCredential;
-  /** The user to whom the credential is being granted. */
-  userID: Scalars['UUID_NAMEID_EMAIL'];
-};
-
-export type Groupable = {
-  /** The groups contained by this entity. */
-  groups?: Maybe<Array<UserGroup>>;
+  aspectTemplates: Array<AspectTemplate>;
 };
 
 export type Lifecycle = {
@@ -1099,12 +1109,12 @@ export type Mutation = {
   adminCommunicationUpdateRoomsJoinRule: Scalars['Boolean'];
   /** Assigns a User as an Challenge Admin. */
   assignUserAsChallengeAdmin: User;
-  /** Assigns a User as an Hub Admin. */
-  assignUserAsHubAdmin: User;
   /** Assigns a User as a Global Admin. */
   assignUserAsGlobalAdmin: User;
   /** Assigns a User as a Global Community Admin. */
   assignUserAsGlobalCommunityAdmin: User;
+  /** Assigns a User as an Hub Admin. */
+  assignUserAsHubAdmin: User;
   /** Assigns a User as an Opportunity Admin. */
   assignUserAsOpportunityAdmin: User;
   /** Assigns a User as an Organization Admin. */
@@ -1139,12 +1149,12 @@ export type Mutation = {
   createChildChallenge: Challenge;
   /** Creates a new Discussion as part of this Communication. */
   createDiscussion: Discussion;
-  /** Creates a new Hub. */
-  createHub: Hub;
   /** Creates a new User Group in the specified Community. */
   createGroupOnCommunity: UserGroup;
   /** Creates a new User Group for the specified Organization. */
   createGroupOnOrganization: UserGroup;
+  /** Creates a new Hub. */
+  createHub: Hub;
   /** Creates a new Opportunity within the parent Challenge. */
   createOpportunity: Opportunity;
   /** Creates a new Organization on the platform. */
@@ -1221,12 +1231,12 @@ export type Mutation = {
   removeUpdate: Scalars['MessageID'];
   /** Removes a User from being an Challenge Admin. */
   removeUserAsChallengeAdmin: User;
-  /** Removes a User from being an Hub Admin. */
-  removeUserAsHubAdmin: User;
   /** Removes a User from being a Global Admin. */
   removeUserAsGlobalAdmin: User;
   /** Removes a User from being a Global Community Admin. */
   removeUserAsGlobalCommunityAdmin: User;
+  /** Removes a User from being an Hub Admin. */
+  removeUserAsHubAdmin: User;
   /** Removes a User from being an Opportunity Admin. */
   removeUserAsOpportunityAdmin: User;
   /** Removes a User from being an Organization Admin. */
@@ -1297,16 +1307,16 @@ export type MutationAssignUserAsChallengeAdminArgs = {
   membershipData: AssignChallengeAdminInput;
 };
 
-export type MutationAssignUserAsHubAdminArgs = {
-  membershipData: AssignHubAdminInput;
-};
-
 export type MutationAssignUserAsGlobalAdminArgs = {
   membershipData: AssignGlobalAdminInput;
 };
 
 export type MutationAssignUserAsGlobalCommunityAdminArgs = {
   membershipData: AssignGlobalCommunityAdminInput;
+};
+
+export type MutationAssignUserAsHubAdminArgs = {
+  membershipData: AssignHubAdminInput;
 };
 
 export type MutationAssignUserAsOpportunityAdminArgs = {
@@ -1377,16 +1387,16 @@ export type MutationCreateDiscussionArgs = {
   createData: CommunicationCreateDiscussionInput;
 };
 
-export type MutationCreateHubArgs = {
-  hubData: CreateHubInput;
-};
-
 export type MutationCreateGroupOnCommunityArgs = {
   groupData: CreateUserGroupInput;
 };
 
 export type MutationCreateGroupOnOrganizationArgs = {
   groupData: CreateUserGroupInput;
+};
+
+export type MutationCreateHubArgs = {
+  hubData: CreateHubInput;
 };
 
 export type MutationCreateOpportunityArgs = {
@@ -1537,16 +1547,16 @@ export type MutationRemoveUserAsChallengeAdminArgs = {
   membershipData: RemoveChallengeAdminInput;
 };
 
-export type MutationRemoveUserAsHubAdminArgs = {
-  membershipData: RemoveHubAdminInput;
-};
-
 export type MutationRemoveUserAsGlobalAdminArgs = {
   membershipData: RemoveGlobalAdminInput;
 };
 
 export type MutationRemoveUserAsGlobalCommunityAdminArgs = {
   membershipData: RemoveGlobalCommunityAdminInput;
+};
+
+export type MutationRemoveUserAsHubAdminArgs = {
+  membershipData: RemoveHubAdminInput;
 };
 
 export type MutationRemoveUserAsOpportunityAdminArgs = {
@@ -1809,6 +1819,13 @@ export type Platform = {
   terms: Scalars['String'];
 };
 
+export type PlatformHubTemplate = {
+  /** Application templates. */
+  applications?: Maybe<Array<ApplicationTemplate>>;
+  /** Hub template name. */
+  name: Scalars['String'];
+};
+
 export type Profile = {
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
@@ -1986,16 +2003,16 @@ export type RemoveCommunityMemberInput = {
   userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
-export type RemoveHubAdminInput = {
-  hubID: Scalars['UUID_NAMEID'];
-  userID: Scalars['UUID_NAMEID_EMAIL'];
-};
-
 export type RemoveGlobalAdminInput = {
   userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
 export type RemoveGlobalCommunityAdminInput = {
+  userID: Scalars['UUID_NAMEID_EMAIL'];
+};
+
+export type RemoveHubAdminInput = {
+  hubID: Scalars['UUID_NAMEID'];
   userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
@@ -2077,8 +2094,6 @@ export type Subscription = {
   canvasContentUpdated: CanvasContentUpdated;
   /** Receive new Discussion messages */
   communicationDiscussionMessageReceived: CommunicationDiscussionMessageReceived;
-  /** Receive new Discussion messages */
-  communicationDiscussionMessageReceived2: CommunicationDiscussionMessageReceived;
   /** Receive updates on Discussions */
   communicationDiscussionUpdated: Discussion;
   /** Receive new Update messages on Communities the currently authenticated User is a member of. */
@@ -2090,10 +2105,6 @@ export type SubscriptionCanvasContentUpdatedArgs = {
 };
 
 export type SubscriptionCommunicationDiscussionMessageReceivedArgs = {
-  discussionIDs?: Maybe<Array<Scalars['UUID']>>;
-};
-
-export type SubscriptionCommunicationDiscussionMessageReceived2Args = {
   discussionID: Scalars['UUID'];
 };
 
@@ -2127,7 +2138,7 @@ export type Template = {
   /** Template description. */
   description: Scalars['String'];
   /** Hub templates. */
-  hubs: Array<HubTemplate>;
+  hubs: Array<PlatformHubTemplate>;
   /** Template name. */
   name: Scalars['String'];
   /** Opportunity templates. */
@@ -2153,8 +2164,15 @@ export type UpdateAspectInput = {
   displayName?: Maybe<Scalars['String']>;
   /** A display identifier, unique within the containing scope. Note: updating the nameID will affect URL on the client. */
   nameID?: Maybe<Scalars['NameID']>;
+  /** Update the set of References for the Aspect. */
+  references?: Maybe<Array<UpdateReferenceInput>>;
   /** Update the tags on the Aspect. */
   tags?: Maybe<Array<Scalars['String']>>;
+};
+
+export type UpdateAspectTemplateInput = {
+  description?: Maybe<Scalars['String']>;
+  type: Scalars['String'];
 };
 
 export type UpdateAuthorizationPolicyInput = {
@@ -2229,6 +2247,13 @@ export type UpdateHubInput = {
   nameID?: Maybe<Scalars['NameID']>;
   /** Update the tags on the Tagset. */
   tags?: Maybe<Array<Scalars['String']>>;
+  /** Update the template for this Hub. */
+  template?: Maybe<UpdateHubTemplateInput>;
+};
+
+export type UpdateHubTemplateInput = {
+  /** The set of aspect type definitions to be supported by the Hub. */
+  aspectTemplates: Array<UpdateAspectTemplateInput>;
 };
 
 export type UpdateOpportunityInput = {
