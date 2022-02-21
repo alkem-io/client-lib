@@ -24,6 +24,7 @@ import { ErrorHandler, handleErrors } from './util/handleErrors';
 import semver from 'semver';
 import { AuthInfo } from 'src';
 import { KratosPublicApiClient } from './util/kratos.public.api.client';
+import { log, LOG_LEVEL } from './util/logger';
 
 export class AlkemioClient {
   public apiToken: string;
@@ -34,6 +35,7 @@ export class AlkemioClient {
   constructor(config: ClientConfig) {
     this.apiToken = '';
     this.config = config;
+    this.config.loggingEnabled = config.loggingEnabled ?? false;
     const privateClient = new GraphQLClient(
       this.config.apiEndpointPrivateGraphql
     );
@@ -80,7 +82,7 @@ export class AlkemioClient {
   }
 
   private logMessage(msg: string) {
-    console.log(msg);
+    if (this.config.loggingEnabled) log(msg, LOG_LEVEL.INFO);
   }
 
   private async getApiToken(authInfo: AuthInfo): Promise<string> {

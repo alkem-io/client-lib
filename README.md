@@ -22,7 +22,7 @@ To use this package, first instantiate an instance of the AlkemioClient class, p
     apiEndpointPrivateGraphql: 'http://localhost:3000/api/private/non-interactive/graphql',
   });
   ```
-The ctClient can then be used to access the Alkemio server api using provided wrapper methods e.g.
+The alkemioClient can then be used to access the Alkemio server api using provided wrapper methods e.g.
 ```
   await alkemioClient.testConnection();
 ```
