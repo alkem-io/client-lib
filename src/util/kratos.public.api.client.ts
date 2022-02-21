@@ -87,7 +87,6 @@ export class KratosPublicApiClient extends HttpClient {
       this.apiBaseURL,
       `self-service/login?${found[0]}`
     );
-    console.log(`Action URI: ${actionURI}`);
     return actionURI;
   }
 }
