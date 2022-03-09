@@ -726,8 +726,8 @@ export type UsersWithAuthorizationCredentialWithPreferencesQuery = {
           group: string;
           displayName: string;
           description: string;
-          valueType: SchemaTypes.UserPreferenceValueType;
-          type: SchemaTypes.UserPreferenceType;
+          valueType: SchemaTypes.PreferenceValueType;
+          type: string;
         };
       }>;
     } & UserDetailsFragment
