@@ -74,6 +74,24 @@ export type Agent = {
   verifiedCredentials?: Maybe<Array<VerifiedCredential>>;
 };
 
+export type AgentBeginVerifiedCredentialOfferOutput = {
+  /** The token can be consumed until the expiresOn date (milliseconds since the UNIX epoch) is reached */
+  expiresOn: Scalars['Float'];
+  /** The interaction id for this credential offer. */
+  interactionId: Scalars['String'];
+  /** The token containing the information about issuer, callback endpoint and the credentials offered */
+  jwt: Scalars['String'];
+};
+
+export type AgentBeginVerifiedCredentialRequestOutput = {
+  /** The token can be consumed until the expiresOn date (milliseconds since the UNIX epoch) is reached */
+  expiresOn: Scalars['Float'];
+  /** The interaction id for this credential request. */
+  interactionId: Scalars['String'];
+  /** The token containing the information about issuer, callback endpoint and credential requirements */
+  jwt: Scalars['String'];
+};
+
 export type Application = {
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
@@ -228,8 +246,12 @@ export type Authorization = {
   id: Scalars['UUID'];
   /** The privileges granted to the current user based on this Authorization Policy. */
   myPrivileges?: Maybe<Array<AuthorizationPrivilege>>;
+  /** The set of privilege rules that are contained by this Authorization Policy. */
+  privilegeRules?: Maybe<Array<AuthorizationPolicyRulePrivilege>>;
   /** The set of verified credential rules that are contained by this Authorization Policy. */
-  verifiedCredentialRules?: Maybe<Array<AuthorizationPolicyRuleCredential>>;
+  verifiedCredentialClaimRules?: Maybe<
+    Array<AuthorizationPolicyRuleVerifiedCredentialClaim>
+  >;
 };
 
 export enum AuthorizationCredential {
@@ -252,13 +274,26 @@ export enum AuthorizationCredential {
 }
 
 export type AuthorizationPolicyRuleCredential = {
-  grantedPrivileges: Array<Scalars['String']>;
+  grantedPrivileges: Array<AuthorizationPrivilege>;
+  inheritable: Scalars['Boolean'];
   resourceID: Scalars['String'];
   type: Scalars['String'];
 };
 
+export type AuthorizationPolicyRulePrivilege = {
+  grantedPrivileges: Array<AuthorizationPrivilege>;
+  sourcePrivilege: Scalars['String'];
+};
+
+export type AuthorizationPolicyRuleVerifiedCredentialClaim = {
+  grantedPrivileges: Array<AuthorizationPrivilege>;
+  name: Scalars['String'];
+  value: Scalars['String'];
+};
+
 export enum AuthorizationPrivilege {
   CommunityApply = 'COMMUNITY_APPLY',
+  CommunityContextReview = 'COMMUNITY_CONTEXT_REVIEW',
   CommunityJoin = 'COMMUNITY_JOIN',
   Create = 'CREATE',
   CreateAspect = 'CREATE_ASPECT',
@@ -273,24 +308,6 @@ export enum AuthorizationPrivilege {
   Update = 'UPDATE',
   UpdateCanvas = 'UPDATE_CANVAS',
 }
-
-export type BeginCredentialOfferOutput = {
-  /** The token can be consumed until the expiresOn date (milliseconds since the UNIX epoch) is reached */
-  expiresOn: Scalars['Float'];
-  /** The interaction id for this credential offer. */
-  interactionId: Scalars['String'];
-  /** The token containing the information about issuer, callback endpoint and the credentials offered */
-  jwt: Scalars['String'];
-};
-
-export type BeginCredentialRequestOutput = {
-  /** The token can be consumed until the expiresOn date (milliseconds since the UNIX epoch) is reached */
-  expiresOn: Scalars['Float'];
-  /** The interaction id for this credential request. */
-  interactionId: Scalars['String'];
-  /** The token containing the information about issuer, callback endpoint and credential requirements */
-  jwt: Scalars['String'];
-};
 
 export type Canvas = {
   /** The authorization rules for the entity */
@@ -370,13 +387,6 @@ export type ChallengeOpportunitiesArgs = {
   shuffle?: Maybe<Scalars['Boolean']>;
 };
 
-export type ChallengeAuthorizeStateModificationInput = {
-  /** The challenge whose state can be udpated. */
-  challengeID: Scalars['UUID'];
-  /** The user who is being authorized to update the Challenge state. */
-  userID: Scalars['UUID_NAMEID_EMAIL'];
-};
-
 export type ChallengeEventInput = {
   ID: Scalars['UUID'];
   eventName: Scalars['String'];
@@ -385,6 +395,8 @@ export type ChallengeEventInput = {
 export type ChallengeTemplate = {
   /** Application templates. */
   applications?: Maybe<Array<ApplicationTemplate>>;
+  /** Feedback templates. */
+  feedback?: Maybe<Array<FeedbackTemplate>>;
   /** Challenge template name. */
   name: Scalars['String'];
 };
@@ -543,6 +555,15 @@ export type Community = Groupable & {
   members?: Maybe<Array<User>>;
 };
 
+export type CommunityApplyInput = {
+  communityID: Scalars['UUID'];
+  questions: Array<CreateNvpInput>;
+};
+
+export type CommunityJoinInput = {
+  communityID: Scalars['UUID'];
+};
+
 export type Config = {
   /** Authentication configuration. */
   authentication: AuthenticationConfig;
@@ -603,12 +624,6 @@ export type CreateActorInput = {
   value?: Maybe<Scalars['String']>;
 };
 
-export type CreateApplicationInput = {
-  parentID: Scalars['UUID'];
-  questions: Array<CreateNvpInput>;
-  userID: Scalars['UUID_NAMEID_EMAIL'];
-};
-
 export type CreateAspectOnContextInput = {
   contextID: Scalars['UUID'];
   description: Scalars['String'];
@@ -660,6 +675,11 @@ export type CreateContextInput = {
   tagline?: Maybe<Scalars['String']>;
   vision?: Maybe<Scalars['Markdown']>;
   who?: Maybe<Scalars['Markdown']>;
+};
+
+export type CreateFeedbackOnCommunityContextInput = {
+  communityID: Scalars['UUID'];
+  questions: Array<CreateNvpInput>;
 };
 
 export type CreateHubInput = {
@@ -944,6 +964,13 @@ export type FeatureFlag = {
   name: Scalars['String'];
 };
 
+export type FeedbackTemplate = {
+  /** Feedback template name. */
+  name: Scalars['String'];
+  /** Template questions. */
+  questions: Array<QuestionTemplate>;
+};
+
 export type GrantAuthorizationCredentialInput = {
   /** The resource to which this credential is tied. */
   resourceID?: Maybe<Scalars['UUID']>;
@@ -1035,6 +1062,13 @@ export type HubOpportunityArgs = {
 
 export type HubProjectArgs = {
   ID: Scalars['UUID_NAMEID'];
+};
+
+export type HubAspectTemplate = {
+  /** A default description for this Aspect. */
+  description: Scalars['String'];
+  /** The type of the Aspect */
+  type: Scalars['String'];
 };
 
 export type HubAuthorizationResetInput = {
@@ -1161,6 +1195,8 @@ export type Mutation = {
   adminCommunicationRemoveOrphanedRoom: Scalars['Boolean'];
   /** Allow updating the rule for joining rooms: public or invite. */
   adminCommunicationUpdateRoomsJoinRule: Scalars['Boolean'];
+  /** Apply to join the specified Community as a member. */
+  applyForCommunityMembership: Application;
   /** Assigns a User as an Challenge Admin. */
   assignUserAsChallengeAdmin: User;
   /** Assigns a User as a Global Admin. */
@@ -1188,17 +1224,15 @@ export type Mutation = {
   /** Reset the Authorization policy on the specified User. */
   authorizationPolicyResetOnUser: User;
   /** Generate Alkemio user credential offer */
-  beginAlkemioUserCredentialOfferInteraction: BeginCredentialOfferOutput;
+  beginAlkemioUserVerifiedCredentialOfferInteraction: AgentBeginVerifiedCredentialOfferOutput;
   /** Generate community member credential offer */
-  beginCommunityMemberCredentialOfferInteraction: BeginCredentialOfferOutput;
-  /** Generate credential share request */
-  beginCredentialRequestInteraction: BeginCredentialRequestOutput;
+  beginCommunityMemberVerifiedCredentialOfferInteraction: AgentBeginVerifiedCredentialOfferOutput;
+  /** Generate verified credential share request */
+  beginVerifiedCredentialRequestInteraction: AgentBeginVerifiedCredentialRequestOutput;
   /** Creates a new Actor in the specified ActorGroup. */
   createActor: Actor;
   /** Create a new Actor Group on the EcosystemModel. */
   createActorGroup: ActorGroup;
-  /** Creates Application for a User to join this Community. */
-  createApplication: Application;
   /** Create a new Aspect on the Context. */
   createAspectOnContext: Aspect;
   /** Create a new Canvas on the Context. */
@@ -1209,6 +1243,8 @@ export type Mutation = {
   createChildChallenge: Challenge;
   /** Creates a new Discussion as part of this Communication. */
   createDiscussion: Discussion;
+  /** Creates feedback on community context from users having COMMUNITY_CONTEXT_REVIEW privilege */
+  createFeedbackOnCommunityContext: Scalars['Boolean'];
   /** Creates a new User Group in the specified Community. */
   createGroupOnCommunity: UserGroup;
   /** Creates a new User Group for the specified Organization. */
@@ -1279,8 +1315,8 @@ export type Mutation = {
   eventOnProject: Project;
   /** Grants an authorization credential to a User. */
   grantCredentialToUser: User;
-  /** Authorizes a User to be able to modify the state on the specified Challenge. */
-  grantStateModificationOnChallenge: User;
+  /** Join the specified Community as a member, without going through an approval process. */
+  joinCommunity: Community;
   /** Sends a message on the specified User`s behalf and returns the room id */
   messageUser: Scalars['String'];
   /** Removes a comment message. */
@@ -1365,6 +1401,10 @@ export type MutationAdminCommunicationUpdateRoomsJoinRuleArgs = {
   changeRoomAccessData: CommunicationAdminUpdateRoomsJoinRuleInput;
 };
 
+export type MutationApplyForCommunityMembershipArgs = {
+  applicationData: CommunityApplyInput;
+};
+
 export type MutationAssignUserAsChallengeAdminArgs = {
   membershipData: AssignChallengeAdminInput;
 };
@@ -1417,11 +1457,11 @@ export type MutationAuthorizationPolicyResetOnUserArgs = {
   authorizationResetData: UserAuthorizationResetInput;
 };
 
-export type MutationBeginCommunityMemberCredentialOfferInteractionArgs = {
+export type MutationBeginCommunityMemberVerifiedCredentialOfferInteractionArgs = {
   communityID: Scalars['String'];
 };
 
-export type MutationBeginCredentialRequestInteractionArgs = {
+export type MutationBeginVerifiedCredentialRequestInteractionArgs = {
   types: Array<Scalars['String']>;
 };
 
@@ -1431,10 +1471,6 @@ export type MutationCreateActorArgs = {
 
 export type MutationCreateActorGroupArgs = {
   actorGroupData: CreateActorGroupInput;
-};
-
-export type MutationCreateApplicationArgs = {
-  applicationData: CreateApplicationInput;
 };
 
 export type MutationCreateAspectOnContextArgs = {
@@ -1455,6 +1491,10 @@ export type MutationCreateChildChallengeArgs = {
 
 export type MutationCreateDiscussionArgs = {
   createData: CommunicationCreateDiscussionInput;
+};
+
+export type MutationCreateFeedbackOnCommunityContextArgs = {
+  feedbackData: CreateFeedbackOnCommunityContextInput;
 };
 
 export type MutationCreateGroupOnCommunityArgs = {
@@ -1593,8 +1633,8 @@ export type MutationGrantCredentialToUserArgs = {
   grantCredentialData: GrantAuthorizationCredentialInput;
 };
 
-export type MutationGrantStateModificationOnChallengeArgs = {
-  grantStateModificationVCData: ChallengeAuthorizeStateModificationInput;
+export type MutationJoinCommunityArgs = {
+  joinCommunityData: CommunityJoinInput;
 };
 
 export type MutationMessageUserArgs = {
@@ -1785,8 +1825,6 @@ export type OpportunityTemplate = {
   actorGroups?: Maybe<Array<Scalars['String']>>;
   /** Application templates. */
   applications?: Maybe<Array<ApplicationTemplate>>;
-  /** Template aspects. */
-  aspects?: Maybe<Array<Scalars['String']>>;
   /** Template opportunity name. */
   name: Scalars['String'];
   /** Template relations. */
@@ -1876,6 +1914,47 @@ export type OryConfig = {
   kratosPublicBaseURL: Scalars['String'];
 };
 
+export type PaginatedUser = Searchable & {
+  /** The unique personal identifier (upn) for the account associated with this user profile */
+  accountUpn: Scalars['String'];
+  /** The Agent representing this User. */
+  agent?: Maybe<Agent>;
+  /** The authorization rules for the entity */
+  authorization?: Maybe<Authorization>;
+  city: Scalars['String'];
+  /** The Community rooms this user is a member of */
+  communityRooms?: Maybe<Array<CommunicationRoom>>;
+  country: Scalars['String'];
+  /** The direct rooms this user is a member of */
+  directRooms?: Maybe<Array<DirectRoom>>;
+  /** The display name. */
+  displayName: Scalars['String'];
+  /** The email address for this User. */
+  email: Scalars['String'];
+  firstName: Scalars['String'];
+  gender: Scalars['String'];
+  id: Scalars['UUID'];
+  lastName: Scalars['String'];
+  /** A name identifier of the entity, unique within a given scope. */
+  nameID: Scalars['NameID'];
+  /** The phone number for this User. */
+  phone: Scalars['String'];
+  /** The preferences for this user */
+  preferences: Array<Preference>;
+  /** The Profile for this User. */
+  profile?: Maybe<Profile>;
+};
+
+export type PaginatedUserEdge = {
+  node: PaginatedUser;
+};
+
+export type PaginatedUserPageInfo = {
+  endCursor: Scalars['String'];
+  hasNextPage: Scalars['Boolean'];
+  startCursor: Scalars['String'];
+};
+
 export type Platform = {
   /** URL to a page about the platform */
   about: Scalars['String'];
@@ -1896,6 +1975,8 @@ export type Platform = {
 export type PlatformHubTemplate = {
   /** Application templates. */
   applications?: Maybe<Array<ApplicationTemplate>>;
+  /** Hub aspect templates. */
+  aspects?: Maybe<Array<HubAspectTemplate>>;
   /** Hub template name. */
   name: Scalars['String'];
 };
@@ -1921,10 +2002,27 @@ export type PreferenceDefinition = {
   /** The ID of the entity */
   id: Scalars['UUID'];
   /** The type of the Preference, specific to the Entity it is on. */
-  type: Scalars['String'];
+  type: PreferenceType;
   /** Preference value type */
   valueType: PreferenceValueType;
 };
+
+export enum PreferenceType {
+  AuthorizationAnonymousReadAccess = 'AUTHORIZATION_ANONYMOUS_READ_ACCESS',
+  MembershipApplicationsFromAnyone = 'MEMBERSHIP_APPLICATIONS_FROM_ANYONE',
+  MembershipJoinHubFromAnyone = 'MEMBERSHIP_JOIN_HUB_FROM_ANYONE',
+  MembershipJoinHubFromHostOrganizationMembers = 'MEMBERSHIP_JOIN_HUB_FROM_HOST_ORGANIZATION_MEMBERS',
+  NotificationApplicationReceived = 'NOTIFICATION_APPLICATION_RECEIVED',
+  NotificationApplicationSubmitted = 'NOTIFICATION_APPLICATION_SUBMITTED',
+  NotificationCommunicationDiscussionCreated = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED',
+  NotificationCommunicationDiscussionCreatedAdmin = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED_ADMIN',
+  NotificationCommunicationDiscussionResponse = 'NOTIFICATION_COMMUNICATION_DISCUSSION_RESPONSE',
+  NotificationCommunicationUpdates = 'NOTIFICATION_COMMUNICATION_UPDATES',
+  NotificationCommunicationUpdateSentAdmin = 'NOTIFICATION_COMMUNICATION_UPDATE_SENT_ADMIN',
+  NotificationCommunityReviewSubmitted = 'NOTIFICATION_COMMUNITY_REVIEW_SUBMITTED',
+  NotificationCommunityReviewSubmittedAdmin = 'NOTIFICATION_COMMUNITY_REVIEW_SUBMITTED_ADMIN',
+  NotificationUserSignUp = 'NOTIFICATION_USER_SIGN_UP',
+}
 
 export enum PreferenceValueType {
   Boolean = 'BOOLEAN',
@@ -1946,6 +2044,11 @@ export type Profile = {
   references?: Maybe<Array<Reference>>;
   /** A list of named tagsets, each of which has a list of tags. */
   tagsets?: Maybe<Array<Tagset>>;
+};
+
+export type ProfileCredentialVerified = {
+  /** The vc. */
+  vc: Scalars['String'];
 };
 
 export type Project = {
@@ -1981,7 +2084,7 @@ export type Query = {
   /** Alkemio configuration. Provides configuration to external services in the Alkemio ecosystem. */
   configuration: Config;
   /** Get supported credential metadata */
-  getSupportedCredentialMetadata: Array<CredentialMetadataOutput>;
+  getSupportedVerifiedCredentialMetadata: Array<CredentialMetadataOutput>;
   /** An hub. If no ID is specified then the first Hub is returned. */
   hub: Hub;
   /** The Hubs on this platform */
@@ -2010,6 +2113,8 @@ export type Query = {
   users: Array<User>;
   /** The users filtered by list of IDs. */
   usersById: Array<User>;
+  /** The users who have profiles on this platform */
+  usersPaginated: RelayStylePaginatedUser;
   /** All Users that hold credentials matching the supplied criteria. */
   usersWithAuthorizationCredential: Array<User>;
 };
@@ -2060,6 +2165,11 @@ export type QueryUsersByIdArgs = {
   IDs: Array<Scalars['UUID_NAMEID_EMAIL']>;
 };
 
+export type QueryUsersPaginatedArgs = {
+  after?: Maybe<Scalars['UUID']>;
+  first?: Maybe<Scalars['Int']>;
+};
+
 export type QueryUsersWithAuthorizationCredentialArgs = {
   credentialsCriteriaData: UsersWithAuthorizationCredentialInput;
 };
@@ -2100,6 +2210,11 @@ export type Relation = {
   /** The ID of the entity */
   id: Scalars['UUID'];
   type: Scalars['String'];
+};
+
+export type RelayStylePaginatedUser = {
+  edges?: Maybe<Array<PaginatedUserEdge>>;
+  pageInfo?: Maybe<PaginatedUserPageInfo>;
 };
 
 export type RemoveChallengeAdminInput = {
@@ -2207,6 +2322,8 @@ export type Subscription = {
   communicationDiscussionUpdated: Discussion;
   /** Receive new Update messages on Communities the currently authenticated User is a member of. */
   communicationUpdateMessageReceived: CommunicationUpdateMessageReceived;
+  /** Received on verified credentials change */
+  profileVerifiedCredential: ProfileCredentialVerified;
 };
 
 export type SubscriptionCanvasContentUpdatedArgs = {
@@ -2558,6 +2675,8 @@ export enum UserPreferenceType {
   NotificationCommunicationDiscussionResponse = 'NOTIFICATION_COMMUNICATION_DISCUSSION_RESPONSE',
   NotificationCommunicationUpdates = 'NOTIFICATION_COMMUNICATION_UPDATES',
   NotificationCommunicationUpdateSentAdmin = 'NOTIFICATION_COMMUNICATION_UPDATE_SENT_ADMIN',
+  NotificationCommunityReviewSubmitted = 'NOTIFICATION_COMMUNITY_REVIEW_SUBMITTED',
+  NotificationCommunityReviewSubmittedAdmin = 'NOTIFICATION_COMMUNITY_REVIEW_SUBMITTED_ADMIN',
   NotificationUserSignUp = 'NOTIFICATION_USER_SIGN_UP',
 }
 
@@ -2583,8 +2702,8 @@ export type UsersWithAuthorizationCredentialInput = {
 };
 
 export type VerifiedCredential = {
-  /** JSON for the claim in the credential */
-  claim: Scalars['JSON'];
+  /** The time at which the credential is no longer valid */
+  claims: Array<VerifiedCredentialClaim>;
   /** JSON for the context in the credential */
   context: Scalars['JSON'];
   /** The time at which the credential is no longer valid */
@@ -2597,6 +2716,13 @@ export type VerifiedCredential = {
   name: Scalars['String'];
   /** The type of VC */
   type: Scalars['String'];
+};
+
+export type VerifiedCredentialClaim = {
+  /** The name of the claim */
+  name: Scalars['JSON'];
+  /** The value for the claim */
+  value: Scalars['JSON'];
 };
 
 export type Visual = {

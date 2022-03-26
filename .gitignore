@@ -5,3 +5,5 @@ build
 .DS_Store
 dist
 secrets/*.json
+.idea
+.vscode
