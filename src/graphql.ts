@@ -52,11 +52,11 @@ export type UserDetailsFragment = {
 };
 
 export type AddUserToCommunityMutationVariables = SchemaTypes.Exact<{
-  input: SchemaTypes.AssignCommunityMemberInput;
+  input: SchemaTypes.AssignCommunityMemberUserInput;
 }>;
 
 export type AddUserToCommunityMutation = {
-  assignUserToCommunity: { displayName: string; id: string };
+  assignUserAsCommunityMember: { displayName: string; id: string };
 };
 
 export type AddUserToGroupMutationVariables = SchemaTypes.Exact<{
@@ -832,8 +832,8 @@ export const OpportunityProfileFragmentDoc = gql`
   }
 `;
 export const AddUserToCommunityDocument = gql`
-  mutation addUserToCommunity($input: AssignCommunityMemberInput!) {
-    assignUserToCommunity(membershipData: $input) {
+  mutation addUserToCommunity($input: AssignCommunityMemberUserInput!) {
+    assignUserAsCommunityMember(membershipData: $input) {
       displayName
       id
     }
