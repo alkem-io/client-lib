@@ -1,0 +1,5 @@
+mutation assignUserAsCommunityLead($input: AssignCommunityLeadUserInput!) {
+  assignUserAsCommunityLead(leadershipData: $input) {
+    id
+  }
+}

@@ -67,6 +67,14 @@ export type AssignOrgAsLeadMutation = {
   assignOrganizationAsCommunityLead: { id: string };
 };
 
+export type AssignUserAsCommunityLeadMutationVariables = SchemaTypes.Exact<{
+  input: SchemaTypes.AssignCommunityLeadUserInput;
+}>;
+
+export type AssignUserAsCommunityLeadMutation = {
+  assignUserAsCommunityLead: { id: string };
+};
+
 export type AssignUserToCommunityMutationVariables = SchemaTypes.Exact<{
   input: SchemaTypes.AssignCommunityMemberUserInput;
 }>;
@@ -863,6 +871,13 @@ export const AssignOrgAsLeadDocument = gql`
     }
   }
 `;
+export const AssignUserAsCommunityLeadDocument = gql`
+  mutation assignUserAsCommunityLead($input: AssignCommunityLeadUserInput!) {
+    assignUserAsCommunityLead(leadershipData: $input) {
+      id
+    }
+  }
+`;
 export const AssignUserToCommunityDocument = gql`
   mutation assignUserToCommunity($input: AssignCommunityMemberUserInput!) {
     assignUserAsCommunityMember(membershipData: $input) {
@@ -1598,6 +1613,22 @@ export function getSdk(
       return withWrapper(() =>
         client.rawRequest<AssignOrgAsLeadMutation>(
           print(AssignOrgAsLeadDocument),
+          variables
+        )
+      );
+    },
+    assignUserAsCommunityLead(
+      variables: AssignUserAsCommunityLeadMutationVariables
+    ): Promise<{
+      data?: AssignUserAsCommunityLeadMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<AssignUserAsCommunityLeadMutation>(
+          print(AssignUserAsCommunityLeadDocument),
           variables
         )
       );

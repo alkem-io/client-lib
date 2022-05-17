@@ -182,6 +182,11 @@ export type AssignCommunityLeadOrganizationInput = {
   organizationID: Scalars['UUID_NAMEID'];
 };
 
+export type AssignCommunityLeadUserInput = {
+  communityID: Scalars['UUID'];
+  userID: Scalars['UUID_NAMEID_EMAIL'];
+};
+
 export type AssignCommunityMemberOrganizationInput = {
   communityID: Scalars['UUID'];
   organizationID: Scalars['UUID_NAMEID'];
@@ -1257,6 +1262,8 @@ export type Mutation = {
   assignOrganizationAsCommunityMember: Community;
   /** Assigns a User as an Challenge Admin. */
   assignUserAsChallengeAdmin: User;
+  /** Assigns a User as a lead of the specified Community. */
+  assignUserAsCommunityLead: Community;
   /** Assigns a User as a member of the specified Community. */
   assignUserAsCommunityMember: Community;
   /** Assigns a User as a Global Admin. */
@@ -1483,6 +1490,10 @@ export type MutationAssignOrganizationAsCommunityMemberArgs = {
 
 export type MutationAssignUserAsChallengeAdminArgs = {
   membershipData: AssignChallengeAdminInput;
+};
+
+export type MutationAssignUserAsCommunityLeadArgs = {
+  leadershipData: AssignCommunityLeadUserInput;
 };
 
 export type MutationAssignUserAsCommunityMemberArgs = {
@@ -2581,6 +2592,7 @@ export type UpdateAspectInput = {
   references?: Maybe<Array<UpdateReferenceInput>>;
   /** Update the tags on the Aspect. */
   tags?: Maybe<Array<Scalars['String']>>;
+  type?: Maybe<Scalars['String']>;
 };
 
 export type UpdateAspectTemplateInput = {
