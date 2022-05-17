@@ -9,5 +9,8 @@ mutation createOpportunity($opportunityData: CreateOpportunityInput!) {
         id
       }
     }
+    community {
+      id
+    }
   }
 }

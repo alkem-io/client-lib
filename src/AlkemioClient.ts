@@ -8,7 +8,6 @@ import {
   UpdateChallengeInput,
   UpdateOrganizationInput,
   CreateUserInput,
-  UpdateContextInput,
   UpdateReferenceInput,
   CreateHubInput,
   CreateOpportunityInput,
@@ -295,7 +294,9 @@ export class AlkemioClient {
   public async updateUserProfile(
     userEmail: string,
     description?: string,
-    avatarURI?: string
+    avatarURI?: string,
+    country?: string,
+    city?: string
   ): Promise<boolean> {
     const { data, errors } = await this.privateClient.user({
       userID: userEmail,
@@ -308,7 +309,12 @@ export class AlkemioClient {
     this.errorHandler(errors);
 
     if (profileID) {
-      const profileUpdated = await this.updateProfile(profileID, description);
+      const profileUpdated = await this.updateProfile(
+        profileID,
+        description,
+        country,
+        city
+      );
       if (avatarURI) {
         await this.updateVisual(avatarID, avatarURI);
       }
@@ -318,11 +324,20 @@ export class AlkemioClient {
     return false;
   }
 
-  async updateProfile(profileID: string, description?: string) {
+  async updateProfile(
+    profileID: string,
+    description?: string,
+    country?: string,
+    city?: string
+  ) {
     const { data, errors } = await this.privateClient.updateProfile({
       profileData: {
         ID: profileID,
         description: description,
+        location: {
+          country,
+          city,
+        },
       },
     });
     this.errorHandler(errors);
@@ -386,7 +401,7 @@ export class AlkemioClient {
     const uID = userID;
     const gID = groupID;
 
-    const { data, errors } = await this.privateClient.addUserToGroup({
+    const { data, errors } = await this.privateClient.assignUserToGroup({
       input: {
         userID: uID,
         groupID: gID,
@@ -430,7 +445,7 @@ export class AlkemioClient {
 
     if (!response || !communityID) return;
 
-    return await this.privateClient.addUserToCommunity({
+    return await this.privateClient.assignUserToCommunity({
       input: {
         userID: userID,
         communityID: communityID,
@@ -490,7 +505,7 @@ export class AlkemioClient {
 
     if (!communityID) return;
 
-    return await this.privateClient.addUserToCommunity({
+    return await this.privateClient.assignUserToCommunity({
       input: {
         userID: userID,
         communityID,
@@ -504,25 +519,12 @@ export class AlkemioClient {
 
     if (!hubInfo || !communityID) return;
 
-    return await this.privateClient.addUserToCommunity({
+    return await this.privateClient.assignUserToCommunity({
       input: {
         userID: userID,
         communityID,
       },
     });
-  }
-
-  async updateHubContext(hubID: string, context: UpdateContextInput) {
-    const { data, errors } = await this.privateClient.updateHub({
-      hubData: {
-        ID: hubID,
-        context: context,
-      },
-    });
-
-    this.errorHandler(errors);
-
-    return data?.updateHub;
   }
 
   async updateHub(hubData: UpdateHubInput) {
@@ -820,13 +822,39 @@ export class AlkemioClient {
     return data?.hub.opportunities;
   }
 
+  async assignOrganizationAsCommunityLead(
+    communityID: string,
+    organizationID: string
+  ) {
+    const { data, errors } = await this.privateClient.assignOrgAsLead({
+      input: { communityID, organizationID },
+    });
+
+    this.errorHandler(errors);
+
+    return data?.assignOrganizationAsCommunityLead;
+  }
+
+  async assignOrganizationAsCommunityMember(
+    communityID: string,
+    organizationID: string
+  ) {
+    const { data, errors } = await this.privateClient.assignOrgAsMember({
+      input: { communityID, organizationID },
+    });
+
+    this.errorHandler(errors);
+
+    return data?.assignOrganizationAsCommunityMember;
+  }
+
   async addUserToCommunity(userID: string, communityID?: string) {
     const uID = userID;
     if (!communityID)
       throw new Error(`Unable to locate community: ${communityID}`);
     const cID = communityID;
 
-    const { data, errors } = await this.privateClient.addUserToCommunity({
+    const { data, errors } = await this.privateClient.assignUserToCommunity({
       input: {
         userID: uID,
         communityID: cID,
@@ -835,7 +863,7 @@ export class AlkemioClient {
 
     this.errorHandler(errors);
 
-    return data?.assignUserToCommunity;
+    return data?.assignUserAsCommunityMember;
   }
 
   async updateReferencesOnHub(
