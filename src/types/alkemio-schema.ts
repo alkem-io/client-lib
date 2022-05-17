@@ -107,7 +107,7 @@ export type ApplicationEventInput = {
   eventName: Scalars['String'];
 };
 
-export type ApplicationResultEntry = {
+export type ApplicationResult = {
   /** ID for the Challenge being applied to, if any. Or the Challenge containing the Opportunity being applied to. */
   challengeID?: Maybe<Scalars['UUID']>;
   /** ID for the community */
@@ -177,7 +177,22 @@ export type AssignChallengeAdminInput = {
   userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
-export type AssignCommunityMemberInput = {
+export type AssignCommunityLeadOrganizationInput = {
+  communityID: Scalars['UUID'];
+  organizationID: Scalars['UUID_NAMEID'];
+};
+
+export type AssignCommunityLeadUserInput = {
+  communityID: Scalars['UUID'];
+  userID: Scalars['UUID_NAMEID_EMAIL'];
+};
+
+export type AssignCommunityMemberOrganizationInput = {
+  communityID: Scalars['UUID'];
+  organizationID: Scalars['UUID_NAMEID'];
+};
+
+export type AssignCommunityMemberUserInput = {
   communityID: Scalars['UUID'];
   userID: Scalars['UUID_NAMEID_EMAIL'];
 };
@@ -267,6 +282,7 @@ export enum AuthorizationCredential {
   HubHost = 'HUB_HOST',
   HubMember = 'HUB_MEMBER',
   OpportunityAdmin = 'OPPORTUNITY_ADMIN',
+  OpportunityLead = 'OPPORTUNITY_LEAD',
   OpportunityMember = 'OPPORTUNITY_MEMBER',
   OrganizationAdmin = 'ORGANIZATION_ADMIN',
   OrganizationMember = 'ORGANIZATION_MEMBER',
@@ -561,8 +577,14 @@ export type Community = Groupable & {
   groups?: Maybe<Array<UserGroup>>;
   /** The ID of the entity */
   id: Scalars['UUID'];
+  /** All Organizations that are leads in this Community. */
+  leadOrganizations?: Maybe<Array<Organization>>;
+  /** All users that are leads in this Community. */
+  leadUsers?: Maybe<Array<User>>;
+  /** All Organizations that are contributing to this Community. */
+  memberOrganizations?: Maybe<Array<Organization>>;
   /** All users that are contributing to this Community. */
-  members?: Maybe<Array<User>>;
+  memberUsers?: Maybe<Array<User>>;
 };
 
 export type CommunityApplyInput = {
@@ -600,6 +622,8 @@ export type Context = {
   id: Scalars['UUID'];
   /** What is the potential impact? */
   impact?: Maybe<Scalars['Markdown']>;
+  /** Location of this entity */
+  location?: Maybe<Location>;
   /** The References for this Context. */
   references?: Maybe<Array<Reference>>;
   /** A one line description */
@@ -620,6 +644,13 @@ export type ContextAspectsArgs = {
 
 export type ContextCanvasesArgs = {
   IDs?: Maybe<Array<Scalars['UUID']>>;
+};
+
+export type ContextAspectCreated = {
+  /** The aspect that has been created. */
+  aspect: Aspect;
+  /** The identifier for the Context on which the aspect was created. */
+  contextID: Scalars['String'];
 };
 
 export type CreateActorGroupInput = {
@@ -682,6 +713,7 @@ export type CreateChallengeOnHubInput = {
 export type CreateContextInput = {
   background?: Maybe<Scalars['Markdown']>;
   impact?: Maybe<Scalars['Markdown']>;
+  location?: Maybe<CreateLocationInput>;
   /** Set of References for the new Context. */
   references?: Maybe<Array<CreateReferenceInput>>;
   tagline?: Maybe<Scalars['String']>;
@@ -704,6 +736,11 @@ export type CreateHubInput = {
   /** A readable identifier, unique within the containing scope. */
   nameID: Scalars['NameID'];
   tags?: Maybe<Array<Scalars['String']>>;
+};
+
+export type CreateLocationInput = {
+  city?: Maybe<Scalars['String']>;
+  country?: Maybe<Scalars['String']>;
 };
 
 export type CreateNvpInput = {
@@ -737,6 +774,7 @@ export type CreateOrganizationInput = {
 
 export type CreateProfileInput = {
   description?: Maybe<Scalars['String']>;
+  location?: Maybe<CreateLocationInput>;
   referencesData?: Maybe<Array<CreateReferenceInput>>;
   tagsetsData?: Maybe<Array<CreateTagsetInput>>;
 };
@@ -1116,10 +1154,10 @@ export type Lifecycle = {
   templateName?: Maybe<Scalars['String']>;
 };
 
-export type MembershipCommunityResultEntry = {
-  /** Display name of the community */
-  displayName: Scalars['String'];
-  /** The ID of the community the user is a member of. */
+export type Location = {
+  city: Scalars['String'];
+  country: Scalars['String'];
+  /** The ID of the entity */
   id: Scalars['UUID'];
 };
 
@@ -1128,7 +1166,16 @@ export type MembershipOrganizationInput = {
   organizationID: Scalars['UUID_NAMEID'];
 };
 
-export type MembershipOrganizationResultEntryChallenge = {
+export type MembershipResult = {
+  /** Display name of the entity */
+  displayName: Scalars['String'];
+  /** A unique identifier for this membership result. */
+  id: Scalars['String'];
+  /** Name Identifier of the entity */
+  nameID: Scalars['NameID'];
+};
+
+export type MembershipResultChallengeLeading = {
   /** Display name of the entity */
   displayName: Scalars['String'];
   /** The ID of the Hub hosting this Challenge. */
@@ -1139,23 +1186,16 @@ export type MembershipOrganizationResultEntryChallenge = {
   nameID: Scalars['NameID'];
 };
 
-export type MembershipResultEntry = {
-  /** Display name of the entity */
+export type MembershipResultCommunity = {
+  /** Display name of the community */
   displayName: Scalars['String'];
-  /** A unique identifier for this membership result. */
-  id: Scalars['String'];
-  /** Name Identifier of the entity */
-  nameID: Scalars['NameID'];
+  /** The ID of the community the user is a member of. */
+  id: Scalars['UUID'];
 };
 
-export type MembershipUserInput = {
-  /** The ID of the user to retrieve the membership of. */
-  userID: Scalars['UUID_NAMEID_EMAIL'];
-};
-
-export type MembershipUserResultEntryHub = {
+export type MembershipResultContributorToHub = {
   /** Details of the Challenges the user is a member of */
-  challenges: Array<MembershipResultEntry>;
+  challenges: Array<MembershipResult>;
   /** Display name of the entity */
   displayName: Scalars['String'];
   /** The Hub ID */
@@ -1164,13 +1204,13 @@ export type MembershipUserResultEntryHub = {
   id: Scalars['String'];
   /** Name Identifier of the entity */
   nameID: Scalars['NameID'];
-  /** Details of the Opportunities the user is a member of */
-  opportunities: Array<MembershipResultEntry>;
-  /** Details of the UserGroups the user is a member of */
-  userGroups: Array<MembershipResultEntry>;
+  /** Details of the Opportunities the Contributor is a member of */
+  opportunities: Array<MembershipResult>;
+  /** Details of the UserGroups the User is a member of */
+  userGroups: Array<MembershipResult>;
 };
 
-export type MembershipUserResultEntryOrganization = {
+export type MembershipResultUserinOrganization = {
   /** Display name of the entity */
   displayName: Scalars['String'];
   /** A unique identifier for this membership result. */
@@ -1179,8 +1219,13 @@ export type MembershipUserResultEntryOrganization = {
   nameID: Scalars['NameID'];
   /** The Organization ID. */
   organizationID: Scalars['String'];
-  /** Details of the Organizations the user is a member of */
-  userGroups: Array<MembershipResultEntry>;
+  /** Details of the Groups in the Organizations the user is a member of */
+  userGroups: Array<MembershipResult>;
+};
+
+export type MembershipUserInput = {
+  /** The ID of the user to retrieve the membership of. */
+  userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
 /** A message that was sent either as an Update or as part of a Discussion. */
@@ -1211,8 +1256,16 @@ export type Mutation = {
   adminCommunicationUpdateRoomsJoinRule: Scalars['Boolean'];
   /** Apply to join the specified Community as a member. */
   applyForCommunityMembership: Application;
+  /** Assigns an Organization as a Lead of the specified Community. */
+  assignOrganizationAsCommunityLead: Community;
+  /** Assigns an Organization as a member of the specified Community. */
+  assignOrganizationAsCommunityMember: Community;
   /** Assigns a User as an Challenge Admin. */
   assignUserAsChallengeAdmin: User;
+  /** Assigns a User as a lead of the specified Community. */
+  assignUserAsCommunityLead: Community;
+  /** Assigns a User as a member of the specified Community. */
+  assignUserAsCommunityMember: Community;
   /** Assigns a User as a Global Admin. */
   assignUserAsGlobalAdmin: User;
   /** Assigns a User as a Global Community Admin. */
@@ -1225,8 +1278,6 @@ export type Mutation = {
   assignUserAsOrganizationAdmin: User;
   /** Assigns a User as an Organization Owner. */
   assignUserAsOrganizationOwner: User;
-  /** Assigns a User as a member of the specified Community. */
-  assignUserToCommunity: Community;
   /** Assigns a User as a member of the specified User Group. */
   assignUserToGroup: UserGroup;
   /** Assigns a User as a member of the specified Organization. */
@@ -1337,10 +1388,18 @@ export type Mutation = {
   removeComment: Scalars['MessageID'];
   /** Removes a message from the specified Discussion. */
   removeMessageFromDiscussion: Scalars['MessageID'];
+  /** Removes an Organization as a Lead of the specified Community. */
+  removeOrganizationAsCommunityLead: Community;
+  /** Removes an Organization as a member of the specified Community. */
+  removeOrganizationAsCommunityMember: Community;
   /** Removes an update message. */
   removeUpdate: Scalars['MessageID'];
   /** Removes a User from being an Challenge Admin. */
   removeUserAsChallengeAdmin: User;
+  /** Removes a User as a member of the specified Community. */
+  removeUserAsCommunityLead: Community;
+  /** Removes a User as a member of the specified Community. */
+  removeUserAsCommunityMember: Community;
   /** Removes a User from being a Global Admin. */
   removeUserAsGlobalAdmin: User;
   /** Removes a User from being a Global Community Admin. */
@@ -1353,8 +1412,6 @@ export type Mutation = {
   removeUserAsOrganizationAdmin: User;
   /** Removes a User from being an Organization Owner. */
   removeUserAsOrganizationOwner: User;
-  /** Removes a User as a member of the specified Community. */
-  removeUserFromCommunity: Community;
   /** Removes the specified User from specified user group */
   removeUserFromGroup: UserGroup;
   /** Removes a User as a member of the specified Organization. */
@@ -1423,8 +1480,24 @@ export type MutationApplyForCommunityMembershipArgs = {
   applicationData: CommunityApplyInput;
 };
 
+export type MutationAssignOrganizationAsCommunityLeadArgs = {
+  leadershipData: AssignCommunityLeadOrganizationInput;
+};
+
+export type MutationAssignOrganizationAsCommunityMemberArgs = {
+  membershipData: AssignCommunityMemberOrganizationInput;
+};
+
 export type MutationAssignUserAsChallengeAdminArgs = {
   membershipData: AssignChallengeAdminInput;
+};
+
+export type MutationAssignUserAsCommunityLeadArgs = {
+  leadershipData: AssignCommunityLeadUserInput;
+};
+
+export type MutationAssignUserAsCommunityMemberArgs = {
+  membershipData: AssignCommunityMemberUserInput;
 };
 
 export type MutationAssignUserAsGlobalAdminArgs = {
@@ -1449,10 +1522,6 @@ export type MutationAssignUserAsOrganizationAdminArgs = {
 
 export type MutationAssignUserAsOrganizationOwnerArgs = {
   membershipData: AssignOrganizationOwnerInput;
-};
-
-export type MutationAssignUserToCommunityArgs = {
-  membershipData: AssignCommunityMemberInput;
 };
 
 export type MutationAssignUserToGroupArgs = {
@@ -1667,12 +1736,28 @@ export type MutationRemoveMessageFromDiscussionArgs = {
   messageData: DiscussionRemoveMessageInput;
 };
 
+export type MutationRemoveOrganizationAsCommunityLeadArgs = {
+  leadershipData: RemoveCommunityLeadOrganizationInput;
+};
+
+export type MutationRemoveOrganizationAsCommunityMemberArgs = {
+  membershipData: RemoveCommunityMemberOrganizationInput;
+};
+
 export type MutationRemoveUpdateArgs = {
   messageData: UpdatesRemoveMessageInput;
 };
 
 export type MutationRemoveUserAsChallengeAdminArgs = {
   membershipData: RemoveChallengeAdminInput;
+};
+
+export type MutationRemoveUserAsCommunityLeadArgs = {
+  leadershipData: RemoveCommunityLeadUserInput;
+};
+
+export type MutationRemoveUserAsCommunityMemberArgs = {
+  membershipData: RemoveCommunityMemberUserInput;
 };
 
 export type MutationRemoveUserAsGlobalAdminArgs = {
@@ -1697,10 +1782,6 @@ export type MutationRemoveUserAsOrganizationAdminArgs = {
 
 export type MutationRemoveUserAsOrganizationOwnerArgs = {
   membershipData: RemoveOrganizationOwnerInput;
-};
-
-export type MutationRemoveUserFromCommunityArgs = {
-  membershipData: RemoveCommunityMemberInput;
 };
 
 export type MutationRemoveUserFromGroupArgs = {
@@ -1900,11 +1981,23 @@ export type OrganizationAuthorizationResetInput = {
   organizationID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
+export type OrganizationFilterInput = {
+  contactEmail?: Maybe<Scalars['String']>;
+  displayName?: Maybe<Scalars['String']>;
+  domain?: Maybe<Scalars['String']>;
+  nameID?: Maybe<Scalars['String']>;
+  website?: Maybe<Scalars['String']>;
+};
+
 export type OrganizationMembership = {
   /** Details of the Challenges the Organization is leading. */
-  challengesLeading: Array<MembershipOrganizationResultEntryChallenge>;
+  challengesLeading: Array<MembershipResultChallengeLeading>;
+  /** All the communitites the user is a part of. */
+  communities: Array<MembershipResultCommunity>;
+  /** Details of Hubs the user is a member of, with child memberships */
+  hubs: Array<MembershipResultContributorToHub>;
   /** Details of Hubs the Organization is hosting. */
-  hubsHosting: Array<MembershipResultEntry>;
+  hubsHosting: Array<MembershipResult>;
   id: Scalars['UUID'];
 };
 
@@ -1946,45 +2039,25 @@ export type OryConfig = {
   kratosPublicBaseURL: Scalars['String'];
 };
 
-export type PaginatedUser = Searchable & {
-  /** The unique personal identifier (upn) for the account associated with this user profile */
-  accountUpn: Scalars['String'];
-  /** The Agent representing this User. */
-  agent?: Maybe<Agent>;
-  /** The authorization rules for the entity */
-  authorization?: Maybe<Authorization>;
-  city: Scalars['String'];
-  /** The Community rooms this user is a member of */
-  communityRooms?: Maybe<Array<CommunicationRoom>>;
-  country: Scalars['String'];
-  /** The direct rooms this user is a member of */
-  directRooms?: Maybe<Array<DirectRoom>>;
-  /** The display name. */
-  displayName: Scalars['String'];
-  /** The email address for this User. */
-  email: Scalars['String'];
-  firstName: Scalars['String'];
-  gender: Scalars['String'];
-  id: Scalars['UUID'];
-  lastName: Scalars['String'];
-  /** A name identifier of the entity, unique within a given scope. */
-  nameID: Scalars['NameID'];
-  /** The phone number for this User. */
-  phone: Scalars['String'];
-  /** The preferences for this user */
-  preferences: Array<Preference>;
-  /** The Profile for this User. */
-  profile?: Maybe<Profile>;
-};
-
-export type PaginatedUserEdge = {
-  node: PaginatedUser;
-};
-
-export type PaginatedUserPageInfo = {
-  endCursor: Scalars['String'];
+export type PageInfo = {
+  /** The last cursor of the page result */
+  endCursor?: Maybe<Scalars['String']>;
+  /** Indicate whether more items exist after the returned ones */
   hasNextPage: Scalars['Boolean'];
-  startCursor: Scalars['String'];
+  /** Indicate whether more items exist before the returned ones */
+  hasPreviousPage: Scalars['Boolean'];
+  /** The first cursor of the page result */
+  startCursor?: Maybe<Scalars['String']>;
+};
+
+export type PaginatedOrganization = {
+  organization: Array<Organization>;
+  pageInfo: PageInfo;
+};
+
+export type PaginatedUsers = {
+  pageInfo: PageInfo;
+  users: Array<User>;
 };
 
 export type Platform = {
@@ -2050,6 +2123,10 @@ export enum PreferenceType {
   MembershipJoinHubFromHostOrganizationMembers = 'MEMBERSHIP_JOIN_HUB_FROM_HOST_ORGANIZATION_MEMBERS',
   NotificationApplicationReceived = 'NOTIFICATION_APPLICATION_RECEIVED',
   NotificationApplicationSubmitted = 'NOTIFICATION_APPLICATION_SUBMITTED',
+  NotificationAspectCommentAdmin = 'NOTIFICATION_ASPECT_COMMENT_ADMIN',
+  NotificationAspectCommentCreatedBy = 'NOTIFICATION_ASPECT_COMMENT_CREATED_BY',
+  NotificationAspectCreated = 'NOTIFICATION_ASPECT_CREATED',
+  NotificationAspectCreatedAdmin = 'NOTIFICATION_ASPECT_CREATED_ADMIN',
   NotificationCommunicationDiscussionCreated = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED',
   NotificationCommunicationDiscussionCreatedAdmin = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED_ADMIN',
   NotificationCommunicationDiscussionResponse = 'NOTIFICATION_COMMUNICATION_DISCUSSION_RESPONSE',
@@ -2078,6 +2155,8 @@ export type Profile = {
   description?: Maybe<Scalars['String']>;
   /** The ID of the entity */
   id: Scalars['UUID'];
+  /** The location for this Profile. */
+  location?: Maybe<Location>;
   /** A list of URLs to relevant information. */
   references?: Maybe<Array<Reference>>;
   /** A list of named tagsets, each of which has a list of tags. */
@@ -2143,6 +2222,8 @@ export type Query = {
   organization: Organization;
   /** The Organizations on this platform */
   organizations: Array<Organization>;
+  /** The Organizations on this platform in paginated format */
+  organizationsPaginated: PaginatedOrganization;
   /** Search the hub for terms supplied */
   search: Array<SearchResultEntry>;
   /** A particular user, identified by the ID or by email */
@@ -2154,7 +2235,7 @@ export type Query = {
   /** The users filtered by list of IDs. */
   usersById: Array<User>;
   /** The users who have profiles on this platform */
-  usersPaginated: RelayStylePaginatedUser;
+  usersPaginated: PaginatedUsers;
   /** All Users that hold credentials matching the supplied criteria. */
   usersWithAuthorizationCredential: Array<User>;
 };
@@ -2184,6 +2265,14 @@ export type QueryOrganizationsArgs = {
   shuffle?: Maybe<Scalars['Boolean']>;
 };
 
+export type QueryOrganizationsPaginatedArgs = {
+  after?: Maybe<Scalars['UUID']>;
+  before?: Maybe<Scalars['UUID']>;
+  filter?: Maybe<OrganizationFilterInput>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+};
+
 export type QuerySearchArgs = {
   searchData: SearchInput;
 };
@@ -2207,7 +2296,10 @@ export type QueryUsersByIdArgs = {
 
 export type QueryUsersPaginatedArgs = {
   after?: Maybe<Scalars['UUID']>;
+  before?: Maybe<Scalars['UUID']>;
+  filter?: Maybe<UserFilterInput>;
   first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 export type QueryUsersWithAuthorizationCredentialArgs = {
@@ -2252,9 +2344,48 @@ export type Relation = {
   type: Scalars['String'];
 };
 
-export type RelayStylePaginatedUser = {
-  edges?: Maybe<Array<PaginatedUserEdge>>;
-  pageInfo?: Maybe<PaginatedUserPageInfo>;
+export type RelayPaginatedUser = Searchable & {
+  /** The unique personal identifier (upn) for the account associated with this user profile */
+  accountUpn: Scalars['String'];
+  /** The Agent representing this User. */
+  agent?: Maybe<Agent>;
+  /** The authorization rules for the entity */
+  authorization?: Maybe<Authorization>;
+  /** The Community rooms this user is a member of */
+  communityRooms?: Maybe<Array<CommunicationRoom>>;
+  /** The direct rooms this user is a member of */
+  directRooms?: Maybe<Array<DirectRoom>>;
+  /** The display name. */
+  displayName: Scalars['String'];
+  /** The email address for this User. */
+  email: Scalars['String'];
+  firstName: Scalars['String'];
+  gender: Scalars['String'];
+  id: Scalars['UUID'];
+  lastName: Scalars['String'];
+  /** A name identifier of the entity, unique within a given scope. */
+  nameID: Scalars['NameID'];
+  /** The phone number for this User. */
+  phone: Scalars['String'];
+  /** The preferences for this user */
+  preferences: Array<Preference>;
+  /** The Profile for this User. */
+  profile?: Maybe<Profile>;
+};
+
+export type RelayPaginatedUserEdge = {
+  node: RelayPaginatedUser;
+};
+
+export type RelayPaginatedUserPageInfo = {
+  /** The last cursor of the page result */
+  endCursor?: Maybe<Scalars['String']>;
+  /** Indicate whether more items exist after the returned ones */
+  hasNextPage: Scalars['Boolean'];
+  /** Indicate whether more items exist before the returned ones */
+  hasPreviousPage: Scalars['Boolean'];
+  /** The first cursor of the page result */
+  startCursor?: Maybe<Scalars['String']>;
 };
 
 export type RemoveChallengeAdminInput = {
@@ -2262,7 +2393,22 @@ export type RemoveChallengeAdminInput = {
   userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
-export type RemoveCommunityMemberInput = {
+export type RemoveCommunityLeadOrganizationInput = {
+  communityID: Scalars['UUID'];
+  organizationID: Scalars['UUID_NAMEID'];
+};
+
+export type RemoveCommunityLeadUserInput = {
+  communityID: Scalars['UUID'];
+  userID: Scalars['UUID_NAMEID_EMAIL'];
+};
+
+export type RemoveCommunityMemberOrganizationInput = {
+  communityID: Scalars['UUID'];
+  organizationID: Scalars['UUID_NAMEID'];
+};
+
+export type RemoveCommunityMemberUserInput = {
   communityID: Scalars['UUID'];
   userID: Scalars['UUID_NAMEID_EMAIL'];
 };
@@ -2356,18 +2502,26 @@ export type ServiceMetadata = {
 export type Subscription = {
   /** Receive updated content of a canvas */
   canvasContentUpdated: CanvasContentUpdated;
+  /** Receive new Update messages on Communities the currently authenticated User is a member of. */
+  communicationCommentsMessageReceived: CommentsMessageReceived;
   /** Receive new Discussion messages */
   communicationDiscussionMessageReceived: CommunicationDiscussionMessageReceived;
   /** Receive updates on Discussions */
   communicationDiscussionUpdated: Discussion;
   /** Receive new Update messages on Communities the currently authenticated User is a member of. */
   communicationUpdateMessageReceived: CommunicationUpdateMessageReceived;
+  /** Receive new Update messages on Communities the currently authenticated User is a member of. */
+  contextAspectCreated: ContextAspectCreated;
   /** Received on verified credentials change */
   profileVerifiedCredential: ProfileCredentialVerified;
 };
 
 export type SubscriptionCanvasContentUpdatedArgs = {
   canvasIDs?: Maybe<Array<Scalars['UUID']>>;
+};
+
+export type SubscriptionCommunicationCommentsMessageReceivedArgs = {
+  commentsID: Scalars['UUID'];
 };
 
 export type SubscriptionCommunicationDiscussionMessageReceivedArgs = {
@@ -2380,6 +2534,10 @@ export type SubscriptionCommunicationDiscussionUpdatedArgs = {
 
 export type SubscriptionCommunicationUpdateMessageReceivedArgs = {
   updatesIDs?: Maybe<Array<Scalars['UUID']>>;
+};
+
+export type SubscriptionContextAspectCreatedArgs = {
+  contextID: Scalars['UUID'];
 };
 
 export type Tagset = {
@@ -2434,6 +2592,7 @@ export type UpdateAspectInput = {
   references?: Maybe<Array<UpdateReferenceInput>>;
   /** Update the tags on the Aspect. */
   tags?: Maybe<Array<Scalars['String']>>;
+  type?: Maybe<Scalars['String']>;
 };
 
 export type UpdateAspectTemplateInput = {
@@ -2480,6 +2639,7 @@ export type UpdateChallengePreferenceInput = {
 export type UpdateContextInput = {
   background?: Maybe<Scalars['Markdown']>;
   impact?: Maybe<Scalars['Markdown']>;
+  location?: Maybe<UpdateLocationInput>;
   /** Update the set of References for the Context. */
   references?: Maybe<Array<UpdateReferenceInput>>;
   tagline?: Maybe<Scalars['String']>;
@@ -2533,6 +2693,11 @@ export type UpdateHubTemplateInput = {
   aspectTemplates: Array<UpdateAspectTemplateInput>;
 };
 
+export type UpdateLocationInput = {
+  city?: Maybe<Scalars['String']>;
+  country?: Maybe<Scalars['String']>;
+};
+
 export type UpdateOpportunityInput = {
   ID: Scalars['UUID'];
   /** Update the contained Context entity. */
@@ -2570,6 +2735,7 @@ export type UpdateOrganizationPreferenceInput = {
 export type UpdateProfileInput = {
   ID: Scalars['UUID'];
   description?: Maybe<Scalars['String']>;
+  location?: Maybe<UpdateLocationInput>;
   references?: Maybe<Array<UpdateReferenceInput>>;
   tagsets?: Maybe<Array<UpdateTagsetInput>>;
 };
@@ -2605,8 +2771,6 @@ export type UpdateUserGroupInput = {
 export type UpdateUserInput = {
   ID: Scalars['UUID_NAMEID_EMAIL'];
   accountUpn?: Maybe<Scalars['String']>;
-  city?: Maybe<Scalars['String']>;
-  country?: Maybe<Scalars['String']>;
   /** The display name for this entity. */
   displayName?: Maybe<Scalars['String']>;
   firstName?: Maybe<Scalars['String']>;
@@ -2663,10 +2827,8 @@ export type User = Searchable & {
   agent?: Maybe<Agent>;
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
-  city: Scalars['String'];
   /** The Community rooms this user is a member of */
   communityRooms?: Maybe<Array<CommunicationRoom>>;
-  country: Scalars['String'];
   /** The direct rooms this user is a member of */
   directRooms?: Maybe<Array<DirectRoom>>;
   /** The display name. */
@@ -2699,6 +2861,12 @@ export type UserAuthorizationResetInput = {
   userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
+export type UserFilterInput = {
+  email?: Maybe<Scalars['String']>;
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+};
+
 export type UserGroup = Searchable & {
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
@@ -2714,19 +2882,23 @@ export type UserGroup = Searchable & {
 
 export type UserMembership = {
   /** Open applications for this user. */
-  applications?: Maybe<Array<ApplicationResultEntry>>;
+  applications?: Maybe<Array<ApplicationResult>>;
   /** All the communitites the user is a part of. */
-  communities: Array<MembershipCommunityResultEntry>;
+  communities: Array<MembershipResultCommunity>;
   /** Details of Hubs the user is a member of, with child memberships */
-  hubs: Array<MembershipUserResultEntryHub>;
+  hubs: Array<MembershipResultContributorToHub>;
   id: Scalars['UUID'];
   /** Details of the Organizations the user is a member of, with child memberships. */
-  organizations: Array<MembershipUserResultEntryOrganization>;
+  organizations: Array<MembershipResultUserinOrganization>;
 };
 
 export enum UserPreferenceType {
   NotificationApplicationReceived = 'NOTIFICATION_APPLICATION_RECEIVED',
   NotificationApplicationSubmitted = 'NOTIFICATION_APPLICATION_SUBMITTED',
+  NotificationAspectCommentAdmin = 'NOTIFICATION_ASPECT_COMMENT_ADMIN',
+  NotificationAspectCommentCreatedBy = 'NOTIFICATION_ASPECT_COMMENT_CREATED_BY',
+  NotificationAspectCreated = 'NOTIFICATION_ASPECT_CREATED',
+  NotificationAspectCreatedAdmin = 'NOTIFICATION_ASPECT_CREATED_ADMIN',
   NotificationCommunicationDiscussionCreated = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED',
   NotificationCommunicationDiscussionCreatedAdmin = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED_ADMIN',
   NotificationCommunicationDiscussionResponse = 'NOTIFICATION_COMMUNICATION_DISCUSSION_RESPONSE',

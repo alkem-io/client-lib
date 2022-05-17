@@ -8,5 +8,8 @@ mutation createChallenge($challengeData: CreateChallengeOnHubInput!) {
         id
       }
     }
+    community {
+      id
+    }
   }
 }

@@ -1,5 +1,5 @@
-mutation addUserToCommunity($input: AssignCommunityMemberInput!) {
-  assignUserToCommunity(membershipData: $input) {
+mutation assignUserToCommunity($input: AssignCommunityMemberUserInput!) {
+  assignUserAsCommunityMember(membershipData: $input) {
     displayName
     id
   }

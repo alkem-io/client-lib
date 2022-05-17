@@ -51,19 +51,43 @@ export type UserDetailsFragment = {
   }>;
 };
 
-export type AddUserToCommunityMutationVariables = SchemaTypes.Exact<{
-  input: SchemaTypes.AssignCommunityMemberInput;
+export type AssignOrgAsMemberMutationVariables = SchemaTypes.Exact<{
+  input: SchemaTypes.AssignCommunityMemberOrganizationInput;
 }>;
 
-export type AddUserToCommunityMutation = {
-  assignUserToCommunity: { displayName: string; id: string };
+export type AssignOrgAsMemberMutation = {
+  assignOrganizationAsCommunityMember: { id: string };
 };
 
-export type AddUserToGroupMutationVariables = SchemaTypes.Exact<{
+export type AssignOrgAsLeadMutationVariables = SchemaTypes.Exact<{
+  input: SchemaTypes.AssignCommunityLeadOrganizationInput;
+}>;
+
+export type AssignOrgAsLeadMutation = {
+  assignOrganizationAsCommunityLead: { id: string };
+};
+
+export type AssignUserAsCommunityLeadMutationVariables = SchemaTypes.Exact<{
+  input: SchemaTypes.AssignCommunityLeadUserInput;
+}>;
+
+export type AssignUserAsCommunityLeadMutation = {
+  assignUserAsCommunityLead: { id: string };
+};
+
+export type AssignUserToCommunityMutationVariables = SchemaTypes.Exact<{
+  input: SchemaTypes.AssignCommunityMemberUserInput;
+}>;
+
+export type AssignUserToCommunityMutation = {
+  assignUserAsCommunityMember: { displayName: string; id: string };
+};
+
+export type AssignUserToGroupMutationVariables = SchemaTypes.Exact<{
   input: SchemaTypes.AssignUserGroupMemberInput;
 }>;
 
-export type AddUserToGroupMutation = {
+export type AssignUserToGroupMutation = {
   assignUserToGroup: {
     id: string;
     members?: SchemaTypes.Maybe<
@@ -217,6 +241,7 @@ export type CreateChallengeMutation = {
     context?: SchemaTypes.Maybe<{
       visuals?: SchemaTypes.Maybe<Array<{ name: string; id: string }>>;
     }>;
+    community?: SchemaTypes.Maybe<{ id: string }>;
   };
 };
 
@@ -291,6 +316,7 @@ export type CreateOpportunityMutation = {
     context?: SchemaTypes.Maybe<{
       visuals?: SchemaTypes.Maybe<Array<{ name: string; id: string }>>;
     }>;
+    community?: SchemaTypes.Maybe<{ id: string }>;
   };
 };
 
@@ -831,16 +857,37 @@ export const OpportunityProfileFragmentDoc = gql`
     }
   }
 `;
-export const AddUserToCommunityDocument = gql`
-  mutation addUserToCommunity($input: AssignCommunityMemberInput!) {
-    assignUserToCommunity(membershipData: $input) {
+export const AssignOrgAsMemberDocument = gql`
+  mutation assignOrgAsMember($input: AssignCommunityMemberOrganizationInput!) {
+    assignOrganizationAsCommunityMember(membershipData: $input) {
+      id
+    }
+  }
+`;
+export const AssignOrgAsLeadDocument = gql`
+  mutation assignOrgAsLead($input: AssignCommunityLeadOrganizationInput!) {
+    assignOrganizationAsCommunityLead(leadershipData: $input) {
+      id
+    }
+  }
+`;
+export const AssignUserAsCommunityLeadDocument = gql`
+  mutation assignUserAsCommunityLead($input: AssignCommunityLeadUserInput!) {
+    assignUserAsCommunityLead(leadershipData: $input) {
+      id
+    }
+  }
+`;
+export const AssignUserToCommunityDocument = gql`
+  mutation assignUserToCommunity($input: AssignCommunityMemberUserInput!) {
+    assignUserAsCommunityMember(membershipData: $input) {
       displayName
       id
     }
   }
 `;
-export const AddUserToGroupDocument = gql`
-  mutation addUserToGroup($input: AssignUserGroupMemberInput!) {
+export const AssignUserToGroupDocument = gql`
+  mutation assignUserToGroup($input: AssignUserGroupMemberInput!) {
     assignUserToGroup(membershipData: $input) {
       id
       members {
@@ -1001,6 +1048,9 @@ export const CreateChallengeDocument = gql`
           id
         }
       }
+      community {
+        id
+      }
     }
   }
 `;
@@ -1074,6 +1124,9 @@ export const CreateOpportunityDocument = gql`
           name
           id
         }
+      }
+      community {
+        id
       }
     }
   }
@@ -1532,34 +1585,82 @@ export function getSdk(
   withWrapper: SdkFunctionWrapper = defaultWrapper
 ) {
   return {
-    addUserToCommunity(
-      variables: AddUserToCommunityMutationVariables
+    assignOrgAsMember(
+      variables: AssignOrgAsMemberMutationVariables
     ): Promise<{
-      data?: AddUserToCommunityMutation | undefined;
+      data?: AssignOrgAsMemberMutation | undefined;
       extensions?: any;
       headers: Headers;
       status: number;
       errors?: GraphQLError[] | undefined;
     }> {
       return withWrapper(() =>
-        client.rawRequest<AddUserToCommunityMutation>(
-          print(AddUserToCommunityDocument),
+        client.rawRequest<AssignOrgAsMemberMutation>(
+          print(AssignOrgAsMemberDocument),
           variables
         )
       );
     },
-    addUserToGroup(
-      variables: AddUserToGroupMutationVariables
+    assignOrgAsLead(
+      variables: AssignOrgAsLeadMutationVariables
     ): Promise<{
-      data?: AddUserToGroupMutation | undefined;
+      data?: AssignOrgAsLeadMutation | undefined;
       extensions?: any;
       headers: Headers;
       status: number;
       errors?: GraphQLError[] | undefined;
     }> {
       return withWrapper(() =>
-        client.rawRequest<AddUserToGroupMutation>(
-          print(AddUserToGroupDocument),
+        client.rawRequest<AssignOrgAsLeadMutation>(
+          print(AssignOrgAsLeadDocument),
+          variables
+        )
+      );
+    },
+    assignUserAsCommunityLead(
+      variables: AssignUserAsCommunityLeadMutationVariables
+    ): Promise<{
+      data?: AssignUserAsCommunityLeadMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<AssignUserAsCommunityLeadMutation>(
+          print(AssignUserAsCommunityLeadDocument),
+          variables
+        )
+      );
+    },
+    assignUserToCommunity(
+      variables: AssignUserToCommunityMutationVariables
+    ): Promise<{
+      data?: AssignUserToCommunityMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<AssignUserToCommunityMutation>(
+          print(AssignUserToCommunityDocument),
+          variables
+        )
+      );
+    },
+    assignUserToGroup(
+      variables: AssignUserToGroupMutationVariables
+    ): Promise<{
+      data?: AssignUserToGroupMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<AssignUserToGroupMutation>(
+          print(AssignUserToGroupDocument),
           variables
         )
       );
