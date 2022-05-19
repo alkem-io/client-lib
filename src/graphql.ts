@@ -480,8 +480,13 @@ export type ChallengeQuery = {
       nameID: string;
       id: string;
       displayName: string;
-      community?: SchemaTypes.Maybe<{ id: string; displayName: string }>;
-      leadOrganizations: Array<{ nameID: string; id: string }>;
+      community?: SchemaTypes.Maybe<{
+        id: string;
+        displayName: string;
+        leadOrganizations?: SchemaTypes.Maybe<
+          Array<{ nameID: string; id: string }>
+        >;
+      }>;
       context?: SchemaTypes.Maybe<{ id: string }>;
     };
   };
@@ -1291,12 +1296,12 @@ export const ChallengeDocument = gql`
         id
         displayName
         community {
+          leadOrganizations {
+            nameID
+            id
+          }
           id
           displayName
-        }
-        leadOrganizations {
-          nameID
-          id
         }
         context {
           id
