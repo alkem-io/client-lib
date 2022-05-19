@@ -418,6 +418,7 @@ export type UpdateHubMutation = {
   updateHub: {
     nameID: string;
     host?: SchemaTypes.Maybe<{ nameID: string }>;
+    community?: SchemaTypes.Maybe<{ id: string }>;
     context?: SchemaTypes.Maybe<{
       tagline?: SchemaTypes.Maybe<string>;
       visuals?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
@@ -1232,6 +1233,9 @@ export const UpdateHubDocument = gql`
       nameID
       host {
         nameID
+      }
+      community {
+        id
       }
       context {
         tagline
