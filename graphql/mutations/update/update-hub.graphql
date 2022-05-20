@@ -4,6 +4,9 @@ mutation updateHub($hubData: UpdateHubInput!) {
     host {
       nameID
     }
+    community {
+      id
+    }
     context {
       tagline
       visuals {

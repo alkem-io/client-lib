@@ -5,6 +5,13 @@ mutation updateOpportunity(
     id
     displayName
     nameID
+    community {
+    id
+    groups {
+      id
+      name
+      }
+    }
     context {
       visuals {
         id

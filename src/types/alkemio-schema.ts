@@ -388,8 +388,6 @@ export type Challenge = Searchable & {
   displayName: Scalars['String'];
   hubID: Scalars['String'];
   id: Scalars['UUID'];
-  /** The Organizations that are leading this Challenge. */
-  leadOrganizations: Array<Organization>;
   /** The lifeycle for the Challenge. */
   lifecycle?: Maybe<Lifecycle>;
   /** A name identifier of the entity, unique within a given scope. */
@@ -2619,8 +2617,6 @@ export type UpdateChallengeInput = {
   context?: Maybe<UpdateContextInput>;
   /** The display name for this entity. */
   displayName?: Maybe<Scalars['String']>;
-  /** Update the lead Organizations for the Challenge. */
-  leadOrganizations?: Maybe<Array<Scalars['UUID_NAMEID']>>;
   /** A display identifier, unique within the containing scope. Note: updating the nameID will affect URL on the client. */
   nameID?: Maybe<Scalars['NameID']>;
   /** Update the tags on the Tagset. */

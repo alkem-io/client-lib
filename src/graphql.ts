@@ -11,9 +11,11 @@ export type ChallengeDetailsFragment = {
   nameID: string;
   tagset?: SchemaTypes.Maybe<{ tags: Array<string>; id: string; name: string }>;
   community?: SchemaTypes.Maybe<{
+    id: string;
     groups?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
   }>;
   context?: SchemaTypes.Maybe<{
+    id: string;
     visuals?: SchemaTypes.Maybe<Array<{ name: string; id: string }>>;
     ecosystemModel?: SchemaTypes.Maybe<{
       id: string;
@@ -27,6 +29,7 @@ export type OpportunityDetailsFragment = {
   nameID: string;
   tagset?: SchemaTypes.Maybe<{ tags: Array<string>; id: string; name: string }>;
   community?: SchemaTypes.Maybe<{
+    id: string;
     groups?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
   }>;
 };
@@ -418,6 +421,7 @@ export type UpdateHubMutation = {
   updateHub: {
     nameID: string;
     host?: SchemaTypes.Maybe<{ nameID: string }>;
+    community?: SchemaTypes.Maybe<{ id: string }>;
     context?: SchemaTypes.Maybe<{
       tagline?: SchemaTypes.Maybe<string>;
       visuals?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
@@ -434,6 +438,10 @@ export type UpdateOpportunityMutation = {
     id: string;
     displayName: string;
     nameID: string;
+    community?: SchemaTypes.Maybe<{
+      id: string;
+      groups?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
+    }>;
     context?: SchemaTypes.Maybe<{
       visuals?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
     }>;
@@ -480,8 +488,13 @@ export type ChallengeQuery = {
       nameID: string;
       id: string;
       displayName: string;
-      community?: SchemaTypes.Maybe<{ id: string; displayName: string }>;
-      leadOrganizations: Array<{ nameID: string; id: string }>;
+      community?: SchemaTypes.Maybe<{
+        id: string;
+        displayName: string;
+        leadOrganizations?: SchemaTypes.Maybe<
+          Array<{ nameID: string; id: string }>
+        >;
+      }>;
       context?: SchemaTypes.Maybe<{ id: string }>;
     };
   };
@@ -770,12 +783,14 @@ export const ChallengeDetailsFragmentDoc = gql`
       name
     }
     community {
+      id
       groups {
         id
         name
       }
     }
     context {
+      id
       visuals {
         name
         id
@@ -800,6 +815,7 @@ export const OpportunityDetailsFragmentDoc = gql`
       name
     }
     community {
+      id
       groups {
         id
         name
@@ -1228,6 +1244,9 @@ export const UpdateHubDocument = gql`
       host {
         nameID
       }
+      community {
+        id
+      }
       context {
         tagline
         visuals {
@@ -1244,6 +1263,13 @@ export const UpdateOpportunityDocument = gql`
       id
       displayName
       nameID
+      community {
+        id
+        groups {
+          id
+          name
+        }
+      }
       context {
         visuals {
           id
@@ -1291,12 +1317,12 @@ export const ChallengeDocument = gql`
         id
         displayName
         community {
+          leadOrganizations {
+            nameID
+            id
+          }
           id
           displayName
-        }
-        leadOrganizations {
-          nameID
-          id
         }
         context {
           id
