@@ -7,12 +7,14 @@ fragment ChallengeDetails on Challenge {
     name
   }
   community {
+    id
     groups {
       id
       name
     }
   }
   context {
+    id
     visuals {
       name
       id

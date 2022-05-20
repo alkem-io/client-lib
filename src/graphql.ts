@@ -11,9 +11,11 @@ export type ChallengeDetailsFragment = {
   nameID: string;
   tagset?: SchemaTypes.Maybe<{ tags: Array<string>; id: string; name: string }>;
   community?: SchemaTypes.Maybe<{
+    id: string;
     groups?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
   }>;
   context?: SchemaTypes.Maybe<{
+    id: string;
     visuals?: SchemaTypes.Maybe<Array<{ name: string; id: string }>>;
     ecosystemModel?: SchemaTypes.Maybe<{
       id: string;
@@ -27,6 +29,7 @@ export type OpportunityDetailsFragment = {
   nameID: string;
   tagset?: SchemaTypes.Maybe<{ tags: Array<string>; id: string; name: string }>;
   community?: SchemaTypes.Maybe<{
+    id: string;
     groups?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
   }>;
 };
@@ -435,6 +438,10 @@ export type UpdateOpportunityMutation = {
     id: string;
     displayName: string;
     nameID: string;
+    community?: SchemaTypes.Maybe<{
+      id: string;
+      groups?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
+    }>;
     context?: SchemaTypes.Maybe<{
       visuals?: SchemaTypes.Maybe<Array<{ id: string; name: string }>>;
     }>;
@@ -776,12 +783,14 @@ export const ChallengeDetailsFragmentDoc = gql`
       name
     }
     community {
+      id
       groups {
         id
         name
       }
     }
     context {
+      id
       visuals {
         name
         id
@@ -806,6 +815,7 @@ export const OpportunityDetailsFragmentDoc = gql`
       name
     }
     community {
+      id
       groups {
         id
         name
@@ -1253,6 +1263,13 @@ export const UpdateOpportunityDocument = gql`
       id
       displayName
       nameID
+      community {
+        id
+        groups {
+          id
+          name
+        }
+      }
       context {
         visuals {
           id
