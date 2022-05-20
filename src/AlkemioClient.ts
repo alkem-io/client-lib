@@ -848,6 +848,28 @@ export class AlkemioClient {
     return data?.assignOrganizationAsCommunityMember;
   }
 
+  async assignUserAsCommunityLead(communityID: string, userID: string) {
+    const { data, errors } = await this.privateClient.assignUserAsCommunityLead(
+      {
+        input: { communityID, userID },
+      }
+    );
+
+    this.errorHandler(errors);
+
+    return data?.assignUserAsCommunityLead;
+  }
+
+  async assignUserAsCommunityMember(communityID: string, userID: string) {
+    const { data, errors } = await this.privateClient.assignUserToCommunity({
+      input: { communityID, userID },
+    });
+
+    this.errorHandler(errors);
+
+    return data?.assignUserAsCommunityMember;
+  }
+
   async addUserToCommunity(userID: string, communityID?: string) {
     const uID = userID;
     if (!communityID)
