@@ -386,6 +386,12 @@ export type CreateUserMutation = {
   };
 };
 
+export type DeleteOrganizationMutationVariables = SchemaTypes.Exact<{
+  deleteData: SchemaTypes.DeleteOrganizationInput;
+}>;
+
+export type DeleteOrganizationMutation = { deleteOrganization: { id: string } };
+
 export type DeleteReferenceMutationVariables = SchemaTypes.Exact<{
   input: SchemaTypes.DeleteReferenceInput;
 }>;
@@ -1209,6 +1215,13 @@ export const CreateUserDocument = gql`
           id
         }
       }
+    }
+  }
+`;
+export const DeleteOrganizationDocument = gql`
+  mutation deleteOrganization($deleteData: DeleteOrganizationInput!) {
+    deleteOrganization(deleteData: $deleteData) {
+      id
     }
   }
 `;
@@ -2071,6 +2084,22 @@ export function getSdk(
       return withWrapper(() =>
         client.rawRequest<CreateUserMutation>(
           print(CreateUserDocument),
+          variables
+        )
+      );
+    },
+    deleteOrganization(
+      variables: DeleteOrganizationMutationVariables
+    ): Promise<{
+      data?: DeleteOrganizationMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<DeleteOrganizationMutation>(
+          print(DeleteOrganizationDocument),
           variables
         )
       );
