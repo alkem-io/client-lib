@@ -5,6 +5,19 @@ query hub($id: UUID_NAMEID!) {
     displayName
     community {
       id
+      displayName
+      memberUsers {
+        nameID
+      }
+      memberOrganizations {
+        nameID
+      }
+      leadUsers {
+        nameID
+      }
+      leadOrganizations {
+        nameID
+      }
     }
     context {
       id
