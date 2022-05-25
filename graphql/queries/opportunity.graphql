@@ -7,6 +7,18 @@ query opportunity($hubID: UUID_NAMEID!, $opportunityID: UUID_NAMEID!) {
       community {
         id
         displayName
+        memberUsers {
+          nameID
+        }
+        memberOrganizations {
+          nameID
+        }
+        leadUsers {
+          nameID
+        }
+        leadOrganizations {
+          nameID
+        }
       }
       context {
         id

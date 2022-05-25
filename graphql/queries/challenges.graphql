@@ -9,7 +9,11 @@ query challenges($hubID: UUID_NAMEID!) {
           name
           id
         }
-    }
+      }
+      community {
+        id
+        displayName
+      }
     }
   }
 }

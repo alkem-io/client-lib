@@ -386,6 +386,12 @@ export type CreateUserMutation = {
   };
 };
 
+export type DeleteOrganizationMutationVariables = SchemaTypes.Exact<{
+  deleteData: SchemaTypes.DeleteOrganizationInput;
+}>;
+
+export type DeleteOrganizationMutation = { deleteOrganization: { id: string } };
+
 export type DeleteReferenceMutationVariables = SchemaTypes.Exact<{
   input: SchemaTypes.DeleteReferenceInput;
 }>;
@@ -491,9 +497,10 @@ export type ChallengeQuery = {
       community?: SchemaTypes.Maybe<{
         id: string;
         displayName: string;
-        leadOrganizations?: SchemaTypes.Maybe<
-          Array<{ nameID: string; id: string }>
-        >;
+        memberUsers?: SchemaTypes.Maybe<Array<{ nameID: string }>>;
+        memberOrganizations?: SchemaTypes.Maybe<Array<{ nameID: string }>>;
+        leadUsers?: SchemaTypes.Maybe<Array<{ nameID: string }>>;
+        leadOrganizations?: SchemaTypes.Maybe<Array<{ nameID: string }>>;
       }>;
       context?: SchemaTypes.Maybe<{ id: string }>;
     };
@@ -514,6 +521,7 @@ export type ChallengesQuery = {
         context?: SchemaTypes.Maybe<{
           visuals?: SchemaTypes.Maybe<Array<{ name: string; id: string }>>;
         }>;
+        community?: SchemaTypes.Maybe<{ id: string; displayName: string }>;
       }>
     >;
   };
@@ -592,7 +600,14 @@ export type HubQuery = {
     id: string;
     nameID: string;
     displayName: string;
-    community?: SchemaTypes.Maybe<{ id: string }>;
+    community?: SchemaTypes.Maybe<{
+      id: string;
+      displayName: string;
+      memberUsers?: SchemaTypes.Maybe<Array<{ nameID: string }>>;
+      memberOrganizations?: SchemaTypes.Maybe<Array<{ nameID: string }>>;
+      leadUsers?: SchemaTypes.Maybe<Array<{ nameID: string }>>;
+      leadOrganizations?: SchemaTypes.Maybe<Array<{ nameID: string }>>;
+    }>;
     context?: SchemaTypes.Maybe<{
       id: string;
       references?: SchemaTypes.Maybe<
@@ -679,7 +694,14 @@ export type OpportunityQuery = {
       displayName: string;
       id: string;
       nameID: string;
-      community?: SchemaTypes.Maybe<{ id: string; displayName: string }>;
+      community?: SchemaTypes.Maybe<{
+        id: string;
+        displayName: string;
+        memberUsers?: SchemaTypes.Maybe<Array<{ nameID: string }>>;
+        memberOrganizations?: SchemaTypes.Maybe<Array<{ nameID: string }>>;
+        leadUsers?: SchemaTypes.Maybe<Array<{ nameID: string }>>;
+        leadOrganizations?: SchemaTypes.Maybe<Array<{ nameID: string }>>;
+      }>;
       context?: SchemaTypes.Maybe<{
         id: string;
         visuals?: SchemaTypes.Maybe<Array<{ name: string; id: string }>>;
@@ -1212,6 +1234,13 @@ export const CreateUserDocument = gql`
     }
   }
 `;
+export const DeleteOrganizationDocument = gql`
+  mutation deleteOrganization($deleteData: DeleteOrganizationInput!) {
+    deleteOrganization(deleteData: $deleteData) {
+      id
+    }
+  }
+`;
 export const DeleteReferenceDocument = gql`
   mutation deleteReference($input: DeleteReferenceInput!) {
     deleteReference(deleteData: $input) {
@@ -1317,12 +1346,20 @@ export const ChallengeDocument = gql`
         id
         displayName
         community {
-          leadOrganizations {
-            nameID
-            id
-          }
           id
           displayName
+          memberUsers {
+            nameID
+          }
+          memberOrganizations {
+            nameID
+          }
+          leadUsers {
+            nameID
+          }
+          leadOrganizations {
+            nameID
+          }
         }
         context {
           id
@@ -1343,6 +1380,10 @@ export const ChallengesDocument = gql`
             name
             id
           }
+        }
+        community {
+          id
+          displayName
         }
       }
     }
@@ -1420,6 +1461,19 @@ export const HubDocument = gql`
       displayName
       community {
         id
+        displayName
+        memberUsers {
+          nameID
+        }
+        memberOrganizations {
+          nameID
+        }
+        leadUsers {
+          nameID
+        }
+        leadOrganizations {
+          nameID
+        }
       }
       context {
         id
@@ -1494,6 +1548,18 @@ export const OpportunityDocument = gql`
         community {
           id
           displayName
+          memberUsers {
+            nameID
+          }
+          memberOrganizations {
+            nameID
+          }
+          leadUsers {
+            nameID
+          }
+          leadOrganizations {
+            nameID
+          }
         }
         context {
           id
@@ -2071,6 +2137,22 @@ export function getSdk(
       return withWrapper(() =>
         client.rawRequest<CreateUserMutation>(
           print(CreateUserDocument),
+          variables
+        )
+      );
+    },
+    deleteOrganization(
+      variables: DeleteOrganizationMutationVariables
+    ): Promise<{
+      data?: DeleteOrganizationMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<DeleteOrganizationMutation>(
+          print(DeleteOrganizationDocument),
           variables
         )
       );
