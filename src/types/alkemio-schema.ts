@@ -107,7 +107,7 @@ export type ApplicationEventInput = {
   eventName: Scalars['String'];
 };
 
-export type ApplicationResult = {
+export type ApplicationForRoleResult = {
   /** ID for the Challenge being applied to, if any. Or the Challenge containing the Opportunity being applied to. */
   challengeID?: Maybe<Scalars['UUID']>;
   /** ID for the community */
@@ -154,7 +154,7 @@ export type Aspect = {
   /** The ID of the entity */
   id: Scalars['UUID'];
   /** A name identifier of the entity, unique within a given scope. */
-  nameID: Scalars['NameID'];
+  nameID?: Maybe<Scalars['NameID']>;
   /** The References for this Aspect. */
   references?: Maybe<Array<Reference>>;
   /** The set of tags for the Aspect */
@@ -651,6 +651,18 @@ export type ContextAspectCreated = {
   contextID: Scalars['String'];
 };
 
+export type ContributorRoles = {
+  /** Open applications for this contributor. */
+  applications?: Maybe<Array<ApplicationForRoleResult>>;
+  /** All the communitites the user is a part of. */
+  communities: Array<RolesResultCommunity>;
+  /** Details of Hubs the User or Organization is a member of, with child memberships */
+  hubs: Array<RolesResultHub>;
+  id: Scalars['UUID'];
+  /** Details of the Organizations the User is a member of, with child memberships. */
+  organizations: Array<RolesResultOrganization>;
+};
+
 export type CreateActorGroupInput = {
   description?: Maybe<Scalars['String']>;
   ecosystemModelID: Scalars['UUID'];
@@ -670,7 +682,7 @@ export type CreateAspectOnContextInput = {
   description: Scalars['String'];
   /** The display name for the entity. */
   displayName: Scalars['String'];
-  /** A readable identifier, unique within the containing scope. If not provided generate based on the displayName */
+  /** A readable identifier, unique within the containing scope. */
   nameID?: Maybe<Scalars['NameID']>;
   tags?: Maybe<Array<Scalars['String']>>;
   type: Scalars['String'];
@@ -686,7 +698,7 @@ export type CreateChallengeOnChallengeInput = {
   challengeID: Scalars['UUID'];
   context?: Maybe<CreateContextInput>;
   /** The display name for the entity. */
-  displayName?: Maybe<Scalars['String']>;
+  displayName: Scalars['String'];
   /** Set lead Organizations for the Challenge. */
   leadOrganizations?: Maybe<Array<Scalars['UUID_NAMEID']>>;
   lifecycleTemplate?: Maybe<Scalars['String']>;
@@ -698,7 +710,7 @@ export type CreateChallengeOnChallengeInput = {
 export type CreateChallengeOnHubInput = {
   context?: Maybe<CreateContextInput>;
   /** The display name for the entity. */
-  displayName?: Maybe<Scalars['String']>;
+  displayName: Scalars['String'];
   hubID: Scalars['UUID_NAMEID'];
   /** Set lead Organizations for the Challenge. */
   leadOrganizations?: Maybe<Array<Scalars['UUID_NAMEID']>>;
@@ -727,7 +739,7 @@ export type CreateFeedbackOnCommunityContextInput = {
 export type CreateHubInput = {
   context?: Maybe<CreateContextInput>;
   /** The display name for the entity. */
-  displayName?: Maybe<Scalars['String']>;
+  displayName: Scalars['String'];
   /** The host Organization for the hub */
   hostID: Scalars['UUID_NAMEID'];
   lifecycleTemplate?: Maybe<Scalars['String']>;
@@ -751,7 +763,7 @@ export type CreateOpportunityInput = {
   challengeID: Scalars['UUID'];
   context?: Maybe<CreateContextInput>;
   /** The display name for the entity. */
-  displayName?: Maybe<Scalars['String']>;
+  displayName: Scalars['String'];
   lifecycleTemplate?: Maybe<Scalars['String']>;
   /** A readable identifier, unique within the containing scope. */
   nameID: Scalars['NameID'];
@@ -761,7 +773,7 @@ export type CreateOpportunityInput = {
 export type CreateOrganizationInput = {
   contactEmail?: Maybe<Scalars['String']>;
   /** The display name for the entity. */
-  displayName?: Maybe<Scalars['String']>;
+  displayName: Scalars['String'];
   domain?: Maybe<Scalars['String']>;
   legalEntityName?: Maybe<Scalars['String']>;
   /** A readable identifier, unique within the containing scope. */
@@ -780,7 +792,7 @@ export type CreateProfileInput = {
 export type CreateProjectInput = {
   description?: Maybe<Scalars['String']>;
   /** The display name for the entity. */
-  displayName?: Maybe<Scalars['String']>;
+  displayName: Scalars['String'];
   /** A readable identifier, unique within the containing scope. */
   nameID: Scalars['NameID'];
   opportunityID: Scalars['UUID_NAMEID'];
@@ -842,10 +854,8 @@ export type CreateUserGroupInput = {
 
 export type CreateUserInput = {
   accountUpn?: Maybe<Scalars['String']>;
-  city?: Maybe<Scalars['String']>;
-  country?: Maybe<Scalars['String']>;
   /** The display name for the entity. */
-  displayName?: Maybe<Scalars['String']>;
+  displayName: Scalars['String'];
   email: Scalars['String'];
   firstName?: Maybe<Scalars['String']>;
   gender?: Maybe<Scalars['String']>;
@@ -1157,73 +1167,6 @@ export type Location = {
   country: Scalars['String'];
   /** The ID of the entity */
   id: Scalars['UUID'];
-};
-
-export type MembershipOrganizationInput = {
-  /** The ID of the organization to retrieve the membership of. */
-  organizationID: Scalars['UUID_NAMEID'];
-};
-
-export type MembershipResult = {
-  /** Display name of the entity */
-  displayName: Scalars['String'];
-  /** A unique identifier for this membership result. */
-  id: Scalars['String'];
-  /** Name Identifier of the entity */
-  nameID: Scalars['NameID'];
-};
-
-export type MembershipResultChallengeLeading = {
-  /** Display name of the entity */
-  displayName: Scalars['String'];
-  /** The ID of the Hub hosting this Challenge. */
-  hubID: Scalars['String'];
-  /** A unique identifier for this membership result. */
-  id: Scalars['String'];
-  /** Name Identifier of the entity */
-  nameID: Scalars['NameID'];
-};
-
-export type MembershipResultCommunity = {
-  /** Display name of the community */
-  displayName: Scalars['String'];
-  /** The ID of the community the user is a member of. */
-  id: Scalars['UUID'];
-};
-
-export type MembershipResultContributorToHub = {
-  /** Details of the Challenges the user is a member of */
-  challenges: Array<MembershipResult>;
-  /** Display name of the entity */
-  displayName: Scalars['String'];
-  /** The Hub ID */
-  hubID: Scalars['String'];
-  /** A unique identifier for this membership result. */
-  id: Scalars['String'];
-  /** Name Identifier of the entity */
-  nameID: Scalars['NameID'];
-  /** Details of the Opportunities the Contributor is a member of */
-  opportunities: Array<MembershipResult>;
-  /** Details of the UserGroups the User is a member of */
-  userGroups: Array<MembershipResult>;
-};
-
-export type MembershipResultUserinOrganization = {
-  /** Display name of the entity */
-  displayName: Scalars['String'];
-  /** A unique identifier for this membership result. */
-  id: Scalars['String'];
-  /** Name Identifier of the entity */
-  nameID: Scalars['NameID'];
-  /** The Organization ID. */
-  organizationID: Scalars['String'];
-  /** Details of the Groups in the Organizations the user is a member of */
-  userGroups: Array<MembershipResult>;
-};
-
-export type MembershipUserInput = {
-  /** The ID of the user to retrieve the membership of. */
-  userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
 /** A message that was sent either as an Update or as part of a Discussion. */
@@ -1987,18 +1930,6 @@ export type OrganizationFilterInput = {
   website?: Maybe<Scalars['String']>;
 };
 
-export type OrganizationMembership = {
-  /** Details of the Challenges the Organization is leading. */
-  challengesLeading: Array<MembershipResultChallengeLeading>;
-  /** All the communitites the user is a part of. */
-  communities: Array<MembershipResultCommunity>;
-  /** Details of Hubs the user is a member of, with child memberships */
-  hubs: Array<MembershipResultContributorToHub>;
-  /** Details of Hubs the Organization is hosting. */
-  hubsHosting: Array<MembershipResult>;
-  id: Scalars['UUID'];
-};
-
 export enum OrganizationPreferenceType {
   AuthorizationOrganizationMatchDomain = 'AUTHORIZATION_ORGANIZATION_MATCH_DOMAIN',
 }
@@ -2209,10 +2140,6 @@ export type Query = {
   me: User;
   /** Check if the currently logged in user has a User profile */
   meHasProfile: Scalars['Boolean'];
-  /** The memberships for this Organization */
-  membershipOrganization: OrganizationMembership;
-  /** Search the hub for terms supplied */
-  membershipUser: UserMembership;
   /** Alkemio Services Metadata */
   metadata: Metadata;
   /** A particular Organization */
@@ -2221,6 +2148,10 @@ export type Query = {
   organizations: Array<Organization>;
   /** The Organizations on this platform in paginated format */
   organizationsPaginated: PaginatedOrganization;
+  /** The roles that the specified Organization has. */
+  rolesOrganization: ContributorRoles;
+  /** The roles that that the specified User has. */
+  rolesUser: ContributorRoles;
   /** Search the hub for terms supplied */
   search: Array<SearchResultEntry>;
   /** A particular user, identified by the ID or by email */
@@ -2245,14 +2176,6 @@ export type QueryHubArgs = {
   ID: Scalars['UUID_NAMEID'];
 };
 
-export type QueryMembershipOrganizationArgs = {
-  membershipData: MembershipOrganizationInput;
-};
-
-export type QueryMembershipUserArgs = {
-  membershipData: MembershipUserInput;
-};
-
 export type QueryOrganizationArgs = {
   ID: Scalars['UUID_NAMEID'];
 };
@@ -2268,6 +2191,14 @@ export type QueryOrganizationsPaginatedArgs = {
   filter?: Maybe<OrganizationFilterInput>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+};
+
+export type QueryRolesOrganizationArgs = {
+  rolesData: RolesOrganizationInput;
+};
+
+export type QueryRolesUserArgs = {
+  rolesData: RolesUserInput;
 };
 
 export type QuerySearchArgs = {
@@ -2450,9 +2381,73 @@ export type RemoveUserGroupMemberInput = {
 
 export type RevokeAuthorizationCredentialInput = {
   /** The resource to which access is being removed. */
-  resourceID?: Maybe<Scalars['String']>;
+  resourceID: Scalars['String'];
   type: AuthorizationCredential;
   /** The user from whom the credential is being removed. */
+  userID: Scalars['UUID_NAMEID_EMAIL'];
+};
+
+export type RolesOrganizationInput = {
+  /** The ID of the organization to retrieve the roles of. */
+  organizationID: Scalars['UUID_NAMEID'];
+};
+
+export type RolesResult = {
+  /** Display name of the entity */
+  displayName: Scalars['String'];
+  /** A unique identifier for this membership result. */
+  id: Scalars['String'];
+  /** Name Identifier of the entity */
+  nameID: Scalars['NameID'];
+  /** The roles held by the contributor */
+  roles: Array<Scalars['String']>;
+  /** Details of the Groups in the Organizations the user is a member of */
+  userGroups: Array<RolesResult>;
+};
+
+export type RolesResultCommunity = {
+  /** Display name of the community */
+  displayName: Scalars['String'];
+  /** The ID of the community the user is a member of. */
+  id: Scalars['UUID'];
+};
+
+export type RolesResultHub = {
+  /** Details of the Challenges the user is a member of */
+  challenges: Array<RolesResult>;
+  /** Display name of the entity */
+  displayName: Scalars['String'];
+  /** The Hub ID */
+  hubID: Scalars['String'];
+  /** A unique identifier for this membership result. */
+  id: Scalars['String'];
+  /** Name Identifier of the entity */
+  nameID: Scalars['NameID'];
+  /** Details of the Opportunities the Contributor is a member of */
+  opportunities: Array<RolesResult>;
+  /** The roles held by the contributor */
+  roles: Array<Scalars['String']>;
+  /** Details of the Groups in the Organizations the user is a member of */
+  userGroups: Array<RolesResult>;
+};
+
+export type RolesResultOrganization = {
+  /** Display name of the entity */
+  displayName: Scalars['String'];
+  /** A unique identifier for this membership result. */
+  id: Scalars['String'];
+  /** Name Identifier of the entity */
+  nameID: Scalars['NameID'];
+  /** The Organization ID. */
+  organizationID: Scalars['String'];
+  /** The roles held by the contributor */
+  roles: Array<Scalars['String']>;
+  /** Details of the Groups in the Organizations the user is a member of */
+  userGroups: Array<RolesResult>;
+};
+
+export type RolesUserInput = {
+  /** The ID of the user to retrieve the roles of. */
   userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
@@ -2873,18 +2868,6 @@ export type UserGroup = Searchable & {
   parent?: Maybe<Groupable>;
   /** The profile for the user group */
   profile?: Maybe<Profile>;
-};
-
-export type UserMembership = {
-  /** Open applications for this user. */
-  applications?: Maybe<Array<ApplicationResult>>;
-  /** All the communitites the user is a part of. */
-  communities: Array<MembershipResultCommunity>;
-  /** Details of Hubs the user is a member of, with child memberships */
-  hubs: Array<MembershipResultContributorToHub>;
-  id: Scalars['UUID'];
-  /** Details of the Organizations the user is a member of, with child memberships. */
-  organizations: Array<MembershipResultUserinOrganization>;
 };
 
 export enum UserPreferenceType {

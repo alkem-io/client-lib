@@ -224,7 +224,7 @@ export type CreateAspectOnContextMutationVariables = SchemaTypes.Exact<{
 export type CreateAspectOnContextMutation = {
   createAspectOnContext: {
     id: string;
-    nameID: string;
+    nameID?: SchemaTypes.Maybe<string>;
     displayName: string;
     description: string;
     tagset?: SchemaTypes.Maybe<{ tags: Array<string> }>;
