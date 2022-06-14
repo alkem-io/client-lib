@@ -226,7 +226,7 @@ export type CreateAspectOnContextMutation = {
     id: string;
     nameID?: SchemaTypes.Maybe<string>;
     displayName: string;
-    description: string;
+    description: any;
     tagset?: SchemaTypes.Maybe<{ tags: Array<string> }>;
     banner?: SchemaTypes.Maybe<{ id: string }>;
     bannerNarrow?: SchemaTypes.Maybe<{ id: string }>;
@@ -385,6 +385,18 @@ export type CreateUserMutation = {
     }>;
   };
 };
+
+export type DeleteChallengeMutationVariables = SchemaTypes.Exact<{
+  deleteData: SchemaTypes.DeleteChallengeInput;
+}>;
+
+export type DeleteChallengeMutation = { deleteChallenge: { id: string } };
+
+export type DeleteOpportunityMutationVariables = SchemaTypes.Exact<{
+  deleteData: SchemaTypes.DeleteOpportunityInput;
+}>;
+
+export type DeleteOpportunityMutation = { deleteOpportunity: { id: string } };
 
 export type DeleteOrganizationMutationVariables = SchemaTypes.Exact<{
   deleteData: SchemaTypes.DeleteOrganizationInput;
@@ -1231,6 +1243,20 @@ export const CreateUserDocument = gql`
           id
         }
       }
+    }
+  }
+`;
+export const DeleteChallengeDocument = gql`
+  mutation deleteChallenge($deleteData: DeleteChallengeInput!) {
+    deleteChallenge(deleteData: $deleteData) {
+      id
+    }
+  }
+`;
+export const DeleteOpportunityDocument = gql`
+  mutation deleteOpportunity($deleteData: DeleteOpportunityInput!) {
+    deleteOpportunity(deleteData: $deleteData) {
+      id
     }
   }
 `;
@@ -2137,6 +2163,38 @@ export function getSdk(
       return withWrapper(() =>
         client.rawRequest<CreateUserMutation>(
           print(CreateUserDocument),
+          variables
+        )
+      );
+    },
+    deleteChallenge(
+      variables: DeleteChallengeMutationVariables
+    ): Promise<{
+      data?: DeleteChallengeMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<DeleteChallengeMutation>(
+          print(DeleteChallengeDocument),
+          variables
+        )
+      );
+    },
+    deleteOpportunity(
+      variables: DeleteOpportunityMutationVariables
+    ): Promise<{
+      data?: DeleteOpportunityMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<DeleteOpportunityMutation>(
+          print(DeleteOpportunityDocument),
           variables
         )
       );
