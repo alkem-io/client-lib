@@ -154,7 +154,7 @@ export type Aspect = {
   /** The ID of the entity */
   id: Scalars['UUID'];
   /** A name identifier of the entity, unique within a given scope. */
-  nameID?: Maybe<Scalars['NameID']>;
+  nameID: Scalars['NameID'];
   /** The References for this Aspect. */
   references?: Maybe<Array<Reference>>;
   /** The set of tags for the Aspect */
@@ -343,12 +343,14 @@ export type Canvas = {
   authorization?: Maybe<Authorization>;
   /** The checkout out state of this Canvas. */
   checkout?: Maybe<CanvasCheckout>;
+  /** The display name. */
+  displayName: Scalars['String'];
   /** The ID of the entity */
   id: Scalars['UUID'];
   /** Is the Canvas a template? */
   isTemplate: Scalars['Boolean'];
-  /** The name of the Canvas. */
-  name: Scalars['String'];
+  /** A name identifier of the entity, unique within a given scope. */
+  nameID: Scalars['NameID'];
   /** The JSON representation of the Canvas. */
   value: Scalars['JSON'];
 };
@@ -361,7 +363,7 @@ export type CanvasCheckout = {
   lifecycle: Lifecycle;
   /** The id of the user that has checked the entity out. */
   lockedBy: Scalars['UUID'];
-  /** Checked out status of the Canvas */
+  /** The checkout out state of this Canvas. */
   status: CanvasCheckoutStateEnum;
 };
 
@@ -582,6 +584,10 @@ export type Community = Groupable & {
   applications?: Maybe<Array<Application>>;
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
+  /** All member users excluding the current lead users in this Community. */
+  availableLeadUsers?: Maybe<PaginatedUsers>;
+  /** All available users that are potential Community members. */
+  availableMemberUsers?: Maybe<PaginatedUsers>;
   /** The Communications for this Community. */
   communication?: Maybe<Communication>;
   /** The name of the Community */
@@ -598,6 +604,24 @@ export type Community = Groupable & {
   memberOrganizations?: Maybe<Array<Organization>>;
   /** All users that are contributing to this Community. */
   memberUsers?: Maybe<Array<User>>;
+  /** The policy that defines the roles for this Community. */
+  policy?: Maybe<CommunityPolicy>;
+};
+
+export type CommunityAvailableLeadUsersArgs = {
+  after?: Maybe<Scalars['UUID']>;
+  before?: Maybe<Scalars['UUID']>;
+  filter?: Maybe<UserFilterInput>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+};
+
+export type CommunityAvailableMemberUsersArgs = {
+  after?: Maybe<Scalars['UUID']>;
+  before?: Maybe<Scalars['UUID']>;
+  filter?: Maybe<UserFilterInput>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 export type CommunityApplyInput = {
@@ -607,6 +631,24 @@ export type CommunityApplyInput = {
 
 export type CommunityJoinInput = {
   communityID: Scalars['UUID'];
+};
+
+export type CommunityPolicy = {
+  lead: CommunityPolicyRole;
+  member: CommunityPolicyRole;
+};
+
+export type CommunityPolicyRole = {
+  /** The CredentialDefinition that is associated with this role */
+  credential: CredentialDefinition;
+  /** Maximum number of Organizations in this role */
+  maxOrg: Scalars['Float'];
+  /** Maximum number of Users in this role */
+  maxUser: Scalars['Float'];
+  /** Minimun number of Organizations in this role */
+  minOrg: Scalars['Float'];
+  /** Minimum number of Users in this role */
+  minUser: Scalars['Float'];
 };
 
 export type Config = {
@@ -676,6 +718,16 @@ export type ContributorRoles = {
   organizations: Array<RolesResultOrganization>;
 };
 
+export type ConvertChallengeToHubInput = {
+  /** The Challenge to be promoted to be a new Hub. Note: the original Challenge will no longer exist after the conversion.  */
+  challengeID: Scalars['UUID_NAMEID'];
+};
+
+export type ConvertOpportunityToChallengeInput = {
+  /** The Opportunity to be promoted to be a new Challenge. Note: the original Opportunity will no longer exist after the conversion.  */
+  opportunityID: Scalars['UUID_NAMEID'];
+};
+
 export type CreateActorGroupInput = {
   description?: Maybe<Scalars['String']>;
   ecosystemModelID: Scalars['UUID'];
@@ -713,7 +765,10 @@ export type CreateAspectTemplateOnTemplatesSetInput = {
 
 export type CreateCanvasOnContextInput = {
   contextID: Scalars['UUID'];
-  name: Scalars['String'];
+  /** The display name for the entity. */
+  displayName: Scalars['String'];
+  /** A readable identifier, unique within the containing scope. If not provided it will be generated based on the displayName. */
+  nameID?: Maybe<Scalars['NameID']>;
   value?: Maybe<Scalars['String']>;
 };
 
@@ -907,6 +962,13 @@ export type Credential = {
   id: Scalars['UUID'];
   resourceID: Scalars['String'];
   type: AuthorizationCredential;
+};
+
+export type CredentialDefinition = {
+  /** The resourceID for this CredentialDefinition */
+  resourceID: Scalars['String'];
+  /** The type for this CredentialDefinition */
+  type: Scalars['String'];
 };
 
 export type CredentialMetadataOutput = {
@@ -1130,7 +1192,7 @@ export type Hub = {
   /** The set of tags for the  hub. */
   tagset?: Maybe<Tagset>;
   /** The templates in use by this Hub */
-  templates: TemplatesSet;
+  templates?: Maybe<TemplatesSet>;
 };
 
 export type HubApplicationArgs = {
@@ -1275,6 +1337,10 @@ export type Mutation = {
   beginCommunityMemberVerifiedCredentialOfferInteraction: AgentBeginVerifiedCredentialOfferOutput;
   /** Generate verified credential share request */
   beginVerifiedCredentialRequestInteraction: AgentBeginVerifiedCredentialRequestOutput;
+  /** Creates a new Hub by converting an existing Challenge. */
+  convertChallengeToHub: Hub;
+  /** Creates a new Challenge by converting an existing Opportunity. */
+  convertOpportunityToChallenge: Challenge;
   /** Creates a new Actor in the specified ActorGroup. */
   createActor: Actor;
   /** Create a new Actor Group on the EcosystemModel. */
@@ -1409,6 +1475,8 @@ export type Mutation = {
   revokeCredentialFromUser: User;
   /** Sends an comment message. Returns the id of the new Update message. */
   sendComment: Message;
+  /** Express interest to collaborate on an Opportunity. */
+  sendCommunityCollaborationInterest: Scalars['Boolean'];
   /** Sends a message to the specified Discussion.  */
   sendMessageToDiscussion: Message;
   /** Sends an update message. Returns the id of the new Update message. */
@@ -1543,6 +1611,14 @@ export type MutationBeginCommunityMemberVerifiedCredentialOfferInteractionArgs =
 
 export type MutationBeginVerifiedCredentialRequestInteractionArgs = {
   types: Array<Scalars['String']>;
+};
+
+export type MutationConvertChallengeToHubArgs = {
+  convertData: ConvertChallengeToHubInput;
+};
+
+export type MutationConvertOpportunityToChallengeArgs = {
+  convertData: ConvertOpportunityToChallengeInput;
 };
 
 export type MutationCreateActorArgs = {
@@ -1809,6 +1885,10 @@ export type MutationSendCommentArgs = {
   messageData: CommentsSendMessageInput;
 };
 
+export type MutationSendCommunityCollaborationInterestArgs = {
+  collaborationData: OpportunityCollaborationInput;
+};
+
 export type MutationSendMessageToDiscussionArgs = {
   messageData: DiscussionSendMessageInput;
 };
@@ -1937,6 +2017,10 @@ export type Opportunity = Searchable & {
   relations?: Maybe<Array<Relation>>;
   /** The set of tags for the challenge */
   tagset?: Maybe<Tagset>;
+};
+
+export type OpportunityCollaborationInput = {
+  opportunityID: Scalars['UUID'];
 };
 
 export type OpportunityEventInput = {
@@ -2072,6 +2156,12 @@ export type Platform = {
   featureFlags: Array<FeatureFlag>;
   /** URL to a form for providing feedback */
   feedback: Scalars['String'];
+  /** URL for the link Foundation in the HomePage of the application */
+  foundation: Scalars['String'];
+  /** URL for the link Impact in the HomePage of the application */
+  impact: Scalars['String'];
+  /** URL for the link Opensource in the HomePage of the application */
+  opensource: Scalars['String'];
   /** URL to the privacy policy for the platform */
   privacy: Scalars['String'];
   /** URL to the security policy for the platform */
@@ -2136,6 +2226,8 @@ export enum PreferenceType {
   NotificationCommunicationDiscussionResponse = 'NOTIFICATION_COMMUNICATION_DISCUSSION_RESPONSE',
   NotificationCommunicationUpdates = 'NOTIFICATION_COMMUNICATION_UPDATES',
   NotificationCommunicationUpdateSentAdmin = 'NOTIFICATION_COMMUNICATION_UPDATE_SENT_ADMIN',
+  NotificationCommunityCollaborationInterestAdmin = 'NOTIFICATION_COMMUNITY_COLLABORATION_INTEREST_ADMIN',
+  NotificationCommunityCollaborationInterestUser = 'NOTIFICATION_COMMUNITY_COLLABORATION_INTEREST_USER',
   NotificationCommunityNewMember = 'NOTIFICATION_COMMUNITY_NEW_MEMBER',
   NotificationCommunityNewMemberAdmin = 'NOTIFICATION_COMMUNITY_NEW_MEMBER_ADMIN',
   NotificationCommunityReviewSubmitted = 'NOTIFICATION_COMMUNITY_REVIEW_SUBMITTED',
@@ -2477,13 +2569,24 @@ export type RolesResult = {
   nameID: Scalars['NameID'];
   /** The roles held by the contributor */
   roles: Array<Scalars['String']>;
+};
+
+export type RolesResultCommunity = {
+  /** Display name of the entity */
+  displayName: Scalars['String'];
+  /** A unique identifier for this membership result. */
+  id: Scalars['String'];
+  /** Name Identifier of the entity */
+  nameID: Scalars['NameID'];
+  /** The roles held by the contributor */
+  roles: Array<Scalars['String']>;
   /** Details of the Groups in the Organizations the user is a member of */
   userGroups: Array<RolesResult>;
 };
 
 export type RolesResultHub = {
   /** Details of the Challenges the user is a member of */
-  challenges: Array<RolesResult>;
+  challenges: Array<RolesResultCommunity>;
   /** Display name of the entity */
   displayName: Scalars['String'];
   /** The Hub ID */
@@ -2493,7 +2596,7 @@ export type RolesResultHub = {
   /** Name Identifier of the entity */
   nameID: Scalars['NameID'];
   /** Details of the Opportunities the Contributor is a member of */
-  opportunities: Array<RolesResult>;
+  opportunities: Array<RolesResultCommunity>;
   /** The roles held by the contributor */
   roles: Array<Scalars['String']>;
   /** Details of the Groups in the Organizations the user is a member of */
@@ -2692,14 +2795,21 @@ export type UpdateAspectTemplateInput = {
 
 export type UpdateCanvasDirectInput = {
   ID: Scalars['UUID'];
+  /** The display name for this entity. */
+  displayName?: Maybe<Scalars['String']>;
   isTemplate?: Maybe<Scalars['Boolean']>;
-  name?: Maybe<Scalars['String']>;
+  /** A display identifier, unique within the containing scope. Note: updating the nameID will affect URL on the client. */
+  nameID?: Maybe<Scalars['NameID']>;
   value?: Maybe<Scalars['String']>;
 };
 
 export type UpdateCanvasInput = {
+  ID: Scalars['UUID'];
+  /** The display name for this entity. */
+  displayName?: Maybe<Scalars['String']>;
   isTemplate?: Maybe<Scalars['Boolean']>;
-  name?: Maybe<Scalars['String']>;
+  /** A display identifier, unique within the containing scope. Note: updating the nameID will affect URL on the client. */
+  nameID?: Maybe<Scalars['NameID']>;
   value?: Maybe<Scalars['String']>;
 };
 
@@ -2984,6 +3094,8 @@ export enum UserPreferenceType {
   NotificationCommunicationDiscussionResponse = 'NOTIFICATION_COMMUNICATION_DISCUSSION_RESPONSE',
   NotificationCommunicationUpdates = 'NOTIFICATION_COMMUNICATION_UPDATES',
   NotificationCommunicationUpdateSentAdmin = 'NOTIFICATION_COMMUNICATION_UPDATE_SENT_ADMIN',
+  NotificationCommunityCollaborationInterestAdmin = 'NOTIFICATION_COMMUNITY_COLLABORATION_INTEREST_ADMIN',
+  NotificationCommunityCollaborationInterestUser = 'NOTIFICATION_COMMUNITY_COLLABORATION_INTEREST_USER',
   NotificationCommunityNewMember = 'NOTIFICATION_COMMUNITY_NEW_MEMBER',
   NotificationCommunityNewMemberAdmin = 'NOTIFICATION_COMMUNITY_NEW_MEMBER_ADMIN',
   NotificationCommunityReviewSubmitted = 'NOTIFICATION_COMMUNITY_REVIEW_SUBMITTED',
