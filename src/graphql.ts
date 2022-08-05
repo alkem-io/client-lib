@@ -386,6 +386,18 @@ export type CreateUserMutation = {
   };
 };
 
+export type DeleteChallengeMutationVariables = SchemaTypes.Exact<{
+  deleteData: SchemaTypes.DeleteChallengeInput;
+}>;
+
+export type DeleteChallengeMutation = { deleteChallenge: { id: string } };
+
+export type DeleteOpportunityMutationVariables = SchemaTypes.Exact<{
+  deleteData: SchemaTypes.DeleteOpportunityInput;
+}>;
+
+export type DeleteOpportunityMutation = { deleteOpportunity: { id: string } };
+
 export type DeleteOrganizationMutationVariables = SchemaTypes.Exact<{
   deleteData: SchemaTypes.DeleteOrganizationInput;
 }>;
@@ -650,18 +662,20 @@ export type OpportunitiesQueryVariables = SchemaTypes.Exact<{
 
 export type OpportunitiesQuery = {
   hub: {
-    opportunities: Array<
-      {
-        id: string;
-        context?: SchemaTypes.Maybe<{
-          ecosystemModel?: SchemaTypes.Maybe<{
-            actorGroups?: SchemaTypes.Maybe<
-              Array<{ id: string; name: string }>
-            >;
+    opportunities?: SchemaTypes.Maybe<
+      Array<
+        {
+          id: string;
+          context?: SchemaTypes.Maybe<{
+            ecosystemModel?: SchemaTypes.Maybe<{
+              actorGroups?: SchemaTypes.Maybe<
+                Array<{ id: string; name: string }>
+              >;
+            }>;
           }>;
-        }>;
-        relations?: SchemaTypes.Maybe<Array<{ actorName: string }>>;
-      } & OpportunityProfileFragment
+          relations?: SchemaTypes.Maybe<Array<{ actorName: string }>>;
+        } & OpportunityProfileFragment
+      >
     >;
   };
 };
@@ -1231,6 +1245,20 @@ export const CreateUserDocument = gql`
           id
         }
       }
+    }
+  }
+`;
+export const DeleteChallengeDocument = gql`
+  mutation deleteChallenge($deleteData: DeleteChallengeInput!) {
+    deleteChallenge(deleteData: $deleteData) {
+      id
+    }
+  }
+`;
+export const DeleteOpportunityDocument = gql`
+  mutation deleteOpportunity($deleteData: DeleteOpportunityInput!) {
+    deleteOpportunity(deleteData: $deleteData) {
+      id
     }
   }
 `;
@@ -2137,6 +2165,38 @@ export function getSdk(
       return withWrapper(() =>
         client.rawRequest<CreateUserMutation>(
           print(CreateUserDocument),
+          variables
+        )
+      );
+    },
+    deleteChallenge(
+      variables: DeleteChallengeMutationVariables
+    ): Promise<{
+      data?: DeleteChallengeMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<DeleteChallengeMutation>(
+          print(DeleteChallengeDocument),
+          variables
+        )
+      );
+    },
+    deleteOpportunity(
+      variables: DeleteOpportunityMutationVariables
+    ): Promise<{
+      data?: DeleteOpportunityMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<DeleteOpportunityMutation>(
+          print(DeleteOpportunityDocument),
           variables
         )
       );

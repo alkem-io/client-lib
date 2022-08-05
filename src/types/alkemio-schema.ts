@@ -19,6 +19,8 @@ export type Scalars = {
   DateTime: Date;
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSON: string;
+  /** A representation of a Lifecycle Definition, based on XState. It is serialized JSON. */
+  LifecycleDefinition: any;
   /** A decentralized identifier (DID) as per the W3C standard. */
   Markdown: any;
   /** An identifier that originates from the underlying messaging platform. */
@@ -336,6 +338,7 @@ export enum AuthorizationPrivilege {
   ReadUsers = 'READ_USERS',
   Update = 'UPDATE',
   UpdateCanvas = 'UPDATE_CANVAS',
+  UpdateLifecycle = 'UPDATE_LIFECYCLE',
 }
 
 export type Canvas = {
@@ -347,10 +350,10 @@ export type Canvas = {
   displayName: Scalars['String'];
   /** The ID of the entity */
   id: Scalars['UUID'];
-  /** Is the Canvas a template? */
-  isTemplate: Scalars['Boolean'];
   /** A name identifier of the entity, unique within a given scope. */
   nameID: Scalars['NameID'];
+  /** The preview image for the Canvas. */
+  preview?: Maybe<Visual>;
   /** The JSON representation of the Canvas. */
   value: Scalars['JSON'];
 };
@@ -699,6 +702,8 @@ export type ContextAspectsArgs = {
 
 export type ContextCanvasesArgs = {
   IDs?: Maybe<Array<Scalars['UUID']>>;
+  limit?: Maybe<Scalars['Float']>;
+  shuffle?: Maybe<Scalars['Boolean']>;
 };
 
 export type ContextAspectCreated = {
@@ -773,6 +778,8 @@ export type CreateCanvasOnContextInput = {
 };
 
 export type CreateCanvasTemplateOnTemplatesSetInput = {
+  /** Use the specified Canvas as the initial value for this CanvasTempplate */
+  canvasID?: Maybe<Scalars['UUID']>;
   /** The meta information for this Template. */
   info: CreateTemplateInfoInput;
   templatesSetID: Scalars['UUID'];
@@ -831,6 +838,16 @@ export type CreateHubInput = {
   /** A readable identifier, unique within the containing scope. */
   nameID: Scalars['NameID'];
   tags?: Maybe<Array<Scalars['String']>>;
+};
+
+export type CreateLifecycleTemplateOnTemplatesSetInput = {
+  /** The XState definition for this LifecycleTemplate. */
+  definition: Scalars['LifecycleDefinition'];
+  /** The meta information for this Template. */
+  info: CreateTemplateInfoInput;
+  templatesSetID: Scalars['UUID'];
+  /** The type of the Lifecycles that this Template supports. */
+  type: LifecycleType;
 };
 
 export type CreateLocationInput = {
@@ -1027,6 +1044,10 @@ export type DeleteHubInput = {
   ID: Scalars['UUID_NAMEID'];
 };
 
+export type DeleteLifecycleTemplateInput = {
+  ID: Scalars['UUID'];
+};
+
 export type DeleteOpportunityInput = {
   ID: Scalars['UUID'];
 };
@@ -1113,8 +1134,6 @@ export type EcosystemModel = {
   actorGroups?: Maybe<Array<ActorGroup>>;
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
-  /** The Canvas for visualizing this Ecosystem Model. */
-  canvas?: Maybe<Canvas>;
   /** Overview of this ecosystem model. */
   description?: Maybe<Scalars['String']>;
   /** The ID of the entity */
@@ -1180,11 +1199,11 @@ export type Hub = {
   /** A name identifier of the entity, unique within a given scope. */
   nameID: Scalars['NameID'];
   /** All opportunities within the hub */
-  opportunities: Array<Opportunity>;
+  opportunities?: Maybe<Array<Opportunity>>;
   /** A particular Opportunity, either by its ID or nameID */
   opportunity: Opportunity;
   /** The preferences for this Hub */
-  preferences: Array<Preference>;
+  preferences?: Maybe<Array<Preference>>;
   /** A particular Project, identified by the ID */
   project: Project;
   /** All projects within this hub */
@@ -1253,7 +1272,7 @@ export type Lifecycle = {
   /** The ID of the entity */
   id: Scalars['UUID'];
   /** The machine definition, describing the states, transitions etc for this Lifeycle. */
-  machineDef: Scalars['JSON'];
+  machineDef: Scalars['LifecycleDefinition'];
   /** The next events of this Lifecycle. */
   nextEvents?: Maybe<Array<Scalars['String']>>;
   /** The current state of this Lifecycle. */
@@ -1263,6 +1282,24 @@ export type Lifecycle = {
   /** The Lifecycle template name. */
   templateName?: Maybe<Scalars['String']>;
 };
+
+export type LifecycleTemplate = {
+  /** The authorization rules for the entity */
+  authorization?: Maybe<Authorization>;
+  /** The XState definition for this LifecycleTemplate. */
+  definition?: Maybe<Scalars['LifecycleDefinition']>;
+  /** The ID of the entity */
+  id: Scalars['UUID'];
+  /** The meta information for this Template */
+  info: TemplateInfo;
+  /** The type for this LifecycleTemplate. */
+  type: LifecycleType;
+};
+
+export enum LifecycleType {
+  Challenge = 'CHALLENGE',
+  Opportunity = 'OPPORTUNITY',
+}
 
 export type Location = {
   city: Scalars['String'];
@@ -1367,6 +1404,8 @@ export type Mutation = {
   createGroupOnOrganization: UserGroup;
   /** Creates a new Hub. */
   createHub: Hub;
+  /** Creates a new LifecycleTemplate on the specified TemplatesSet. */
+  createLifecycleTemplate: LifecycleTemplate;
   /** Creates a new Opportunity within the parent Challenge. */
   createOpportunity: Opportunity;
   /** Creates a new Organization on the platform. */
@@ -1405,6 +1444,8 @@ export type Mutation = {
   deleteDiscussion: Discussion;
   /** Deletes the specified Hub. */
   deleteHub: Hub;
+  /** Deletes the specified LifecycleTemplate. */
+  deleteLifecycleTemplate: LifecycleTemplate;
   /** Deletes the specified Opportunity. */
   deleteOpportunity: Opportunity;
   /** Deletes the specified Organization. */
@@ -1475,8 +1516,6 @@ export type Mutation = {
   revokeCredentialFromUser: User;
   /** Sends an comment message. Returns the id of the new Update message. */
   sendComment: Message;
-  /** Express interest to collaborate on an Opportunity. */
-  sendCommunityCollaborationInterest: Scalars['Boolean'];
   /** Sends a message to the specified Discussion.  */
   sendMessageToDiscussion: Message;
   /** Sends an update message. Returns the id of the new Update message. */
@@ -1491,16 +1530,22 @@ export type Mutation = {
   updateCanvas: Canvas;
   /** Updates the specified CanvasTemplate. */
   updateCanvasTemplate: CanvasTemplate;
-  /** Updates the specified Challenge. */
+  /** Updates the Lifecycle on the specified Challenge. */
   updateChallenge: Challenge;
+  /** Updates the Lifecycle on the specified Challenge. */
+  updateChallengeLifecycle: Challenge;
   /** Updates the specified Discussion. */
   updateDiscussion: Discussion;
   /** Updates the specified EcosystemModel. */
   updateEcosystemModel: EcosystemModel;
   /** Updates the Hub. */
   updateHub: Hub;
+  /** Updates the specified LifecycleTemplate. */
+  updateLifecycleTemplate: LifecycleTemplate;
   /** Updates the specified Opportunity. */
   updateOpportunity: Opportunity;
+  /** Updates the Lifecycle on the specified Opportunity. */
+  updateOpportunityLifecycle: Opportunity;
   /** Updates the specified Organization. */
   updateOrganization: Organization;
   /** Updates one of the Preferences on a Challenge */
@@ -1673,6 +1718,10 @@ export type MutationCreateHubArgs = {
   hubData: CreateHubInput;
 };
 
+export type MutationCreateLifecycleTemplateArgs = {
+  lifecycleTemplateInput: CreateLifecycleTemplateOnTemplatesSetInput;
+};
+
 export type MutationCreateOpportunityArgs = {
   opportunityData: CreateOpportunityInput;
 };
@@ -1743,6 +1792,10 @@ export type MutationDeleteDiscussionArgs = {
 
 export type MutationDeleteHubArgs = {
   deleteData: DeleteHubInput;
+};
+
+export type MutationDeleteLifecycleTemplateArgs = {
+  deleteData: DeleteLifecycleTemplateInput;
 };
 
 export type MutationDeleteOpportunityArgs = {
@@ -1885,10 +1938,6 @@ export type MutationSendCommentArgs = {
   messageData: CommentsSendMessageInput;
 };
 
-export type MutationSendCommunityCollaborationInterestArgs = {
-  collaborationData: OpportunityCollaborationInput;
-};
-
 export type MutationSendMessageToDiscussionArgs = {
   messageData: DiscussionSendMessageInput;
 };
@@ -1921,6 +1970,10 @@ export type MutationUpdateChallengeArgs = {
   challengeData: UpdateChallengeInput;
 };
 
+export type MutationUpdateChallengeLifecycleArgs = {
+  challengeData: UpdateChallengeLifecycleInput;
+};
+
 export type MutationUpdateDiscussionArgs = {
   updateData: UpdateDiscussionInput;
 };
@@ -1933,8 +1986,16 @@ export type MutationUpdateHubArgs = {
   hubData: UpdateHubInput;
 };
 
+export type MutationUpdateLifecycleTemplateArgs = {
+  lifecycleTemplateInput: UpdateLifecycleTemplateInput;
+};
+
 export type MutationUpdateOpportunityArgs = {
   opportunityData: UpdateOpportunityInput;
+};
+
+export type MutationUpdateOpportunityLifecycleArgs = {
+  opportunityData: UpdateOpportunityLifecycleInput;
 };
 
 export type MutationUpdateOrganizationArgs = {
@@ -2017,10 +2078,6 @@ export type Opportunity = Searchable & {
   relations?: Maybe<Array<Relation>>;
   /** The set of tags for the challenge */
   tagset?: Maybe<Tagset>;
-};
-
-export type OpportunityCollaborationInput = {
-  opportunityID: Scalars['UUID'];
 };
 
 export type OpportunityEventInput = {
@@ -2759,6 +2816,8 @@ export type TemplatesSet = {
   canvasTemplates: Array<CanvasTemplate>;
   /** The ID of the entity */
   id: Scalars['UUID'];
+  /** The LifecycleTemplates in this TemplatesSet. */
+  lifecycleTemplates: Array<LifecycleTemplate>;
 };
 
 export type UpdateActorInput = {
@@ -2797,17 +2856,6 @@ export type UpdateCanvasDirectInput = {
   ID: Scalars['UUID'];
   /** The display name for this entity. */
   displayName?: Maybe<Scalars['String']>;
-  isTemplate?: Maybe<Scalars['Boolean']>;
-  /** A display identifier, unique within the containing scope. Note: updating the nameID will affect URL on the client. */
-  nameID?: Maybe<Scalars['NameID']>;
-  value?: Maybe<Scalars['String']>;
-};
-
-export type UpdateCanvasInput = {
-  ID: Scalars['UUID'];
-  /** The display name for this entity. */
-  displayName?: Maybe<Scalars['String']>;
-  isTemplate?: Maybe<Scalars['Boolean']>;
   /** A display identifier, unique within the containing scope. Note: updating the nameID will affect URL on the client. */
   nameID?: Maybe<Scalars['NameID']>;
   value?: Maybe<Scalars['String']>;
@@ -2832,9 +2880,16 @@ export type UpdateChallengeInput = {
   tags?: Maybe<Array<Scalars['String']>>;
 };
 
+export type UpdateChallengeLifecycleInput = {
+  /** ID of the Challenge */
+  challengeID: Scalars['UUID'];
+  /** The Lifecycle Definition to use for this Challenge. */
+  lifecycleDefinition: Scalars['LifecycleDefinition'];
+};
+
 export type UpdateChallengePreferenceInput = {
   /** ID of the Challenge */
-  challengeID: Scalars['UUID_NAMEID'];
+  challengeID: Scalars['UUID'];
   /** Type of the challenge preference */
   type: ChallengePreferenceType;
   value: Scalars['String'];
@@ -2862,8 +2917,6 @@ export type UpdateDiscussionInput = {
 
 export type UpdateEcosystemModelInput = {
   ID: Scalars['UUID'];
-  /** Update the Canvas for this Ecosystem Model. */
-  canvas?: Maybe<UpdateCanvasInput>;
   description?: Maybe<Scalars['String']>;
 };
 
@@ -2890,6 +2943,16 @@ export type UpdateHubPreferenceInput = {
   value: Scalars['String'];
 };
 
+export type UpdateLifecycleTemplateInput = {
+  ID: Scalars['UUID'];
+  /** The XState definition for this LifecycleTemplate. */
+  definition?: Maybe<Scalars['LifecycleDefinition']>;
+  /** The meta information for this Template. */
+  info?: Maybe<UpdateTemplateInfoInput>;
+  /** The type of the Lifecycles that this Template supports. */
+  type?: Maybe<LifecycleType>;
+};
+
 export type UpdateLocationInput = {
   city?: Maybe<Scalars['String']>;
   country?: Maybe<Scalars['String']>;
@@ -2905,6 +2968,13 @@ export type UpdateOpportunityInput = {
   nameID?: Maybe<Scalars['NameID']>;
   /** Update the tags on the Tagset. */
   tags?: Maybe<Array<Scalars['String']>>;
+};
+
+export type UpdateOpportunityLifecycleInput = {
+  /** The Lifecycle Definition to use for this Opportunity. */
+  lifecycleDefinition: Scalars['LifecycleDefinition'];
+  /** ID of the Opportunity */
+  opportunityID: Scalars['UUID'];
 };
 
 export type UpdateOrganizationInput = {
