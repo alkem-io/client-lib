@@ -697,6 +697,30 @@ export class AlkemioClient {
     return data?.deleteOrganization;
   }
 
+  public async deleteOpportunity(opportunityID: string) {
+    const { data, errors } = await this.privateClient.deleteOpportunity({
+      deleteData: {
+        ID: opportunityID,
+      },
+    });
+
+    this.errorHandler(errors);
+
+    return data?.deleteOpportunity;
+  }
+
+  public async deleteChallenge(challengeID: string) {
+    const { data, errors } = await this.privateClient.deleteChallenge({
+      deleteData: {
+        ID: challengeID,
+      },
+    });
+
+    this.errorHandler(errors);
+
+    return data?.deleteChallenge;
+  }
+
   public async organizations() {
     const { data, errors } = await this.privateClient.organizations();
 
