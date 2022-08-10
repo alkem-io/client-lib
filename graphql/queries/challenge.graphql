@@ -20,8 +20,14 @@ query challenge($hubID: UUID_NAMEID!, $challengeID: UUID_NAMEID!) {
           nameID
         }
       }
-
-
+      collaboration {
+        id
+        callouts {
+          id
+          nameID
+          type
+        }
+      }
       context {
         id
       }

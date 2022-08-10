@@ -11,10 +11,6 @@ query opportunities($hubID: UUID_NAMEID!) {
           }
         }
       }
-
-      relations {
-          actorName
-        }
     }
   }
 }

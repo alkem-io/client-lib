@@ -17,7 +17,11 @@ import {
   OrganizationAuthorizationResetInput,
   CreateChallengeOnChallengeInput,
   AuthorizationCredential,
-  CreateAspectOnContextInput,
+  CreateAspectOnCalloutInput,
+  CreateCalloutOnCollaborationInput,
+  CalloutType,
+  CalloutState,
+  CalloutVisibility,
 } from './types/alkemio-schema';
 import { ErrorHandler, handleErrors } from './util/handleErrors';
 import semver from 'semver';
@@ -537,17 +541,20 @@ export class AlkemioClient {
     return data?.updateHub;
   }
 
-  async createRelation(
-    opportunityID: string,
+  async createRelationOnCollaboration(
+    collaborationID: string,
     type: string,
     description: string,
     actorName: string,
     actorRole: string,
     actorType: string
   ) {
-    const { data, errors } = await this.privateClient.createRelation({
+    const {
+      data,
+      errors,
+    } = await this.privateClient.createRelationOnCollaboration({
       relationData: {
-        parentID: opportunityID,
+        collaborationID,
         type,
         description,
         actorName,
@@ -558,7 +565,7 @@ export class AlkemioClient {
 
     this.errorHandler(errors);
 
-    return data?.createRelation;
+    return data?.createRelationOnCollaboration;
   }
 
   async createActorGroup(
@@ -623,30 +630,61 @@ export class AlkemioClient {
     return data?.updateActor;
   }
 
-  // Create a aspect for the given context
-  async createAspectOnContext(
-    contextID: string,
+  // Create a aspect for the given callout
+  async createAspectOnCallout(
+    calloutID: string,
     type: string,
     displayName: string,
     nameID: string,
     description: string,
     tags?: string[]
   ) {
-    const aspectData: CreateAspectOnContextInput = {
+    const aspectData: CreateAspectOnCalloutInput = {
       type,
-      contextID,
+      calloutID,
       displayName,
       nameID,
       description,
       tags,
     };
-    const { data, errors } = await this.privateClient.createAspectOnContext({
-      aspectData: aspectData,
+    const { data, errors } = await this.privateClient.createAspectOnCallout({
+      aspectData,
     });
 
     this.errorHandler(errors);
 
-    return data?.createAspectOnContext;
+    return data?.createAspectOnCallout;
+  }
+
+  // Create a callout for the given collaboration
+  async createCalloutOnCollaboration(
+    collaborationID: string,
+    displayName: string,
+    nameID: string,
+    description: string,
+    type: CalloutType,
+    state: CalloutState,
+    visibility: CalloutVisibility
+  ) {
+    const calloutData: CreateCalloutOnCollaborationInput = {
+      collaborationID,
+      type,
+      state,
+      visibility,
+      displayName,
+      nameID,
+      description,
+    };
+    const {
+      data,
+      errors,
+    } = await this.privateClient.createCalloutOnCollaboration({
+      calloutData,
+    });
+
+    this.errorHandler(errors);
+
+    return data?.createCalloutOnCollaboration;
   }
 
   async createUserGroupOnHub(
