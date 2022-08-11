@@ -37,6 +37,9 @@ query opportunity($hubID: UUID_NAMEID!, $opportunityID: UUID_NAMEID!) {
           }
         }
       }
+      collaboration {
+        id
+      }
     }
   }
 }

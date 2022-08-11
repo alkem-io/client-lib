@@ -328,10 +328,12 @@ export enum AuthorizationPrivilege {
   CommunityJoin = 'COMMUNITY_JOIN',
   Create = 'CREATE',
   CreateAspect = 'CREATE_ASPECT',
+  CreateCallout = 'CREATE_CALLOUT',
   CreateCanvas = 'CREATE_CANVAS',
   CreateComment = 'CREATE_COMMENT',
   CreateHub = 'CREATE_HUB',
   CreateOrganization = 'CREATE_ORGANIZATION',
+  CreateRelation = 'CREATE_RELATION',
   Delete = 'DELETE',
   Grant = 'GRANT',
   Read = 'READ',
@@ -339,6 +341,67 @@ export enum AuthorizationPrivilege {
   Update = 'UPDATE',
   UpdateCanvas = 'UPDATE_CANVAS',
   UpdateLifecycle = 'UPDATE_LIFECYCLE',
+}
+
+export type Callout = {
+  /** The Aspects associated with this Callout. */
+  aspects?: Maybe<Array<Aspect>>;
+  /** The authorization rules for the entity */
+  authorization?: Maybe<Authorization>;
+  /** The Canvases associated with this Callout. */
+  canvases?: Maybe<Array<Canvas>>;
+  /** The description of this Callout */
+  description?: Maybe<Scalars['Markdown']>;
+  /** The Discussion object for this Callout. */
+  discussion?: Maybe<Discussion>;
+  /** The display name. */
+  displayName: Scalars['String'];
+  /** The ID of the entity */
+  id: Scalars['UUID'];
+  /** A name identifier of the entity, unique within a given scope. */
+  nameID: Scalars['NameID'];
+  /** State of the Callout. */
+  state: CalloutState;
+  /** The Callout type, e.g. Card, Canvas, Discussion */
+  type: CalloutType;
+  /** Visibility of the Callout. */
+  visibility: CalloutVisibility;
+};
+
+export type CalloutAspectsArgs = {
+  IDs?: Maybe<Array<Scalars['UUID_NAMEID']>>;
+  limit?: Maybe<Scalars['Float']>;
+  shuffle?: Maybe<Scalars['Boolean']>;
+};
+
+export type CalloutCanvasesArgs = {
+  IDs?: Maybe<Array<Scalars['UUID']>>;
+  limit?: Maybe<Scalars['Float']>;
+  shuffle?: Maybe<Scalars['Boolean']>;
+};
+
+export type CalloutAspectCreated = {
+  /** The aspect that has been created. */
+  aspect: Aspect;
+  /** The identifier for the Callout on which the aspect was created. */
+  calloutID: Scalars['String'];
+};
+
+export enum CalloutState {
+  Archived = 'ARCHIVED',
+  Closed = 'CLOSED',
+  Open = 'OPEN',
+}
+
+export enum CalloutType {
+  Canvas = 'CANVAS',
+  Card = 'CARD',
+  Discussion = 'DISCUSSION',
+}
+
+export enum CalloutVisibility {
+  Draft = 'DRAFT',
+  Published = 'PUBLISHED',
 }
 
 export type Canvas = {
@@ -407,6 +470,8 @@ export type Challenge = Searchable & {
   authorization?: Maybe<Authorization>;
   /** The set of child Challenges within this challenge. */
   challenges?: Maybe<Array<Challenge>>;
+  /** The collaboration for the challenge. */
+  collaboration?: Maybe<Collaboration>;
   /** The community for the challenge. */
   community?: Maybe<Community>;
   /** The context for the challenge. */
@@ -450,6 +515,17 @@ export type ChallengeTemplate = {
   feedback?: Maybe<Array<FeedbackTemplate>>;
   /** Challenge template name. */
   name: Scalars['String'];
+};
+
+export type Collaboration = {
+  /** The authorization rules for the entity */
+  authorization?: Maybe<Authorization>;
+  /** List of callouts */
+  callouts?: Maybe<Array<Callout>>;
+  /** The ID of the entity */
+  id: Scalars['UUID'];
+  /** List of relations */
+  relations?: Maybe<Array<Relation>>;
 };
 
 export type Comments = {
@@ -666,14 +742,10 @@ export type Config = {
 };
 
 export type Context = {
-  /** The Aspects for this Context. */
-  aspects?: Maybe<Array<Aspect>>;
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
   /** A detailed description of the current situation */
   background?: Maybe<Scalars['String']>;
-  /** The Canvas entities for this Context. */
-  canvases?: Maybe<Array<Canvas>>;
   /** The EcosystemModel for this Context. */
   ecosystemModel?: Maybe<EcosystemModel>;
   /** The ID of the entity */
@@ -692,25 +764,6 @@ export type Context = {
   visuals?: Maybe<Array<Visual>>;
   /** Who should get involved in this challenge */
   who?: Maybe<Scalars['String']>;
-};
-
-export type ContextAspectsArgs = {
-  IDs?: Maybe<Array<Scalars['UUID_NAMEID']>>;
-  limit?: Maybe<Scalars['Float']>;
-  shuffle?: Maybe<Scalars['Boolean']>;
-};
-
-export type ContextCanvasesArgs = {
-  IDs?: Maybe<Array<Scalars['UUID']>>;
-  limit?: Maybe<Scalars['Float']>;
-  shuffle?: Maybe<Scalars['Boolean']>;
-};
-
-export type ContextAspectCreated = {
-  /** The aspect that has been created. */
-  aspect: Aspect;
-  /** The identifier for the Context on which the aspect was created. */
-  contextID: Scalars['String'];
 };
 
 export type ContributorRoles = {
@@ -747,8 +800,8 @@ export type CreateActorInput = {
   value?: Maybe<Scalars['String']>;
 };
 
-export type CreateAspectOnContextInput = {
-  contextID: Scalars['UUID'];
+export type CreateAspectOnCalloutInput = {
+  calloutID: Scalars['UUID'];
   description: Scalars['Markdown'];
   /** The display name for the entity. */
   displayName: Scalars['String'];
@@ -768,8 +821,24 @@ export type CreateAspectTemplateOnTemplatesSetInput = {
   type: Scalars['String'];
 };
 
-export type CreateCanvasOnContextInput = {
-  contextID: Scalars['UUID'];
+export type CreateCalloutOnCollaborationInput = {
+  collaborationID: Scalars['UUID'];
+  /** Callout description. */
+  description?: Maybe<Scalars['Markdown']>;
+  /** The display name for the entity. */
+  displayName: Scalars['String'];
+  /** A readable identifier, unique within the containing scope. */
+  nameID: Scalars['NameID'];
+  /** State of the callout. */
+  state: CalloutState;
+  /** Callout type. */
+  type: CalloutType;
+  /** Visibility of the Callout. */
+  visibility: CalloutVisibility;
+};
+
+export type CreateCanvasOnCalloutInput = {
+  calloutID: Scalars['UUID'];
   /** The display name for the entity. */
   displayName: Scalars['String'];
   /** A readable identifier, unique within the containing scope. If not provided it will be generated based on the displayName. */
@@ -927,12 +996,12 @@ export type CreateReferenceOnProfileInput = {
   uri?: Maybe<Scalars['String']>;
 };
 
-export type CreateRelationInput = {
+export type CreateRelationOnCollaborationInput = {
   actorName: Scalars['String'];
   actorRole?: Maybe<Scalars['String']>;
   actorType?: Maybe<Scalars['String']>;
+  collaborationID: Scalars['UUID'];
   description?: Maybe<Scalars['String']>;
-  parentID: Scalars['String'];
   type: Scalars['String'];
 };
 
@@ -1023,9 +1092,12 @@ export type DeleteAspectTemplateInput = {
   ID: Scalars['UUID'];
 };
 
-export type DeleteCanvasOnContextInput = {
-  canvasID: Scalars['UUID'];
-  contextID: Scalars['UUID'];
+export type DeleteCalloutInput = {
+  ID: Scalars['UUID'];
+};
+
+export type DeleteCanvasInput = {
+  ID: Scalars['UUID'];
 };
 
 export type DeleteCanvasTemplateInput = {
@@ -1033,6 +1105,10 @@ export type DeleteCanvasTemplateInput = {
 };
 
 export type DeleteChallengeInput = {
+  ID: Scalars['UUID'];
+};
+
+export type DeleteCollaborationInput = {
   ID: Scalars['UUID'];
 };
 
@@ -1180,6 +1256,8 @@ export type Hub = {
   challenge: Challenge;
   /** The challenges for the hub. */
   challenges?: Maybe<Array<Challenge>>;
+  /** The collaboration for the Hub. */
+  collaboration?: Maybe<Collaboration>;
   /** Get a Community within the Hub. Defaults to the Community for the Hub itself. */
   community?: Maybe<Community>;
   /** The context for the hub. */
@@ -1382,12 +1460,14 @@ export type Mutation = {
   createActor: Actor;
   /** Create a new Actor Group on the EcosystemModel. */
   createActorGroup: ActorGroup;
-  /** Create a new Aspect on the Context. */
-  createAspectOnContext: Aspect;
+  /** Create a new Aspect on the Callout. */
+  createAspectOnCallout: Aspect;
   /** Creates a new AspectTemplate on the specified TemplatesSet. */
   createAspectTemplate: AspectTemplate;
-  /** Create a new Canvas on the Context. */
-  createCanvasOnContext: Canvas;
+  /** Create a new Callout on the Collaboration. */
+  createCalloutOnCollaboration: Callout;
+  /** Create a new Canvas on the Callout. */
+  createCanvasOnCallout: Canvas;
   /** Creates a new CanvasTemplate on the specified TemplatesSet. */
   createCanvasTemplate: CanvasTemplate;
   /** Creates a new Challenge within the specified Hub. */
@@ -1418,8 +1498,8 @@ export type Mutation = {
   createReferenceOnContext: Reference;
   /** Creates a new Reference on the specified Profile. */
   createReferenceOnProfile: Reference;
-  /** Create a new Relation on the Opportunity. */
-  createRelation: Relation;
+  /** Create a new Relation on the Collaboration. */
+  createRelationOnCollaboration: Relation;
   /** Creates a new Tagset on the specified Profile */
   createTagsetOnProfile: Tagset;
   /** Creates a new User on the platform. */
@@ -1434,12 +1514,16 @@ export type Mutation = {
   deleteAspect: Aspect;
   /** Deletes the specified AspectTemplate. */
   deleteAspectTemplate: AspectTemplate;
-  /** Deletes the specified Canvas. */
-  deleteCanvasOnContext: Canvas;
+  /** Delete a Callout. */
+  deleteCallout: Callout;
+  /** Updates the specified Canvas. */
+  deleteCanvas: Canvas;
   /** Deletes the specified CanvasTemplate. */
   deleteCanvasTemplate: CanvasTemplate;
   /** Deletes the specified Challenge. */
   deleteChallenge: Challenge;
+  /** Delete Collaboration. */
+  deleteCollaboration: Collaboration;
   /** Deletes the specified Discussion. */
   deleteDiscussion: Discussion;
   /** Deletes the specified Hub. */
@@ -1526,6 +1610,8 @@ export type Mutation = {
   updateAspect: Aspect;
   /** Updates the specified AspectTemplate. */
   updateAspectTemplate: AspectTemplate;
+  /** Update a Callout. */
+  updateCallout: Callout;
   /** Updates the specified Canvas. */
   updateCanvas: Canvas;
   /** Updates the specified CanvasTemplate. */
@@ -1674,16 +1760,20 @@ export type MutationCreateActorGroupArgs = {
   actorGroupData: CreateActorGroupInput;
 };
 
-export type MutationCreateAspectOnContextArgs = {
-  aspectData: CreateAspectOnContextInput;
+export type MutationCreateAspectOnCalloutArgs = {
+  aspectData: CreateAspectOnCalloutInput;
 };
 
 export type MutationCreateAspectTemplateArgs = {
   aspectTemplateInput: CreateAspectTemplateOnTemplatesSetInput;
 };
 
-export type MutationCreateCanvasOnContextArgs = {
-  canvasData: CreateCanvasOnContextInput;
+export type MutationCreateCalloutOnCollaborationArgs = {
+  calloutData: CreateCalloutOnCollaborationInput;
+};
+
+export type MutationCreateCanvasOnCalloutArgs = {
+  canvasData: CreateCanvasOnCalloutInput;
 };
 
 export type MutationCreateCanvasTemplateArgs = {
@@ -1746,8 +1836,8 @@ export type MutationCreateReferenceOnProfileArgs = {
   referenceInput: CreateReferenceOnProfileInput;
 };
 
-export type MutationCreateRelationArgs = {
-  relationData: CreateRelationInput;
+export type MutationCreateRelationOnCollaborationArgs = {
+  relationData: CreateRelationOnCollaborationInput;
 };
 
 export type MutationCreateTagsetOnProfileArgs = {
@@ -1774,8 +1864,12 @@ export type MutationDeleteAspectTemplateArgs = {
   deleteData: DeleteAspectTemplateInput;
 };
 
-export type MutationDeleteCanvasOnContextArgs = {
-  deleteData: DeleteCanvasOnContextInput;
+export type MutationDeleteCalloutArgs = {
+  deleteData: DeleteCalloutInput;
+};
+
+export type MutationDeleteCanvasArgs = {
+  canvasData: DeleteCanvasInput;
 };
 
 export type MutationDeleteCanvasTemplateArgs = {
@@ -1784,6 +1878,10 @@ export type MutationDeleteCanvasTemplateArgs = {
 
 export type MutationDeleteChallengeArgs = {
   deleteData: DeleteChallengeInput;
+};
+
+export type MutationDeleteCollaborationArgs = {
+  deleteData: DeleteCollaborationInput;
 };
 
 export type MutationDeleteDiscussionArgs = {
@@ -1958,6 +2056,10 @@ export type MutationUpdateAspectTemplateArgs = {
   aspectTemplateInput: UpdateAspectTemplateInput;
 };
 
+export type MutationUpdateCalloutArgs = {
+  calloutData: UpdateCalloutInput;
+};
+
 export type MutationUpdateCanvasArgs = {
   canvasData: UpdateCanvasDirectInput;
 };
@@ -2057,6 +2159,8 @@ export type Opportunity = Searchable & {
   authorization?: Maybe<Authorization>;
   /** The parent Challenge of the Opportunity */
   challenge?: Maybe<Challenge>;
+  /** The collaboration for the Opportunity. */
+  collaboration?: Maybe<Collaboration>;
   /** The community for the Opportunity. */
   community?: Maybe<Community>;
   /** The context for the Opportunity. */
@@ -2074,8 +2178,6 @@ export type Opportunity = Searchable & {
   parentNameID?: Maybe<Scalars['String']>;
   /** The set of projects within the context of this Opportunity */
   projects?: Maybe<Array<Project>>;
-  /** The set of Relations within the context of this Opportunity. */
-  relations?: Maybe<Array<Relation>>;
   /** The set of tags for the challenge */
   tagset?: Maybe<Tagset>;
 };
@@ -2723,6 +2825,8 @@ export type ServiceMetadata = {
 export type Subscription = {
   /** Receive new comment on Aspect */
   aspectCommentsMessageReceived: AspectCommentsMessageReceived;
+  /** Receive new Update messages on Communities the currently authenticated User is a member of. */
+  calloutAspectCreated: CalloutAspectCreated;
   /** Receive updated content of a canvas */
   canvasContentUpdated: CanvasContentUpdated;
   /** Receive new Discussion messages */
@@ -2731,14 +2835,16 @@ export type Subscription = {
   communicationDiscussionUpdated: Discussion;
   /** Receive new Update messages on Communities the currently authenticated User is a member of. */
   communicationUpdateMessageReceived: CommunicationUpdateMessageReceived;
-  /** Receive new Update messages on Communities the currently authenticated User is a member of. */
-  contextAspectCreated: ContextAspectCreated;
   /** Received on verified credentials change */
   profileVerifiedCredential: ProfileCredentialVerified;
 };
 
 export type SubscriptionAspectCommentsMessageReceivedArgs = {
   aspectID: Scalars['UUID'];
+};
+
+export type SubscriptionCalloutAspectCreatedArgs = {
+  calloutID: Scalars['UUID'];
 };
 
 export type SubscriptionCanvasContentUpdatedArgs = {
@@ -2755,10 +2861,6 @@ export type SubscriptionCommunicationDiscussionUpdatedArgs = {
 
 export type SubscriptionCommunicationUpdateMessageReceivedArgs = {
   updatesIDs?: Maybe<Array<Scalars['UUID']>>;
-};
-
-export type SubscriptionContextAspectCreatedArgs = {
-  contextID: Scalars['UUID'];
 };
 
 export type Tagset = {
@@ -2850,6 +2952,22 @@ export type UpdateAspectTemplateInput = {
   info?: Maybe<UpdateTemplateInfoInput>;
   /** The type of Aspects created from this Template. */
   type?: Maybe<Scalars['String']>;
+};
+
+export type UpdateCalloutInput = {
+  ID: Scalars['UUID'];
+  /** Callout description. */
+  description?: Maybe<Scalars['Markdown']>;
+  /** The display name for this entity. */
+  displayName?: Maybe<Scalars['String']>;
+  /** A display identifier, unique within the containing scope. Note: updating the nameID will affect URL on the client. */
+  nameID?: Maybe<Scalars['NameID']>;
+  /** State of the callout. */
+  state: CalloutState;
+  /** Callout type. */
+  type: CalloutType;
+  /** Visibility of the Callout. */
+  visibility: CalloutVisibility;
 };
 
 export type UpdateCanvasDirectInput = {

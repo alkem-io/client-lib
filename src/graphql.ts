@@ -217,12 +217,12 @@ export type CreateActorMutation = {
   };
 };
 
-export type CreateAspectOnContextMutationVariables = SchemaTypes.Exact<{
-  aspectData: SchemaTypes.CreateAspectOnContextInput;
+export type CreateAspectOnCalloutMutationVariables = SchemaTypes.Exact<{
+  aspectData: SchemaTypes.CreateAspectOnCalloutInput;
 }>;
 
-export type CreateAspectOnContextMutation = {
-  createAspectOnContext: {
+export type CreateAspectOnCalloutMutation = {
+  createAspectOnCallout: {
     id: string;
     nameID: string;
     displayName: string;
@@ -230,6 +230,18 @@ export type CreateAspectOnContextMutation = {
     tagset?: SchemaTypes.Maybe<{ tags: Array<string> }>;
     banner?: SchemaTypes.Maybe<{ id: string }>;
     bannerNarrow?: SchemaTypes.Maybe<{ id: string }>;
+  };
+};
+
+export type CreateCalloutOnCollaborationMutationVariables = SchemaTypes.Exact<{
+  calloutData: SchemaTypes.CreateCalloutOnCollaborationInput;
+}>;
+
+export type CreateCalloutOnCollaborationMutation = {
+  createCalloutOnCollaboration: {
+    id: string;
+    nameID: string;
+    type: SchemaTypes.CalloutType;
   };
 };
 
@@ -245,6 +257,7 @@ export type CreateChallengeMutation = {
       visuals?: SchemaTypes.Maybe<Array<{ name: string; id: string }>>;
     }>;
     community?: SchemaTypes.Maybe<{ id: string }>;
+    collaboration?: SchemaTypes.Maybe<{ id: string }>;
   };
 };
 
@@ -357,11 +370,13 @@ export type CreateReferenceOnProfileMutation = {
   createReferenceOnProfile: { name: string; uri: string; description: string };
 };
 
-export type CreateRelationMutationVariables = SchemaTypes.Exact<{
-  relationData: SchemaTypes.CreateRelationInput;
+export type CreateRelationOnCollaborationMutationVariables = SchemaTypes.Exact<{
+  relationData: SchemaTypes.CreateRelationOnCollaborationInput;
 }>;
 
-export type CreateRelationMutation = { createRelation: { type: string } };
+export type CreateRelationOnCollaborationMutation = {
+  createRelationOnCollaboration: { type: string };
+};
 
 export type CreateTagsetOnProfileMutationVariables = SchemaTypes.Exact<{
   tagsetData: SchemaTypes.CreateTagsetOnProfileInput;
@@ -514,6 +529,12 @@ export type ChallengeQuery = {
         leadUsers?: SchemaTypes.Maybe<Array<{ nameID: string }>>;
         leadOrganizations?: SchemaTypes.Maybe<Array<{ nameID: string }>>;
       }>;
+      collaboration?: SchemaTypes.Maybe<{
+        id: string;
+        callouts?: SchemaTypes.Maybe<
+          Array<{ id: string; nameID: string; type: SchemaTypes.CalloutType }>
+        >;
+      }>;
       context?: SchemaTypes.Maybe<{ id: string }>;
     };
   };
@@ -534,6 +555,7 @@ export type ChallengesQuery = {
           visuals?: SchemaTypes.Maybe<Array<{ name: string; id: string }>>;
         }>;
         community?: SchemaTypes.Maybe<{ id: string; displayName: string }>;
+        collaboration?: SchemaTypes.Maybe<{ id: string }>;
       }>
     >;
   };
@@ -627,6 +649,7 @@ export type HubQuery = {
       >;
       visuals?: SchemaTypes.Maybe<Array<{ name: string; uri: string }>>;
     }>;
+    collaboration?: SchemaTypes.Maybe<{ id: string }>;
   };
 };
 
@@ -673,7 +696,6 @@ export type OpportunitiesQuery = {
               >;
             }>;
           }>;
-          relations?: SchemaTypes.Maybe<Array<{ actorName: string }>>;
         } & OpportunityProfileFragment
       >
     >;
@@ -730,6 +752,7 @@ export type OpportunityQuery = {
           >;
         }>;
       }>;
+      collaboration?: SchemaTypes.Maybe<{ id: string }>;
     };
   };
 };
@@ -1070,9 +1093,9 @@ export const CreateActorDocument = gql`
     }
   }
 `;
-export const CreateAspectOnContextDocument = gql`
-  mutation createAspectOnContext($aspectData: CreateAspectOnContextInput!) {
-    createAspectOnContext(aspectData: $aspectData) {
+export const CreateAspectOnCalloutDocument = gql`
+  mutation createAspectOnCallout($aspectData: CreateAspectOnCalloutInput!) {
+    createAspectOnCallout(aspectData: $aspectData) {
       id
       nameID
       displayName
@@ -1089,6 +1112,17 @@ export const CreateAspectOnContextDocument = gql`
     }
   }
 `;
+export const CreateCalloutOnCollaborationDocument = gql`
+  mutation createCalloutOnCollaboration(
+    $calloutData: CreateCalloutOnCollaborationInput!
+  ) {
+    createCalloutOnCollaboration(calloutData: $calloutData) {
+      id
+      nameID
+      type
+    }
+  }
+`;
 export const CreateChallengeDocument = gql`
   mutation createChallenge($challengeData: CreateChallengeOnHubInput!) {
     createChallenge(challengeData: $challengeData) {
@@ -1101,6 +1135,9 @@ export const CreateChallengeDocument = gql`
         }
       }
       community {
+        id
+      }
+      collaboration {
         id
       }
     }
@@ -1219,9 +1256,11 @@ export const CreateReferenceOnProfileDocument = gql`
     }
   }
 `;
-export const CreateRelationDocument = gql`
-  mutation createRelation($relationData: CreateRelationInput!) {
-    createRelation(relationData: $relationData) {
+export const CreateRelationOnCollaborationDocument = gql`
+  mutation createRelationOnCollaboration(
+    $relationData: CreateRelationOnCollaborationInput!
+  ) {
+    createRelationOnCollaboration(relationData: $relationData) {
       type
     }
   }
@@ -1389,6 +1428,14 @@ export const ChallengeDocument = gql`
             nameID
           }
         }
+        collaboration {
+          id
+          callouts {
+            id
+            nameID
+            type
+          }
+        }
         context {
           id
         }
@@ -1412,6 +1459,9 @@ export const ChallengesDocument = gql`
         community {
           id
           displayName
+        }
+        collaboration {
+          id
         }
       }
     }
@@ -1516,6 +1566,9 @@ export const HubDocument = gql`
           uri
         }
       }
+      collaboration {
+        id
+      }
     }
   }
 `;
@@ -1557,9 +1610,6 @@ export const OpportunitiesDocument = gql`
               name
             }
           }
-        }
-        relations {
-          actorName
         }
       }
     }
@@ -1605,6 +1655,9 @@ export const OpportunityDocument = gql`
               }
             }
           }
+        }
+        collaboration {
+          id
         }
       }
     }
@@ -1961,18 +2014,34 @@ export function getSdk(
         )
       );
     },
-    createAspectOnContext(
-      variables: CreateAspectOnContextMutationVariables
+    createAspectOnCallout(
+      variables: CreateAspectOnCalloutMutationVariables
     ): Promise<{
-      data?: CreateAspectOnContextMutation | undefined;
+      data?: CreateAspectOnCalloutMutation | undefined;
       extensions?: any;
       headers: Headers;
       status: number;
       errors?: GraphQLError[] | undefined;
     }> {
       return withWrapper(() =>
-        client.rawRequest<CreateAspectOnContextMutation>(
-          print(CreateAspectOnContextDocument),
+        client.rawRequest<CreateAspectOnCalloutMutation>(
+          print(CreateAspectOnCalloutDocument),
+          variables
+        )
+      );
+    },
+    createCalloutOnCollaboration(
+      variables: CreateCalloutOnCollaborationMutationVariables
+    ): Promise<{
+      data?: CreateCalloutOnCollaborationMutation | undefined;
+      extensions?: any;
+      headers: Headers;
+      status: number;
+      errors?: GraphQLError[] | undefined;
+    }> {
+      return withWrapper(() =>
+        client.rawRequest<CreateCalloutOnCollaborationMutation>(
+          print(CreateCalloutOnCollaborationDocument),
           variables
         )
       );
@@ -2121,18 +2190,18 @@ export function getSdk(
         )
       );
     },
-    createRelation(
-      variables: CreateRelationMutationVariables
+    createRelationOnCollaboration(
+      variables: CreateRelationOnCollaborationMutationVariables
     ): Promise<{
-      data?: CreateRelationMutation | undefined;
+      data?: CreateRelationOnCollaborationMutation | undefined;
       extensions?: any;
       headers: Headers;
       status: number;
       errors?: GraphQLError[] | undefined;
     }> {
       return withWrapper(() =>
-        client.rawRequest<CreateRelationMutation>(
-          print(CreateRelationDocument),
+        client.rawRequest<CreateRelationOnCollaborationMutation>(
+          print(CreateRelationOnCollaborationDocument),
           variables
         )
       );

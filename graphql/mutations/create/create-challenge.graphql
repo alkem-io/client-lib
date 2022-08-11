@@ -11,5 +11,8 @@ mutation createChallenge($challengeData: CreateChallengeOnHubInput!) {
     community {
       id
     }
+    collaboration {
+      id
+    }
   }
 }

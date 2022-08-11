@@ -32,5 +32,8 @@ query hub($id: UUID_NAMEID!) {
         uri
       }
     }
+    collaboration {
+      id
+    }
   }
 }
