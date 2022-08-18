@@ -3,6 +3,15 @@ query hub($id: UUID_NAMEID!) {
     id
     nameID
     displayName
+    templates
+    {
+      id
+      lifecycleTemplates
+      {
+        id
+        type
+      }
+    }
     community {
       id
       displayName

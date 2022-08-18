@@ -634,6 +634,13 @@ export type HubQuery = {
     id: string;
     nameID: string;
     displayName: string;
+    templates?: SchemaTypes.Maybe<{
+      id: string;
+      lifecycleTemplates: Array<{
+        id: string;
+        type: SchemaTypes.LifecycleType;
+      }>;
+    }>;
     community?: SchemaTypes.Maybe<{
       id: string;
       displayName: string;
@@ -1537,6 +1544,13 @@ export const HubDocument = gql`
       id
       nameID
       displayName
+      templates {
+        id
+        lifecycleTemplates {
+          id
+          type
+        }
+      }
       community {
         id
         displayName
