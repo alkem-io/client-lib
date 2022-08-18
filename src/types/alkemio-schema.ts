@@ -3069,8 +3069,6 @@ export type UpdateLifecycleTemplateInput = {
   definition?: Maybe<Scalars['LifecycleDefinition']>;
   /** The meta information for this Template. */
   info?: Maybe<UpdateTemplateInfoInput>;
-  /** The type of the Lifecycles that this Template supports. */
-  type?: Maybe<LifecycleType>;
 };
 
 export type UpdateLocationInput = {
