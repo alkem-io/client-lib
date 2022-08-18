@@ -340,7 +340,7 @@ export enum AuthorizationPrivilege {
   ReadUsers = 'READ_USERS',
   Update = 'UPDATE',
   UpdateCanvas = 'UPDATE_CANVAS',
-  UpdateLifecycle = 'UPDATE_LIFECYCLE',
+  UpdateInnovationFlow = 'UPDATE_INNOVATION_FLOW',
 }
 
 export type Callout = {
@@ -860,9 +860,10 @@ export type CreateChallengeOnChallengeInput = {
   context?: Maybe<CreateContextInput>;
   /** The display name for the entity. */
   displayName: Scalars['String'];
+  /** The Innovation Flow template to use for the Challenge. */
+  innovationFlowTemplateID: Scalars['UUID'];
   /** Set lead Organizations for the Challenge. */
   leadOrganizations?: Maybe<Array<Scalars['UUID_NAMEID']>>;
-  lifecycleTemplate?: Maybe<Scalars['String']>;
   /** A readable identifier, unique within the containing scope. */
   nameID: Scalars['NameID'];
   tags?: Maybe<Array<Scalars['String']>>;
@@ -873,9 +874,10 @@ export type CreateChallengeOnHubInput = {
   /** The display name for the entity. */
   displayName: Scalars['String'];
   hubID: Scalars['UUID_NAMEID'];
+  /** The Innovation Flow template to use for the Challenge. */
+  innovationFlowTemplateID: Scalars['UUID'];
   /** Set lead Organizations for the Challenge. */
   leadOrganizations?: Maybe<Array<Scalars['UUID_NAMEID']>>;
-  lifecycleTemplate?: Maybe<Scalars['String']>;
   /** A readable identifier, unique within the containing scope. */
   nameID: Scalars['NameID'];
   tags?: Maybe<Array<Scalars['String']>>;
@@ -903,7 +905,6 @@ export type CreateHubInput = {
   displayName: Scalars['String'];
   /** The host Organization for the hub */
   hostID: Scalars['UUID_NAMEID'];
-  lifecycleTemplate?: Maybe<Scalars['String']>;
   /** A readable identifier, unique within the containing scope. */
   nameID: Scalars['NameID'];
   tags?: Maybe<Array<Scalars['String']>>;
@@ -935,7 +936,8 @@ export type CreateOpportunityInput = {
   context?: Maybe<CreateContextInput>;
   /** The display name for the entity. */
   displayName: Scalars['String'];
-  lifecycleTemplate?: Maybe<Scalars['String']>;
+  /** The Innovation Flow template to use for the Opportunity. */
+  innovationFlowTemplateID: Scalars['UUID'];
   /** A readable identifier, unique within the containing scope. */
   nameID: Scalars['NameID'];
   tags?: Maybe<Array<Scalars['String']>>;
@@ -1365,7 +1367,7 @@ export type LifecycleTemplate = {
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
   /** The XState definition for this LifecycleTemplate. */
-  definition?: Maybe<Scalars['LifecycleDefinition']>;
+  definition: Scalars['LifecycleDefinition'];
   /** The ID of the entity */
   id: Scalars['UUID'];
   /** The meta information for this Template */
@@ -1616,10 +1618,10 @@ export type Mutation = {
   updateCanvas: Canvas;
   /** Updates the specified CanvasTemplate. */
   updateCanvasTemplate: CanvasTemplate;
-  /** Updates the Lifecycle on the specified Challenge. */
+  /** Updates the specified Challenge. */
   updateChallenge: Challenge;
-  /** Updates the Lifecycle on the specified Challenge. */
-  updateChallengeLifecycle: Challenge;
+  /** Updates the Innovation Flow on the specified Challenge. */
+  updateChallengeInnovationFlow: Challenge;
   /** Updates the specified Discussion. */
   updateDiscussion: Discussion;
   /** Updates the specified EcosystemModel. */
@@ -1630,8 +1632,8 @@ export type Mutation = {
   updateLifecycleTemplate: LifecycleTemplate;
   /** Updates the specified Opportunity. */
   updateOpportunity: Opportunity;
-  /** Updates the Lifecycle on the specified Opportunity. */
-  updateOpportunityLifecycle: Opportunity;
+  /** Updates the Innovation Flow on the specified Opportunity. */
+  updateOpportunityInnovationFlow: Opportunity;
   /** Updates the specified Organization. */
   updateOrganization: Organization;
   /** Updates one of the Preferences on a Challenge */
@@ -2072,8 +2074,8 @@ export type MutationUpdateChallengeArgs = {
   challengeData: UpdateChallengeInput;
 };
 
-export type MutationUpdateChallengeLifecycleArgs = {
-  challengeData: UpdateChallengeLifecycleInput;
+export type MutationUpdateChallengeInnovationFlowArgs = {
+  challengeData: UpdateChallengeInnovationFlowInput;
 };
 
 export type MutationUpdateDiscussionArgs = {
@@ -2096,8 +2098,8 @@ export type MutationUpdateOpportunityArgs = {
   opportunityData: UpdateOpportunityInput;
 };
 
-export type MutationUpdateOpportunityLifecycleArgs = {
-  opportunityData: UpdateOpportunityLifecycleInput;
+export type MutationUpdateOpportunityInnovationFlowArgs = {
+  opportunityData: UpdateOpportunityInnovationFlowInput;
 };
 
 export type MutationUpdateOrganizationArgs = {
@@ -2986,6 +2988,13 @@ export type UpdateCanvasTemplateInput = {
   value?: Maybe<Scalars['JSON']>;
 };
 
+export type UpdateChallengeInnovationFlowInput = {
+  /** ID of the Challenge */
+  challengeID: Scalars['UUID'];
+  /** The Innovation Flow template to use for the Challenge. */
+  innovationFlowTemplateID: Scalars['UUID'];
+};
+
 export type UpdateChallengeInput = {
   ID: Scalars['UUID'];
   /** Update the contained Context entity. */
@@ -2996,13 +3005,6 @@ export type UpdateChallengeInput = {
   nameID?: Maybe<Scalars['NameID']>;
   /** Update the tags on the Tagset. */
   tags?: Maybe<Array<Scalars['String']>>;
-};
-
-export type UpdateChallengeLifecycleInput = {
-  /** ID of the Challenge */
-  challengeID: Scalars['UUID'];
-  /** The Lifecycle Definition to use for this Challenge. */
-  lifecycleDefinition: Scalars['LifecycleDefinition'];
 };
 
 export type UpdateChallengePreferenceInput = {
@@ -3067,13 +3069,18 @@ export type UpdateLifecycleTemplateInput = {
   definition?: Maybe<Scalars['LifecycleDefinition']>;
   /** The meta information for this Template. */
   info?: Maybe<UpdateTemplateInfoInput>;
-  /** The type of the Lifecycles that this Template supports. */
-  type?: Maybe<LifecycleType>;
 };
 
 export type UpdateLocationInput = {
   city?: Maybe<Scalars['String']>;
   country?: Maybe<Scalars['String']>;
+};
+
+export type UpdateOpportunityInnovationFlowInput = {
+  /** The Innovation Flow template to use for the Opportunity. */
+  innovationFlowTemplateID: Scalars['UUID'];
+  /** ID of the Opportunity */
+  opportunityID: Scalars['UUID'];
 };
 
 export type UpdateOpportunityInput = {
@@ -3086,13 +3093,6 @@ export type UpdateOpportunityInput = {
   nameID?: Maybe<Scalars['NameID']>;
   /** Update the tags on the Tagset. */
   tags?: Maybe<Array<Scalars['String']>>;
-};
-
-export type UpdateOpportunityLifecycleInput = {
-  /** The Lifecycle Definition to use for this Opportunity. */
-  lifecycleDefinition: Scalars['LifecycleDefinition'];
-  /** ID of the Opportunity */
-  opportunityID: Scalars['UUID'];
 };
 
 export type UpdateOrganizationInput = {
