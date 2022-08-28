@@ -190,38 +190,6 @@ export class AlkemioClient {
     return response.data?.hub;
   }
 
-  public async authorizationResetUser(
-    authorizationResetData: UserAuthorizationResetInput
-  ) {
-    const result = await this.privateClient.authorizationPolicyResetOnUser({
-      authorizationResetData: authorizationResetData,
-    });
-
-    return result.data;
-  }
-
-  public async authorizationResetHub(
-    authorizationResetData: HubAuthorizationResetInput
-  ) {
-    const result = await this.privateClient.authorizationPolicyResetOnHub({
-      authorizationResetData: authorizationResetData,
-    });
-
-    return result.data;
-  }
-
-  public async authorizationResetOrganization(
-    authorizationResetData: OrganizationAuthorizationResetInput
-  ) {
-    const result = await this.privateClient.authorizationPolicyResetOnOrganization(
-      {
-        authorizationResetData: authorizationResetData,
-      }
-    );
-
-    return result.data;
-  }
-
   public async createHub(hubData: CreateHubInput) {
     const result = await this.privateClient.createHub({
       hubData: hubData,
