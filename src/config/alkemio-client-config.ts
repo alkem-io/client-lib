@@ -1,6 +1,6 @@
 import { AuthInfo } from 'src/types';
 
-export interface ClientConfig {
+export interface AlkemioClientConfig {
   apiEndpointPrivateGraphql: string;
   authInfo?: AuthInfo;
   loggingEnabled?: boolean;

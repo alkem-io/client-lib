@@ -9,11 +9,13 @@ generates:
   src/types/alkemio-schema.ts:
     plugins:
       - typescript
+      - typescript-resolvers
+      - typescript-operations
     config:
       skipTypename: true
       maybeValue: T | undefined
       scalars:
-        Upload: File
+        Upload: import('graphql-upload').FileUpload
         NameID: string
         UUID: string
         UUID_NAMEID: string
@@ -21,14 +23,16 @@ generates:
         DID: string
         DateTime: Date
         JSON: string
-  src/graphql.ts:
+  src/generated/graphql.ts:
     preset: import-types
     presetConfig:
-      typesPath: ./types/alkemio-schema
+      typesPath: ../types/alkemio-schema
       importTypesNamespace: SchemaTypes
     plugins:
       - add:
           content: '/* eslint-disable @typescript-eslint/no-explicit-any */'
+      - typescript
+      - typescript-resolvers
       - typescript-operations
       - typescript-graphql-request
     config:
@@ -37,7 +41,7 @@ generates:
       preResolveTypes: true
       skipTypename: true
       scalars:
-        Upload: File
+        Upload: import('graphql-upload').FileUpload
         NameID: string
         UUID: string
         UUID_NAMEID: string
