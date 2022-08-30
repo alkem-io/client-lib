@@ -352,7 +352,7 @@ export type Callout = {
   /** The Canvases associated with this Callout. */
   canvases?: Maybe<Array<Canvas>>;
   /** The description of this Callout */
-  description?: Maybe<Scalars['Markdown']>;
+  description: Scalars['Markdown'];
   /** The Discussion object for this Callout. */
   discussion?: Maybe<Discussion>;
   /** The display name. */
@@ -2392,6 +2392,7 @@ export enum PreferenceType {
   NotificationAspectCommentCreated = 'NOTIFICATION_ASPECT_COMMENT_CREATED',
   NotificationAspectCreated = 'NOTIFICATION_ASPECT_CREATED',
   NotificationAspectCreatedAdmin = 'NOTIFICATION_ASPECT_CREATED_ADMIN',
+  NotificationCalloutCreated = 'NOTIFICATION_CALLOUT_CREATED',
   NotificationCommunicationDiscussionCreated = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED',
   NotificationCommunicationDiscussionCreatedAdmin = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED_ADMIN',
   NotificationCommunicationDiscussionResponse = 'NOTIFICATION_COMMUNICATION_DISCUSSION_RESPONSE',
@@ -2993,11 +2994,11 @@ export type UpdateCalloutInput = {
   /** A display identifier, unique within the containing scope. Note: updating the nameID will affect URL on the client. */
   nameID?: InputMaybe<Scalars['NameID']>;
   /** State of the callout. */
-  state: CalloutState;
+  state?: InputMaybe<CalloutState>;
   /** Callout type. */
-  type: CalloutType;
+  type?: InputMaybe<CalloutType>;
   /** Visibility of the Callout. */
-  visibility: CalloutVisibility;
+  visibility?: InputMaybe<CalloutVisibility>;
 };
 
 export type UpdateCanvasDirectInput = {
@@ -3305,6 +3306,7 @@ export enum UserPreferenceType {
   NotificationAspectCommentCreated = 'NOTIFICATION_ASPECT_COMMENT_CREATED',
   NotificationAspectCreated = 'NOTIFICATION_ASPECT_CREATED',
   NotificationAspectCreatedAdmin = 'NOTIFICATION_ASPECT_CREATED_ADMIN',
+  NotificationCalloutCreated = 'NOTIFICATION_CALLOUT_CREATED',
   NotificationCommunicationDiscussionCreated = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED',
   NotificationCommunicationDiscussionCreatedAdmin = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED_ADMIN',
   NotificationCommunicationDiscussionResponse = 'NOTIFICATION_COMMUNICATION_DISCUSSION_RESPONSE',
@@ -4396,11 +4398,7 @@ export type CalloutResolvers<
     ContextType,
     Partial<CalloutCanvasesArgs>
   >;
-  description?: Resolver<
-    Maybe<ResolversTypes['Markdown']>,
-    ParentType,
-    ContextType
-  >;
+  description?: Resolver<ResolversTypes['Markdown'], ParentType, ContextType>;
   discussion?: Resolver<
     Maybe<ResolversTypes['Discussion']>,
     ParentType,
@@ -7425,30 +7423,6 @@ export type AssignUserAsOrganizationAdminMutationVariables = Exact<{
 
 export type AssignUserAsOrganizationAdminMutation = {
   assignUserAsOrganizationAdmin: { id: string };
-};
-
-export type AuthorizationPolicyResetOnHubMutationVariables = Exact<{
-  authorizationResetData: HubAuthorizationResetInput;
-}>;
-
-export type AuthorizationPolicyResetOnHubMutation = {
-  authorizationPolicyResetOnHub: { nameID: string };
-};
-
-export type AuthorizationPolicyResetOnOrganizationMutationVariables = Exact<{
-  authorizationResetData: OrganizationAuthorizationResetInput;
-}>;
-
-export type AuthorizationPolicyResetOnOrganizationMutation = {
-  authorizationPolicyResetOnOrganization: { nameID: string };
-};
-
-export type AuthorizationPolicyResetOnUserMutationVariables = Exact<{
-  authorizationResetData: UserAuthorizationResetInput;
-}>;
-
-export type AuthorizationPolicyResetOnUserMutation = {
-  authorizationPolicyResetOnUser: { nameID: string };
 };
 
 export type AgrantCredentialToUserMutationVariables = Exact<{

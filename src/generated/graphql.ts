@@ -359,7 +359,7 @@ export type Callout = {
   /** The Canvases associated with this Callout. */
   canvases?: Maybe<Array<Canvas>>;
   /** The description of this Callout */
-  description?: Maybe<Scalars['Markdown']>;
+  description: Scalars['Markdown'];
   /** The Discussion object for this Callout. */
   discussion?: Maybe<Discussion>;
   /** The display name. */
@@ -2399,6 +2399,7 @@ export enum PreferenceType {
   NotificationAspectCommentCreated = 'NOTIFICATION_ASPECT_COMMENT_CREATED',
   NotificationAspectCreated = 'NOTIFICATION_ASPECT_CREATED',
   NotificationAspectCreatedAdmin = 'NOTIFICATION_ASPECT_CREATED_ADMIN',
+  NotificationCalloutCreated = 'NOTIFICATION_CALLOUT_CREATED',
   NotificationCommunicationDiscussionCreated = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED',
   NotificationCommunicationDiscussionCreatedAdmin = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED_ADMIN',
   NotificationCommunicationDiscussionResponse = 'NOTIFICATION_COMMUNICATION_DISCUSSION_RESPONSE',
@@ -3000,11 +3001,11 @@ export type UpdateCalloutInput = {
   /** A display identifier, unique within the containing scope. Note: updating the nameID will affect URL on the client. */
   nameID?: InputMaybe<Scalars['NameID']>;
   /** State of the callout. */
-  state: CalloutState;
+  state?: InputMaybe<CalloutState>;
   /** Callout type. */
-  type: CalloutType;
+  type?: InputMaybe<CalloutType>;
   /** Visibility of the Callout. */
-  visibility: CalloutVisibility;
+  visibility?: InputMaybe<CalloutVisibility>;
 };
 
 export type UpdateCanvasDirectInput = {
@@ -3312,6 +3313,7 @@ export enum UserPreferenceType {
   NotificationAspectCommentCreated = 'NOTIFICATION_ASPECT_COMMENT_CREATED',
   NotificationAspectCreated = 'NOTIFICATION_ASPECT_CREATED',
   NotificationAspectCreatedAdmin = 'NOTIFICATION_ASPECT_CREATED_ADMIN',
+  NotificationCalloutCreated = 'NOTIFICATION_CALLOUT_CREATED',
   NotificationCommunicationDiscussionCreated = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED',
   NotificationCommunicationDiscussionCreatedAdmin = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED_ADMIN',
   NotificationCommunicationDiscussionResponse = 'NOTIFICATION_COMMUNICATION_DISCUSSION_RESPONSE',
@@ -4434,11 +4436,7 @@ export type CalloutResolvers<
     ContextType,
     Partial<SchemaTypes.CalloutCanvasesArgs>
   >;
-  description?: Resolver<
-    SchemaTypes.Maybe<ResolversTypes['Markdown']>,
-    ParentType,
-    ContextType
-  >;
+  description?: Resolver<ResolversTypes['Markdown'], ParentType, ContextType>;
   discussion?: Resolver<
     SchemaTypes.Maybe<ResolversTypes['Discussion']>,
     ParentType,
@@ -7756,32 +7754,6 @@ export type AssignUserAsOrganizationAdminMutation = {
   assignUserAsOrganizationAdmin: { id: string };
 };
 
-export type AuthorizationPolicyResetOnHubMutationVariables = SchemaTypes.Exact<{
-  authorizationResetData: SchemaTypes.HubAuthorizationResetInput;
-}>;
-
-export type AuthorizationPolicyResetOnHubMutation = {
-  authorizationPolicyResetOnHub: { nameID: string };
-};
-
-export type AuthorizationPolicyResetOnOrganizationMutationVariables =
-  SchemaTypes.Exact<{
-    authorizationResetData: SchemaTypes.OrganizationAuthorizationResetInput;
-  }>;
-
-export type AuthorizationPolicyResetOnOrganizationMutation = {
-  authorizationPolicyResetOnOrganization: { nameID: string };
-};
-
-export type AuthorizationPolicyResetOnUserMutationVariables =
-  SchemaTypes.Exact<{
-    authorizationResetData: SchemaTypes.UserAuthorizationResetInput;
-  }>;
-
-export type AuthorizationPolicyResetOnUserMutation = {
-  authorizationPolicyResetOnUser: { nameID: string };
-};
-
 export type AgrantCredentialToUserMutationVariables = SchemaTypes.Exact<{
   grantCredentialData: SchemaTypes.GrantAuthorizationCredentialInput;
 }>;
@@ -8804,39 +8776,6 @@ export const AssignUserAsOrganizationAdminDocument = gql`
     }
   }
 `;
-export const AuthorizationPolicyResetOnHubDocument = gql`
-  mutation authorizationPolicyResetOnHub(
-    $authorizationResetData: HubAuthorizationResetInput!
-  ) {
-    authorizationPolicyResetOnHub(
-      authorizationResetData: $authorizationResetData
-    ) {
-      nameID
-    }
-  }
-`;
-export const AuthorizationPolicyResetOnOrganizationDocument = gql`
-  mutation authorizationPolicyResetOnOrganization(
-    $authorizationResetData: OrganizationAuthorizationResetInput!
-  ) {
-    authorizationPolicyResetOnOrganization(
-      authorizationResetData: $authorizationResetData
-    ) {
-      nameID
-    }
-  }
-`;
-export const AuthorizationPolicyResetOnUserDocument = gql`
-  mutation authorizationPolicyResetOnUser(
-    $authorizationResetData: UserAuthorizationResetInput!
-  ) {
-    authorizationPolicyResetOnUser(
-      authorizationResetData: $authorizationResetData
-    ) {
-      nameID
-    }
-  }
-`;
 export const AgrantCredentialToUserDocument = gql`
   mutation agrantCredentialToUser(
     $grantCredentialData: GrantAuthorizationCredentialInput!
@@ -9584,15 +9523,6 @@ const AssignUserAsHubAdminDocumentString = print(AssignUserAsHubAdminDocument);
 const AssignUserAsOrganizationAdminDocumentString = print(
   AssignUserAsOrganizationAdminDocument
 );
-const AuthorizationPolicyResetOnHubDocumentString = print(
-  AuthorizationPolicyResetOnHubDocument
-);
-const AuthorizationPolicyResetOnOrganizationDocumentString = print(
-  AuthorizationPolicyResetOnOrganizationDocument
-);
-const AuthorizationPolicyResetOnUserDocumentString = print(
-  AuthorizationPolicyResetOnUserDocument
-);
 const AgrantCredentialToUserDocumentString = print(
   AgrantCredentialToUserDocument
 );
@@ -9845,66 +9775,6 @@ export function getSdk(
             { ...requestHeaders, ...wrappedRequestHeaders }
           ),
         'assignUserAsOrganizationAdmin',
-        'mutation'
-      );
-    },
-    authorizationPolicyResetOnHub(
-      variables: SchemaTypes.AuthorizationPolicyResetOnHubMutationVariables,
-      requestHeaders?: Dom.RequestInit['headers']
-    ): Promise<{
-      data: SchemaTypes.AuthorizationPolicyResetOnHubMutation;
-      extensions?: any;
-      headers: Dom.Headers;
-      status: number;
-    }> {
-      return withWrapper(
-        wrappedRequestHeaders =>
-          client.rawRequest<SchemaTypes.AuthorizationPolicyResetOnHubMutation>(
-            AuthorizationPolicyResetOnHubDocumentString,
-            variables,
-            { ...requestHeaders, ...wrappedRequestHeaders }
-          ),
-        'authorizationPolicyResetOnHub',
-        'mutation'
-      );
-    },
-    authorizationPolicyResetOnOrganization(
-      variables: SchemaTypes.AuthorizationPolicyResetOnOrganizationMutationVariables,
-      requestHeaders?: Dom.RequestInit['headers']
-    ): Promise<{
-      data: SchemaTypes.AuthorizationPolicyResetOnOrganizationMutation;
-      extensions?: any;
-      headers: Dom.Headers;
-      status: number;
-    }> {
-      return withWrapper(
-        wrappedRequestHeaders =>
-          client.rawRequest<SchemaTypes.AuthorizationPolicyResetOnOrganizationMutation>(
-            AuthorizationPolicyResetOnOrganizationDocumentString,
-            variables,
-            { ...requestHeaders, ...wrappedRequestHeaders }
-          ),
-        'authorizationPolicyResetOnOrganization',
-        'mutation'
-      );
-    },
-    authorizationPolicyResetOnUser(
-      variables: SchemaTypes.AuthorizationPolicyResetOnUserMutationVariables,
-      requestHeaders?: Dom.RequestInit['headers']
-    ): Promise<{
-      data: SchemaTypes.AuthorizationPolicyResetOnUserMutation;
-      extensions?: any;
-      headers: Dom.Headers;
-      status: number;
-    }> {
-      return withWrapper(
-        wrappedRequestHeaders =>
-          client.rawRequest<SchemaTypes.AuthorizationPolicyResetOnUserMutation>(
-            AuthorizationPolicyResetOnUserDocumentString,
-            variables,
-            { ...requestHeaders, ...wrappedRequestHeaders }
-          ),
-        'authorizationPolicyResetOnUser',
         'mutation'
       );
     },
