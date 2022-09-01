@@ -417,6 +417,9 @@ export type Canvas = {
   authorization?: Maybe<Authorization>;
   /** The checkout out state of this Canvas. */
   checkout?: Maybe<CanvasCheckout>;
+  /** The id of the user that created this Canvas */
+  createdBy: Scalars['UUID'];
+  createdDate: Scalars['DateTime'];
   /** The display name. */
   displayName: Scalars['String'];
   /** The ID of the entity */
@@ -537,7 +540,7 @@ export type Collaboration = {
 };
 
 export type CollaborationCalloutsArgs = {
-  IDs?: InputMaybe<Array<Scalars['UUID']>>;
+  IDs?: InputMaybe<Array<Scalars['UUID_NAMEID']>>;
   limit?: InputMaybe<Scalars['Float']>;
   shuffle?: InputMaybe<Scalars['Boolean']>;
 };
@@ -2399,7 +2402,7 @@ export enum PreferenceType {
   NotificationAspectCommentCreated = 'NOTIFICATION_ASPECT_COMMENT_CREATED',
   NotificationAspectCreated = 'NOTIFICATION_ASPECT_CREATED',
   NotificationAspectCreatedAdmin = 'NOTIFICATION_ASPECT_CREATED_ADMIN',
-  NotificationCalloutCreated = 'NOTIFICATION_CALLOUT_CREATED',
+  NotificationCalloutPublished = 'NOTIFICATION_CALLOUT_PUBLISHED',
   NotificationCommunicationDiscussionCreated = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED',
   NotificationCommunicationDiscussionCreatedAdmin = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED_ADMIN',
   NotificationCommunicationDiscussionResponse = 'NOTIFICATION_COMMUNICATION_DISCUSSION_RESPONSE',
@@ -3313,7 +3316,7 @@ export enum UserPreferenceType {
   NotificationAspectCommentCreated = 'NOTIFICATION_ASPECT_COMMENT_CREATED',
   NotificationAspectCreated = 'NOTIFICATION_ASPECT_CREATED',
   NotificationAspectCreatedAdmin = 'NOTIFICATION_ASPECT_CREATED_ADMIN',
-  NotificationCalloutCreated = 'NOTIFICATION_CALLOUT_CREATED',
+  NotificationCalloutPublished = 'NOTIFICATION_CALLOUT_PUBLISHED',
   NotificationCommunicationDiscussionCreated = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED',
   NotificationCommunicationDiscussionCreatedAdmin = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED_ADMIN',
   NotificationCommunicationDiscussionResponse = 'NOTIFICATION_COMMUNICATION_DISCUSSION_RESPONSE',
@@ -4478,6 +4481,8 @@ export type CanvasResolvers<
     ParentType,
     ContextType
   >;
+  createdBy?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  createdDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   nameID?: Resolver<ResolversTypes['NameID'], ParentType, ContextType>;
