@@ -3,10 +3,12 @@ mutation createAspectOnCallout($aspectData: CreateAspectOnCalloutInput!) {
     id
     nameID
     displayName
-    tagset {
-      tags
+    profile {
+      tagset {
+        tags
+      }
+      description
     }
-    description
     banner {
       id
     }
