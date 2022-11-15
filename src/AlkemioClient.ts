@@ -12,16 +12,12 @@ import {
   CreateHubInput,
   CreateOpportunityInput,
   UpdateOpportunityInput,
-  UserAuthorizationResetInput,
-  HubAuthorizationResetInput,
-  OrganizationAuthorizationResetInput,
   CreateChallengeOnChallengeInput,
   AuthorizationCredential,
   CreateAspectOnCalloutInput,
   CreateCalloutOnCollaborationInput,
   CalloutType,
   CalloutState,
-  CalloutVisibility,
 } from './generated/graphql';
 import semver from 'semver';
 import { AuthInfo } from 'src';
@@ -55,7 +51,8 @@ export class AlkemioClient {
         'Kratos end point not set in config, obtaining from server'
       );
 
-      const serverKratosPublicEndpoint = await this.getKratosPublicApiEndpoint();
+      const serverKratosPublicEndpoint =
+        await this.getKratosPublicApiEndpoint();
       this.config.authInfo.kratosPublicApiEndpoint = serverKratosPublicEndpoint;
     }
 
@@ -568,8 +565,10 @@ export class AlkemioClient {
       calloutID,
       displayName,
       nameID,
-      description,
-      tags,
+      profileData: {
+        description,
+        tags,
+      },
     };
     const { data } = await this.privateClient.createAspectOnCallout({
       aspectData,
@@ -585,14 +584,12 @@ export class AlkemioClient {
     nameID: string,
     description: string,
     type: CalloutType,
-    state: CalloutState,
-    visibility: CalloutVisibility
+    state: CalloutState
   ) {
     const calloutData: CreateCalloutOnCollaborationInput = {
       collaborationID,
       type,
       state,
-      visibility,
       displayName,
       nameID,
       description,
@@ -757,9 +754,10 @@ export class AlkemioClient {
         payload
       );
     } else {
-      queryResult = await this.privateClient.usersWithAuthorizationCredentialWithPreferences(
-        payload
-      );
+      queryResult =
+        await this.privateClient.usersWithAuthorizationCredentialWithPreferences(
+          payload
+        );
     }
 
     return queryResult.data?.usersWithAuthorizationCredential;
