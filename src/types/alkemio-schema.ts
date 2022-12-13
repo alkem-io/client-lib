@@ -25,6 +25,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  CID: any;
   DID: string;
   DateTime: Date;
   JSON: string;
@@ -45,28 +46,9 @@ export type Apm = {
   rumEnabled: Scalars['Boolean'];
 };
 
-export type Activity = {
-  /** The id of the Collaboration entity within which the Activity was generated. */
-  collaborationID: Scalars['UUID'];
-  /** The timestamp for the Activity. */
-  createdDate: Scalars['DateTime'];
-  /** The text details for this Activity. */
-  description: Scalars['String'];
-  /** The ID of the entity */
-  id: Scalars['UUID'];
-  /** The id of the parent of the entity within which the Activity was generated. */
-  parentID?: Maybe<Scalars['UUID']>;
-  /** The id of the entity that is associated with this Activity. */
-  resourceID: Scalars['UUID'];
-  /** The id of the user that triggered this Activity. */
-  triggeredBy: Scalars['UUID'];
-  /** The event type for this Activity. */
-  type: ActivityEventType;
-};
-
 export type ActivityCreatedSubscriptionResult = {
   /** The newly created activity */
-  activity: Activity;
+  activity: ActivityLogEntry;
 };
 
 export enum ActivityEventType {
@@ -78,6 +60,7 @@ export enum ActivityEventType {
   DiscussionComment = 'DISCUSSION_COMMENT',
   MemberJoined = 'MEMBER_JOINED',
   OpportunityCreated = 'OPPORTUNITY_CREATED',
+  UpdateSent = 'UPDATE_SENT',
 }
 
 export type ActivityLogEntry = {
@@ -230,6 +213,24 @@ export type ActivityLogEntryOpportunityCreated = ActivityLogEntry & {
   triggeredBy: User;
   /** The event type for this Activity. */
   type: ActivityEventType;
+};
+
+export type ActivityLogEntryUpdateSent = ActivityLogEntry & {
+  /** The id of the Collaboration entity within which the Activity was generated. */
+  collaborationID: Scalars['UUID'];
+  /** The timestamp for the Activity. */
+  createdDate: Scalars['DateTime'];
+  /** The text details for this Activity. */
+  description: Scalars['String'];
+  id: Scalars['UUID'];
+  /** The Message that been sent to this Community. */
+  message: Scalars['String'];
+  /** The user that triggered this Activity. */
+  triggeredBy: User;
+  /** The event type for this Activity. */
+  type: ActivityEventType;
+  /** The Updates for this Community. */
+  updates: Updates;
 };
 
 export type ActivityLogInput = {
@@ -518,7 +519,7 @@ export type AuthorizationPolicyRuleCredential = {
 
 export type AuthorizationPolicyRulePrivilege = {
   grantedPrivileges: Array<AuthorizationPrivilege>;
-  sourcePrivilege: Scalars['String'];
+  sourcePrivilege: AuthorizationPrivilege;
 };
 
 export type AuthorizationPolicyRuleVerifiedCredential = {
@@ -533,6 +534,7 @@ export enum AuthorizationPrivilege {
   CommunityApply = 'COMMUNITY_APPLY',
   CommunityContextReview = 'COMMUNITY_CONTEXT_REVIEW',
   CommunityJoin = 'COMMUNITY_JOIN',
+  Contribute = 'CONTRIBUTE',
   Create = 'CREATE',
   CreateAspect = 'CREATE_ASPECT',
   CreateCallout = 'CREATE_CALLOUT',
@@ -540,9 +542,12 @@ export enum AuthorizationPrivilege {
   CreateChallenge = 'CREATE_CHALLENGE',
   CreateComment = 'CREATE_COMMENT',
   CreateHub = 'CREATE_HUB',
+  CreateOpportunity = 'CREATE_OPPORTUNITY',
   CreateOrganization = 'CREATE_ORGANIZATION',
   CreateRelation = 'CREATE_RELATION',
   Delete = 'DELETE',
+  FileDelete = 'FILE_DELETE',
+  FileUpload = 'FILE_UPLOAD',
   Grant = 'GRANT',
   GrantGlobalAdmins = 'GRANT_GLOBAL_ADMINS',
   MoveCard = 'MOVE_CARD',
@@ -753,6 +758,9 @@ export type ChallengeEventInput = {
 };
 
 export enum ChallengePreferenceType {
+  AllowContributorsToCreateOpportunities = 'ALLOW_CONTRIBUTORS_TO_CREATE_OPPORTUNITIES',
+  AllowHubMembersToContribute = 'ALLOW_HUB_MEMBERS_TO_CONTRIBUTE',
+  AllowNonMembersReadAccess = 'ALLOW_NON_MEMBERS_READ_ACCESS',
   MembershipApplyChallengeFromHubMembers = 'MEMBERSHIP_APPLY_CHALLENGE_FROM_HUB_MEMBERS',
   MembershipFeedbackOnChallengeContext = 'MEMBERSHIP_FEEDBACK_ON_CHALLENGE_CONTEXT',
   MembershipJoinChallengeFromHubMembers = 'MEMBERSHIP_JOIN_CHALLENGE_FROM_HUB_MEMBERS',
@@ -969,11 +977,15 @@ export type CommunityJoinInput = {
 };
 
 export type CommunityPolicy = {
-  lead: CommunityPolicyRole;
-  member: CommunityPolicyRole;
+  /** The ID of the entity */
+  id: Scalars['UUID'];
+  /** The role policy that defines the leads for this Community. */
+  lead: CommunityRolePolicy;
+  /** The role policy that defines the members for this Community. */
+  member: CommunityRolePolicy;
 };
 
-export type CommunityPolicyRole = {
+export type CommunityRolePolicy = {
   /** The CredentialDefinition that is associated with this role */
   credential: CredentialDefinition;
   /** Maximum number of Organizations in this role */
@@ -984,6 +996,8 @@ export type CommunityPolicyRole = {
   minOrg: Scalars['Float'];
   /** Minimum number of Users in this role */
   minUser: Scalars['Float'];
+  /** The CredentialDefinitions associated with this role in parent communities */
+  parentCredentials: Array<CredentialDefinition>;
 };
 
 export type Config = {
@@ -991,10 +1005,14 @@ export type Config = {
   apm: Apm;
   /** Authentication configuration. */
   authentication: AuthenticationConfig;
+  /** Integration with a 3rd party Geo information service */
+  geo: Geo;
   /** Platform related resources. */
   platform: Platform;
   /** Sentry (client monitoring) related configuration. */
   sentry: Sentry;
+  /** Configuration for storage providers, e.g. file */
+  storage: StorageConfig;
   /** Alkemio template configuration. */
   template: Template;
 };
@@ -1410,6 +1428,11 @@ export type DeleteDiscussionInput = {
   ID: Scalars['UUID'];
 };
 
+export type DeleteFileInput = {
+  /** IPFS Content Identifier (CID) of the file, e.g. Qmde6CnXDGGe7Dynz1pnxgNARtdVBme9YBwNbo4HJiRy2W */
+  CID: Scalars['CID'];
+};
+
 export type DeleteHubInput = {
   ID: Scalars['UUID_NAMEID'];
 };
@@ -1526,6 +1549,18 @@ export type FeedbackTemplate = {
   name: Scalars['String'];
   /** Template questions. */
   questions: Array<QuestionTemplate>;
+};
+
+export type FileStorageConfig = {
+  /** Max file size, in bytes. */
+  maxFileSize: Scalars['Float'];
+  /** Allowed mime types for file upload, separated by a coma. */
+  mimeTypes: Array<Scalars['String']>;
+};
+
+export type Geo = {
+  /** Endpoint where geo information is consumed from. */
+  endpoint: Scalars['String'];
 };
 
 export type GrantAuthorizationCredentialInput = {
@@ -1683,8 +1718,14 @@ export type Library = {
   authorization?: Maybe<Authorization>;
   /** The ID of the entity */
   id: Scalars['UUID'];
+  /** A single Innovation Pack */
+  innovationPack?: Maybe<InnovatonPack>;
   /** Platform level library. */
   innovationPacks: Array<InnovatonPack>;
+};
+
+export type LibraryInnovationPackArgs = {
+  ID: Scalars['UUID'];
 };
 
 export type Lifecycle = {
@@ -1880,6 +1921,8 @@ export type Mutation = {
   deleteCollaboration: Collaboration;
   /** Deletes the specified Discussion. */
   deleteDiscussion: Discussion;
+  /** Removes a file. */
+  deleteFile: Scalars['Boolean'];
   /** Deletes the specified Hub. */
   deleteHub: Hub;
   /** Deletes the specified InnovationPack. */
@@ -2020,6 +2063,8 @@ export type Mutation = {
   updateUserGroup: UserGroup;
   /** Updates the image URI for the specified Visual. */
   updateVisual: Visual;
+  /** Uploads a file. */
+  uploadFile: Scalars['String'];
   /** Uploads and sets an image for the specified Visual. */
   uploadImageOnVisual: Visual;
 };
@@ -2263,6 +2308,10 @@ export type MutationDeleteCollaborationArgs = {
 
 export type MutationDeleteDiscussionArgs = {
   deleteData: DeleteDiscussionInput;
+};
+
+export type MutationDeleteFileArgs = {
+  deleteData: DeleteFileInput;
 };
 
 export type MutationDeleteHubArgs = {
@@ -2545,6 +2594,10 @@ export type MutationUpdateVisualArgs = {
   updateData: UpdateVisualInput;
 };
 
+export type MutationUploadFileArgs = {
+  file: Scalars['Upload'];
+};
+
 export type MutationUploadImageOnVisualArgs = {
   file: Scalars['Upload'];
   uploadData: VisualUploadImageInput;
@@ -2720,6 +2773,8 @@ export type PaginatedUsers = {
 export type Platform = {
   /** URL to a page about the platform */
   about: Scalars['String'];
+  /** URL where users can get tips and tricks */
+  aup: Scalars['String'];
   /** URL where users can see the community forum */
   community: Scalars['String'];
   /** Name of the environment */
@@ -2788,7 +2843,10 @@ export type PreferenceDefinition = {
 };
 
 export enum PreferenceType {
+  AllowContributorsToCreateOpportunities = 'ALLOW_CONTRIBUTORS_TO_CREATE_OPPORTUNITIES',
+  AllowHubMembersToContribute = 'ALLOW_HUB_MEMBERS_TO_CONTRIBUTE',
   AllowMembersToCreateChallenges = 'ALLOW_MEMBERS_TO_CREATE_CHALLENGES',
+  AllowNonMembersReadAccess = 'ALLOW_NON_MEMBERS_READ_ACCESS',
   AuthorizationAnonymousReadAccess = 'AUTHORIZATION_ANONYMOUS_READ_ACCESS',
   AuthorizationOrganizationMatchDomain = 'AUTHORIZATION_ORGANIZATION_MATCH_DOMAIN',
   MembershipApplicationsFromAnyone = 'MEMBERSHIP_APPLICATIONS_FROM_ANYONE',
@@ -2803,6 +2861,7 @@ export enum PreferenceType {
   NotificationAspectCreated = 'NOTIFICATION_ASPECT_CREATED',
   NotificationAspectCreatedAdmin = 'NOTIFICATION_ASPECT_CREATED_ADMIN',
   NotificationCalloutPublished = 'NOTIFICATION_CALLOUT_PUBLISHED',
+  NotificationCanvasCreated = 'NOTIFICATION_CANVAS_CREATED',
   NotificationCommunicationDiscussionCreated = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED',
   NotificationCommunicationDiscussionCreatedAdmin = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED_ADMIN',
   NotificationCommunicationDiscussionResponse = 'NOTIFICATION_COMMUNICATION_DISCUSSION_RESPONSE',
@@ -2814,6 +2873,8 @@ export enum PreferenceType {
   NotificationCommunityNewMemberAdmin = 'NOTIFICATION_COMMUNITY_NEW_MEMBER_ADMIN',
   NotificationCommunityReviewSubmitted = 'NOTIFICATION_COMMUNITY_REVIEW_SUBMITTED',
   NotificationCommunityReviewSubmittedAdmin = 'NOTIFICATION_COMMUNITY_REVIEW_SUBMITTED_ADMIN',
+  NotificationDiscussionCommentCreated = 'NOTIFICATION_DISCUSSION_COMMENT_CREATED',
+  NotificationUserRemoved = 'NOTIFICATION_USER_REMOVED',
   NotificationUserSignUp = 'NOTIFICATION_USER_SIGN_UP',
 }
 
@@ -3348,6 +3409,11 @@ export type ServiceMetadata = {
   version?: Maybe<Scalars['String']>;
 };
 
+export type StorageConfig = {
+  /** Config for uploading files to Alkemio. */
+  file: FileStorageConfig;
+};
+
 export type Subscription = {
   activityCreated: ActivityCreatedSubscriptionResult;
   /** Receive new comment on Aspect */
@@ -3465,13 +3531,13 @@ export type TemplatesSet = {
   aspectTemplates: Array<AspectTemplate>;
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
-  /** A single AspectTemplate */
+  /** A single CanvasTemplate */
   canvasTemplate?: Maybe<CanvasTemplate>;
   /** The CanvasTemplates in this TemplatesSet. */
   canvasTemplates: Array<CanvasTemplate>;
   /** The ID of the entity */
   id: Scalars['UUID'];
-  /** A single AspectTemplate */
+  /** A single LifecycleTemplate */
   lifecycleTemplate?: Maybe<LifecycleTemplate>;
   /** The LifecycleTemplates in this TemplatesSet. */
   lifecycleTemplates: Array<LifecycleTemplate>;
@@ -3890,6 +3956,7 @@ export enum UserPreferenceType {
   NotificationAspectCreated = 'NOTIFICATION_ASPECT_CREATED',
   NotificationAspectCreatedAdmin = 'NOTIFICATION_ASPECT_CREATED_ADMIN',
   NotificationCalloutPublished = 'NOTIFICATION_CALLOUT_PUBLISHED',
+  NotificationCanvasCreated = 'NOTIFICATION_CANVAS_CREATED',
   NotificationCommunicationDiscussionCreated = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED',
   NotificationCommunicationDiscussionCreatedAdmin = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED_ADMIN',
   NotificationCommunicationDiscussionResponse = 'NOTIFICATION_COMMUNICATION_DISCUSSION_RESPONSE',
@@ -3901,6 +3968,8 @@ export enum UserPreferenceType {
   NotificationCommunityNewMemberAdmin = 'NOTIFICATION_COMMUNITY_NEW_MEMBER_ADMIN',
   NotificationCommunityReviewSubmitted = 'NOTIFICATION_COMMUNITY_REVIEW_SUBMITTED',
   NotificationCommunityReviewSubmittedAdmin = 'NOTIFICATION_COMMUNITY_REVIEW_SUBMITTED_ADMIN',
+  NotificationDiscussionCommentCreated = 'NOTIFICATION_DISCUSSION_COMMENT_CREATED',
+  NotificationUserRemoved = 'NOTIFICATION_USER_REMOVED',
   NotificationUserSignUp = 'NOTIFICATION_USER_SIGN_UP',
 }
 
@@ -4081,7 +4150,6 @@ export type DirectiveResolverFn<
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   APM: ResolverTypeWrapper<Apm>;
-  Activity: ResolverTypeWrapper<Activity>;
   ActivityCreatedSubscriptionResult: ResolverTypeWrapper<ActivityCreatedSubscriptionResult>;
   ActivityEventType: ActivityEventType;
   ActivityLogEntry:
@@ -4092,7 +4160,8 @@ export type ResolversTypes = {
     | ResolversTypes['ActivityLogEntryCalloutPublished']
     | ResolversTypes['ActivityLogEntryChallengeCreated']
     | ResolversTypes['ActivityLogEntryMemberJoined']
-    | ResolversTypes['ActivityLogEntryOpportunityCreated'];
+    | ResolversTypes['ActivityLogEntryOpportunityCreated']
+    | ResolversTypes['ActivityLogEntryUpdateSent'];
   ActivityLogEntryCalloutCanvasCreated: ResolverTypeWrapper<ActivityLogEntryCalloutCanvasCreated>;
   ActivityLogEntryCalloutCardComment: ResolverTypeWrapper<ActivityLogEntryCalloutCardComment>;
   ActivityLogEntryCalloutCardCreated: ResolverTypeWrapper<ActivityLogEntryCalloutCardCreated>;
@@ -4101,6 +4170,7 @@ export type ResolversTypes = {
   ActivityLogEntryChallengeCreated: ResolverTypeWrapper<ActivityLogEntryChallengeCreated>;
   ActivityLogEntryMemberJoined: ResolverTypeWrapper<ActivityLogEntryMemberJoined>;
   ActivityLogEntryOpportunityCreated: ResolverTypeWrapper<ActivityLogEntryOpportunityCreated>;
+  ActivityLogEntryUpdateSent: ResolverTypeWrapper<ActivityLogEntryUpdateSent>;
   ActivityLogInput: ActivityLogInput;
   Actor: ResolverTypeWrapper<Actor>;
   ActorGroup: ResolverTypeWrapper<ActorGroup>;
@@ -4142,6 +4212,7 @@ export type ResolversTypes = {
   AuthorizationPolicyRuleVerifiedCredential: ResolverTypeWrapper<AuthorizationPolicyRuleVerifiedCredential>;
   AuthorizationPrivilege: AuthorizationPrivilege;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  CID: ResolverTypeWrapper<Scalars['CID']>;
   Callout: ResolverTypeWrapper<Callout>;
   CalloutAspectCreated: ResolverTypeWrapper<CalloutAspectCreated>;
   CalloutMessageReceived: ResolverTypeWrapper<CalloutMessageReceived>;
@@ -4181,7 +4252,7 @@ export type ResolversTypes = {
   CommunityApplyInput: CommunityApplyInput;
   CommunityJoinInput: CommunityJoinInput;
   CommunityPolicy: ResolverTypeWrapper<CommunityPolicy>;
-  CommunityPolicyRole: ResolverTypeWrapper<CommunityPolicyRole>;
+  CommunityRolePolicy: ResolverTypeWrapper<CommunityRolePolicy>;
   Config: ResolverTypeWrapper<Config>;
   Context: ResolverTypeWrapper<Context>;
   ContributorFilterInput: ContributorFilterInput;
@@ -4236,6 +4307,7 @@ export type ResolversTypes = {
   DeleteChallengeInput: DeleteChallengeInput;
   DeleteCollaborationInput: DeleteCollaborationInput;
   DeleteDiscussionInput: DeleteDiscussionInput;
+  DeleteFileInput: DeleteFileInput;
   DeleteHubInput: DeleteHubInput;
   DeleteInnovationPackInput: DeleteInnovationPackInput;
   DeleteLifecycleTemplateInput: DeleteLifecycleTemplateInput;
@@ -4254,7 +4326,9 @@ export type ResolversTypes = {
   EcosystemModel: ResolverTypeWrapper<EcosystemModel>;
   FeatureFlag: ResolverTypeWrapper<FeatureFlag>;
   FeedbackTemplate: ResolverTypeWrapper<FeedbackTemplate>;
+  FileStorageConfig: ResolverTypeWrapper<FileStorageConfig>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
+  Geo: ResolverTypeWrapper<Geo>;
   GrantAuthorizationCredentialInput: GrantAuthorizationCredentialInput;
   Groupable: ResolversTypes['Community'] | ResolversTypes['Organization'];
   Hub: ResolverTypeWrapper<Hub>;
@@ -4351,6 +4425,7 @@ export type ResolversTypes = {
   SendMessageOnCalloutInput: SendMessageOnCalloutInput;
   Sentry: ResolverTypeWrapper<Sentry>;
   ServiceMetadata: ResolverTypeWrapper<ServiceMetadata>;
+  StorageConfig: ResolverTypeWrapper<StorageConfig>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Subscription: ResolverTypeWrapper<{}>;
   Tagset: ResolverTypeWrapper<Tagset>;
@@ -4418,7 +4493,6 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   APM: Apm;
-  Activity: Activity;
   ActivityCreatedSubscriptionResult: ActivityCreatedSubscriptionResult;
   ActivityLogEntry:
     | ResolversParentTypes['ActivityLogEntryCalloutCanvasCreated']
@@ -4428,7 +4502,8 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['ActivityLogEntryCalloutPublished']
     | ResolversParentTypes['ActivityLogEntryChallengeCreated']
     | ResolversParentTypes['ActivityLogEntryMemberJoined']
-    | ResolversParentTypes['ActivityLogEntryOpportunityCreated'];
+    | ResolversParentTypes['ActivityLogEntryOpportunityCreated']
+    | ResolversParentTypes['ActivityLogEntryUpdateSent'];
   ActivityLogEntryCalloutCanvasCreated: ActivityLogEntryCalloutCanvasCreated;
   ActivityLogEntryCalloutCardComment: ActivityLogEntryCalloutCardComment;
   ActivityLogEntryCalloutCardCreated: ActivityLogEntryCalloutCardCreated;
@@ -4437,6 +4512,7 @@ export type ResolversParentTypes = {
   ActivityLogEntryChallengeCreated: ActivityLogEntryChallengeCreated;
   ActivityLogEntryMemberJoined: ActivityLogEntryMemberJoined;
   ActivityLogEntryOpportunityCreated: ActivityLogEntryOpportunityCreated;
+  ActivityLogEntryUpdateSent: ActivityLogEntryUpdateSent;
   ActivityLogInput: ActivityLogInput;
   Actor: Actor;
   ActorGroup: ActorGroup;
@@ -4474,6 +4550,7 @@ export type ResolversParentTypes = {
   AuthorizationPolicyRulePrivilege: AuthorizationPolicyRulePrivilege;
   AuthorizationPolicyRuleVerifiedCredential: AuthorizationPolicyRuleVerifiedCredential;
   Boolean: Scalars['Boolean'];
+  CID: Scalars['CID'];
   Callout: Callout;
   CalloutAspectCreated: CalloutAspectCreated;
   CalloutMessageReceived: CalloutMessageReceived;
@@ -4508,7 +4585,7 @@ export type ResolversParentTypes = {
   CommunityApplyInput: CommunityApplyInput;
   CommunityJoinInput: CommunityJoinInput;
   CommunityPolicy: CommunityPolicy;
-  CommunityPolicyRole: CommunityPolicyRole;
+  CommunityRolePolicy: CommunityRolePolicy;
   Config: Config;
   Context: Context;
   ContributorFilterInput: ContributorFilterInput;
@@ -4563,6 +4640,7 @@ export type ResolversParentTypes = {
   DeleteChallengeInput: DeleteChallengeInput;
   DeleteCollaborationInput: DeleteCollaborationInput;
   DeleteDiscussionInput: DeleteDiscussionInput;
+  DeleteFileInput: DeleteFileInput;
   DeleteHubInput: DeleteHubInput;
   DeleteInnovationPackInput: DeleteInnovationPackInput;
   DeleteLifecycleTemplateInput: DeleteLifecycleTemplateInput;
@@ -4580,7 +4658,9 @@ export type ResolversParentTypes = {
   EcosystemModel: EcosystemModel;
   FeatureFlag: FeatureFlag;
   FeedbackTemplate: FeedbackTemplate;
+  FileStorageConfig: FileStorageConfig;
   Float: Scalars['Float'];
+  Geo: Geo;
   GrantAuthorizationCredentialInput: GrantAuthorizationCredentialInput;
   Groupable:
     | ResolversParentTypes['Community']
@@ -4671,6 +4751,7 @@ export type ResolversParentTypes = {
   SendMessageOnCalloutInput: SendMessageOnCalloutInput;
   Sentry: Sentry;
   ServiceMetadata: ServiceMetadata;
+  StorageConfig: StorageConfig;
   String: Scalars['String'];
   Subscription: {};
   Tagset: Tagset;
@@ -4743,26 +4824,15 @@ export type ApmResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type ActivityResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['Activity'] = ResolversParentTypes['Activity']
-> = {
-  collaborationID?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
-  createdDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
-  parentID?: Resolver<Maybe<ResolversTypes['UUID']>, ParentType, ContextType>;
-  resourceID?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
-  triggeredBy?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
-  type?: Resolver<ResolversTypes['ActivityEventType'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type ActivityCreatedSubscriptionResultResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['ActivityCreatedSubscriptionResult'] = ResolversParentTypes['ActivityCreatedSubscriptionResult']
 > = {
-  activity?: Resolver<ResolversTypes['Activity'], ParentType, ContextType>;
+  activity?: Resolver<
+    ResolversTypes['ActivityLogEntry'],
+    ParentType,
+    ContextType
+  >;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4778,7 +4848,8 @@ export type ActivityLogEntryResolvers<
     | 'ActivityLogEntryCalloutPublished'
     | 'ActivityLogEntryChallengeCreated'
     | 'ActivityLogEntryMemberJoined'
-    | 'ActivityLogEntryOpportunityCreated',
+    | 'ActivityLogEntryOpportunityCreated'
+    | 'ActivityLogEntryUpdateSent',
     ParentType,
     ContextType
   >;
@@ -4908,6 +4979,21 @@ export type ActivityLogEntryOpportunityCreatedResolvers<
   >;
   triggeredBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   type?: Resolver<ResolversTypes['ActivityEventType'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ActivityLogEntryUpdateSentResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['ActivityLogEntryUpdateSent'] = ResolversParentTypes['ActivityLogEntryUpdateSent']
+> = {
+  collaborationID?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  createdDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  triggeredBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['ActivityEventType'], ParentType, ContextType>;
+  updates?: Resolver<ResolversTypes['Updates'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -5216,7 +5302,11 @@ export type AuthorizationPolicyRulePrivilegeResolvers<
     ParentType,
     ContextType
   >;
-  sourcePrivilege?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  sourcePrivilege?: Resolver<
+    ResolversTypes['AuthorizationPrivilege'],
+    ParentType,
+    ContextType
+  >;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -5233,6 +5323,11 @@ export type AuthorizationPolicyRuleVerifiedCredentialResolvers<
   >;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
+
+export interface CidScalarConfig
+  extends GraphQLScalarTypeConfig<ResolversTypes['CID'], any> {
+  name: 'CID';
+}
 
 export type CalloutResolvers<
   ContextType = any,
@@ -5696,22 +5791,23 @@ export type CommunityPolicyResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['CommunityPolicy'] = ResolversParentTypes['CommunityPolicy']
 > = {
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   lead?: Resolver<
-    ResolversTypes['CommunityPolicyRole'],
+    ResolversTypes['CommunityRolePolicy'],
     ParentType,
     ContextType
   >;
   member?: Resolver<
-    ResolversTypes['CommunityPolicyRole'],
+    ResolversTypes['CommunityRolePolicy'],
     ParentType,
     ContextType
   >;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type CommunityPolicyRoleResolvers<
+export type CommunityRolePolicyResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes['CommunityPolicyRole'] = ResolversParentTypes['CommunityPolicyRole']
+  ParentType extends ResolversParentTypes['CommunityRolePolicy'] = ResolversParentTypes['CommunityRolePolicy']
 > = {
   credential?: Resolver<
     ResolversTypes['CredentialDefinition'],
@@ -5722,6 +5818,11 @@ export type CommunityPolicyRoleResolvers<
   maxUser?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   minOrg?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   minUser?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  parentCredentials?: Resolver<
+    Array<ResolversTypes['CredentialDefinition']>,
+    ParentType,
+    ContextType
+  >;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -5735,8 +5836,10 @@ export type ConfigResolvers<
     ParentType,
     ContextType
   >;
+  geo?: Resolver<ResolversTypes['Geo'], ParentType, ContextType>;
   platform?: Resolver<ResolversTypes['Platform'], ParentType, ContextType>;
   sentry?: Resolver<ResolversTypes['Sentry'], ParentType, ContextType>;
+  storage?: Resolver<ResolversTypes['StorageConfig'], ParentType, ContextType>;
   template?: Resolver<ResolversTypes['Template'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -5944,6 +6047,27 @@ export type FeedbackTemplateResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type FileStorageConfigResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['FileStorageConfig'] = ResolversParentTypes['FileStorageConfig']
+> = {
+  maxFileSize?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  mimeTypes?: Resolver<
+    Array<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type GeoResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['Geo'] = ResolversParentTypes['Geo']
+> = {
+  endpoint?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type GroupableResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['Groupable'] = ResolversParentTypes['Groupable']
@@ -6126,6 +6250,12 @@ export type LibraryResolvers<
     ContextType
   >;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  innovationPack?: Resolver<
+    Maybe<ResolversTypes['InnovatonPack']>,
+    ParentType,
+    ContextType,
+    RequireFields<LibraryInnovationPackArgs, 'ID'>
+  >;
   innovationPacks?: Resolver<
     Array<ResolversTypes['InnovatonPack']>,
     ParentType,
@@ -6640,6 +6770,12 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationDeleteDiscussionArgs, 'deleteData'>
   >;
+  deleteFile?: Resolver<
+    ResolversTypes['Boolean'],
+    ParentType,
+    ContextType,
+    RequireFields<MutationDeleteFileArgs, 'deleteData'>
+  >;
   deleteHub?: Resolver<
     ResolversTypes['Hub'],
     ParentType,
@@ -7075,6 +7211,12 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationUpdateVisualArgs, 'updateData'>
   >;
+  uploadFile?: Resolver<
+    ResolversTypes['String'],
+    ParentType,
+    ContextType,
+    RequireFields<MutationUploadFileArgs, 'file'>
+  >;
   uploadImageOnVisual?: Resolver<
     ResolversTypes['Visual'],
     ParentType,
@@ -7336,6 +7478,7 @@ export type PlatformResolvers<
   ParentType extends ResolversParentTypes['Platform'] = ResolversParentTypes['Platform']
 > = {
   about?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  aup?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   community?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   environment?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   featureFlags?: Resolver<
@@ -7916,6 +8059,14 @@ export type ServiceMetadataResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type StorageConfigResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['StorageConfig'] = ResolversParentTypes['StorageConfig']
+> = {
+  file?: Resolver<ResolversTypes['FileStorageConfig'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type SubscriptionResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']
@@ -8309,7 +8460,6 @@ export type VisualResolvers<
 
 export type Resolvers<ContextType = any> = {
   APM?: ApmResolvers<ContextType>;
-  Activity?: ActivityResolvers<ContextType>;
   ActivityCreatedSubscriptionResult?: ActivityCreatedSubscriptionResultResolvers<ContextType>;
   ActivityLogEntry?: ActivityLogEntryResolvers<ContextType>;
   ActivityLogEntryCalloutCanvasCreated?: ActivityLogEntryCalloutCanvasCreatedResolvers<ContextType>;
@@ -8320,6 +8470,7 @@ export type Resolvers<ContextType = any> = {
   ActivityLogEntryChallengeCreated?: ActivityLogEntryChallengeCreatedResolvers<ContextType>;
   ActivityLogEntryMemberJoined?: ActivityLogEntryMemberJoinedResolvers<ContextType>;
   ActivityLogEntryOpportunityCreated?: ActivityLogEntryOpportunityCreatedResolvers<ContextType>;
+  ActivityLogEntryUpdateSent?: ActivityLogEntryUpdateSentResolvers<ContextType>;
   Actor?: ActorResolvers<ContextType>;
   ActorGroup?: ActorGroupResolvers<ContextType>;
   Agent?: AgentResolvers<ContextType>;
@@ -8338,6 +8489,7 @@ export type Resolvers<ContextType = any> = {
   AuthorizationPolicyRuleCredential?: AuthorizationPolicyRuleCredentialResolvers<ContextType>;
   AuthorizationPolicyRulePrivilege?: AuthorizationPolicyRulePrivilegeResolvers<ContextType>;
   AuthorizationPolicyRuleVerifiedCredential?: AuthorizationPolicyRuleVerifiedCredentialResolvers<ContextType>;
+  CID?: GraphQLScalarType;
   Callout?: CalloutResolvers<ContextType>;
   CalloutAspectCreated?: CalloutAspectCreatedResolvers<ContextType>;
   CalloutMessageReceived?: CalloutMessageReceivedResolvers<ContextType>;
@@ -8361,7 +8513,7 @@ export type Resolvers<ContextType = any> = {
   CommunicationUpdateMessageReceived?: CommunicationUpdateMessageReceivedResolvers<ContextType>;
   Community?: CommunityResolvers<ContextType>;
   CommunityPolicy?: CommunityPolicyResolvers<ContextType>;
-  CommunityPolicyRole?: CommunityPolicyRoleResolvers<ContextType>;
+  CommunityRolePolicy?: CommunityRolePolicyResolvers<ContextType>;
   Config?: ConfigResolvers<ContextType>;
   Context?: ContextResolvers<ContextType>;
   ContributorRoles?: ContributorRolesResolvers<ContextType>;
@@ -8375,6 +8527,8 @@ export type Resolvers<ContextType = any> = {
   EcosystemModel?: EcosystemModelResolvers<ContextType>;
   FeatureFlag?: FeatureFlagResolvers<ContextType>;
   FeedbackTemplate?: FeedbackTemplateResolvers<ContextType>;
+  FileStorageConfig?: FileStorageConfigResolvers<ContextType>;
+  Geo?: GeoResolvers<ContextType>;
   Groupable?: GroupableResolvers<ContextType>;
   Hub?: HubResolvers<ContextType>;
   HubAspectTemplate?: HubAspectTemplateResolvers<ContextType>;
@@ -8429,6 +8583,7 @@ export type Resolvers<ContextType = any> = {
   SearchResultUser?: SearchResultUserResolvers<ContextType>;
   Sentry?: SentryResolvers<ContextType>;
   ServiceMetadata?: ServiceMetadataResolvers<ContextType>;
+  StorageConfig?: StorageConfigResolvers<ContextType>;
   Subscription?: SubscriptionResolvers<ContextType>;
   Tagset?: TagsetResolvers<ContextType>;
   TagsetTemplate?: TagsetTemplateResolvers<ContextType>;
