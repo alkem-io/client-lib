@@ -591,7 +591,6 @@ export class AlkemioClient {
       type,
       state,
       displayName,
-      nameID,
       description,
     };
     const { data } = await this.privateClient.createCalloutOnCollaboration({
