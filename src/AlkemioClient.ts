@@ -251,7 +251,7 @@ export class AlkemioClient {
 
     const profileID = data?.user.profile?.id;
 
-    const avatarID = data?.user.profile?.avatar?.id || '';
+    const avatarID = data?.user.profile?.visual?.id || '';
 
     if (profileID) {
       const profileUpdated = await this.updateProfile(
@@ -277,7 +277,7 @@ export class AlkemioClient {
   ) {
     const { data } = await this.privateClient.updateProfile({
       profileData: {
-        ID: profileID,
+        profileID: profileID,
         description: description,
         location: {
           country,
@@ -557,17 +557,15 @@ export class AlkemioClient {
     type: string,
     displayName: string,
     nameID: string,
-    description: string,
-    tags?: string[]
+    description: string
   ) {
     const aspectData: CreateAspectOnCalloutInput = {
       type,
       calloutID,
-      displayName,
       nameID,
       profileData: {
         description,
-        tags,
+        displayName,
       },
     };
     const { data } = await this.privateClient.createAspectOnCallout({
@@ -581,7 +579,6 @@ export class AlkemioClient {
   async createCalloutOnCollaboration(
     collaborationID: string,
     displayName: string,
-    nameID: string,
     description: string,
     type: CalloutType,
     state: CalloutState
@@ -614,6 +611,7 @@ export class AlkemioClient {
         parentID: communityID,
         profileData: {
           description: groupDesc,
+          displayName: groupName,
         },
       },
     });
@@ -625,7 +623,9 @@ export class AlkemioClient {
     const { data } = await this.privateClient.createOrganization({
       organizationData: {
         nameID: nameID,
-        displayName: displayName,
+        profileData: {
+          displayName: displayName,
+        },
       },
     });
 
