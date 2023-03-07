@@ -4,7 +4,7 @@ mutation createGroupOnOrganization($groupData: CreateUserGroupInput!) {
     name
     profile {
       id
-       avatar {
+       visual(type: AVATAR) {
           id
        }
     }

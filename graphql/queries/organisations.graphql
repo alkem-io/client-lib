@@ -1,11 +1,11 @@
 query organizations {
   organizations {
-    displayName
     id
     nameID
     profile {
       id
-      avatar {
+      displayName
+      visual(type: AVATAR) {
         id
         uri
       }

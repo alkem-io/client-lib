@@ -1,11 +1,11 @@
 mutation createOrganization($organizationData: CreateOrganizationInput!) {
   createOrganization(organizationData: $organizationData) {
-    displayName
     nameID
     id
     profile {
       id
-      avatar {
+      displayName
+      visual(type: AVATAR) {
         id
       }
     }

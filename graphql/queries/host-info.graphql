@@ -3,9 +3,9 @@ query hostInfo($hubID: UUID_NAMEID!) {
     host {
       id
       nameID
-      displayName
       profile {
         id
+        displayName
         tagsets {
           id
          name
