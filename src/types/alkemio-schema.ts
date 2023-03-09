@@ -333,6 +333,13 @@ export type ApplicationForRoleResult = {
   updatedDate: Scalars['DateTime'];
 };
 
+export type ApplicationTemplate = {
+  /** Application template name. */
+  name: Scalars['String'];
+  /** Template questions. */
+  questions: Array<QuestionTemplate>;
+};
+
 export type Aspect = {
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
@@ -1174,6 +1181,7 @@ export type CreateAspectOnCalloutInput = {
   /** A readable identifier, unique within the containing scope. */
   nameID?: InputMaybe<Scalars['NameID']>;
   profileData: CreateProfileInput;
+  tags?: InputMaybe<Array<Scalars['String']>>;
   type: Scalars['String'];
   visualUri?: InputMaybe<Scalars['String']>;
 };
@@ -1210,6 +1218,7 @@ export type CreateCalendarEventOnCalendarInput = {
   profileData?: InputMaybe<CreateProfileInput>;
   /** The start date for the event. */
   startDate: Scalars['DateTime'];
+  tags?: InputMaybe<Array<Scalars['String']>>;
   type: CalendarEventType;
   /** Flag to indicate if this event is for a whole day. */
   wholeDay: Scalars['Boolean'];
@@ -1793,6 +1802,15 @@ export type HubOpportunityArgs = {
 
 export type HubProjectArgs = {
   ID: Scalars['UUID_NAMEID'];
+};
+
+export type HubAspectTemplate = {
+  /** A default description for this Aspect. */
+  defaultDescription: Scalars['String'];
+  /** The type of the Aspect */
+  type: Scalars['String'];
+  /** A description for this Aspect type. */
+  typeDescription: Scalars['String'];
 };
 
 export type HubAuthorizationResetInput = {
@@ -4530,6 +4548,7 @@ export type ResolversTypes = {
   Application: ResolverTypeWrapper<Application>;
   ApplicationEventInput: ApplicationEventInput;
   ApplicationForRoleResult: ResolverTypeWrapper<ApplicationForRoleResult>;
+  ApplicationTemplate: ResolverTypeWrapper<ApplicationTemplate>;
   Aspect: ResolverTypeWrapper<Aspect>;
   AspectCommentsMessageReceived: ResolverTypeWrapper<AspectCommentsMessageReceived>;
   AspectTemplate: ResolverTypeWrapper<AspectTemplate>;
@@ -4689,6 +4708,7 @@ export type ResolversTypes = {
   GrantAuthorizationCredentialInput: GrantAuthorizationCredentialInput;
   Groupable: ResolversTypes['Community'] | ResolversTypes['Organization'];
   Hub: ResolverTypeWrapper<Hub>;
+  HubAspectTemplate: ResolverTypeWrapper<HubAspectTemplate>;
   HubAuthorizationResetInput: HubAuthorizationResetInput;
   HubFilterInput: HubFilterInput;
   HubPreferenceType: HubPreferenceType;
@@ -4891,6 +4911,7 @@ export type ResolversParentTypes = {
   Application: Application;
   ApplicationEventInput: ApplicationEventInput;
   ApplicationForRoleResult: ApplicationForRoleResult;
+  ApplicationTemplate: ApplicationTemplate;
   Aspect: Aspect;
   AspectCommentsMessageReceived: AspectCommentsMessageReceived;
   AspectTemplate: AspectTemplate;
@@ -5041,6 +5062,7 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['Community']
     | ResolversParentTypes['Organization'];
   Hub: Hub;
+  HubAspectTemplate: HubAspectTemplate;
   HubAuthorizationResetInput: HubAuthorizationResetInput;
   HubFilterInput: HubFilterInput;
   ISearchResults: ISearchResults;
@@ -5513,6 +5535,19 @@ export type ApplicationForRoleResultResolvers<
   >;
   state?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ApplicationTemplateResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['ApplicationTemplate'] = ResolversParentTypes['ApplicationTemplate']
+> = {
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  questions?: Resolver<
+    Array<ResolversTypes['QuestionTemplate']>,
+    ParentType,
+    ContextType
+  >;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -6681,6 +6716,20 @@ export type HubResolvers<
     ParentType,
     ContextType
   >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type HubAspectTemplateResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['HubAspectTemplate'] = ResolversParentTypes['HubAspectTemplate']
+> = {
+  defaultDescription?: Resolver<
+    ResolversTypes['String'],
+    ParentType,
+    ContextType
+  >;
+  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  typeDescription?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -9131,6 +9180,7 @@ export type Resolvers<ContextType = any> = {
   AgentBeginVerifiedCredentialRequestOutput?: AgentBeginVerifiedCredentialRequestOutputResolvers<ContextType>;
   Application?: ApplicationResolvers<ContextType>;
   ApplicationForRoleResult?: ApplicationForRoleResultResolvers<ContextType>;
+  ApplicationTemplate?: ApplicationTemplateResolvers<ContextType>;
   Aspect?: AspectResolvers<ContextType>;
   AspectCommentsMessageReceived?: AspectCommentsMessageReceivedResolvers<ContextType>;
   AspectTemplate?: AspectTemplateResolvers<ContextType>;
@@ -9187,6 +9237,7 @@ export type Resolvers<ContextType = any> = {
   Geo?: GeoResolvers<ContextType>;
   Groupable?: GroupableResolvers<ContextType>;
   Hub?: HubResolvers<ContextType>;
+  HubAspectTemplate?: HubAspectTemplateResolvers<ContextType>;
   ISearchResults?: ISearchResultsResolvers<ContextType>;
   InnovatonPack?: InnovatonPackResolvers<ContextType>;
   JSON?: GraphQLScalarType;

@@ -557,7 +557,8 @@ export class AlkemioClient {
     type: string,
     displayName: string,
     nameID: string,
-    description: string
+    description: string,
+    tags?: string[]
   ) {
     const aspectData: CreateAspectOnCalloutInput = {
       type,
@@ -567,6 +568,7 @@ export class AlkemioClient {
         description,
         displayName,
       },
+      tags: tags,
     };
     const { data } = await this.privateClient.createAspectOnCallout({
       aspectData,
