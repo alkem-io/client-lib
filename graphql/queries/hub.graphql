@@ -2,12 +2,9 @@ query hub($id: UUID_NAMEID!) {
   hub(ID: $id) {
     id
     nameID
-    displayName
-    templates
-    {
+    templates {
       id
-      lifecycleTemplates
-      {
+      lifecycleTemplates {
         id
         type
       }
@@ -28,18 +25,21 @@ query hub($id: UUID_NAMEID!) {
         nameID
       }
     }
-    context {
-      id
+    profile {
+      displayName
+      visuals {
+        name
+        id
+      }
       references {
         id
         name
         description
         uri
       }
-      visuals {
-        name
-        uri
-      }
+    }
+    context {
+      id
     }
     collaboration {
       id

@@ -3,8 +3,8 @@ query challenges($hubID: UUID_NAMEID!) {
     challenges {
       id
       nameID
-      displayName
-      context {
+      profile {
+        displayName
         visuals {
           name
           id

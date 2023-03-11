@@ -1,10 +1,17 @@
 fragment ChallengeDetails on Challenge {
   id
   nameID
-  tagset {
-    tags
-    id
-    name
+  profile {
+    displayName
+    visuals {
+      name
+      id
+    }
+    tagset {
+      tags
+      id
+      name
+    }
   }
   community {
     id
@@ -15,10 +22,7 @@ fragment ChallengeDetails on Challenge {
   }
   context {
     id
-    visuals {
-      name
-      id
-    }
+
     ecosystemModel {
       id
       actorGroups {

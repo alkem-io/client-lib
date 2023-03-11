@@ -1,9 +1,15 @@
 query opportunity($hubID: UUID_NAMEID!, $opportunityID: UUID_NAMEID!) {
   hub(ID: $hubID) {
     opportunity(ID: $opportunityID) {
-      displayName
       id
       nameID
+      profile {
+        displayName
+        visuals {
+          name
+          id
+        }
+      }
       community {
         id
         displayName
@@ -22,10 +28,7 @@ query opportunity($hubID: UUID_NAMEID!, $opportunityID: UUID_NAMEID!) {
       }
       context {
         id
-        visuals {
-          name
-          id
-        }
+
         ecosystemModel {
           id
           actorGroups {

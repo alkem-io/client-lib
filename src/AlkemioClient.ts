@@ -20,7 +20,7 @@ import {
   CalloutState,
 } from './generated/graphql';
 import semver from 'semver';
-import { AuthInfo } from 'src';
+import { AuthInfo, CreateReferenceOnProfileInput } from 'src';
 import { KratosPublicApiClient } from './util/kratos.public.api.client';
 import { log, LOG_LEVEL } from './util/logger';
 
@@ -297,30 +297,6 @@ export class AlkemioClient {
       },
     });
     return data?.updateVisual;
-  }
-
-  private async updateVisualOnContext(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    visuals: any[],
-    visualName: string,
-    uri: string
-  ) {
-    const visual = visuals.find(v => v.name === visualName);
-    if (visual) {
-      return await this.updateVisual(visual.id, uri);
-    }
-  }
-
-  async updateVisualsOnContext(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    visuals: any[],
-    banner: string,
-    background: string,
-    avatar: string
-  ) {
-    await this.updateVisualOnContext(visuals, 'banner', banner);
-    await this.updateVisualOnContext(visuals, 'bannerNarrow', background);
-    await this.updateVisualOnContext(visuals, 'avatar', avatar);
   }
 
   async createTagsetOnProfile(
@@ -841,7 +817,7 @@ export class AlkemioClient {
     if (!contextId) {
       throw new Error('Hub context id does not exist.');
     }
-    const existingReferences = hubInfo?.context?.references || [];
+    const existingReferences = hubInfo?.profile?.references || [];
     const newReferences = references.filter(r =>
       existingReferences.every(
         (x: { name: InputMaybe<string> }) => x.name !== r.name
@@ -864,20 +840,21 @@ export class AlkemioClient {
     if (updateRefsInput.length > 0) {
       await this.updateHub({
         ID: hubID,
-        context: {
+        profileData: {
           references: updateRefsInput,
         },
       });
     }
 
     for (const newRef of newReferences) {
-      this.privateClient.createReferenceOnContext({
-        input: {
-          contextID: contextId,
-          name: newRef.name || '',
-          description: newRef.description,
-          uri: newRef.uri,
-        },
+      const input: CreateReferenceOnProfileInput = {
+        profileID: contextId,
+        name: newRef.name || '',
+        description: newRef.description,
+        uri: newRef.uri,
+      };
+      this.privateClient.createReferenceOnProfile({
+        referenceInput: input,
       });
     }
   }

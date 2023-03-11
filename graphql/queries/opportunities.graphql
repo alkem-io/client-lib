@@ -17,24 +17,27 @@ query opportunities($hubID: UUID_NAMEID!) {
 
 fragment OpportunityProfile on Opportunity {
   nameID
-  displayName
-  lifecycle {
-    state
-  }
-  context {
+  profile {
+    displayName
     tagline
-    background
-    vision
-    impact
-    who
+    description
     visuals {
       name
       id
     }
     references {
+      id
       name
-      uri
       description
+      uri
     }
+  }
+  lifecycle {
+    state
+  }
+  context {
+    vision
+    impact
+    who
   }
 }
