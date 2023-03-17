@@ -340,6 +340,13 @@ export type ApplicationForRoleResult = {
   updatedDate: Scalars['DateTime'];
 };
 
+export type ApplicationTemplate = {
+  /** Application template name. */
+  name: Scalars['String'];
+  /** Template questions. */
+  questions: Array<QuestionTemplate>;
+};
+
 export type Aspect = {
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
@@ -1034,6 +1041,8 @@ export type Community = Groupable & {
   memberOrganizations?: Maybe<Array<Organization>>;
   /** All users that are contributing to this Community. */
   memberUsers?: Maybe<Array<User>>;
+  /** The membership status of the currently logged in user. */
+  myMembershipStatus?: Maybe<CommunityMembershipStatus>;
   /** The policy that defines the roles for this Community. */
   policy?: Maybe<CommunityPolicy>;
 };
@@ -1066,6 +1075,12 @@ export type CommunityApplyInput = {
 export type CommunityJoinInput = {
   communityID: Scalars['UUID'];
 };
+
+export enum CommunityMembershipStatus {
+  ApplicationPending = 'APPLICATION_PENDING',
+  Member = 'MEMBER',
+  NotMember = 'NOT_MEMBER',
+}
 
 export type CommunityPolicy = {
   /** The ID of the entity */
@@ -1203,7 +1218,7 @@ export type CreateCalendarEventOnCalendarInput = {
   multipleDays: Scalars['Boolean'];
   /** A readable identifier, unique within the containing scope. */
   nameID?: InputMaybe<Scalars['NameID']>;
-  profileData?: InputMaybe<CreateProfileInput>;
+  profileData: CreateProfileInput;
   /** The start date for the event. */
   startDate: Scalars['DateTime'];
   tags?: InputMaybe<Array<Scalars['String']>>;
@@ -1265,7 +1280,7 @@ export type CreateChallengeOnChallengeInput = {
   leadOrganizations?: InputMaybe<Array<Scalars['UUID_NAMEID']>>;
   /** A readable identifier, unique within the containing scope. */
   nameID?: InputMaybe<Scalars['NameID']>;
-  profileData?: InputMaybe<CreateProfileInput>;
+  profileData: CreateProfileInput;
   tags?: InputMaybe<Array<Scalars['String']>>;
 };
 
@@ -1278,7 +1293,7 @@ export type CreateChallengeOnHubInput = {
   leadOrganizations?: InputMaybe<Array<Scalars['UUID_NAMEID']>>;
   /** A readable identifier, unique within the containing scope. */
   nameID?: InputMaybe<Scalars['NameID']>;
-  profileData?: InputMaybe<CreateProfileInput>;
+  profileData: CreateProfileInput;
   tags?: InputMaybe<Array<Scalars['String']>>;
 };
 
@@ -1299,7 +1314,7 @@ export type CreateHubInput = {
   hostID: Scalars['UUID_NAMEID'];
   /** A readable identifier, unique within the containing scope. */
   nameID: Scalars['NameID'];
-  profileData?: InputMaybe<CreateProfileInput>;
+  profileData: CreateProfileInput;
   tags?: InputMaybe<Array<Scalars['String']>>;
 };
 
@@ -1344,7 +1359,7 @@ export type CreateOpportunityInput = {
   innovationFlowTemplateID?: InputMaybe<Scalars['UUID']>;
   /** A readable identifier, unique within the containing scope. */
   nameID?: InputMaybe<Scalars['NameID']>;
-  profileData?: InputMaybe<CreateProfileInput>;
+  profileData: CreateProfileInput;
   tags?: InputMaybe<Array<Scalars['String']>>;
 };
 
@@ -1772,6 +1787,15 @@ export type HubOpportunityArgs = {
 
 export type HubProjectArgs = {
   ID: Scalars['UUID_NAMEID'];
+};
+
+export type HubAspectTemplate = {
+  /** A default description for this Aspect. */
+  defaultDescription: Scalars['String'];
+  /** The type of the Aspect */
+  type: Scalars['String'];
+  /** A description for this Aspect type. */
+  typeDescription: Scalars['String'];
 };
 
 export type HubAuthorizationResetInput = {
@@ -3930,7 +3954,6 @@ export type UpdateChallengeInput = {
   nameID?: InputMaybe<Scalars['NameID']>;
   /** Update the contained Profile entity. */
   profileData?: InputMaybe<UpdateProfileInput>;
-  tags?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export type UpdateChallengePreferenceInput = {
@@ -3997,7 +4020,6 @@ export type UpdateHubInput = {
   nameID?: InputMaybe<Scalars['NameID']>;
   /** Update the contained Profile entity. */
   profileData?: InputMaybe<UpdateProfileInput>;
-  tags?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export type UpdateHubPreferenceInput = {
@@ -4058,7 +4080,6 @@ export type UpdateOpportunityInput = {
   nameID?: InputMaybe<Scalars['NameID']>;
   /** Update the contained Profile entity. */
   profileData?: InputMaybe<UpdateProfileInput>;
-  tags?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export type UpdateOrganizationInput = {
@@ -4493,6 +4514,7 @@ export type ResolversTypes = {
   Application: ResolverTypeWrapper<SchemaTypes.Application>;
   ApplicationEventInput: SchemaTypes.ApplicationEventInput;
   ApplicationForRoleResult: ResolverTypeWrapper<SchemaTypes.ApplicationForRoleResult>;
+  ApplicationTemplate: ResolverTypeWrapper<SchemaTypes.ApplicationTemplate>;
   Aspect: ResolverTypeWrapper<SchemaTypes.Aspect>;
   AspectCommentsMessageReceived: ResolverTypeWrapper<SchemaTypes.AspectCommentsMessageReceived>;
   AspectTemplate: ResolverTypeWrapper<SchemaTypes.AspectTemplate>;
@@ -4569,6 +4591,7 @@ export type ResolversTypes = {
   Community: ResolverTypeWrapper<SchemaTypes.Community>;
   CommunityApplyInput: SchemaTypes.CommunityApplyInput;
   CommunityJoinInput: SchemaTypes.CommunityJoinInput;
+  CommunityMembershipStatus: SchemaTypes.CommunityMembershipStatus;
   CommunityPolicy: ResolverTypeWrapper<SchemaTypes.CommunityPolicy>;
   CommunityRolePolicy: ResolverTypeWrapper<SchemaTypes.CommunityRolePolicy>;
   Config: ResolverTypeWrapper<SchemaTypes.Config>;
@@ -4651,6 +4674,7 @@ export type ResolversTypes = {
   GrantAuthorizationCredentialInput: SchemaTypes.GrantAuthorizationCredentialInput;
   Groupable: ResolversTypes['Community'] | ResolversTypes['Organization'];
   Hub: ResolverTypeWrapper<SchemaTypes.Hub>;
+  HubAspectTemplate: ResolverTypeWrapper<SchemaTypes.HubAspectTemplate>;
   HubAuthorizationResetInput: SchemaTypes.HubAuthorizationResetInput;
   HubFilterInput: SchemaTypes.HubFilterInput;
   HubPreferenceType: SchemaTypes.HubPreferenceType;
@@ -4857,6 +4881,7 @@ export type ResolversParentTypes = {
   Application: SchemaTypes.Application;
   ApplicationEventInput: SchemaTypes.ApplicationEventInput;
   ApplicationForRoleResult: SchemaTypes.ApplicationForRoleResult;
+  ApplicationTemplate: SchemaTypes.ApplicationTemplate;
   Aspect: SchemaTypes.Aspect;
   AspectCommentsMessageReceived: SchemaTypes.AspectCommentsMessageReceived;
   AspectTemplate: SchemaTypes.AspectTemplate;
@@ -5007,6 +5032,7 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['Community']
     | ResolversParentTypes['Organization'];
   Hub: SchemaTypes.Hub;
+  HubAspectTemplate: SchemaTypes.HubAspectTemplate;
   HubAuthorizationResetInput: SchemaTypes.HubAuthorizationResetInput;
   HubFilterInput: SchemaTypes.HubFilterInput;
   ISearchResults: SchemaTypes.ISearchResults;
@@ -5491,6 +5517,19 @@ export type ApplicationForRoleResultResolvers<
   >;
   state?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ApplicationTemplateResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['ApplicationTemplate'] = ResolversParentTypes['ApplicationTemplate']
+> = {
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  questions?: Resolver<
+    Array<ResolversTypes['QuestionTemplate']>,
+    ParentType,
+    ContextType
+  >;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -6254,6 +6293,11 @@ export type CommunityResolvers<
     ContextType,
     Partial<SchemaTypes.CommunityMemberUsersArgs>
   >;
+  myMembershipStatus?: Resolver<
+    SchemaTypes.Maybe<ResolversTypes['CommunityMembershipStatus']>,
+    ParentType,
+    ContextType
+  >;
   policy?: Resolver<
     SchemaTypes.Maybe<ResolversTypes['CommunityPolicy']>,
     ParentType,
@@ -6718,6 +6762,20 @@ export type HubResolvers<
     ParentType,
     ContextType
   >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type HubAspectTemplateResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['HubAspectTemplate'] = ResolversParentTypes['HubAspectTemplate']
+> = {
+  defaultDescription?: Resolver<
+    ResolversTypes['String'],
+    ParentType,
+    ContextType
+  >;
+  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  typeDescription?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -9405,6 +9463,7 @@ export type Resolvers<ContextType = any> = {
   AgentBeginVerifiedCredentialRequestOutput?: AgentBeginVerifiedCredentialRequestOutputResolvers<ContextType>;
   Application?: ApplicationResolvers<ContextType>;
   ApplicationForRoleResult?: ApplicationForRoleResultResolvers<ContextType>;
+  ApplicationTemplate?: ApplicationTemplateResolvers<ContextType>;
   Aspect?: AspectResolvers<ContextType>;
   AspectCommentsMessageReceived?: AspectCommentsMessageReceivedResolvers<ContextType>;
   AspectTemplate?: AspectTemplateResolvers<ContextType>;
@@ -9461,6 +9520,7 @@ export type Resolvers<ContextType = any> = {
   Geo?: GeoResolvers<ContextType>;
   Groupable?: GroupableResolvers<ContextType>;
   Hub?: HubResolvers<ContextType>;
+  HubAspectTemplate?: HubAspectTemplateResolvers<ContextType>;
   ISearchResults?: ISearchResultsResolvers<ContextType>;
   InnovatonPack?: InnovatonPackResolvers<ContextType>;
   JSON?: GraphQLScalarType;
