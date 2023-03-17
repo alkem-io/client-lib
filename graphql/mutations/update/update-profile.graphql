@@ -1,4 +1,4 @@
-mutation updateProfile($profileData: UpdateProfileInput!) {
+mutation updateProfile($profileData: UpdateProfileDirectInput!) {
   updateProfile(profileData: $profileData) {
     id
   }

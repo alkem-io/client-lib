@@ -20,7 +20,7 @@ import {
   CalloutState,
 } from './generated/graphql';
 import semver from 'semver';
-import { AuthInfo } from 'src';
+import { AuthInfo, CreateReferenceOnProfileInput } from 'src';
 import { KratosPublicApiClient } from './util/kratos.public.api.client';
 import { log, LOG_LEVEL } from './util/logger';
 
@@ -251,7 +251,7 @@ export class AlkemioClient {
 
     const profileID = data?.user.profile?.id;
 
-    const avatarID = data?.user.profile?.avatar?.id || '';
+    const avatarID = data?.user.profile?.visual?.id || '';
 
     if (profileID) {
       const profileUpdated = await this.updateProfile(
@@ -277,7 +277,7 @@ export class AlkemioClient {
   ) {
     const { data } = await this.privateClient.updateProfile({
       profileData: {
-        ID: profileID,
+        profileID: profileID,
         description: description,
         location: {
           country,
@@ -297,30 +297,6 @@ export class AlkemioClient {
       },
     });
     return data?.updateVisual;
-  }
-
-  private async updateVisualOnContext(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    visuals: any[],
-    visualName: string,
-    uri: string
-  ) {
-    const visual = visuals.find(v => v.name === visualName);
-    if (visual) {
-      return await this.updateVisual(visual.id, uri);
-    }
-  }
-
-  async updateVisualsOnContext(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    visuals: any[],
-    banner: string,
-    background: string,
-    avatar: string
-  ) {
-    await this.updateVisualOnContext(visuals, 'banner', banner);
-    await this.updateVisualOnContext(visuals, 'bannerNarrow', background);
-    await this.updateVisualOnContext(visuals, 'avatar', avatar);
   }
 
   async createTagsetOnProfile(
@@ -563,12 +539,12 @@ export class AlkemioClient {
     const aspectData: CreateAspectOnCalloutInput = {
       type,
       calloutID,
-      displayName,
       nameID,
       profileData: {
         description,
-        tags,
+        displayName,
       },
+      tags: tags,
     };
     const { data } = await this.privateClient.createAspectOnCallout({
       aspectData,
@@ -581,7 +557,6 @@ export class AlkemioClient {
   async createCalloutOnCollaboration(
     collaborationID: string,
     displayName: string,
-    nameID: string,
     description: string,
     type: CalloutType,
     state: CalloutState
@@ -614,6 +589,7 @@ export class AlkemioClient {
         parentID: communityID,
         profileData: {
           description: groupDesc,
+          displayName: groupName,
         },
       },
     });
@@ -625,7 +601,9 @@ export class AlkemioClient {
     const { data } = await this.privateClient.createOrganization({
       organizationData: {
         nameID: nameID,
-        displayName: displayName,
+        profileData: {
+          displayName: displayName,
+        },
       },
     });
 
@@ -839,7 +817,7 @@ export class AlkemioClient {
     if (!contextId) {
       throw new Error('Hub context id does not exist.');
     }
-    const existingReferences = hubInfo?.context?.references || [];
+    const existingReferences = hubInfo?.profile?.references || [];
     const newReferences = references.filter(r =>
       existingReferences.every(
         (x: { name: InputMaybe<string> }) => x.name !== r.name
@@ -862,20 +840,21 @@ export class AlkemioClient {
     if (updateRefsInput.length > 0) {
       await this.updateHub({
         ID: hubID,
-        context: {
+        profileData: {
           references: updateRefsInput,
         },
       });
     }
 
     for (const newRef of newReferences) {
-      this.privateClient.createReferenceOnContext({
-        input: {
-          contextID: contextId,
-          name: newRef.name || '',
-          description: newRef.description,
-          uri: newRef.uri,
-        },
+      const input: CreateReferenceOnProfileInput = {
+        profileID: contextId,
+        name: newRef.name || '',
+        description: newRef.description,
+        uri: newRef.uri,
+      };
+      this.privateClient.createReferenceOnProfile({
+        referenceInput: input,
       });
     }
   }

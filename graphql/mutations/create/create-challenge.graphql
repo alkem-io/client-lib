@@ -2,7 +2,7 @@ mutation createChallenge($challengeData: CreateChallengeOnHubInput!) {
   createChallenge(challengeData: $challengeData) {
     id
     nameID
-    context {
+    profile {
       visuals {
         name
         id

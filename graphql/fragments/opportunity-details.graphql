@@ -1,10 +1,12 @@
 fragment OpportunityDetails on Opportunity {
   id
   nameID
-  tagset {
-    tags
-    id
-    name
+  profile {
+    tagset {
+      tags
+      id
+      name
+    }
   }
   community {
     id

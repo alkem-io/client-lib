@@ -7,7 +7,7 @@ mutation updateHub($hubData: UpdateHubInput!) {
     community {
       id
     }
-    context {
+    profile {
       tagline
       visuals {
         id

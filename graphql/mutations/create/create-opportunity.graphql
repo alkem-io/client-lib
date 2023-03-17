@@ -1,9 +1,9 @@
 mutation createOpportunity($opportunityData: CreateOpportunityInput!) {
   createOpportunity(opportunityData: $opportunityData) {
     id
-    displayName
     nameID
-    context {
+    profile {
+      displayName
       visuals {
         name
         id

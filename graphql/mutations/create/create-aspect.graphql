@@ -2,8 +2,9 @@ mutation createAspectOnCallout($aspectData: CreateAspectOnCalloutInput!) {
   createAspectOnCallout(aspectData: $aspectData) {
     id
     nameID
-    displayName
     profile {
+      id
+      displayName
       tagset {
         tags
       }

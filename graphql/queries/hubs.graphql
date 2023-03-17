@@ -1,9 +1,9 @@
 query hubs {
   hubs {
-    displayName
     id
     nameID
-    context {
+    profile {
+      displayName
       visuals {
         name
         id

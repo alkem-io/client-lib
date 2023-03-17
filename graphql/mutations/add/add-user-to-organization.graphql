@@ -1,6 +1,9 @@
 mutation assignUserToOrganization($input: AssignOrganizationAssociateInput!) {
   assignUserToOrganization(membershipData: $input) {
-    displayName
     id
+    profile {
+      id
+      displayName
+    }
   }
 }

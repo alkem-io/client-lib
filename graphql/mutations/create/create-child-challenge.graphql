@@ -2,8 +2,8 @@ mutation createChildChallenge($childChallengeData: CreateChallengeOnChallengeInp
   createChildChallenge(challengeData: $childChallengeData) {
     id
     nameID
-    displayName
-    context {
+    profile {
+      displayName
       visuals {
         name
         id

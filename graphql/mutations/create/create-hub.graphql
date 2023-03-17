@@ -2,7 +2,7 @@ mutation createHub($hubData: CreateHubInput!) {
   createHub(hubData: $hubData) {
     id
     nameID
-    context {
+    profile {
       visuals {
         name
         id

@@ -1,10 +1,10 @@
 query organization($id: UUID_NAMEID!) {
   organization(ID: $id) {
-    displayName
     id
     nameID
     profile {
       id
+      displayName
     }
   }
 }
