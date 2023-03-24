@@ -9,12 +9,9 @@ mutation createAspectOnCallout($aspectData: CreateAspectOnCalloutInput!) {
         tags
       }
       description
-    }
-    banner {
-      id
-    }
-    bannerNarrow {
-      id
+      visuals {
+        id
+      }
     }
   }
 }

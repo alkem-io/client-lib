@@ -565,8 +565,7 @@ export class AlkemioClient {
       collaborationID,
       type,
       state,
-      displayName,
-      description,
+      profile: { displayName, description },
     };
     const { data } = await this.privateClient.createCalloutOnCollaboration({
       calloutData,
@@ -813,8 +812,8 @@ export class AlkemioClient {
     references: Omit<UpdateReferenceInput, 'ID'>[]
   ) {
     const hubInfo = await this.hubInfo(hubID);
-    const contextId = hubInfo?.context?.id;
-    if (!contextId) {
+    const profileId = hubInfo?.profile.id;
+    if (!profileId) {
       throw new Error('Hub context id does not exist.');
     }
     const existingReferences = hubInfo?.profile?.references || [];
@@ -848,7 +847,7 @@ export class AlkemioClient {
 
     for (const newRef of newReferences) {
       const input: CreateReferenceOnProfileInput = {
-        profileID: contextId,
+        profileID: profileId,
         name: newRef.name || '',
         description: newRef.description,
         uri: newRef.uri,
