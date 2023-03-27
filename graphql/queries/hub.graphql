@@ -26,6 +26,7 @@ query hub($id: UUID_NAMEID!) {
       }
     }
     profile {
+      id
       displayName
       visuals {
         name
