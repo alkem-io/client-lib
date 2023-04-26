@@ -53,6 +53,13 @@ export type Apm = {
   rumEnabled: Scalars['Boolean'];
 };
 
+export type ActivityCreatedSubscriptionInput = {
+  /** The collaboration on which to subscribe for new activity */
+  collaborationID: Scalars['UUID'];
+  /** Which activity types to include in the results. Returns all by default. */
+  types?: InputMaybe<Array<ActivityEventType>>;
+};
+
 export type ActivityCreatedSubscriptionResult = {
   /** The newly created activity */
   activity: ActivityLogEntry;
@@ -245,6 +252,8 @@ export type ActivityLogInput = {
   collaborationID: Scalars['UUID'];
   /** The number of ActivityLog entries to return; if omitted return all. */
   limit?: InputMaybe<Scalars['Float']>;
+  /** Which activity types to include in the results. Returns all by default. */
+  types?: InputMaybe<Array<ActivityEventType>>;
 };
 
 export type Actor = {
@@ -3719,7 +3728,7 @@ export type Subscription = {
 };
 
 export type SubscriptionActivityCreatedArgs = {
-  collaborationID: Scalars['UUID'];
+  input: ActivityCreatedSubscriptionInput;
 };
 
 export type SubscriptionAspectCommentsMessageReceivedArgs = {
@@ -4190,6 +4199,7 @@ export type UpdateUserPreferenceInput = {
 };
 
 export type UpdateVisualInput = {
+  alternativeText?: InputMaybe<Scalars['String']>;
   uri: Scalars['String'];
   visualID: Scalars['String'];
 };
@@ -4363,6 +4373,7 @@ export type VerifiedCredentialClaim = {
 
 export type Visual = {
   allowedTypes: Array<Scalars['String']>;
+  alternativeText?: Maybe<Scalars['String']>;
   /** Aspect ratio width / height. */
   aspectRatio: Scalars['Float'];
   /** The authorization rules for the entity */
@@ -4388,6 +4399,7 @@ export enum VisualType {
 }
 
 export type VisualUploadImageInput = {
+  alternativeText?: InputMaybe<Scalars['String']>;
   visualID: Scalars['String'];
 };
 
@@ -4510,6 +4522,7 @@ export type DirectiveResolverFn<
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   APM: ResolverTypeWrapper<SchemaTypes.Apm>;
+  ActivityCreatedSubscriptionInput: SchemaTypes.ActivityCreatedSubscriptionInput;
   ActivityCreatedSubscriptionResult: ResolverTypeWrapper<SchemaTypes.ActivityCreatedSubscriptionResult>;
   ActivityEventType: SchemaTypes.ActivityEventType;
   ActivityLogEntry:
@@ -4881,6 +4894,7 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   APM: SchemaTypes.Apm;
+  ActivityCreatedSubscriptionInput: SchemaTypes.ActivityCreatedSubscriptionInput;
   ActivityCreatedSubscriptionResult: SchemaTypes.ActivityCreatedSubscriptionResult;
   ActivityLogEntry:
     | ResolversParentTypes['ActivityLogEntryCalloutCanvasCreated']
@@ -9091,10 +9105,7 @@ export type SubscriptionResolvers<
     'activityCreated',
     ParentType,
     ContextType,
-    RequireFields<
-      SchemaTypes.SubscriptionActivityCreatedArgs,
-      'collaborationID'
-    >
+    RequireFields<SchemaTypes.SubscriptionActivityCreatedArgs, 'input'>
   >;
   aspectCommentsMessageReceived?: SubscriptionResolver<
     ResolversTypes['AspectCommentsMessageReceived'],
@@ -9478,6 +9489,11 @@ export type VisualResolvers<
 > = {
   allowedTypes?: Resolver<
     Array<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >;
+  alternativeText?: Resolver<
+    SchemaTypes.Maybe<ResolversTypes['String']>,
     ParentType,
     ContextType
   >;
