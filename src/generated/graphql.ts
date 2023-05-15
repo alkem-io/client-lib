@@ -10308,6 +10308,20 @@ export type CreateUserMutation = {
   };
 };
 
+export type UploadFileOnReferenceMutationVariables = SchemaTypes.Exact<{
+  file: SchemaTypes.Scalars['Upload'];
+  uploadData: SchemaTypes.StorageBucketUploadFileInput;
+}>;
+
+export type UploadFileOnReferenceMutation = {
+  uploadFileOnReference: {
+    id: string;
+    description?: string | undefined;
+    name: string;
+    uri: string;
+  };
+};
+
 export type DeleteChallengeMutationVariables = SchemaTypes.Exact<{
   deleteData: SchemaTypes.DeleteChallengeInput;
 }>;
@@ -11347,6 +11361,19 @@ export const CreateUserDocument = gql`
     }
   }
 `;
+export const UploadFileOnReferenceDocument = gql`
+  mutation uploadFileOnReference(
+    $file: Upload!
+    $uploadData: StorageBucketUploadFileInput!
+  ) {
+    uploadFileOnReference(file: $file, uploadData: $uploadData) {
+      id
+      description
+      name
+      uri
+    }
+  }
+`;
 export const DeleteChallengeDocument = gql`
   mutation deleteChallenge($deleteData: DeleteChallengeInput!) {
     deleteChallenge(deleteData: $deleteData) {
@@ -11889,6 +11916,9 @@ const CreateTagsetOnProfileDocumentString = print(
   CreateTagsetOnProfileDocument
 );
 const CreateUserDocumentString = print(CreateUserDocument);
+const UploadFileOnReferenceDocumentString = print(
+  UploadFileOnReferenceDocument
+);
 const DeleteChallengeDocumentString = print(DeleteChallengeDocument);
 const DeleteOpportunityDocumentString = print(DeleteOpportunityDocument);
 const DeleteOrganizationDocumentString = print(DeleteOrganizationDocument);
@@ -12443,6 +12473,26 @@ export function getSdk(
             { ...requestHeaders, ...wrappedRequestHeaders }
           ),
         'createUser',
+        'mutation'
+      );
+    },
+    uploadFileOnReference(
+      variables: SchemaTypes.UploadFileOnReferenceMutationVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<{
+      data: SchemaTypes.UploadFileOnReferenceMutation;
+      extensions?: any;
+      headers: Dom.Headers;
+      status: number;
+    }> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.rawRequest<SchemaTypes.UploadFileOnReferenceMutation>(
+            UploadFileOnReferenceDocumentString,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'uploadFileOnReference',
         'mutation'
       );
     },

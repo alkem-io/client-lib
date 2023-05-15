@@ -1,6 +1,6 @@
 {
   "name": "@alkemio/client-lib",
-  "version": "0.19.0",
+  "version": "0.19.1",
   "description": "Library for interacting with a Alkemio server instance",
   "author": "Alkemio Foundation",
   "private": false,
@@ -16,6 +16,7 @@
     "lint": "tsc --noEmit && eslint src/**/*.ts{,x}",
     "lint:fix": "tsc --noEmit && eslint src/**/*.ts{,x} --fix",
     "validate-connection": "ts-node-dev src/validate-connection.ts",
+    "upload": "ts-node-dev src/util/upload-file.ts",
     "prepublishOnly": "npm run build"
   },
   "repository": {

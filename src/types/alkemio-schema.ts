@@ -9970,6 +9970,20 @@ export type CreateUserMutation = {
   };
 };
 
+export type UploadFileOnReferenceMutationVariables = Exact<{
+  file: Scalars['Upload'];
+  uploadData: StorageBucketUploadFileInput;
+}>;
+
+export type UploadFileOnReferenceMutation = {
+  uploadFileOnReference: {
+    id: string;
+    description?: string | undefined;
+    name: string;
+    uri: string;
+  };
+};
+
 export type DeleteChallengeMutationVariables = Exact<{
   deleteData: DeleteChallengeInput;
 }>;

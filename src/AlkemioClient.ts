@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { PathLike, createReadStream, existsSync } from 'fs';
 import { GraphQLClient } from 'graphql-request';
 import { AlkemioClientConfig } from './config/alkemio-client-config';
 import { getSdk, InputMaybe, Sdk } from './generated/graphql';
@@ -23,6 +24,7 @@ import semver from 'semver';
 import { AuthInfo, CreateReferenceOnProfileInput } from 'src';
 import { KratosPublicApiClient } from './util/kratos.public.api.client';
 import { log, LOG_LEVEL } from './util/logger';
+import { logError } from './util/log.error';
 
 export class AlkemioClient {
   public apiToken: string;
@@ -447,6 +449,19 @@ export class AlkemioClient {
     });
 
     return data?.updateHub;
+  }
+
+  public uploadFileOnReference(path: PathLike, referenceID: string) {
+    if (!existsSync(path)) {
+      throw new Error(`File at '${path}' does not exist`);
+    }
+
+    return this.privateClient
+      .uploadFileOnReference({
+        file: createReadStream(path) as any,
+        uploadData: { referenceID },
+      })
+      .then(x => x.data.uploadFileOnReference, logError);
   }
 
   async createRelationOnCollaboration(
