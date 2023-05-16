@@ -10308,20 +10308,6 @@ export type CreateUserMutation = {
   };
 };
 
-export type UploadFileOnReferenceMutationVariables = SchemaTypes.Exact<{
-  file: SchemaTypes.Scalars['Upload'];
-  uploadData: SchemaTypes.StorageBucketUploadFileInput;
-}>;
-
-export type UploadFileOnReferenceMutation = {
-  uploadFileOnReference: {
-    id: string;
-    description?: string | undefined;
-    name: string;
-    uri: string;
-  };
-};
-
 export type DeleteChallengeMutationVariables = SchemaTypes.Exact<{
   deleteData: SchemaTypes.DeleteChallengeInput;
 }>;
@@ -10446,6 +10432,29 @@ export type UpdateVisualMutationVariables = SchemaTypes.Exact<{
 }>;
 
 export type UpdateVisualMutation = { updateVisual: { id: string } };
+
+export type UploadFileOnReferenceMutationVariables = SchemaTypes.Exact<{
+  file: SchemaTypes.Scalars['Upload'];
+  uploadData: SchemaTypes.StorageBucketUploadFileInput;
+}>;
+
+export type UploadFileOnReferenceMutation = {
+  uploadFileOnReference: {
+    id: string;
+    description?: string | undefined;
+    name: string;
+    uri: string;
+  };
+};
+
+export type UploadImageOnVisualMutationVariables = SchemaTypes.Exact<{
+  file: SchemaTypes.Scalars['Upload'];
+  uploadData: SchemaTypes.VisualUploadImageInput;
+}>;
+
+export type UploadImageOnVisualMutation = {
+  uploadImageOnVisual: { id: string; name: string; uri: string };
+};
 
 export type ChallengeQueryVariables = SchemaTypes.Exact<{
   hubID: SchemaTypes.Scalars['UUID_NAMEID'];
@@ -11361,19 +11370,6 @@ export const CreateUserDocument = gql`
     }
   }
 `;
-export const UploadFileOnReferenceDocument = gql`
-  mutation uploadFileOnReference(
-    $file: Upload!
-    $uploadData: StorageBucketUploadFileInput!
-  ) {
-    uploadFileOnReference(file: $file, uploadData: $uploadData) {
-      id
-      description
-      name
-      uri
-    }
-  }
-`;
 export const DeleteChallengeDocument = gql`
   mutation deleteChallenge($deleteData: DeleteChallengeInput!) {
     deleteChallenge(deleteData: $deleteData) {
@@ -11489,6 +11485,31 @@ export const UpdateVisualDocument = gql`
   mutation updateVisual($updateData: UpdateVisualInput!) {
     updateVisual(updateData: $updateData) {
       id
+    }
+  }
+`;
+export const UploadFileOnReferenceDocument = gql`
+  mutation uploadFileOnReference(
+    $file: Upload!
+    $uploadData: StorageBucketUploadFileInput!
+  ) {
+    uploadFileOnReference(file: $file, uploadData: $uploadData) {
+      id
+      description
+      name
+      uri
+    }
+  }
+`;
+export const UploadImageOnVisualDocument = gql`
+  mutation uploadImageOnVisual(
+    $file: Upload!
+    $uploadData: VisualUploadImageInput!
+  ) {
+    uploadImageOnVisual(file: $file, uploadData: $uploadData) {
+      id
+      name
+      uri
     }
   }
 `;
@@ -11916,9 +11937,6 @@ const CreateTagsetOnProfileDocumentString = print(
   CreateTagsetOnProfileDocument
 );
 const CreateUserDocumentString = print(CreateUserDocument);
-const UploadFileOnReferenceDocumentString = print(
-  UploadFileOnReferenceDocument
-);
 const DeleteChallengeDocumentString = print(DeleteChallengeDocument);
 const DeleteOpportunityDocumentString = print(DeleteOpportunityDocument);
 const DeleteOrganizationDocumentString = print(DeleteOrganizationDocument);
@@ -11930,6 +11948,10 @@ const UpdateOpportunityDocumentString = print(UpdateOpportunityDocument);
 const UpdateOrganizationDocumentString = print(UpdateOrganizationDocument);
 const UpdateProfileDocumentString = print(UpdateProfileDocument);
 const UpdateVisualDocumentString = print(UpdateVisualDocument);
+const UploadFileOnReferenceDocumentString = print(
+  UploadFileOnReferenceDocument
+);
+const UploadImageOnVisualDocumentString = print(UploadImageOnVisualDocument);
 const ChallengeDocumentString = print(ChallengeDocument);
 const ChallengesDocumentString = print(ChallengesDocument);
 const ConfigurationDocumentString = print(ConfigurationDocument);
@@ -12476,26 +12498,6 @@ export function getSdk(
         'mutation'
       );
     },
-    uploadFileOnReference(
-      variables: SchemaTypes.UploadFileOnReferenceMutationVariables,
-      requestHeaders?: Dom.RequestInit['headers']
-    ): Promise<{
-      data: SchemaTypes.UploadFileOnReferenceMutation;
-      extensions?: any;
-      headers: Dom.Headers;
-      status: number;
-    }> {
-      return withWrapper(
-        wrappedRequestHeaders =>
-          client.rawRequest<SchemaTypes.UploadFileOnReferenceMutation>(
-            UploadFileOnReferenceDocumentString,
-            variables,
-            { ...requestHeaders, ...wrappedRequestHeaders }
-          ),
-        'uploadFileOnReference',
-        'mutation'
-      );
-    },
     deleteChallenge(
       variables: SchemaTypes.DeleteChallengeMutationVariables,
       requestHeaders?: Dom.RequestInit['headers']
@@ -12713,6 +12715,46 @@ export function getSdk(
             { ...requestHeaders, ...wrappedRequestHeaders }
           ),
         'updateVisual',
+        'mutation'
+      );
+    },
+    uploadFileOnReference(
+      variables: SchemaTypes.UploadFileOnReferenceMutationVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<{
+      data: SchemaTypes.UploadFileOnReferenceMutation;
+      extensions?: any;
+      headers: Dom.Headers;
+      status: number;
+    }> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.rawRequest<SchemaTypes.UploadFileOnReferenceMutation>(
+            UploadFileOnReferenceDocumentString,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'uploadFileOnReference',
+        'mutation'
+      );
+    },
+    uploadImageOnVisual(
+      variables: SchemaTypes.UploadImageOnVisualMutationVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<{
+      data: SchemaTypes.UploadImageOnVisualMutation;
+      extensions?: any;
+      headers: Dom.Headers;
+      status: number;
+    }> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.rawRequest<SchemaTypes.UploadImageOnVisualMutation>(
+            UploadImageOnVisualDocumentString,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'uploadImageOnVisual',
         'mutation'
       );
     },
