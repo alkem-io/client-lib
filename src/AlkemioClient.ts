@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { PathLike, createReadStream, existsSync } from 'fs';
 import { GraphQLClient } from 'graphql-request';
 import { AlkemioClientConfig } from './config/alkemio-client-config';
 import { getSdk, InputMaybe, Sdk } from './generated/graphql';
@@ -23,6 +24,8 @@ import semver from 'semver';
 import { AuthInfo, CreateReferenceOnProfileInput } from 'src';
 import { KratosPublicApiClient } from './util/kratos.public.api.client';
 import { log, LOG_LEVEL } from './util/logger';
+import { logError } from './util/log.error';
+import { FileUpload } from 'graphql-upload';
 
 export class AlkemioClient {
   public apiToken: string;
@@ -447,6 +450,32 @@ export class AlkemioClient {
     });
 
     return data?.updateHub;
+  }
+
+  public uploadFileOnReference(path: PathLike, referenceID: string) {
+    if (!existsSync(path)) {
+      throw new Error(`File at '${path}' does not exist`);
+    }
+
+    return this.privateClient
+      .uploadFileOnReference({
+        file: createReadStream(path) as unknown as FileUpload,
+        uploadData: { referenceID },
+      })
+      .then(x => x.data.uploadFileOnReference, logError);
+  }
+
+  public uploadImageOnVisual(path: PathLike, visualID: string) {
+    if (!existsSync(path)) {
+      throw new Error(`Image at '${path}' does not exist`);
+    }
+
+    return this.privateClient
+      .uploadImageOnVisual({
+        file: createReadStream(path) as unknown as FileUpload,
+        uploadData: { visualID },
+      })
+      .then(x => x.data.uploadImageOnVisual, logError);
   }
 
   async createRelationOnCollaboration(
