@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PathLike, createReadStream, existsSync } from 'fs';
 import { GraphQLClient } from 'graphql-request';
+import { FileUpload } from 'graphql-upload';
+import semver from 'semver';
 import { AlkemioClientConfig } from './config/alkemio-client-config';
 import { getSdk, InputMaybe, Sdk } from './generated/graphql';
 import {
@@ -20,12 +22,10 @@ import {
   CalloutType,
   CalloutState,
 } from './generated/graphql';
-import semver from 'semver';
 import { AuthInfo, CreateReferenceOnProfileInput } from 'src';
 import { KratosPublicApiClient } from './util/kratos.public.api.client';
 import { log, LOG_LEVEL } from './util/logger';
-import { logError } from './util/log.error';
-import { FileUpload } from 'graphql-upload';
+import { toGraphQLResponse } from './util/toGraphQLResponse';
 
 export class AlkemioClient {
   public apiToken: string;
@@ -452,17 +452,26 @@ export class AlkemioClient {
     return data?.updateHub;
   }
 
-  public uploadFileOnReference(path: PathLike, referenceID: string) {
+  public uploadFileOnReference(
+    path: PathLike,
+    referenceID: string
+  ) {
     if (!existsSync(path)) {
       throw new Error(`File at '${path}' does not exist`);
     }
+
+    const fn = this.privateClient.uploadFileOnReference;
+    type mutationReturnType = Awaited<ReturnType<typeof fn>>;
 
     return this.privateClient
       .uploadFileOnReference({
         file: createReadStream(path) as unknown as FileUpload,
         uploadData: { referenceID },
       })
-      .then(x => x.data.uploadFileOnReference, logError);
+      .then(
+        toGraphQLResponse<mutationReturnType['data']>,
+        toGraphQLResponse<mutationReturnType['data']>
+      );
   }
 
   public uploadImageOnVisual(path: PathLike, visualID: string) {
@@ -470,12 +479,18 @@ export class AlkemioClient {
       throw new Error(`Image at '${path}' does not exist`);
     }
 
+    const fn = this.privateClient.uploadImageOnVisual;
+    type mutationReturnType = Awaited<ReturnType<typeof fn>>;
+
     return this.privateClient
       .uploadImageOnVisual({
         file: createReadStream(path) as unknown as FileUpload,
         uploadData: { visualID },
       })
-      .then(x => x.data.uploadImageOnVisual, logError);
+      .then(
+        toGraphQLResponse<mutationReturnType['data']>,
+        toGraphQLResponse<mutationReturnType['data']>
+      );
   }
 
   async createRelationOnCollaboration(
