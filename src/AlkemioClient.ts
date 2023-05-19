@@ -26,6 +26,8 @@ import { AuthInfo, CreateReferenceOnProfileInput } from 'src';
 import { KratosPublicApiClient } from './util/kratos.public.api.client';
 import { log, LOG_LEVEL } from './util/logger';
 import { toGraphQLResponse } from './util/toGraphQLResponse';
+import { GraphQLResponse } from 'graphql-request/dist/types';
+import * as SchemaTypes from './types/alkemio-schema';
 
 export class AlkemioClient {
   public apiToken: string;
@@ -455,7 +457,7 @@ export class AlkemioClient {
   public uploadFileOnReference(
     path: PathLike,
     referenceID: string
-  ) {
+  ): Promise<GraphQLResponse<SchemaTypes.UploadFileOnReferenceMutation>> {
     if (!existsSync(path)) {
       throw new Error(`File at '${path}' does not exist`);
     }
@@ -474,7 +476,10 @@ export class AlkemioClient {
       );
   }
 
-  public uploadImageOnVisual(path: PathLike, visualID: string) {
+  public uploadImageOnVisual(
+    path: PathLike,
+    visualID: string
+  ): Promise<GraphQLResponse<SchemaTypes.UploadImageOnVisualMutation>> {
     if (!existsSync(path)) {
       throw new Error(`Image at '${path}' does not exist`);
     }
