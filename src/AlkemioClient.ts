@@ -454,16 +454,10 @@ export class AlkemioClient {
     return data?.updateHub;
   }
 
-  public uploadFileOnReference(
-    path: PathLike,
-    referenceID: string
-  ): Promise<GraphQLResponse<SchemaTypes.UploadFileOnReferenceMutation>> {
+  public uploadFileOnReference(path: PathLike, referenceID: string) {
     if (!existsSync(path)) {
       throw new Error(`File at '${path}' does not exist`);
     }
-
-    const fn = this.privateClient.uploadFileOnReference;
-    type mutationReturnType = Awaited<ReturnType<typeof fn>>;
 
     return this.privateClient
       .uploadFileOnReference({
@@ -471,21 +465,15 @@ export class AlkemioClient {
         uploadData: { referenceID },
       })
       .then(
-        toGraphQLResponse<mutationReturnType['data']>,
-        toGraphQLResponse<mutationReturnType['data']>
+        toGraphQLResponse<SchemaTypes.UploadFileOnReferenceMutation>,
+        toGraphQLResponse<SchemaTypes.UploadFileOnReferenceMutation>
       );
   }
 
-  public uploadImageOnVisual(
-    path: PathLike,
-    visualID: string
-  ): Promise<GraphQLResponse<SchemaTypes.UploadImageOnVisualMutation>> {
+  public uploadImageOnVisual(path: PathLike, visualID: string) {
     if (!existsSync(path)) {
       throw new Error(`Image at '${path}' does not exist`);
     }
-
-    const fn = this.privateClient.uploadImageOnVisual;
-    type mutationReturnType = Awaited<ReturnType<typeof fn>>;
 
     return this.privateClient
       .uploadImageOnVisual({
@@ -493,8 +481,8 @@ export class AlkemioClient {
         uploadData: { visualID },
       })
       .then(
-        toGraphQLResponse<mutationReturnType['data']>,
-        toGraphQLResponse<mutationReturnType['data']>
+        toGraphQLResponse<SchemaTypes.UploadImageOnVisualMutation>,
+        toGraphQLResponse<SchemaTypes.UploadImageOnVisualMutation>
       );
   }
 
