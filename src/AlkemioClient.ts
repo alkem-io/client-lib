@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PathLike, createReadStream, existsSync } from 'fs';
 import { GraphQLClient } from 'graphql-request';
+import { FileUpload } from 'graphql-upload';
+import semver from 'semver';
 import { AlkemioClientConfig } from './config/alkemio-client-config';
 import { getSdk, InputMaybe, Sdk } from './generated/graphql';
 import {
@@ -20,12 +22,12 @@ import {
   CalloutType,
   CalloutState,
 } from './generated/graphql';
-import semver from 'semver';
 import { AuthInfo, CreateReferenceOnProfileInput } from 'src';
 import { KratosPublicApiClient } from './util/kratos.public.api.client';
 import { log, LOG_LEVEL } from './util/logger';
-import { logError } from './util/log.error';
-import { FileUpload } from 'graphql-upload';
+import { toGraphQLResponse } from './util/toGraphQLResponse';
+import { GraphQLResponse } from 'graphql-request/dist/types';
+import * as SchemaTypes from './types/alkemio-schema';
 
 export class AlkemioClient {
   public apiToken: string;
@@ -462,7 +464,10 @@ export class AlkemioClient {
         file: createReadStream(path) as unknown as FileUpload,
         uploadData: { referenceID },
       })
-      .then(x => x.data.uploadFileOnReference, logError);
+      .then(
+        toGraphQLResponse<SchemaTypes.UploadFileOnReferenceMutation>,
+        toGraphQLResponse<SchemaTypes.UploadFileOnReferenceMutation>
+      );
   }
 
   public uploadImageOnVisual(path: PathLike, visualID: string) {
@@ -475,7 +480,10 @@ export class AlkemioClient {
         file: createReadStream(path) as unknown as FileUpload,
         uploadData: { visualID },
       })
-      .then(x => x.data.uploadImageOnVisual, logError);
+      .then(
+        toGraphQLResponse<SchemaTypes.UploadImageOnVisualMutation>,
+        toGraphQLResponse<SchemaTypes.UploadImageOnVisualMutation>
+      );
   }
 
   async createRelationOnCollaboration(
