@@ -580,8 +580,10 @@ export type AuthorizationPolicyRuleVerifiedCredential = {
 export enum AuthorizationPrivilege {
   Admin = 'ADMIN',
   AuthorizationReset = 'AUTHORIZATION_RESET',
+  CommunityAddMember = 'COMMUNITY_ADD_MEMBER',
   CommunityApply = 'COMMUNITY_APPLY',
   CommunityContextReview = 'COMMUNITY_CONTEXT_REVIEW',
+  CommunityInvite = 'COMMUNITY_INVITE',
   CommunityJoin = 'COMMUNITY_JOIN',
   Contribute = 'CONTRIBUTE',
   Create = 'CREATE',
@@ -1065,6 +1067,8 @@ export type Community = Groupable & {
   groups?: Maybe<Array<UserGroup>>;
   /** The ID of the entity */
   id: Scalars['UUID'];
+  /** Invitations for this community. */
+  invitations?: Maybe<Array<Invitation>>;
   /** All Organizations that are leads in this Community. */
   leadOrganizations?: Maybe<Array<Organization>>;
   /** All users that are leads in this Community. */
@@ -1181,6 +1185,8 @@ export type ContributorRoles = {
   /** Details of Hubs the User or Organization is a member of, with child memberships */
   hubs: Array<RolesResultHub>;
   id: Scalars['UUID'];
+  /** Open invitations for this contributor. */
+  invitations?: Maybe<Array<InvitationForRoleResult>>;
   /** Details of the Organizations the User is a member of, with child memberships. */
   organizations: Array<RolesResultOrganization>;
 };
@@ -1333,6 +1339,20 @@ export type CreateInnovationFlowTemplateOnTemplatesSetInput = {
   visualUri?: InputMaybe<Scalars['String']>;
 };
 
+export type CreateInnovationHubInput = {
+  /** A list of Hubs to include in this Innovation Hub. Only valid when type 'list' is used. */
+  hubListFilter?: InputMaybe<Array<Scalars['UUID']>>;
+  /** Hubs with which visibility this Innovation Hub will display. Only valid when type 'visibility' is used. */
+  hubVisibilityFilter?: InputMaybe<HubVisibility>;
+  /** A readable identifier, unique within the containing scope. */
+  nameID?: InputMaybe<Scalars['NameID']>;
+  profileData: CreateProfileInput;
+  /** The subdomain to associate the Innovation Hub with. */
+  subdomain: Scalars['String'];
+  /** The type of Innovation Hub. */
+  type: InnovationHubType;
+};
+
 export type CreateInnovationPackOnLibraryInput = {
   /** A readable identifier, unique within the containing scope. */
   nameID: Scalars['NameID'];
@@ -1340,6 +1360,12 @@ export type CreateInnovationPackOnLibraryInput = {
   /** The provider Organization for the InnovationPack */
   providerID: Scalars['UUID_NAMEID'];
   tags?: InputMaybe<Array<Scalars['String']>>;
+};
+
+export type CreateInvitationExistingUserOnCommunityInput = {
+  communityID: Scalars['UUID'];
+  /** The identifier for the user being invited. */
+  invitedUser: Scalars['UUID'];
 };
 
 export type CreateLocationInput = {
@@ -1565,8 +1591,16 @@ export type DeleteInnovationFlowTemplateInput = {
   ID: Scalars['UUID'];
 };
 
+export type DeleteInnovationHubInput = {
+  ID: Scalars['UUID'];
+};
+
 export type DeleteInnovationPackInput = {
   ID: Scalars['UUID_NAMEID'];
+};
+
+export type DeleteInvitationInput = {
+  ID: Scalars['UUID'];
 };
 
 export type DeleteOpportunityInput = {
@@ -1680,6 +1714,8 @@ export type Document = {
   size: Scalars['Float'];
   /** The tagset in use on this Document. */
   tagset: Tagset;
+  /** The uploaded date of this Document */
+  uploadedDate: Scalars['DateTime'];
 };
 
 export type EcosystemModel = {
@@ -1902,7 +1938,7 @@ export enum InnovationFlowType {
 export type InnovationHub = {
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
-  hubListFilter: Array<Hub>;
+  hubListFilter?: Maybe<Array<Hub>>;
   /** If defined, what type of visibility to filter the Hubs on. You can have only one type of filter active at any given time. */
   hubVisibilityFilter?: Maybe<HubVisibility>;
   /** The ID of the entity */
@@ -1935,6 +1971,46 @@ export type InnovationPack = {
   provider?: Maybe<Organization>;
   /** The templates in use by this InnovationPack */
   templates?: Maybe<TemplatesSet>;
+};
+
+export type Invitation = {
+  /** The authorization rules for the entity */
+  authorization?: Maybe<Authorization>;
+  createdDate: Scalars['DateTime'];
+  /** The ID of the entity */
+  id: Scalars['UUID'];
+  /** The User who triggered the invitation. */
+  invitedBy: User;
+  lifecycle: Lifecycle;
+  updatedDate: Scalars['DateTime'];
+  /** The User who is invited. */
+  user: User;
+};
+
+export type InvitationEventInput = {
+  eventName: Scalars['String'];
+  invitationID: Scalars['UUID'];
+};
+
+export type InvitationForRoleResult = {
+  /** ID for the Challenge being invited to, if any. Or the Challenge containing the Opportunity being invited to. */
+  challengeID?: Maybe<Scalars['UUID']>;
+  /** ID for the community */
+  communityID: Scalars['UUID'];
+  /** Date of creation */
+  createdDate: Scalars['DateTime'];
+  /** Display name of the community */
+  displayName: Scalars['String'];
+  /** ID for the ultimate containing Hub */
+  hubID: Scalars['UUID'];
+  /** ID for the application */
+  id: Scalars['UUID'];
+  /** ID for the Opportunity being invited to, if any. */
+  opportunityID?: Maybe<Scalars['UUID']>;
+  /** The current state of the invitation. */
+  state: Scalars['String'];
+  /** Date of last update */
+  updatedDate: Scalars['DateTime'];
 };
 
 export type Library = {
@@ -2058,6 +2134,8 @@ export type Mutation = {
   assignUserToGroup: UserGroup;
   /** Assigns a User as an associate of the specified Organization. */
   assignUserToOrganization: Organization;
+  /** Reset the Authorization Policy on all entities */
+  authorizationPolicyResetAll: Scalars['Boolean'];
   /** Reset the Authorization Policy on the specified Hub. */
   authorizationPolicyResetOnHub: Hub;
   /** Reset the Authorization Policy on the specified Organization. */
@@ -2104,6 +2182,8 @@ export type Mutation = {
   createHub: Hub;
   /** Creates a new InnovationFlowTemplate on the specified TemplatesSet. */
   createInnovationFlowTemplate: InnovationFlowTemplate;
+  /** Create Innovation Hub. */
+  createInnovationHub: InnovationHub;
   /** Create a new InnovatonPack on the Library. */
   createInnovationPackOnLibrary: InnovationPack;
   /** Creates a new Opportunity within the parent Challenge. */
@@ -2150,8 +2230,12 @@ export type Mutation = {
   deleteHub: Hub;
   /** Deletes the specified InnovationFlowTemplate. */
   deleteInnovationFlowTemplate: InnovationFlowTemplate;
+  /** Delete Innovation Hub. */
+  deleteInnovationHub: InnovationHub;
   /** Deletes the specified InnovationPack. */
   deleteInnovationPack: InnovationPack;
+  /** Removes the specified User invitation. */
+  deleteInvitation: Invitation;
   /** Deletes the specified Opportunity. */
   deleteOpportunity: Opportunity;
   /** Deletes the specified Organization. */
@@ -2178,6 +2262,8 @@ export type Mutation = {
   eventOnCanvasCheckout: CanvasCheckout;
   /** Trigger an event on the Challenge. */
   eventOnChallenge: Challenge;
+  /** Trigger an event on the Invitation. */
+  eventOnCommunityInvitation: Application;
   /** Trigger an event on the Opportunity. */
   eventOnOpportunity: Opportunity;
   /** Trigger an event on the Organization Verification. */
@@ -2186,6 +2272,8 @@ export type Mutation = {
   eventOnProject: Project;
   /** Grants an authorization credential to a User. */
   grantCredentialToUser: User;
+  /** Invite an existing User to join the specified Community as a member. */
+  inviteExistingUserForCommunityMembership: Invitation;
   /** Join the specified Community as a member, without going through an approval process. */
   joinCommunity: Community;
   /** Sends a message on the specified User`s behalf and returns the room id */
@@ -2276,6 +2364,8 @@ export type Mutation = {
   updateHubVisibility: Hub;
   /** Updates the specified InnovationFlowTemplate. */
   updateInnovationFlowTemplate: InnovationFlowTemplate;
+  /** Update Innovation Hub. */
+  updateInnovationHub: InnovationHub;
   /** Updates the InnovationPack. */
   updateInnovationPack: InnovationPack;
   /** Updates the specified Opportunity. */
@@ -2469,6 +2559,10 @@ export type MutationCreateInnovationFlowTemplateArgs = {
   innovationFlowTemplateInput: CreateInnovationFlowTemplateOnTemplatesSetInput;
 };
 
+export type MutationCreateInnovationHubArgs = {
+  createData: CreateInnovationHubInput;
+};
+
 export type MutationCreateInnovationPackOnLibraryArgs = {
   packData: CreateInnovationPackOnLibraryInput;
 };
@@ -2557,8 +2651,16 @@ export type MutationDeleteInnovationFlowTemplateArgs = {
   deleteData: DeleteInnovationFlowTemplateInput;
 };
 
+export type MutationDeleteInnovationHubArgs = {
+  deleteData: DeleteInnovationHubInput;
+};
+
 export type MutationDeleteInnovationPackArgs = {
   deleteData: DeleteInnovationPackInput;
+};
+
+export type MutationDeleteInvitationArgs = {
+  deleteData: DeleteInvitationInput;
 };
 
 export type MutationDeleteOpportunityArgs = {
@@ -2613,6 +2715,10 @@ export type MutationEventOnChallengeArgs = {
   challengeEventData: ChallengeEventInput;
 };
 
+export type MutationEventOnCommunityInvitationArgs = {
+  invitationEventData: InvitationEventInput;
+};
+
 export type MutationEventOnOpportunityArgs = {
   opportunityEventData: OpportunityEventInput;
 };
@@ -2627,6 +2733,10 @@ export type MutationEventOnProjectArgs = {
 
 export type MutationGrantCredentialToUserArgs = {
   grantCredentialData: GrantAuthorizationCredentialInput;
+};
+
+export type MutationInviteExistingUserForCommunityMembershipArgs = {
+  invitationData: CreateInvitationExistingUserOnCommunityInput;
 };
 
 export type MutationJoinCommunityArgs = {
@@ -2807,6 +2917,10 @@ export type MutationUpdateHubVisibilityArgs = {
 
 export type MutationUpdateInnovationFlowTemplateArgs = {
   innovationFlowTemplateInput: UpdateInnovationFlowTemplateInput;
+};
+
+export type MutationUpdateInnovationHubArgs = {
+  updateData: UpdateInnovationHubInput;
 };
 
 export type MutationUpdateInnovationPackArgs = {
@@ -3053,8 +3167,8 @@ export type Platform = {
   communication: Communication;
   /** The ID of the entity */
   id: Scalars['UUID'];
-  /** Details about an Innovation Hubs on the platform */
-  innovationHub: InnovationHub;
+  /** Details about an Innovation Hubs on the platform. If the arguments are omitted, the current Innovation Hub you are in will be returned. */
+  innovationHub?: Maybe<InnovationHub>;
   /** List of Innovation Hubs on the platform */
   innovationHubs: Array<InnovationHub>;
   /** The Innovation Library for the platform */
@@ -3075,6 +3189,8 @@ export type PlatformLocations = {
   aup: Scalars['String'];
   /** URL where users can see the community forum */
   community: Scalars['String'];
+  /** Main domain of the environment */
+  domain: Scalars['String'];
   /** Name of the environment */
   environment: Scalars['String'];
   /** The feature flags for the platform */
@@ -3174,6 +3290,7 @@ export enum PreferenceType {
   NotificationCommunicationUpdateSentAdmin = 'NOTIFICATION_COMMUNICATION_UPDATE_SENT_ADMIN',
   NotificationCommunityCollaborationInterestAdmin = 'NOTIFICATION_COMMUNITY_COLLABORATION_INTEREST_ADMIN',
   NotificationCommunityCollaborationInterestUser = 'NOTIFICATION_COMMUNITY_COLLABORATION_INTEREST_USER',
+  NotificationCommunityInvitationUser = 'NOTIFICATION_COMMUNITY_INVITATION_USER',
   NotificationCommunityNewMember = 'NOTIFICATION_COMMUNITY_NEW_MEMBER',
   NotificationCommunityNewMemberAdmin = 'NOTIFICATION_COMMUNITY_NEW_MEMBER_ADMIN',
   NotificationCommunityReviewSubmitted = 'NOTIFICATION_COMMUNITY_REVIEW_SUBMITTED',
@@ -3207,6 +3324,8 @@ export type Profile = {
   location?: Maybe<Location>;
   /** A list of URLs to relevant information. */
   references?: Maybe<Array<Reference>>;
+  /** The storage bucket for this Profile. */
+  storageBucket?: Maybe<StorageBucket>;
   /** The taglie for this entity. */
   tagline: Scalars['String'];
   /** The default tagset. */
@@ -4179,6 +4298,18 @@ export type UpdateInnovationFlowTemplateInput = {
   profile?: InputMaybe<UpdateProfileInput>;
 };
 
+export type UpdateInnovationHubInput = {
+  ID: Scalars['UUID'];
+  /** A list of Hubs to include in this Innovation Hub. Only valid when type 'list' is used. */
+  hubListFilter?: InputMaybe<Array<Scalars['UUID_NAMEID']>>;
+  /** Hubs with which visibility this Innovation Hub will display. Only valid when type 'visibility' is used. */
+  hubVisibilityFilter?: InputMaybe<HubVisibility>;
+  /** A display identifier, unique within the containing scope. Note: updating the nameID will affect URL on the client. */
+  nameID?: InputMaybe<Scalars['NameID']>;
+  /** The Profile of this entity. */
+  profileData?: InputMaybe<UpdateProfileInput>;
+};
+
 export type UpdateInnovationPackInput = {
   /** The ID or NameID of the InnovationPack. */
   ID: Scalars['UUID_NAMEID'];
@@ -4435,6 +4566,7 @@ export enum UserPreferenceType {
   NotificationCommunicationUpdateSentAdmin = 'NOTIFICATION_COMMUNICATION_UPDATE_SENT_ADMIN',
   NotificationCommunityCollaborationInterestAdmin = 'NOTIFICATION_COMMUNITY_COLLABORATION_INTEREST_ADMIN',
   NotificationCommunityCollaborationInterestUser = 'NOTIFICATION_COMMUNITY_COLLABORATION_INTEREST_USER',
+  NotificationCommunityInvitationUser = 'NOTIFICATION_COMMUNITY_INVITATION_USER',
   NotificationCommunityNewMember = 'NOTIFICATION_COMMUNITY_NEW_MEMBER',
   NotificationCommunityNewMemberAdmin = 'NOTIFICATION_COMMUNITY_NEW_MEMBER_ADMIN',
   NotificationCommunityReviewSubmitted = 'NOTIFICATION_COMMUNITY_REVIEW_SUBMITTED',
@@ -4771,7 +4903,9 @@ export type ResolversTypes = {
   CreateFeedbackOnCommunityContextInput: CreateFeedbackOnCommunityContextInput;
   CreateHubInput: CreateHubInput;
   CreateInnovationFlowTemplateOnTemplatesSetInput: CreateInnovationFlowTemplateOnTemplatesSetInput;
+  CreateInnovationHubInput: CreateInnovationHubInput;
   CreateInnovationPackOnLibraryInput: CreateInnovationPackOnLibraryInput;
+  CreateInvitationExistingUserOnCommunityInput: CreateInvitationExistingUserOnCommunityInput;
   CreateLocationInput: CreateLocationInput;
   CreateNVPInput: CreateNvpInput;
   CreateOpportunityInput: CreateOpportunityInput;
@@ -4806,7 +4940,9 @@ export type ResolversTypes = {
   DeleteDocumentInput: DeleteDocumentInput;
   DeleteHubInput: DeleteHubInput;
   DeleteInnovationFlowTemplateInput: DeleteInnovationFlowTemplateInput;
+  DeleteInnovationHubInput: DeleteInnovationHubInput;
   DeleteInnovationPackInput: DeleteInnovationPackInput;
+  DeleteInvitationInput: DeleteInvitationInput;
   DeleteOpportunityInput: DeleteOpportunityInput;
   DeleteOrganizationInput: DeleteOrganizationInput;
   DeletePostTemplateInput: DeletePostTemplateInput;
@@ -4844,6 +4980,9 @@ export type ResolversTypes = {
   InnovationHubType: InnovationHubType;
   InnovationPack: ResolverTypeWrapper<InnovationPack>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
+  Invitation: ResolverTypeWrapper<Invitation>;
+  InvitationEventInput: InvitationEventInput;
+  InvitationForRoleResult: ResolverTypeWrapper<InvitationForRoleResult>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   Library: ResolverTypeWrapper<Library>;
   Lifecycle: ResolverTypeWrapper<Lifecycle>;
@@ -4972,6 +5111,7 @@ export type ResolversTypes = {
   UpdateHubPreferenceInput: UpdateHubPreferenceInput;
   UpdateHubVisibilityInput: UpdateHubVisibilityInput;
   UpdateInnovationFlowTemplateInput: UpdateInnovationFlowTemplateInput;
+  UpdateInnovationHubInput: UpdateInnovationHubInput;
   UpdateInnovationPackInput: UpdateInnovationPackInput;
   UpdateLocationInput: UpdateLocationInput;
   UpdateOpportunityInnovationFlowInput: UpdateOpportunityInnovationFlowInput;
@@ -5128,7 +5268,9 @@ export type ResolversParentTypes = {
   CreateFeedbackOnCommunityContextInput: CreateFeedbackOnCommunityContextInput;
   CreateHubInput: CreateHubInput;
   CreateInnovationFlowTemplateOnTemplatesSetInput: CreateInnovationFlowTemplateOnTemplatesSetInput;
+  CreateInnovationHubInput: CreateInnovationHubInput;
   CreateInnovationPackOnLibraryInput: CreateInnovationPackOnLibraryInput;
+  CreateInvitationExistingUserOnCommunityInput: CreateInvitationExistingUserOnCommunityInput;
   CreateLocationInput: CreateLocationInput;
   CreateNVPInput: CreateNvpInput;
   CreateOpportunityInput: CreateOpportunityInput;
@@ -5163,7 +5305,9 @@ export type ResolversParentTypes = {
   DeleteDocumentInput: DeleteDocumentInput;
   DeleteHubInput: DeleteHubInput;
   DeleteInnovationFlowTemplateInput: DeleteInnovationFlowTemplateInput;
+  DeleteInnovationHubInput: DeleteInnovationHubInput;
   DeleteInnovationPackInput: DeleteInnovationPackInput;
+  DeleteInvitationInput: DeleteInvitationInput;
   DeleteOpportunityInput: DeleteOpportunityInput;
   DeleteOrganizationInput: DeleteOrganizationInput;
   DeletePostTemplateInput: DeletePostTemplateInput;
@@ -5198,6 +5342,9 @@ export type ResolversParentTypes = {
   InnovationHub: InnovationHub;
   InnovationPack: InnovationPack;
   Int: Scalars['Int'];
+  Invitation: Invitation;
+  InvitationEventInput: InvitationEventInput;
+  InvitationForRoleResult: InvitationForRoleResult;
   JSON: Scalars['JSON'];
   Library: Library;
   Lifecycle: Lifecycle;
@@ -5320,6 +5467,7 @@ export type ResolversParentTypes = {
   UpdateHubPreferenceInput: UpdateHubPreferenceInput;
   UpdateHubVisibilityInput: UpdateHubVisibilityInput;
   UpdateInnovationFlowTemplateInput: UpdateInnovationFlowTemplateInput;
+  UpdateInnovationHubInput: UpdateInnovationHubInput;
   UpdateInnovationPackInput: UpdateInnovationPackInput;
   UpdateLocationInput: UpdateLocationInput;
   UpdateOpportunityInnovationFlowInput: UpdateOpportunityInnovationFlowInput;
@@ -6389,6 +6537,11 @@ export type CommunityResolvers<
     ContextType
   >;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  invitations?: Resolver<
+    Maybe<Array<ResolversTypes['Invitation']>>,
+    ParentType,
+    ContextType
+  >;
   leadOrganizations?: Resolver<
     Maybe<Array<ResolversTypes['Organization']>>,
     ParentType,
@@ -6520,6 +6673,11 @@ export type ContributorRolesResolvers<
     ContextType
   >;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  invitations?: Resolver<
+    Maybe<Array<ResolversTypes['InvitationForRoleResult']>>,
+    ParentType,
+    ContextType
+  >;
   organizations?: Resolver<
     Array<ResolversTypes['RolesResultOrganization']>,
     ParentType,
@@ -6641,6 +6799,7 @@ export type DocumentResolvers<
   mimeType?: Resolver<ResolversTypes['MimeType'], ParentType, ContextType>;
   size?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   tagset?: Resolver<ResolversTypes['Tagset'], ParentType, ContextType>;
+  uploadedDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -6947,7 +7106,7 @@ export type InnovationHubResolvers<
     ContextType
   >;
   hubListFilter?: Resolver<
-    Array<ResolversTypes['Hub']>,
+    Maybe<Array<ResolversTypes['Hub']>>,
     ParentType,
     ContextType
   >;
@@ -6986,6 +7145,48 @@ export type InnovationPackResolvers<
     ParentType,
     ContextType
   >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type InvitationResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['Invitation'] = ResolversParentTypes['Invitation']
+> = {
+  authorization?: Resolver<
+    Maybe<ResolversTypes['Authorization']>,
+    ParentType,
+    ContextType
+  >;
+  createdDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  invitedBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  lifecycle?: Resolver<ResolversTypes['Lifecycle'], ParentType, ContextType>;
+  updatedDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type InvitationForRoleResultResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['InvitationForRoleResult'] = ResolversParentTypes['InvitationForRoleResult']
+> = {
+  challengeID?: Resolver<
+    Maybe<ResolversTypes['UUID']>,
+    ParentType,
+    ContextType
+  >;
+  communityID?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  createdDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  hubID?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  opportunityID?: Resolver<
+    Maybe<ResolversTypes['UUID']>,
+    ParentType,
+    ContextType
+  >;
+  state?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -7236,6 +7437,11 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationAssignUserToOrganizationArgs, 'membershipData'>
   >;
+  authorizationPolicyResetAll?: Resolver<
+    ResolversTypes['Boolean'],
+    ParentType,
+    ContextType
+  >;
   authorizationPolicyResetOnHub?: Resolver<
     ResolversTypes['Hub'],
     ParentType,
@@ -7390,6 +7596,12 @@ export type MutationResolvers<
       'innovationFlowTemplateInput'
     >
   >;
+  createInnovationHub?: Resolver<
+    ResolversTypes['InnovationHub'],
+    ParentType,
+    ContextType,
+    RequireFields<MutationCreateInnovationHubArgs, 'createData'>
+  >;
   createInnovationPackOnLibrary?: Resolver<
     ResolversTypes['InnovationPack'],
     ParentType,
@@ -7530,11 +7742,23 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationDeleteInnovationFlowTemplateArgs, 'deleteData'>
   >;
+  deleteInnovationHub?: Resolver<
+    ResolversTypes['InnovationHub'],
+    ParentType,
+    ContextType,
+    RequireFields<MutationDeleteInnovationHubArgs, 'deleteData'>
+  >;
   deleteInnovationPack?: Resolver<
     ResolversTypes['InnovationPack'],
     ParentType,
     ContextType,
     RequireFields<MutationDeleteInnovationPackArgs, 'deleteData'>
+  >;
+  deleteInvitation?: Resolver<
+    ResolversTypes['Invitation'],
+    ParentType,
+    ContextType,
+    RequireFields<MutationDeleteInvitationArgs, 'deleteData'>
   >;
   deleteOpportunity?: Resolver<
     ResolversTypes['Opportunity'],
@@ -7614,6 +7838,12 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationEventOnChallengeArgs, 'challengeEventData'>
   >;
+  eventOnCommunityInvitation?: Resolver<
+    ResolversTypes['Application'],
+    ParentType,
+    ContextType,
+    RequireFields<MutationEventOnCommunityInvitationArgs, 'invitationEventData'>
+  >;
   eventOnOpportunity?: Resolver<
     ResolversTypes['Opportunity'],
     ParentType,
@@ -7640,6 +7870,15 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationGrantCredentialToUserArgs, 'grantCredentialData'>
+  >;
+  inviteExistingUserForCommunityMembership?: Resolver<
+    ResolversTypes['Invitation'],
+    ParentType,
+    ContextType,
+    RequireFields<
+      MutationInviteExistingUserForCommunityMembershipArgs,
+      'invitationData'
+    >
   >;
   joinCommunity?: Resolver<
     ResolversTypes['Community'],
@@ -7925,6 +8164,12 @@ export type MutationResolvers<
       MutationUpdateInnovationFlowTemplateArgs,
       'innovationFlowTemplateInput'
     >
+  >;
+  updateInnovationHub?: Resolver<
+    ResolversTypes['InnovationHub'],
+    ParentType,
+    ContextType,
+    RequireFields<MutationUpdateInnovationHubArgs, 'updateData'>
   >;
   updateInnovationPack?: Resolver<
     ResolversTypes['InnovationPack'],
@@ -8308,7 +8553,7 @@ export type PlatformResolvers<
   >;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   innovationHub?: Resolver<
-    ResolversTypes['InnovationHub'],
+    Maybe<ResolversTypes['InnovationHub']>,
     ParentType,
     ContextType,
     Partial<PlatformInnovationHubArgs>
@@ -8334,6 +8579,7 @@ export type PlatformLocationsResolvers<
   about?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   aup?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   community?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  domain?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   environment?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   featureFlags?: Resolver<
     Array<ResolversTypes['FeatureFlag']>,
@@ -8434,6 +8680,11 @@ export type ProfileResolvers<
   >;
   references?: Resolver<
     Maybe<Array<ResolversTypes['Reference']>>,
+    ParentType,
+    ContextType
+  >;
+  storageBucket?: Resolver<
+    Maybe<ResolversTypes['StorageBucket']>,
     ParentType,
     ContextType
   >;
@@ -9520,6 +9771,8 @@ export type Resolvers<ContextType = any> = {
   InnovationFlowTemplate?: InnovationFlowTemplateResolvers<ContextType>;
   InnovationHub?: InnovationHubResolvers<ContextType>;
   InnovationPack?: InnovationPackResolvers<ContextType>;
+  Invitation?: InvitationResolvers<ContextType>;
+  InvitationForRoleResult?: InvitationForRoleResultResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   Library?: LibraryResolvers<ContextType>;
   Lifecycle?: LifecycleResolvers<ContextType>;
