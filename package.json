@@ -16,6 +16,7 @@
     "lint": "tsc --noEmit && eslint src/**/*.ts{,x}",
     "lint:fix": "tsc --noEmit && eslint src/**/*.ts{,x} --fix",
     "validate-connection": "ts-node-dev src/validate-connection.ts",
+    "validate-upload": "ts-node-dev src/validate-upload.ts",
     "prepublishOnly": "npm run build"
   },
   "repository": {
