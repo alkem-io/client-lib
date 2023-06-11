@@ -1,5 +1,5 @@
-mutation updateHub($hubData: UpdateHubInput!) {
-  updateHub(hubData: $hubData) {
+mutation updateSpace($spaceData: UpdateHubInput!) {
+  updateHub(hubData: $spaceData) {
     nameID
     host {
       nameID

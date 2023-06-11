@@ -17,7 +17,7 @@ import {
   UpdateOpportunityInput,
   CreateChallengeOnChallengeInput,
   AuthorizationCredential,
-  CreateAspectOnCalloutInput,
+  CreatePostOnCalloutInput,
   CreateCalloutOnCollaborationInput,
   CalloutType,
   CalloutState,
@@ -26,7 +26,6 @@ import { AuthInfo, CreateReferenceOnProfileInput } from 'src';
 import { KratosPublicApiClient } from './util/kratos.public.api.client';
 import { log, LOG_LEVEL } from './util/logger';
 import { toGraphQLResponse } from './util/toGraphQLResponse';
-import { GraphQLResponse } from 'graphql-request/dist/types';
 import * as SchemaTypes from './types/alkemio-schema';
 
 export class AlkemioClient {
@@ -170,31 +169,31 @@ export class AlkemioClient {
     return serverVersion;
   }
 
-  public async hubExists(hubID: string): Promise<boolean> {
+  public async spaceExists(spaceID: string): Promise<boolean> {
     try {
-      const result = await this.privateClient.hub({
-        id: hubID,
+      const result = await this.privateClient.space({
+        id: spaceID,
       });
       if (result.data) return true;
     } catch (error: any) {
       this.logMessage(
-        `unable to check if hub exists, error: ${error.toString()}`
+        `unable to check if space exists, error: ${error.toString()}`
       );
       return false;
     }
     return true;
   }
 
-  async hubInfo(hubID: string) {
-    const response = await this.privateClient.hub({
-      id: hubID,
+  async spaceInfo(spaceID: string) {
+    const response = await this.privateClient.space({
+      id: spaceID,
     });
     return response.data?.hub;
   }
 
-  public async createHub(hubData: CreateHubInput) {
-    const result = await this.privateClient.createHub({
-      hubData: hubData,
+  public async createSpace(spaceData: CreateHubInput) {
+    const result = await this.privateClient.createSpace({
+      spaceData: spaceData,
     });
     return result.data?.createHub;
   }
@@ -352,12 +351,12 @@ export class AlkemioClient {
   }
 
   async addUserToChallenge(
-    hubID: string,
+    spaceID: string,
     challengeName: string,
     userID: string
   ) {
     const response = await this.privateClient.challenge({
-      hubID: hubID,
+      hubID: spaceID,
       challengeID: challengeName,
     });
     const communityID = response.data?.hub.challenge?.community?.id;
@@ -372,10 +371,10 @@ export class AlkemioClient {
     });
   }
 
-  public async opportunityByNameID(hubID: string, opportunityNameID: string) {
+  public async opportunityByNameID(spaceID: string, opportunityNameID: string) {
     try {
       const result = await this.privateClient.opportunity({
-        hubID: hubID,
+        hubID: spaceID,
         opportunityID: opportunityNameID,
       });
       if (result.data) return result.data?.hub.opportunity;
@@ -384,10 +383,10 @@ export class AlkemioClient {
     }
   }
 
-  async challengeByNameID(hubNameID: string, challengeNameID: string) {
+  async challengeByNameID(spaceNameID: string, challengeNameID: string) {
     try {
       const response = await this.privateClient.challenge({
-        hubID: hubNameID,
+        hubID: spaceNameID,
         challengeID: challengeNameID,
       });
 
@@ -412,12 +411,12 @@ export class AlkemioClient {
   }
 
   async addUserToOpportunity(
-    hubName: string,
+    spaceName: string,
     opportunityName: string,
     userID: string
   ) {
     const opportunityInfo = await this.opportunityByNameID(
-      hubName,
+      spaceName,
       opportunityName
     );
     const communityID = opportunityInfo?.community?.id;
@@ -432,11 +431,11 @@ export class AlkemioClient {
     });
   }
 
-  async addUserToHub(hubID: string, userID: string) {
-    const hubInfo = await this.hubInfo(hubID);
-    const communityID = hubInfo?.community?.id;
+  async addUserToSpace(spaceID: string, userID: string) {
+    const spaceInfo = await this.spaceInfo(spaceID);
+    const communityID = spaceInfo?.community?.id;
 
-    if (!hubInfo || !communityID) return;
+    if (!spaceInfo || !communityID) return;
 
     return await this.privateClient.assignUserToCommunity({
       input: {
@@ -446,9 +445,9 @@ export class AlkemioClient {
     });
   }
 
-  async updateHub(hubData: UpdateHubInput) {
-    const { data } = await this.privateClient.updateHub({
-      hubData: hubData,
+  async updateSpace(spaceData: UpdateHubInput) {
+    const { data } = await this.privateClient.updateSpace({
+      spaceData: spaceData,
     });
 
     return data?.updateHub;
@@ -564,8 +563,8 @@ export class AlkemioClient {
     return data?.updateActor;
   }
 
-  // Create a aspect for the given callout
-  async createAspectOnCallout(
+  // Create a post for the given callout
+  async createPostOnCallout(
     calloutID: string,
     type: string,
     displayName: string,
@@ -573,7 +572,7 @@ export class AlkemioClient {
     description: string,
     tags?: string[]
   ) {
-    const aspectData: CreateAspectOnCalloutInput = {
+    const postData: CreatePostOnCalloutInput = {
       type,
       calloutID,
       nameID,
@@ -583,11 +582,11 @@ export class AlkemioClient {
       },
       tags: tags,
     };
-    const { data } = await this.privateClient.createAspectOnCallout({
-      aspectData,
+    const { data } = await this.privateClient.createPostOnCallout({
+      postData,
     });
 
-    return data?.createAspectOnCallout;
+    return data?.createPostOnCallout;
   }
 
   // Create a callout for the given collaboration
@@ -611,13 +610,13 @@ export class AlkemioClient {
     return data?.createCalloutOnCollaboration;
   }
 
-  async createUserGroupOnHub(
-    hubID: string,
+  async createUserGroupOnSpace(
+    spaceID: string,
     groupName: string,
     groupDesc: string
   ) {
-    const hubInfo = await this.hubInfo(hubID);
-    const communityID = hubInfo?.community?.id;
+    const spaceInfo = await this.spaceInfo(spaceID);
+    const communityID = spaceInfo?.community?.id;
     if (!communityID) return;
     const { data } = await this.privateClient.createGroupOnCommunity({
       groupData: {
@@ -690,9 +689,9 @@ export class AlkemioClient {
     return data?.organization;
   }
 
-  public async challenges(hubID: string) {
+  public async challenges(spaceID: string) {
     const { data } = await this.privateClient.challenges({
-      hubID: hubID,
+      hubID: spaceID,
     });
 
     return data?.hub.challenges;
@@ -730,16 +729,16 @@ export class AlkemioClient {
     return data?.createUser;
   }
 
-  public async groups(hubID: string) {
+  public async groups(spaceID: string) {
     const { data } = await this.privateClient.groups({
-      hubID: hubID,
+      hubID: spaceID,
     });
 
     return data?.hub.community?.groups;
   }
 
-  public async groupByName(hubID: string, name: string) {
-    const groups = await this.groups(hubID);
+  public async groupByName(spaceID: string, name: string) {
+    const groups = await this.groups(spaceID);
     return groups?.find((x: { name: string }) => x.name === name);
   }
 
@@ -776,15 +775,15 @@ export class AlkemioClient {
     return queryResult.data?.usersWithAuthorizationCredential;
   }
 
-  public async hubs() {
-    const { data } = await this.privateClient.hubs();
+  public async spaces() {
+    const { data } = await this.privateClient.spaces();
 
     return data?.hubs;
   }
 
-  public async opportunities(hubID: string) {
+  public async opportunities(spaceID: string) {
     const { data } = await this.privateClient.opportunities({
-      hubID: hubID,
+      hubID: spaceID,
     });
 
     return data?.hub.opportunities;
@@ -844,16 +843,16 @@ export class AlkemioClient {
     return data?.assignUserAsCommunityMember;
   }
 
-  async updateReferencesOnHub(
-    hubID: string,
+  async updateReferencesOnSpace(
+    spaceID: string,
     references: Omit<UpdateReferenceInput, 'ID'>[]
   ) {
-    const hubInfo = await this.hubInfo(hubID);
-    const profileId = hubInfo?.profile.id;
+    const spaceInfo = await this.spaceInfo(spaceID);
+    const profileId = spaceInfo?.profile.id;
     if (!profileId) {
-      throw new Error('Hub context id does not exist.');
+      throw new Error('Space context id does not exist.');
     }
-    const existingReferences = hubInfo?.profile?.references || [];
+    const existingReferences = spaceInfo?.profile?.references || [];
     const newReferences = references.filter(r =>
       existingReferences.every(
         (x: { name: InputMaybe<string> }) => x.name !== r.name
@@ -874,8 +873,8 @@ export class AlkemioClient {
       updateRefsInput.push(newRefInput);
     }
     if (updateRefsInput.length > 0) {
-      await this.updateHub({
-        ID: hubID,
+      await this.updateSpace({
+        ID: spaceID,
         profileData: {
           references: updateRefsInput,
         },

@@ -1,9 +1,8 @@
-query hubs {
-  hubs {
+mutation createSpace($spaceData: CreateHubInput!) {
+  createHub(hubData: $spaceData) {
     id
     nameID
     profile {
-      displayName
       visuals {
         name
         id

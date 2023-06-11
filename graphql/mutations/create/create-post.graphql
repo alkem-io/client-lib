@@ -1,5 +1,5 @@
-mutation createAspectOnCallout($aspectData: CreateAspectOnCalloutInput!) {
-  createAspectOnCallout(aspectData: $aspectData) {
+mutation createPostOnCallout($postData: CreatePostOnCalloutInput!) {
+  createPostOnCallout(postData: $postData) {
     id
     nameID
     profile {
