@@ -774,8 +774,8 @@ export type ChallengeEventInput = {
 export enum ChallengePreferenceType {
   AllowContributorsToCreateCallouts = 'ALLOW_CONTRIBUTORS_TO_CREATE_CALLOUTS',
   AllowContributorsToCreateOpportunities = 'ALLOW_CONTRIBUTORS_TO_CREATE_OPPORTUNITIES',
-  AllowHubMembersToContribute = 'ALLOW_HUB_MEMBERS_TO_CONTRIBUTE',
   AllowNonMembersReadAccess = 'ALLOW_NON_MEMBERS_READ_ACCESS',
+  AllowSpaceMembersToContribute = 'ALLOW_SPACE_MEMBERS_TO_CONTRIBUTE',
   MembershipApplyChallengeFromHubMembers = 'MEMBERSHIP_APPLY_CHALLENGE_FROM_HUB_MEMBERS',
   MembershipFeedbackOnChallengeContext = 'MEMBERSHIP_FEEDBACK_ON_CHALLENGE_CONTEXT',
   MembershipJoinChallengeFromHubMembers = 'MEMBERSHIP_JOIN_CHALLENGE_FROM_HUB_MEMBERS',
@@ -1740,15 +1740,6 @@ export type HubFilterInput = {
   /** Return Hubs with a Visibility matching one of the provided types. */
   visibilities?: InputMaybe<Array<HubVisibility>>;
 };
-
-export enum HubPreferenceType {
-  AllowMembersToCreateCallouts = 'ALLOW_MEMBERS_TO_CREATE_CALLOUTS',
-  AllowMembersToCreateChallenges = 'ALLOW_MEMBERS_TO_CREATE_CHALLENGES',
-  AuthorizationAnonymousReadAccess = 'AUTHORIZATION_ANONYMOUS_READ_ACCESS',
-  MembershipApplicationsFromAnyone = 'MEMBERSHIP_APPLICATIONS_FROM_ANYONE',
-  MembershipJoinHubFromAnyone = 'MEMBERSHIP_JOIN_HUB_FROM_ANYONE',
-  MembershipJoinHubFromHostOrganizationMembers = 'MEMBERSHIP_JOIN_HUB_FROM_HOST_ORGANIZATION_MEMBERS',
-}
 
 export enum HubVisibility {
   Active = 'ACTIVE',
@@ -3131,18 +3122,18 @@ export type PreferenceDefinition = {
 export enum PreferenceType {
   AllowContributorsToCreateCallouts = 'ALLOW_CONTRIBUTORS_TO_CREATE_CALLOUTS',
   AllowContributorsToCreateOpportunities = 'ALLOW_CONTRIBUTORS_TO_CREATE_OPPORTUNITIES',
-  AllowHubMembersToContribute = 'ALLOW_HUB_MEMBERS_TO_CONTRIBUTE',
   AllowMembersToCreateCallouts = 'ALLOW_MEMBERS_TO_CREATE_CALLOUTS',
   AllowMembersToCreateChallenges = 'ALLOW_MEMBERS_TO_CREATE_CHALLENGES',
   AllowNonMembersReadAccess = 'ALLOW_NON_MEMBERS_READ_ACCESS',
+  AllowSpaceMembersToContribute = 'ALLOW_SPACE_MEMBERS_TO_CONTRIBUTE',
   AuthorizationAnonymousReadAccess = 'AUTHORIZATION_ANONYMOUS_READ_ACCESS',
   AuthorizationOrganizationMatchDomain = 'AUTHORIZATION_ORGANIZATION_MATCH_DOMAIN',
   MembershipApplicationsFromAnyone = 'MEMBERSHIP_APPLICATIONS_FROM_ANYONE',
   MembershipApplyChallengeFromHubMembers = 'MEMBERSHIP_APPLY_CHALLENGE_FROM_HUB_MEMBERS',
   MembershipFeedbackOnChallengeContext = 'MEMBERSHIP_FEEDBACK_ON_CHALLENGE_CONTEXT',
   MembershipJoinChallengeFromHubMembers = 'MEMBERSHIP_JOIN_CHALLENGE_FROM_HUB_MEMBERS',
-  MembershipJoinHubFromAnyone = 'MEMBERSHIP_JOIN_HUB_FROM_ANYONE',
-  MembershipJoinHubFromHostOrganizationMembers = 'MEMBERSHIP_JOIN_HUB_FROM_HOST_ORGANIZATION_MEMBERS',
+  MembershipJoinSpaceFromAnyone = 'MEMBERSHIP_JOIN_SPACE_FROM_ANYONE',
+  MembershipJoinSpaceFromHostOrganizationMembers = 'MEMBERSHIP_JOIN_SPACE_FROM_HOST_ORGANIZATION_MEMBERS',
   NotificationApplicationReceived = 'NOTIFICATION_APPLICATION_RECEIVED',
   NotificationApplicationSubmitted = 'NOTIFICATION_APPLICATION_SUBMITTED',
   NotificationCalloutPublished = 'NOTIFICATION_CALLOUT_PUBLISHED',
@@ -3838,6 +3829,15 @@ export type ServiceMetadata = {
   version?: Maybe<Scalars['String']>;
 };
 
+export enum SpacePreferenceType {
+  AllowMembersToCreateCallouts = 'ALLOW_MEMBERS_TO_CREATE_CALLOUTS',
+  AllowMembersToCreateChallenges = 'ALLOW_MEMBERS_TO_CREATE_CHALLENGES',
+  AuthorizationAnonymousReadAccess = 'AUTHORIZATION_ANONYMOUS_READ_ACCESS',
+  MembershipApplicationsFromAnyone = 'MEMBERSHIP_APPLICATIONS_FROM_ANYONE',
+  MembershipJoinSpaceFromAnyone = 'MEMBERSHIP_JOIN_SPACE_FROM_ANYONE',
+  MembershipJoinSpaceFromHostOrganizationMembers = 'MEMBERSHIP_JOIN_SPACE_FROM_HOST_ORGANIZATION_MEMBERS',
+}
+
 export type StorageBucket = {
   /** Mime types allowed to be stored on this StorageBucket. */
   allowedMimeTypes: Array<Scalars['String']>;
@@ -4173,7 +4173,7 @@ export type UpdateHubPreferenceInput = {
   /** ID of the Hub */
   hubID: Scalars['UUID_NAMEID'];
   /** Type of the user preference */
-  type: HubPreferenceType;
+  type: SpacePreferenceType;
   value: Scalars['String'];
 };
 
@@ -4894,7 +4894,6 @@ export type ResolversTypes = {
   Hub: ResolverTypeWrapper<Hub>;
   HubAuthorizationResetInput: HubAuthorizationResetInput;
   HubFilterInput: HubFilterInput;
-  HubPreferenceType: HubPreferenceType;
   HubVisibility: HubVisibility;
   ISearchResults: ResolverTypeWrapper<ISearchResults>;
   InnovationFlowTemplate: ResolverTypeWrapper<InnovationFlowTemplate>;
@@ -5004,6 +5003,7 @@ export type ResolversTypes = {
   SearchResultUserGroup: ResolverTypeWrapper<SearchResultUserGroup>;
   Sentry: ResolverTypeWrapper<Sentry>;
   ServiceMetadata: ResolverTypeWrapper<ServiceMetadata>;
+  SpacePreferenceType: SpacePreferenceType;
   StorageBucket: ResolverTypeWrapper<StorageBucket>;
   StorageBucketUploadFileInput: StorageBucketUploadFileInput;
   StorageConfig: ResolverTypeWrapper<StorageConfig>;
