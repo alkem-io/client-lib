@@ -3145,11 +3145,7 @@ export enum PreferenceType {
   MembershipJoinHubFromHostOrganizationMembers = 'MEMBERSHIP_JOIN_HUB_FROM_HOST_ORGANIZATION_MEMBERS',
   NotificationApplicationReceived = 'NOTIFICATION_APPLICATION_RECEIVED',
   NotificationApplicationSubmitted = 'NOTIFICATION_APPLICATION_SUBMITTED',
-  NotificationAspectCommentCreated = 'NOTIFICATION_ASPECT_COMMENT_CREATED',
-  NotificationAspectCreated = 'NOTIFICATION_ASPECT_CREATED',
-  NotificationAspectCreatedAdmin = 'NOTIFICATION_ASPECT_CREATED_ADMIN',
   NotificationCalloutPublished = 'NOTIFICATION_CALLOUT_PUBLISHED',
-  NotificationCanvasCreated = 'NOTIFICATION_CANVAS_CREATED',
   NotificationCommunicationDiscussionCreated = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED',
   NotificationCommunicationDiscussionCreatedAdmin = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED_ADMIN',
   NotificationCommunicationMention = 'NOTIFICATION_COMMUNICATION_MENTION',
@@ -3168,8 +3164,12 @@ export enum PreferenceType {
   NotificationForumDiscussionCreated = 'NOTIFICATION_FORUM_DISCUSSION_CREATED',
   NotificationOrganizationMention = 'NOTIFICATION_ORGANIZATION_MENTION',
   NotificationOrganizationMessage = 'NOTIFICATION_ORGANIZATION_MESSAGE',
+  NotificationPostCommentCreated = 'NOTIFICATION_POST_COMMENT_CREATED',
+  NotificationPostCreated = 'NOTIFICATION_POST_CREATED',
+  NotificationPostCreatedAdmin = 'NOTIFICATION_POST_CREATED_ADMIN',
   NotificationUserRemoved = 'NOTIFICATION_USER_REMOVED',
   NotificationUserSignUp = 'NOTIFICATION_USER_SIGN_UP',
+  NotificationWhiteboardCreated = 'NOTIFICATION_WHITEBOARD_CREATED',
 }
 
 export enum PreferenceValueType {
@@ -4442,11 +4442,7 @@ export type UserGroup = {
 export enum UserPreferenceType {
   NotificationApplicationReceived = 'NOTIFICATION_APPLICATION_RECEIVED',
   NotificationApplicationSubmitted = 'NOTIFICATION_APPLICATION_SUBMITTED',
-  NotificationAspectCommentCreated = 'NOTIFICATION_ASPECT_COMMENT_CREATED',
-  NotificationAspectCreated = 'NOTIFICATION_ASPECT_CREATED',
-  NotificationAspectCreatedAdmin = 'NOTIFICATION_ASPECT_CREATED_ADMIN',
   NotificationCalloutPublished = 'NOTIFICATION_CALLOUT_PUBLISHED',
-  NotificationCanvasCreated = 'NOTIFICATION_CANVAS_CREATED',
   NotificationCommunicationDiscussionCreated = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED',
   NotificationCommunicationDiscussionCreatedAdmin = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED_ADMIN',
   NotificationCommunicationMention = 'NOTIFICATION_COMMUNICATION_MENTION',
@@ -4465,8 +4461,12 @@ export enum UserPreferenceType {
   NotificationForumDiscussionCreated = 'NOTIFICATION_FORUM_DISCUSSION_CREATED',
   NotificationOrganizationMention = 'NOTIFICATION_ORGANIZATION_MENTION',
   NotificationOrganizationMessage = 'NOTIFICATION_ORGANIZATION_MESSAGE',
+  NotificationPostCommentCreated = 'NOTIFICATION_POST_COMMENT_CREATED',
+  NotificationPostCreated = 'NOTIFICATION_POST_CREATED',
+  NotificationPostCreatedAdmin = 'NOTIFICATION_POST_CREATED_ADMIN',
   NotificationUserRemoved = 'NOTIFICATION_USER_REMOVED',
   NotificationUserSignUp = 'NOTIFICATION_USER_SIGN_UP',
+  NotificationWhiteboardCreated = 'NOTIFICATION_WHITEBOARD_CREATED',
 }
 
 export type UserSendMessageInput = {
