@@ -28,6 +28,7 @@ export type Scalars = {
   CID: any;
   DID: string;
   DateTime: Date;
+  Emoji: any;
   JSON: string;
   LifecycleDefinition: any;
   Markdown: any;
@@ -299,7 +300,7 @@ export type ActivityLogEntryUpdateSent = ActivityLogEntry & {
   /** The event type for this Activity. */
   type: ActivityEventType;
   /** The Updates for this Community. */
-  updates: Updates;
+  updates: Room;
 };
 
 export type ActivityLogInput = {
@@ -409,10 +410,10 @@ export type ApplicationForRoleResult = {
 export type Aspect = {
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
-  /** The parent Callout of the Aspect */
+  /** The parent Callout of the Post */
   callout?: Maybe<Callout>;
-  /** The comments for this Aspect. */
-  comments?: Maybe<Comments>;
+  /** The comments on this Post. */
+  comments: Room;
   /** The user that created this Aspect */
   createdBy?: Maybe<User>;
   createdDate: Scalars['DateTime'];
@@ -422,15 +423,8 @@ export type Aspect = {
   nameID: Scalars['NameID'];
   /** The Profile for this Card. */
   profile: Profile;
-  /** The aspect type, e.g. knowledge, idea, stakeholder persona etc. */
+  /** The Post type, e.g. knowledge, idea, stakeholder persona etc. */
   type: Scalars['String'];
-};
-
-export type AspectCommentsMessageReceived = {
-  /** The identifier for the Aspect. */
-  aspectID: Scalars['String'];
-  /** The message that has been sent. */
-  message: Message;
 };
 
 export type AssignChallengeAdminInput = {
@@ -591,9 +585,11 @@ export enum AuthorizationPrivilege {
   CreateCallout = 'CREATE_CALLOUT',
   CreateCanvas = 'CREATE_CANVAS',
   CreateChallenge = 'CREATE_CHALLENGE',
-  CreateComment = 'CREATE_COMMENT',
   CreateDiscussion = 'CREATE_DISCUSSION',
   CreateHub = 'CREATE_HUB',
+  CreateMessage = 'CREATE_MESSAGE',
+  CreateMessageReaction = 'CREATE_MESSAGE_REACTION',
+  CreateMessageReply = 'CREATE_MESSAGE_REPLY',
   CreateOpportunity = 'CREATE_OPPORTUNITY',
   CreateOrganization = 'CREATE_ORGANIZATION',
   CreateRelation = 'CREATE_RELATION',
@@ -635,8 +631,8 @@ export type CalendarEventsArgs = {
 export type CalendarEvent = {
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
-  /** The comments for this CalendarEvent. */
-  comments?: Maybe<Comments>;
+  /** The comments for this CalendarEvent */
+  comments: Room;
   /** The user that created this CalendarEvent */
   createdBy?: Maybe<User>;
   createdDate: Scalars['DateTime'];
@@ -660,13 +656,6 @@ export type CalendarEvent = {
   wholeDay: Scalars['Boolean'];
 };
 
-export type CalendarEventCommentsMessageReceived = {
-  /** The identifier for the CalendarEvent. */
-  calendarEventID: Scalars['String'];
-  /** The message that has been sent. */
-  message: Message;
-};
-
 export enum CalendarEventType {
   Event = 'EVENT',
   Milestone = 'MILESTONE',
@@ -683,8 +672,8 @@ export type Callout = {
   authorization?: Maybe<Authorization>;
   /** The Canvases associated with this Callout. */
   canvases?: Maybe<Array<Canvas>>;
-  /** The Comments object for this Callout. */
-  comments?: Maybe<Comments>;
+  /** The comments for this Callout. */
+  comments?: Maybe<Room>;
   /** The user that created this Callout */
   createdBy?: Maybe<User>;
   /** Callout group. */
@@ -730,15 +719,6 @@ export type CalloutAspectCreated = {
   aspect: Aspect;
   /** The identifier for the Callout on which the aspect was created. */
   calloutID: Scalars['String'];
-};
-
-export type CalloutMessageReceived = {
-  /** The identifier for the Callout. */
-  calloutID: Scalars['String'];
-  /** The identifier for the Comments. */
-  commentsID: Scalars['String'];
-  /** The message that has been sent. */
-  message: Message;
 };
 
 export enum CalloutState {
@@ -896,31 +876,6 @@ export type CollaborationCalloutsArgs = {
   sortByActivity?: InputMaybe<Scalars['Boolean']>;
 };
 
-export type Comments = {
-  /** The authorization rules for the entity */
-  authorization?: Maybe<Authorization>;
-  /** The number of comments. */
-  commentsCount: Scalars['Float'];
-  /** The ID of the entity */
-  id: Scalars['UUID'];
-  /** Messages in this Comments. */
-  messages?: Maybe<Array<Message>>;
-};
-
-export type CommentsRemoveMessageInput = {
-  /** The Comments the message is being removed from. */
-  commentsID: Scalars['UUID'];
-  /** The message id that should be removed */
-  messageID: Scalars['MessageID'];
-};
-
-export type CommentsSendMessageInput = {
-  /** The Comments the message is being sent to */
-  commentsID: Scalars['UUID'];
-  /** The message being sent */
-  message: Scalars['String'];
-};
-
 export type Communication = {
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
@@ -931,8 +886,8 @@ export type Communication = {
   discussions?: Maybe<Array<Discussion>>;
   /** The ID of the entity */
   id: Scalars['UUID'];
-  /** Updates for this Communication. */
-  updates?: Maybe<Updates>;
+  /** The updates on this Communication. */
+  updates: Room;
 };
 
 export type CommunicationDiscussionArgs = {
@@ -1004,13 +959,6 @@ export type CommunicationCreateDiscussionInput = {
   tags?: InputMaybe<Array<Scalars['String']>>;
 };
 
-export type CommunicationDiscussionMessageReceived = {
-  /** The identifier for the Discussion on which the message was sent. */
-  discussionID: Scalars['String'];
-  /** The message that has been sent. */
-  message: Message;
-};
-
 export type CommunicationRoom = {
   /** The display name of the room */
   displayName: Scalars['String'];
@@ -1039,13 +987,6 @@ export type CommunicationSendMessageToUserInput = {
   message: Scalars['String'];
   /** All Users the message is being sent to */
   receiverIds: Array<Scalars['UUID']>;
-};
-
-export type CommunicationUpdateMessageReceived = {
-  /** The message that has been sent. */
-  message: Message;
-  /** The identifier for the Updates on which the message was sent. */
-  updatesID: Scalars['String'];
 };
 
 export type Community = Groupable & {
@@ -1655,14 +1596,12 @@ export type Discussion = {
   authorization?: Maybe<Authorization>;
   /** The category assigned to this Discussion. */
   category: DiscussionCategory;
-  /** The number of comments. */
-  commentsCount: Scalars['Float'];
+  /** The comments for this Discussion. */
+  comments: Room;
   /** The id of the user that created this discussion */
   createdBy?: Maybe<Scalars['UUID']>;
   /** The ID of the entity */
   id: Scalars['UUID'];
-  /** Messages for this Discussion. */
-  messages?: Maybe<Array<Message>>;
   /** A name identifier of the entity, unique within a given scope. */
   nameID: Scalars['NameID'];
   /** The Profile for this Discussion. */
@@ -1682,20 +1621,6 @@ export enum DiscussionCategory {
   Questions = 'QUESTIONS',
   Sharing = 'SHARING',
 }
-
-export type DiscussionRemoveMessageInput = {
-  /** The Discussion to remove a message from. */
-  discussionID: Scalars['UUID'];
-  /** The message id that should be removed */
-  messageID: Scalars['MessageID'];
-};
-
-export type DiscussionSendMessageInput = {
-  /** The Discussion the message is being sent to */
-  discussionID: Scalars['UUID'];
-  /** The message being sent */
-  message: Scalars['String'];
-};
 
 export type Document = {
   /** Do we allow anonymous read access for this document? */
@@ -1976,11 +1901,11 @@ export type InnovationPack = {
 export type Invitation = {
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
+  /** The User who triggered the invitation. */
+  createdBy: User;
   createdDate: Scalars['DateTime'];
   /** The ID of the entity */
   id: Scalars['UUID'];
-  /** The User who triggered the invitation. */
-  invitedBy: User;
   lifecycle: Lifecycle;
   updatedDate: Scalars['DateTime'];
   /** The User who is invited. */
@@ -2062,8 +1987,12 @@ export type Message = {
   id: Scalars['MessageID'];
   /** The message being sent */
   message: Scalars['Markdown'];
+  /** Reactions on this message */
+  reactions: Array<Reaction>;
   /** The user that created this Aspect */
   sender?: Maybe<User>;
+  /** The message being replied to */
+  threadID?: Maybe<Scalars['String']>;
   /** The server timestamp in UTC */
   timestamp: Scalars['Float'];
 };
@@ -2096,6 +2025,8 @@ export type MoveAspectInput = {
 };
 
 export type Mutation = {
+  /** Add a reaction to a message from the specified Room. */
+  addReactionToMessageInRoom: Reaction;
   /** Ensure all community members are registered for communications. */
   adminCommunicationEnsureAccessToCommunications: Scalars['Boolean'];
   /** Remove an orphaned room from messaging platform. */
@@ -2280,16 +2211,14 @@ export type Mutation = {
   messageUser: Scalars['String'];
   /** Moves the specified Aspect to another Callout. */
   moveAspectToCallout: Aspect;
-  /** Removes a comment message. */
-  removeComment: Scalars['MessageID'];
-  /** Removes a message from the specified Discussion. */
-  removeMessageFromDiscussion: Scalars['MessageID'];
+  /** Removes a message. */
+  removeMessageOnRoom: Scalars['MessageID'];
   /** Removes an Organization as a Lead of the specified Community. */
   removeOrganizationAsCommunityLead: Community;
   /** Removes an Organization as a member of the specified Community. */
   removeOrganizationAsCommunityMember: Community;
-  /** Removes an update message. */
-  removeUpdate: Scalars['MessageID'];
+  /** Remove a reaction on a message from the specified Room. */
+  removeReactionToMessageInRoom: Scalars['Boolean'];
   /** Removes a User from being an Challenge Admin. */
   removeUserAsChallengeAdmin: User;
   /** Removes a User as a Lead of the specified Community. */
@@ -2316,20 +2245,16 @@ export type Mutation = {
   removeUserFromOrganization: Organization;
   /** Removes an authorization credential from a User. */
   revokeCredentialFromUser: User;
-  /** Sends an comment message. Returns the id of the new Update message. */
-  sendComment: Message;
-  /** Send a message on a Comments Callout */
-  sendMessageOnCallout: Message;
+  /** Sends a reply to a message from the specified Room. */
+  sendMessageReplyToRoom: Message;
   /** Send message to Community Leads. */
   sendMessageToCommunityLeads: Scalars['Boolean'];
-  /** Sends a message to the specified Discussion.  */
-  sendMessageToDiscussion: Message;
   /** Send message to an Organization. */
   sendMessageToOrganization: Scalars['Boolean'];
+  /** Sends an comment message. Returns the id of the new Update message. */
+  sendMessageToRoom: Message;
   /** Send message to a User. */
   sendMessageToUser: Scalars['Boolean'];
-  /** Sends an update message. Returns the id of the new Update message. */
-  sendUpdate: Message;
   /** Updates the specified Actor. */
   updateActor: Actor;
   /** Updates the specified Aspect. */
@@ -2400,6 +2325,10 @@ export type Mutation = {
   uploadFileOnReference: Reference;
   /** Uploads and sets an image for the specified Visual. */
   uploadImageOnVisual: Visual;
+};
+
+export type MutationAddReactionToMessageInRoomArgs = {
+  reactionData: RoomAddReactionToMessageInput;
 };
 
 export type MutationAdminCommunicationEnsureAccessToCommunicationsArgs = {
@@ -2751,12 +2680,8 @@ export type MutationMoveAspectToCalloutArgs = {
   moveAspectData: MoveAspectInput;
 };
 
-export type MutationRemoveCommentArgs = {
-  messageData: CommentsRemoveMessageInput;
-};
-
-export type MutationRemoveMessageFromDiscussionArgs = {
-  messageData: DiscussionRemoveMessageInput;
+export type MutationRemoveMessageOnRoomArgs = {
+  messageData: RoomRemoveMessageInput;
 };
 
 export type MutationRemoveOrganizationAsCommunityLeadArgs = {
@@ -2767,8 +2692,8 @@ export type MutationRemoveOrganizationAsCommunityMemberArgs = {
   membershipData: RemoveCommunityMemberOrganizationInput;
 };
 
-export type MutationRemoveUpdateArgs = {
-  messageData: UpdatesRemoveMessageInput;
+export type MutationRemoveReactionToMessageInRoomArgs = {
+  reactionData: RoomRemoveReactionToMessageInput;
 };
 
 export type MutationRemoveUserAsChallengeAdminArgs = {
@@ -2823,32 +2748,24 @@ export type MutationRevokeCredentialFromUserArgs = {
   revokeCredentialData: RevokeAuthorizationCredentialInput;
 };
 
-export type MutationSendCommentArgs = {
-  messageData: CommentsSendMessageInput;
-};
-
-export type MutationSendMessageOnCalloutArgs = {
-  data: SendMessageOnCalloutInput;
+export type MutationSendMessageReplyToRoomArgs = {
+  messageData: RoomSendMessageReplyInput;
 };
 
 export type MutationSendMessageToCommunityLeadsArgs = {
   messageData: CommunicationSendMessageToCommunityLeadsInput;
 };
 
-export type MutationSendMessageToDiscussionArgs = {
-  messageData: DiscussionSendMessageInput;
-};
-
 export type MutationSendMessageToOrganizationArgs = {
   messageData: CommunicationSendMessageToOrganizationInput;
 };
 
-export type MutationSendMessageToUserArgs = {
-  messageData: CommunicationSendMessageToUserInput;
+export type MutationSendMessageToRoomArgs = {
+  messageData: RoomSendMessageInput;
 };
 
-export type MutationSendUpdateArgs = {
-  messageData: UpdatesSendMessageInput;
+export type MutationSendMessageToUserArgs = {
+  messageData: CommunicationSendMessageToUserInput;
 };
 
 export type MutationUpdateActorArgs = {
@@ -3282,6 +3199,7 @@ export enum PreferenceType {
   NotificationAspectCreatedAdmin = 'NOTIFICATION_ASPECT_CREATED_ADMIN',
   NotificationCalloutPublished = 'NOTIFICATION_CALLOUT_PUBLISHED',
   NotificationCanvasCreated = 'NOTIFICATION_CANVAS_CREATED',
+  NotificationCommentReply = 'NOTIFICATION_COMMENT_REPLY',
   NotificationCommunicationDiscussionCreated = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED',
   NotificationCommunicationDiscussionCreatedAdmin = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED_ADMIN',
   NotificationCommunicationMention = 'NOTIFICATION_COMMUNICATION_MENTION',
@@ -3378,6 +3296,8 @@ export type Query = {
   adminCommunicationOrphanedUsage: CommunicationAdminOrphanedUsageResult;
   /** The authorization policy for the platform */
   authorization: Authorization;
+  /** A particular whiteboard, identified by the provided ID. */
+  canvas: Canvas;
   /** A specific Collaboration entity. */
   collaboration: Collaboration;
   /** A specific Community entity. */
@@ -3432,6 +3352,10 @@ export type QueryActivityLogOnCollaborationArgs = {
 
 export type QueryAdminCommunicationMembershipArgs = {
   communicationData: CommunicationAdminMembershipInput;
+};
+
+export type QueryCanvasArgs = {
+  ID: Scalars['UUID'];
 };
 
 export type QueryCollaborationArgs = {
@@ -3529,6 +3453,18 @@ export type QuestionTemplate = {
   required: Scalars['Boolean'];
   /** Sorting order for the question. Lower is first. */
   sortOrder?: Maybe<Scalars['Float']>;
+};
+
+/** A reaction to a message. */
+export type Reaction = {
+  /** The reaction Emoji */
+  emoji: Scalars['Emoji'];
+  /** The id for the reaction. */
+  id: Scalars['MessageID'];
+  /** The user that reacted */
+  sender?: Maybe<User>;
+  /** The server timestamp in UTC */
+  timestamp: Scalars['Float'];
 };
 
 export type Reference = {
@@ -3750,6 +3686,63 @@ export type RolesUserInput = {
   userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
+export type Room = {
+  /** The authorization rules for the entity */
+  authorization?: Maybe<Authorization>;
+  /** The ID of the entity */
+  id: Scalars['UUID'];
+  /** Messages in this Room. */
+  messages: Array<Message>;
+  /** The number of messages in the Room. */
+  messagesCount: Scalars['Float'];
+};
+
+export type RoomAddReactionToMessageInput = {
+  /** The reaction to the message. */
+  emoji: Scalars['Emoji'];
+  /** The message id that is being reacted to */
+  messageID: Scalars['MessageID'];
+  /** The Room to remove a message from. */
+  roomID: Scalars['UUID'];
+};
+
+export type RoomMessageReceived = {
+  /** The message that has been sent. */
+  message: Message;
+  /** The identifier for the Room on which the message was sent. */
+  roomID: Scalars['String'];
+};
+
+export type RoomRemoveMessageInput = {
+  /** The message id that should be removed */
+  messageID: Scalars['MessageID'];
+  /** The Room to remove a message from. */
+  roomID: Scalars['UUID'];
+};
+
+export type RoomRemoveReactionToMessageInput = {
+  /** The reaction that is being removed */
+  reactionID: Scalars['MessageID'];
+  /** The Room to remove a message from. */
+  roomID: Scalars['UUID'];
+};
+
+export type RoomSendMessageInput = {
+  /** The message being sent */
+  message: Scalars['String'];
+  /** The Room the message is being sent to */
+  roomID: Scalars['UUID'];
+};
+
+export type RoomSendMessageReplyInput = {
+  /** The message being sent */
+  message: Scalars['String'];
+  /** The Room the message is being sent to */
+  roomID: Scalars['UUID'];
+  /** The message starting the thread being replied to */
+  threadID: Scalars['MessageID'];
+};
+
 export type SearchInput = {
   /** Restrict the search to only the specified Hub. Default is all Hubs. */
   searchInHubFilter?: InputMaybe<Scalars['UUID_NAMEID']>;
@@ -3879,13 +3872,6 @@ export type SearchResultUserGroup = SearchResult & {
   userGroup: UserGroup;
 };
 
-export type SendMessageOnCalloutInput = {
-  /** The Callout the message is being sent to */
-  calloutID: Scalars['UUID'];
-  /** The message contents */
-  message: Scalars['String'];
-};
-
 export type Sentry = {
   /** Flag indicating if the client should use Sentry for monitoring. */
   enabled: Scalars['Boolean'];
@@ -3939,48 +3925,28 @@ export type StorageConfig = {
 
 export type Subscription = {
   activityCreated: ActivityCreatedSubscriptionResult;
-  /** Receive new comment on Aspect */
-  aspectCommentsMessageReceived: AspectCommentsMessageReceived;
-  /** Receive new comment on CalendarEvent */
-  calendarEventCommentsMessageReceived: CalendarEventCommentsMessageReceived;
   /** Receive new Update messages on Communities the currently authenticated User is a member of. */
   calloutAspectCreated: CalloutAspectCreated;
-  /** Receive comments on Callouts */
-  calloutMessageReceived: CalloutMessageReceived;
   /** Receive updated content of a canvas */
   canvasContentUpdated: CanvasContentUpdated;
   /** Receive new Challenges created on the Hub. */
   challengeCreated: ChallengeCreated;
-  /** Receive new Discussion messages */
-  communicationDiscussionMessageReceived: CommunicationDiscussionMessageReceived;
   /** Receive updates on Discussions */
   communicationDiscussionUpdated: Discussion;
-  /** Receive new Update messages on Communities the currently authenticated User is a member of. */
-  communicationUpdateMessageReceived: CommunicationUpdateMessageReceived;
   /** Receive new Opportunities created on the Challenge. */
   opportunityCreated: OpportunityCreated;
   /** Received on verified credentials change */
   profileVerifiedCredential: ProfileCredentialVerified;
+  /** Receive new Room messages */
+  roomMessageReceived: RoomMessageReceived;
 };
 
 export type SubscriptionActivityCreatedArgs = {
   input: ActivityCreatedSubscriptionInput;
 };
 
-export type SubscriptionAspectCommentsMessageReceivedArgs = {
-  aspectID: Scalars['UUID'];
-};
-
-export type SubscriptionCalendarEventCommentsMessageReceivedArgs = {
-  calendarEventID: Scalars['UUID'];
-};
-
 export type SubscriptionCalloutAspectCreatedArgs = {
   calloutID: Scalars['UUID'];
-};
-
-export type SubscriptionCalloutMessageReceivedArgs = {
-  calloutIDs: Array<Scalars['UUID']>;
 };
 
 export type SubscriptionCanvasContentUpdatedArgs = {
@@ -3991,20 +3957,16 @@ export type SubscriptionChallengeCreatedArgs = {
   hubID: Scalars['UUID_NAMEID'];
 };
 
-export type SubscriptionCommunicationDiscussionMessageReceivedArgs = {
-  discussionID: Scalars['UUID'];
-};
-
 export type SubscriptionCommunicationDiscussionUpdatedArgs = {
   communicationID: Scalars['UUID'];
 };
 
-export type SubscriptionCommunicationUpdateMessageReceivedArgs = {
-  updatesIDs?: InputMaybe<Array<Scalars['UUID']>>;
-};
-
 export type SubscriptionOpportunityCreatedArgs = {
   challengeID: Scalars['UUID'];
+};
+
+export type SubscriptionRoomMessageReceivedArgs = {
+  roomID: Scalars['UUID'];
 };
 
 export type Tagset = {
@@ -4464,29 +4426,6 @@ export type UpdateWhiteboardTemplateInput = {
   value?: InputMaybe<Scalars['JSON']>;
 };
 
-export type Updates = {
-  /** The authorization rules for the entity */
-  authorization?: Maybe<Authorization>;
-  /** The ID of the entity */
-  id: Scalars['UUID'];
-  /** Messages in this Updates. */
-  messages?: Maybe<Array<Message>>;
-};
-
-export type UpdatesRemoveMessageInput = {
-  /** The message id that should be removed */
-  messageID: Scalars['String'];
-  /** The Updates the message is being removed from. */
-  updatesID: Scalars['UUID'];
-};
-
-export type UpdatesSendMessageInput = {
-  /** The message being sent */
-  message: Scalars['String'];
-  /** The Updates the message is being sent to */
-  updatesID: Scalars['UUID'];
-};
-
 export type User = {
   /** The unique personal identifier (upn) for the account associated with this user profile */
   accountUpn: Scalars['String'];
@@ -4558,6 +4497,7 @@ export enum UserPreferenceType {
   NotificationAspectCreatedAdmin = 'NOTIFICATION_ASPECT_CREATED_ADMIN',
   NotificationCalloutPublished = 'NOTIFICATION_CALLOUT_PUBLISHED',
   NotificationCanvasCreated = 'NOTIFICATION_CANVAS_CREATED',
+  NotificationCommentReply = 'NOTIFICATION_COMMENT_REPLY',
   NotificationCommunicationDiscussionCreated = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED',
   NotificationCommunicationDiscussionCreatedAdmin = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED_ADMIN',
   NotificationCommunicationMention = 'NOTIFICATION_COMMUNICATION_MENTION',
@@ -4808,7 +4748,6 @@ export type ResolversTypes = {
   ApplicationEventInput: ApplicationEventInput;
   ApplicationForRoleResult: ResolverTypeWrapper<ApplicationForRoleResult>;
   Aspect: ResolverTypeWrapper<Aspect>;
-  AspectCommentsMessageReceived: ResolverTypeWrapper<AspectCommentsMessageReceived>;
   AssignChallengeAdminInput: AssignChallengeAdminInput;
   AssignCommunityLeadOrganizationInput: AssignCommunityLeadOrganizationInput;
   AssignCommunityLeadUserInput: AssignCommunityLeadUserInput;
@@ -4840,11 +4779,9 @@ export type ResolversTypes = {
   CID: ResolverTypeWrapper<Scalars['CID']>;
   Calendar: ResolverTypeWrapper<Calendar>;
   CalendarEvent: ResolverTypeWrapper<CalendarEvent>;
-  CalendarEventCommentsMessageReceived: ResolverTypeWrapper<CalendarEventCommentsMessageReceived>;
   CalendarEventType: CalendarEventType;
   Callout: ResolverTypeWrapper<Callout>;
   CalloutAspectCreated: ResolverTypeWrapper<CalloutAspectCreated>;
-  CalloutMessageReceived: ResolverTypeWrapper<CalloutMessageReceived>;
   CalloutState: CalloutState;
   CalloutType: CalloutType;
   CalloutVisibility: CalloutVisibility;
@@ -4859,9 +4796,6 @@ export type ResolversTypes = {
   ChallengePreferenceType: ChallengePreferenceType;
   ChallengeTemplate: ResolverTypeWrapper<ChallengeTemplate>;
   Collaboration: ResolverTypeWrapper<Collaboration>;
-  Comments: ResolverTypeWrapper<Comments>;
-  CommentsRemoveMessageInput: CommentsRemoveMessageInput;
-  CommentsSendMessageInput: CommentsSendMessageInput;
   Communication: ResolverTypeWrapper<Communication>;
   CommunicationAdminEnsureAccessInput: CommunicationAdminEnsureAccessInput;
   CommunicationAdminMembershipInput: CommunicationAdminMembershipInput;
@@ -4872,12 +4806,10 @@ export type ResolversTypes = {
   CommunicationAdminRoomResult: ResolverTypeWrapper<CommunicationAdminRoomResult>;
   CommunicationAdminUpdateRoomsJoinRuleInput: CommunicationAdminUpdateRoomsJoinRuleInput;
   CommunicationCreateDiscussionInput: CommunicationCreateDiscussionInput;
-  CommunicationDiscussionMessageReceived: ResolverTypeWrapper<CommunicationDiscussionMessageReceived>;
   CommunicationRoom: ResolverTypeWrapper<CommunicationRoom>;
   CommunicationSendMessageToCommunityLeadsInput: CommunicationSendMessageToCommunityLeadsInput;
   CommunicationSendMessageToOrganizationInput: CommunicationSendMessageToOrganizationInput;
   CommunicationSendMessageToUserInput: CommunicationSendMessageToUserInput;
-  CommunicationUpdateMessageReceived: ResolverTypeWrapper<CommunicationUpdateMessageReceived>;
   Community: ResolverTypeWrapper<Community>;
   CommunityApplyInput: CommunityApplyInput;
   CommunityJoinInput: CommunityJoinInput;
@@ -4955,10 +4887,9 @@ export type ResolversTypes = {
   DirectRoom: ResolverTypeWrapper<DirectRoom>;
   Discussion: ResolverTypeWrapper<Discussion>;
   DiscussionCategory: DiscussionCategory;
-  DiscussionRemoveMessageInput: DiscussionRemoveMessageInput;
-  DiscussionSendMessageInput: DiscussionSendMessageInput;
   Document: ResolverTypeWrapper<Document>;
   EcosystemModel: ResolverTypeWrapper<EcosystemModel>;
+  Emoji: ResolverTypeWrapper<Scalars['Emoji']>;
   FeatureFlag: ResolverTypeWrapper<FeatureFlag>;
   FeedbackTemplate: ResolverTypeWrapper<FeedbackTemplate>;
   FileStorageConfig: ResolverTypeWrapper<FileStorageConfig>;
@@ -5027,6 +4958,7 @@ export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>;
   Question: ResolverTypeWrapper<Question>;
   QuestionTemplate: ResolverTypeWrapper<QuestionTemplate>;
+  Reaction: ResolverTypeWrapper<Reaction>;
   Reference: ResolverTypeWrapper<Reference>;
   Relation: ResolverTypeWrapper<Relation>;
   RelayPaginatedUser: ResolverTypeWrapper<RelayPaginatedUser>;
@@ -5053,6 +4985,13 @@ export type ResolversTypes = {
   RolesResultHub: ResolverTypeWrapper<RolesResultHub>;
   RolesResultOrganization: ResolverTypeWrapper<RolesResultOrganization>;
   RolesUserInput: RolesUserInput;
+  Room: ResolverTypeWrapper<Room>;
+  RoomAddReactionToMessageInput: RoomAddReactionToMessageInput;
+  RoomMessageReceived: ResolverTypeWrapper<RoomMessageReceived>;
+  RoomRemoveMessageInput: RoomRemoveMessageInput;
+  RoomRemoveReactionToMessageInput: RoomRemoveReactionToMessageInput;
+  RoomSendMessageInput: RoomSendMessageInput;
+  RoomSendMessageReplyInput: RoomSendMessageReplyInput;
   SearchInput: SearchInput;
   SearchResult:
     | ResolversTypes['SearchResultCard']
@@ -5070,7 +5009,6 @@ export type ResolversTypes = {
   SearchResultType: SearchResultType;
   SearchResultUser: ResolverTypeWrapper<SearchResultUser>;
   SearchResultUserGroup: ResolverTypeWrapper<SearchResultUserGroup>;
-  SendMessageOnCalloutInput: SendMessageOnCalloutInput;
   Sentry: ResolverTypeWrapper<Sentry>;
   ServiceMetadata: ResolverTypeWrapper<ServiceMetadata>;
   StorageBucket: ResolverTypeWrapper<StorageBucket>;
@@ -5129,9 +5067,6 @@ export type ResolversTypes = {
   UpdateUserPreferenceInput: UpdateUserPreferenceInput;
   UpdateVisualInput: UpdateVisualInput;
   UpdateWhiteboardTemplateInput: UpdateWhiteboardTemplateInput;
-  Updates: ResolverTypeWrapper<Updates>;
-  UpdatesRemoveMessageInput: UpdatesRemoveMessageInput;
-  UpdatesSendMessageInput: UpdatesSendMessageInput;
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
   User: ResolverTypeWrapper<User>;
   UserAuthorizationPrivilegesInput: UserAuthorizationPrivilegesInput;
@@ -5184,7 +5119,6 @@ export type ResolversParentTypes = {
   ApplicationEventInput: ApplicationEventInput;
   ApplicationForRoleResult: ApplicationForRoleResult;
   Aspect: Aspect;
-  AspectCommentsMessageReceived: AspectCommentsMessageReceived;
   AssignChallengeAdminInput: AssignChallengeAdminInput;
   AssignCommunityLeadOrganizationInput: AssignCommunityLeadOrganizationInput;
   AssignCommunityLeadUserInput: AssignCommunityLeadUserInput;
@@ -5212,10 +5146,8 @@ export type ResolversParentTypes = {
   CID: Scalars['CID'];
   Calendar: Calendar;
   CalendarEvent: CalendarEvent;
-  CalendarEventCommentsMessageReceived: CalendarEventCommentsMessageReceived;
   Callout: Callout;
   CalloutAspectCreated: CalloutAspectCreated;
-  CalloutMessageReceived: CalloutMessageReceived;
   Canvas: Canvas;
   CanvasCheckout: CanvasCheckout;
   CanvasCheckoutEventInput: CanvasCheckoutEventInput;
@@ -5225,9 +5157,6 @@ export type ResolversParentTypes = {
   ChallengeEventInput: ChallengeEventInput;
   ChallengeTemplate: ChallengeTemplate;
   Collaboration: Collaboration;
-  Comments: Comments;
-  CommentsRemoveMessageInput: CommentsRemoveMessageInput;
-  CommentsSendMessageInput: CommentsSendMessageInput;
   Communication: Communication;
   CommunicationAdminEnsureAccessInput: CommunicationAdminEnsureAccessInput;
   CommunicationAdminMembershipInput: CommunicationAdminMembershipInput;
@@ -5238,12 +5167,10 @@ export type ResolversParentTypes = {
   CommunicationAdminRoomResult: CommunicationAdminRoomResult;
   CommunicationAdminUpdateRoomsJoinRuleInput: CommunicationAdminUpdateRoomsJoinRuleInput;
   CommunicationCreateDiscussionInput: CommunicationCreateDiscussionInput;
-  CommunicationDiscussionMessageReceived: CommunicationDiscussionMessageReceived;
   CommunicationRoom: CommunicationRoom;
   CommunicationSendMessageToCommunityLeadsInput: CommunicationSendMessageToCommunityLeadsInput;
   CommunicationSendMessageToOrganizationInput: CommunicationSendMessageToOrganizationInput;
   CommunicationSendMessageToUserInput: CommunicationSendMessageToUserInput;
-  CommunicationUpdateMessageReceived: CommunicationUpdateMessageReceived;
   Community: Community;
   CommunityApplyInput: CommunityApplyInput;
   CommunityJoinInput: CommunityJoinInput;
@@ -5319,10 +5246,9 @@ export type ResolversParentTypes = {
   DeleteWhiteboardTemplateInput: DeleteWhiteboardTemplateInput;
   DirectRoom: DirectRoom;
   Discussion: Discussion;
-  DiscussionRemoveMessageInput: DiscussionRemoveMessageInput;
-  DiscussionSendMessageInput: DiscussionSendMessageInput;
   Document: Document;
   EcosystemModel: EcosystemModel;
+  Emoji: Scalars['Emoji'];
   FeatureFlag: FeatureFlag;
   FeedbackTemplate: FeedbackTemplate;
   FileStorageConfig: FileStorageConfig;
@@ -5384,6 +5310,7 @@ export type ResolversParentTypes = {
   Query: {};
   Question: Question;
   QuestionTemplate: QuestionTemplate;
+  Reaction: Reaction;
   Reference: Reference;
   Relation: Relation;
   RelayPaginatedUser: RelayPaginatedUser;
@@ -5410,6 +5337,13 @@ export type ResolversParentTypes = {
   RolesResultHub: RolesResultHub;
   RolesResultOrganization: RolesResultOrganization;
   RolesUserInput: RolesUserInput;
+  Room: Room;
+  RoomAddReactionToMessageInput: RoomAddReactionToMessageInput;
+  RoomMessageReceived: RoomMessageReceived;
+  RoomRemoveMessageInput: RoomRemoveMessageInput;
+  RoomRemoveReactionToMessageInput: RoomRemoveReactionToMessageInput;
+  RoomSendMessageInput: RoomSendMessageInput;
+  RoomSendMessageReplyInput: RoomSendMessageReplyInput;
   SearchInput: SearchInput;
   SearchResult:
     | ResolversParentTypes['SearchResultCard']
@@ -5426,7 +5360,6 @@ export type ResolversParentTypes = {
   SearchResultOrganization: SearchResultOrganization;
   SearchResultUser: SearchResultUser;
   SearchResultUserGroup: SearchResultUserGroup;
-  SendMessageOnCalloutInput: SendMessageOnCalloutInput;
   Sentry: Sentry;
   ServiceMetadata: ServiceMetadata;
   StorageBucket: StorageBucket;
@@ -5485,9 +5418,6 @@ export type ResolversParentTypes = {
   UpdateUserPreferenceInput: UpdateUserPreferenceInput;
   UpdateVisualInput: UpdateVisualInput;
   UpdateWhiteboardTemplateInput: UpdateWhiteboardTemplateInput;
-  Updates: Updates;
-  UpdatesRemoveMessageInput: UpdatesRemoveMessageInput;
-  UpdatesSendMessageInput: UpdatesSendMessageInput;
   Upload: Scalars['Upload'];
   User: User;
   UserAuthorizationPrivilegesInput: UserAuthorizationPrivilegesInput;
@@ -5752,7 +5682,7 @@ export type ActivityLogEntryUpdateSentResolvers<
   parentNameID?: Resolver<ResolversTypes['NameID'], ParentType, ContextType>;
   triggeredBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   type?: Resolver<ResolversTypes['ActivityEventType'], ParentType, ContextType>;
-  updates?: Resolver<ResolversTypes['Updates'], ParentType, ContextType>;
+  updates?: Resolver<ResolversTypes['Room'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -5899,26 +5829,13 @@ export type AspectResolvers<
     ContextType
   >;
   callout?: Resolver<Maybe<ResolversTypes['Callout']>, ParentType, ContextType>;
-  comments?: Resolver<
-    Maybe<ResolversTypes['Comments']>,
-    ParentType,
-    ContextType
-  >;
+  comments?: Resolver<ResolversTypes['Room'], ParentType, ContextType>;
   createdBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   createdDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   nameID?: Resolver<ResolversTypes['NameID'], ParentType, ContextType>;
   profile?: Resolver<ResolversTypes['Profile'], ParentType, ContextType>;
   type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type AspectCommentsMessageReceivedResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['AspectCommentsMessageReceived'] = ResolversParentTypes['AspectCommentsMessageReceived']
-> = {
-  aspectID?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  message?: Resolver<ResolversTypes['Message'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -6080,11 +5997,7 @@ export type CalendarEventResolvers<
     ParentType,
     ContextType
   >;
-  comments?: Resolver<
-    Maybe<ResolversTypes['Comments']>,
-    ParentType,
-    ContextType
-  >;
+  comments?: Resolver<ResolversTypes['Room'], ParentType, ContextType>;
   createdBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   createdDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   durationDays?: Resolver<
@@ -6104,15 +6017,6 @@ export type CalendarEventResolvers<
   >;
   type?: Resolver<ResolversTypes['CalendarEventType'], ParentType, ContextType>;
   wholeDay?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type CalendarEventCommentsMessageReceivedResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['CalendarEventCommentsMessageReceived'] = ResolversParentTypes['CalendarEventCommentsMessageReceived']
-> = {
-  calendarEventID?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  message?: Resolver<ResolversTypes['Message'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -6138,11 +6042,7 @@ export type CalloutResolvers<
     ContextType,
     Partial<CalloutCanvasesArgs>
   >;
-  comments?: Resolver<
-    Maybe<ResolversTypes['Comments']>,
-    ParentType,
-    ContextType
-  >;
+  comments?: Resolver<Maybe<ResolversTypes['Room']>, ParentType, ContextType>;
   createdBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   group?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
@@ -6185,16 +6085,6 @@ export type CalloutAspectCreatedResolvers<
 > = {
   aspect?: Resolver<ResolversTypes['Aspect'], ParentType, ContextType>;
   calloutID?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type CalloutMessageReceivedResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['CalloutMessageReceived'] = ResolversParentTypes['CalloutMessageReceived']
-> = {
-  calloutID?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  commentsID?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  message?: Resolver<ResolversTypes['Message'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -6355,25 +6245,6 @@ export type CollaborationResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type CommentsResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['Comments'] = ResolversParentTypes['Comments']
-> = {
-  authorization?: Resolver<
-    Maybe<ResolversTypes['Authorization']>,
-    ParentType,
-    ContextType
-  >;
-  commentsCount?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
-  messages?: Resolver<
-    Maybe<Array<ResolversTypes['Message']>>,
-    ParentType,
-    ContextType
-  >;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type CommunicationResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['Communication'] = ResolversParentTypes['Communication']
@@ -6400,7 +6271,7 @@ export type CommunicationResolvers<
     ContextType
   >;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
-  updates?: Resolver<Maybe<ResolversTypes['Updates']>, ParentType, ContextType>;
+  updates?: Resolver<ResolversTypes['Room'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -6462,15 +6333,6 @@ export type CommunicationAdminRoomResultResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type CommunicationDiscussionMessageReceivedResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['CommunicationDiscussionMessageReceived'] = ResolversParentTypes['CommunicationDiscussionMessageReceived']
-> = {
-  discussionID?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  message?: Resolver<ResolversTypes['Message'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type CommunicationRoomResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['CommunicationRoom'] = ResolversParentTypes['CommunicationRoom']
@@ -6482,15 +6344,6 @@ export type CommunicationRoomResolvers<
     ParentType,
     ContextType
   >;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type CommunicationUpdateMessageReceivedResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['CommunicationUpdateMessageReceived'] = ResolversParentTypes['CommunicationUpdateMessageReceived']
-> = {
-  message?: Resolver<ResolversTypes['Message'], ParentType, ContextType>;
-  updatesID?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -6765,14 +6618,9 @@ export type DiscussionResolvers<
     ParentType,
     ContextType
   >;
-  commentsCount?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  comments?: Resolver<ResolversTypes['Room'], ParentType, ContextType>;
   createdBy?: Resolver<Maybe<ResolversTypes['UUID']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
-  messages?: Resolver<
-    Maybe<Array<ResolversTypes['Message']>>,
-    ParentType,
-    ContextType
-  >;
   nameID?: Resolver<ResolversTypes['NameID'], ParentType, ContextType>;
   profile?: Resolver<ResolversTypes['Profile'], ParentType, ContextType>;
   timestamp?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -6825,6 +6673,11 @@ export type EcosystemModelResolvers<
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
+
+export interface EmojiScalarConfig
+  extends GraphQLScalarTypeConfig<ResolversTypes['Emoji'], any> {
+  name: 'Emoji';
+}
 
 export type FeatureFlagResolvers<
   ContextType = any,
@@ -7157,9 +7010,9 @@ export type InvitationResolvers<
     ParentType,
     ContextType
   >;
+  createdBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   createdDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
-  invitedBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   lifecycle?: Resolver<ResolversTypes['Lifecycle'], ParentType, ContextType>;
   updatedDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
@@ -7279,7 +7132,13 @@ export type MessageResolvers<
 > = {
   id?: Resolver<ResolversTypes['MessageID'], ParentType, ContextType>;
   message?: Resolver<ResolversTypes['Markdown'], ParentType, ContextType>;
+  reactions?: Resolver<
+    Array<ResolversTypes['Reaction']>,
+    ParentType,
+    ContextType
+  >;
   sender?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  threadID?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   timestamp?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -7306,6 +7165,12 @@ export type MutationResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
 > = {
+  addReactionToMessageInRoom?: Resolver<
+    ResolversTypes['Reaction'],
+    ParentType,
+    ContextType,
+    RequireFields<MutationAddReactionToMessageInRoomArgs, 'reactionData'>
+  >;
   adminCommunicationEnsureAccessToCommunications?: Resolver<
     ResolversTypes['Boolean'],
     ParentType,
@@ -7898,17 +7763,11 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationMoveAspectToCalloutArgs, 'moveAspectData'>
   >;
-  removeComment?: Resolver<
+  removeMessageOnRoom?: Resolver<
     ResolversTypes['MessageID'],
     ParentType,
     ContextType,
-    RequireFields<MutationRemoveCommentArgs, 'messageData'>
-  >;
-  removeMessageFromDiscussion?: Resolver<
-    ResolversTypes['MessageID'],
-    ParentType,
-    ContextType,
-    RequireFields<MutationRemoveMessageFromDiscussionArgs, 'messageData'>
+    RequireFields<MutationRemoveMessageOnRoomArgs, 'messageData'>
   >;
   removeOrganizationAsCommunityLead?: Resolver<
     ResolversTypes['Community'],
@@ -7928,11 +7787,11 @@ export type MutationResolvers<
       'membershipData'
     >
   >;
-  removeUpdate?: Resolver<
-    ResolversTypes['MessageID'],
+  removeReactionToMessageInRoom?: Resolver<
+    ResolversTypes['Boolean'],
     ParentType,
     ContextType,
-    RequireFields<MutationRemoveUpdateArgs, 'messageData'>
+    RequireFields<MutationRemoveReactionToMessageInRoomArgs, 'reactionData'>
   >;
   removeUserAsChallengeAdmin?: Resolver<
     ResolversTypes['User'],
@@ -8015,17 +7874,11 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationRevokeCredentialFromUserArgs, 'revokeCredentialData'>
   >;
-  sendComment?: Resolver<
+  sendMessageReplyToRoom?: Resolver<
     ResolversTypes['Message'],
     ParentType,
     ContextType,
-    RequireFields<MutationSendCommentArgs, 'messageData'>
-  >;
-  sendMessageOnCallout?: Resolver<
-    ResolversTypes['Message'],
-    ParentType,
-    ContextType,
-    RequireFields<MutationSendMessageOnCalloutArgs, 'data'>
+    RequireFields<MutationSendMessageReplyToRoomArgs, 'messageData'>
   >;
   sendMessageToCommunityLeads?: Resolver<
     ResolversTypes['Boolean'],
@@ -8033,29 +7886,23 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationSendMessageToCommunityLeadsArgs, 'messageData'>
   >;
-  sendMessageToDiscussion?: Resolver<
-    ResolversTypes['Message'],
-    ParentType,
-    ContextType,
-    RequireFields<MutationSendMessageToDiscussionArgs, 'messageData'>
-  >;
   sendMessageToOrganization?: Resolver<
     ResolversTypes['Boolean'],
     ParentType,
     ContextType,
     RequireFields<MutationSendMessageToOrganizationArgs, 'messageData'>
   >;
+  sendMessageToRoom?: Resolver<
+    ResolversTypes['Message'],
+    ParentType,
+    ContextType,
+    RequireFields<MutationSendMessageToRoomArgs, 'messageData'>
+  >;
   sendMessageToUser?: Resolver<
     ResolversTypes['Boolean'],
     ParentType,
     ContextType,
     RequireFields<MutationSendMessageToUserArgs, 'messageData'>
-  >;
-  sendUpdate?: Resolver<
-    ResolversTypes['Message'],
-    ParentType,
-    ContextType,
-    RequireFields<MutationSendUpdateArgs, 'messageData'>
   >;
   updateActor?: Resolver<
     ResolversTypes['Actor'],
@@ -8760,6 +8607,12 @@ export type QueryResolvers<
     ParentType,
     ContextType
   >;
+  canvas?: Resolver<
+    ResolversTypes['Canvas'],
+    ParentType,
+    ContextType,
+    RequireFields<QueryCanvasArgs, 'ID'>
+  >;
   collaboration?: Resolver<
     ResolversTypes['Collaboration'],
     ParentType,
@@ -8897,6 +8750,17 @@ export type QuestionTemplateResolvers<
   question?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   required?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   sortOrder?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ReactionResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['Reaction'] = ResolversParentTypes['Reaction']
+> = {
+  emoji?: Resolver<ResolversTypes['Emoji'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['MessageID'], ParentType, ContextType>;
+  sender?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  timestamp?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -9084,6 +8948,34 @@ export type RolesResultOrganizationResolvers<
     ParentType,
     ContextType
   >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type RoomResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['Room'] = ResolversParentTypes['Room']
+> = {
+  authorization?: Resolver<
+    Maybe<ResolversTypes['Authorization']>,
+    ParentType,
+    ContextType
+  >;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  messages?: Resolver<
+    Array<ResolversTypes['Message']>,
+    ParentType,
+    ContextType
+  >;
+  messagesCount?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type RoomMessageReceivedResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['RoomMessageReceived'] = ResolversParentTypes['RoomMessageReceived']
+> = {
+  message?: Resolver<ResolversTypes['Message'], ParentType, ContextType>;
+  roomID?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -9285,36 +9177,12 @@ export type SubscriptionResolvers<
     ContextType,
     RequireFields<SubscriptionActivityCreatedArgs, 'input'>
   >;
-  aspectCommentsMessageReceived?: SubscriptionResolver<
-    ResolversTypes['AspectCommentsMessageReceived'],
-    'aspectCommentsMessageReceived',
-    ParentType,
-    ContextType,
-    RequireFields<SubscriptionAspectCommentsMessageReceivedArgs, 'aspectID'>
-  >;
-  calendarEventCommentsMessageReceived?: SubscriptionResolver<
-    ResolversTypes['CalendarEventCommentsMessageReceived'],
-    'calendarEventCommentsMessageReceived',
-    ParentType,
-    ContextType,
-    RequireFields<
-      SubscriptionCalendarEventCommentsMessageReceivedArgs,
-      'calendarEventID'
-    >
-  >;
   calloutAspectCreated?: SubscriptionResolver<
     ResolversTypes['CalloutAspectCreated'],
     'calloutAspectCreated',
     ParentType,
     ContextType,
     RequireFields<SubscriptionCalloutAspectCreatedArgs, 'calloutID'>
-  >;
-  calloutMessageReceived?: SubscriptionResolver<
-    ResolversTypes['CalloutMessageReceived'],
-    'calloutMessageReceived',
-    ParentType,
-    ContextType,
-    RequireFields<SubscriptionCalloutMessageReceivedArgs, 'calloutIDs'>
   >;
   canvasContentUpdated?: SubscriptionResolver<
     ResolversTypes['CanvasContentUpdated'],
@@ -9330,16 +9198,6 @@ export type SubscriptionResolvers<
     ContextType,
     RequireFields<SubscriptionChallengeCreatedArgs, 'hubID'>
   >;
-  communicationDiscussionMessageReceived?: SubscriptionResolver<
-    ResolversTypes['CommunicationDiscussionMessageReceived'],
-    'communicationDiscussionMessageReceived',
-    ParentType,
-    ContextType,
-    RequireFields<
-      SubscriptionCommunicationDiscussionMessageReceivedArgs,
-      'discussionID'
-    >
-  >;
   communicationDiscussionUpdated?: SubscriptionResolver<
     ResolversTypes['Discussion'],
     'communicationDiscussionUpdated',
@@ -9349,13 +9207,6 @@ export type SubscriptionResolvers<
       SubscriptionCommunicationDiscussionUpdatedArgs,
       'communicationID'
     >
-  >;
-  communicationUpdateMessageReceived?: SubscriptionResolver<
-    ResolversTypes['CommunicationUpdateMessageReceived'],
-    'communicationUpdateMessageReceived',
-    ParentType,
-    ContextType,
-    Partial<SubscriptionCommunicationUpdateMessageReceivedArgs>
   >;
   opportunityCreated?: SubscriptionResolver<
     ResolversTypes['OpportunityCreated'],
@@ -9369,6 +9220,13 @@ export type SubscriptionResolvers<
     'profileVerifiedCredential',
     ParentType,
     ContextType
+  >;
+  roomMessageReceived?: SubscriptionResolver<
+    ResolversTypes['RoomMessageReceived'],
+    'roomMessageReceived',
+    ParentType,
+    ContextType,
+    RequireFields<SubscriptionRoomMessageReceivedArgs, 'roomID'>
   >;
 };
 
@@ -9520,24 +9378,6 @@ export interface Uuid_Nameid_EmailScalarConfig
   extends GraphQLScalarTypeConfig<ResolversTypes['UUID_NAMEID_EMAIL'], any> {
   name: 'UUID_NAMEID_EMAIL';
 }
-
-export type UpdatesResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['Updates'] = ResolversParentTypes['Updates']
-> = {
-  authorization?: Resolver<
-    Maybe<ResolversTypes['Authorization']>,
-    ParentType,
-    ContextType
-  >;
-  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
-  messages?: Resolver<
-    Maybe<Array<ResolversTypes['Message']>>,
-    ParentType,
-    ContextType
-  >;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
 
 export interface UploadScalarConfig
   extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
@@ -9713,7 +9553,6 @@ export type Resolvers<ContextType = any> = {
   Application?: ApplicationResolvers<ContextType>;
   ApplicationForRoleResult?: ApplicationForRoleResultResolvers<ContextType>;
   Aspect?: AspectResolvers<ContextType>;
-  AspectCommentsMessageReceived?: AspectCommentsMessageReceivedResolvers<ContextType>;
   AuthenticationConfig?: AuthenticationConfigResolvers<ContextType>;
   AuthenticationProviderConfig?: AuthenticationProviderConfigResolvers<ContextType>;
   AuthenticationProviderConfigUnion?: AuthenticationProviderConfigUnionResolvers<ContextType>;
@@ -9724,10 +9563,8 @@ export type Resolvers<ContextType = any> = {
   CID?: GraphQLScalarType;
   Calendar?: CalendarResolvers<ContextType>;
   CalendarEvent?: CalendarEventResolvers<ContextType>;
-  CalendarEventCommentsMessageReceived?: CalendarEventCommentsMessageReceivedResolvers<ContextType>;
   Callout?: CalloutResolvers<ContextType>;
   CalloutAspectCreated?: CalloutAspectCreatedResolvers<ContextType>;
-  CalloutMessageReceived?: CalloutMessageReceivedResolvers<ContextType>;
   Canvas?: CanvasResolvers<ContextType>;
   CanvasCheckout?: CanvasCheckoutResolvers<ContextType>;
   CanvasContentUpdated?: CanvasContentUpdatedResolvers<ContextType>;
@@ -9735,15 +9572,12 @@ export type Resolvers<ContextType = any> = {
   ChallengeCreated?: ChallengeCreatedResolvers<ContextType>;
   ChallengeTemplate?: ChallengeTemplateResolvers<ContextType>;
   Collaboration?: CollaborationResolvers<ContextType>;
-  Comments?: CommentsResolvers<ContextType>;
   Communication?: CommunicationResolvers<ContextType>;
   CommunicationAdminMembershipResult?: CommunicationAdminMembershipResultResolvers<ContextType>;
   CommunicationAdminOrphanedUsageResult?: CommunicationAdminOrphanedUsageResultResolvers<ContextType>;
   CommunicationAdminRoomMembershipResult?: CommunicationAdminRoomMembershipResultResolvers<ContextType>;
   CommunicationAdminRoomResult?: CommunicationAdminRoomResultResolvers<ContextType>;
-  CommunicationDiscussionMessageReceived?: CommunicationDiscussionMessageReceivedResolvers<ContextType>;
   CommunicationRoom?: CommunicationRoomResolvers<ContextType>;
-  CommunicationUpdateMessageReceived?: CommunicationUpdateMessageReceivedResolvers<ContextType>;
   Community?: CommunityResolvers<ContextType>;
   CommunityPolicy?: CommunityPolicyResolvers<ContextType>;
   CommunityRolePolicy?: CommunityRolePolicyResolvers<ContextType>;
@@ -9759,6 +9593,7 @@ export type Resolvers<ContextType = any> = {
   Discussion?: DiscussionResolvers<ContextType>;
   Document?: DocumentResolvers<ContextType>;
   EcosystemModel?: EcosystemModelResolvers<ContextType>;
+  Emoji?: GraphQLScalarType;
   FeatureFlag?: FeatureFlagResolvers<ContextType>;
   FeedbackTemplate?: FeedbackTemplateResolvers<ContextType>;
   FileStorageConfig?: FileStorageConfigResolvers<ContextType>;
@@ -9806,6 +9641,7 @@ export type Resolvers<ContextType = any> = {
   Query?: QueryResolvers<ContextType>;
   Question?: QuestionResolvers<ContextType>;
   QuestionTemplate?: QuestionTemplateResolvers<ContextType>;
+  Reaction?: ReactionResolvers<ContextType>;
   Reference?: ReferenceResolvers<ContextType>;
   Relation?: RelationResolvers<ContextType>;
   RelayPaginatedUser?: RelayPaginatedUserResolvers<ContextType>;
@@ -9815,6 +9651,8 @@ export type Resolvers<ContextType = any> = {
   RolesResultCommunity?: RolesResultCommunityResolvers<ContextType>;
   RolesResultHub?: RolesResultHubResolvers<ContextType>;
   RolesResultOrganization?: RolesResultOrganizationResolvers<ContextType>;
+  Room?: RoomResolvers<ContextType>;
+  RoomMessageReceived?: RoomMessageReceivedResolvers<ContextType>;
   SearchResult?: SearchResultResolvers<ContextType>;
   SearchResultCard?: SearchResultCardResolvers<ContextType>;
   SearchResultChallenge?: SearchResultChallengeResolvers<ContextType>;
@@ -9837,7 +9675,6 @@ export type Resolvers<ContextType = any> = {
   UUID?: GraphQLScalarType;
   UUID_NAMEID?: GraphQLScalarType;
   UUID_NAMEID_EMAIL?: GraphQLScalarType;
-  Updates?: UpdatesResolvers<ContextType>;
   Upload?: GraphQLScalarType;
   User?: UserResolvers<ContextType>;
   UserGroup?: UserGroupResolvers<ContextType>;
