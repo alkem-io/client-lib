@@ -776,9 +776,9 @@ export enum ChallengePreferenceType {
   AllowContributorsToCreateOpportunities = 'ALLOW_CONTRIBUTORS_TO_CREATE_OPPORTUNITIES',
   AllowNonMembersReadAccess = 'ALLOW_NON_MEMBERS_READ_ACCESS',
   AllowSpaceMembersToContribute = 'ALLOW_SPACE_MEMBERS_TO_CONTRIBUTE',
-  MembershipApplyChallengeFromHubMembers = 'MEMBERSHIP_APPLY_CHALLENGE_FROM_HUB_MEMBERS',
+  MembershipApplyChallengeFromSpaceMembers = 'MEMBERSHIP_APPLY_CHALLENGE_FROM_SPACE_MEMBERS',
   MembershipFeedbackOnChallengeContext = 'MEMBERSHIP_FEEDBACK_ON_CHALLENGE_CONTEXT',
-  MembershipJoinChallengeFromHubMembers = 'MEMBERSHIP_JOIN_CHALLENGE_FROM_HUB_MEMBERS',
+  MembershipJoinChallengeFromSpaceMembers = 'MEMBERSHIP_JOIN_CHALLENGE_FROM_SPACE_MEMBERS',
 }
 
 export type ChallengeTemplate = {
@@ -3042,6 +3042,8 @@ export type PlatformLocations = {
   help: Scalars['String'];
   /** URL for the link Impact in the HomePage of the application */
   impact: Scalars['String'];
+  /** URL to a page about the collaboration tools */
+  inspiration: Scalars['String'];
   /** URL where new users can get onboarding help */
   newuser: Scalars['String'];
   /** URL for the link Opensource in the HomePage of the application */
@@ -3129,14 +3131,15 @@ export enum PreferenceType {
   AuthorizationAnonymousReadAccess = 'AUTHORIZATION_ANONYMOUS_READ_ACCESS',
   AuthorizationOrganizationMatchDomain = 'AUTHORIZATION_ORGANIZATION_MATCH_DOMAIN',
   MembershipApplicationsFromAnyone = 'MEMBERSHIP_APPLICATIONS_FROM_ANYONE',
-  MembershipApplyChallengeFromHubMembers = 'MEMBERSHIP_APPLY_CHALLENGE_FROM_HUB_MEMBERS',
+  MembershipApplyChallengeFromSpaceMembers = 'MEMBERSHIP_APPLY_CHALLENGE_FROM_SPACE_MEMBERS',
   MembershipFeedbackOnChallengeContext = 'MEMBERSHIP_FEEDBACK_ON_CHALLENGE_CONTEXT',
-  MembershipJoinChallengeFromHubMembers = 'MEMBERSHIP_JOIN_CHALLENGE_FROM_HUB_MEMBERS',
+  MembershipJoinChallengeFromSpaceMembers = 'MEMBERSHIP_JOIN_CHALLENGE_FROM_SPACE_MEMBERS',
   MembershipJoinSpaceFromAnyone = 'MEMBERSHIP_JOIN_SPACE_FROM_ANYONE',
   MembershipJoinSpaceFromHostOrganizationMembers = 'MEMBERSHIP_JOIN_SPACE_FROM_HOST_ORGANIZATION_MEMBERS',
   NotificationApplicationReceived = 'NOTIFICATION_APPLICATION_RECEIVED',
   NotificationApplicationSubmitted = 'NOTIFICATION_APPLICATION_SUBMITTED',
   NotificationCalloutPublished = 'NOTIFICATION_CALLOUT_PUBLISHED',
+  NotificationCommentReply = 'NOTIFICATION_COMMENT_REPLY',
   NotificationCommunicationDiscussionCreated = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED',
   NotificationCommunicationDiscussionCreatedAdmin = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED_ADMIN',
   NotificationCommunicationMention = 'NOTIFICATION_COMMUNICATION_MENTION',
@@ -4443,6 +4446,7 @@ export enum UserPreferenceType {
   NotificationApplicationReceived = 'NOTIFICATION_APPLICATION_RECEIVED',
   NotificationApplicationSubmitted = 'NOTIFICATION_APPLICATION_SUBMITTED',
   NotificationCalloutPublished = 'NOTIFICATION_CALLOUT_PUBLISHED',
+  NotificationCommentReply = 'NOTIFICATION_COMMENT_REPLY',
   NotificationCommunicationDiscussionCreated = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED',
   NotificationCommunicationDiscussionCreatedAdmin = 'NOTIFICATION_COMMUNICATION_DISCUSSION_CREATED_ADMIN',
   NotificationCommunicationMention = 'NOTIFICATION_COMMUNICATION_MENTION',
@@ -8366,6 +8370,7 @@ export type PlatformLocationsResolvers<
   foundation?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   help?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   impact?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  inspiration?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   newuser?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   opensource?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   privacy?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
