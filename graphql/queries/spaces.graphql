@@ -1,8 +1,9 @@
-mutation createHub($hubData: CreateHubInput!) {
-  createHub(hubData: $hubData) {
+query spaces {
+  hubs {
     id
     nameID
     profile {
+      displayName
       visuals {
         name
         id

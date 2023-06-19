@@ -13,9 +13,9 @@ const main = async () => {
   const serverVersion = await alkemioClient.validateConnection();
   log(`Alkemio platform version: ${serverVersion}`, LOG_LEVEL.INFO);
 
-  const hubID = 'eco1';
-  const hubExists = await alkemioClient.hubExists(hubID);
-  log(`Hub '${hubID}' exists: ${hubExists}`, LOG_LEVEL.INFO);
+  const spaceID = 'eco1';
+  const spaceExists = await alkemioClient.spaceExists(spaceID);
+  log(`Space '${spaceID}' exists: ${spaceExists}`, LOG_LEVEL.INFO);
 };
 
 try {

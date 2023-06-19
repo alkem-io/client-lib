@@ -1,4 +1,4 @@
-query hub($id: UUID_NAMEID!) {
+query space($id: UUID_NAMEID!) {
   hub(ID: $id) {
     id
     nameID
