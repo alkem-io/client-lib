@@ -191,11 +191,7 @@ export class AlkemioClient {
     return response.data?.space;
   }
 
-<<<<<<< Updated upstream
-  public async createSpace(spaceData: CreateHubInput) {
-=======
   public async createSpace(spaceData: CreateSpaceInput) {
->>>>>>> Stashed changes
     const result = await this.privateClient.createSpace({
       spaceData: spaceData,
     });
@@ -360,11 +356,7 @@ export class AlkemioClient {
     userID: string
   ) {
     const response = await this.privateClient.challenge({
-<<<<<<< Updated upstream
-      hubID: spaceID,
-=======
       spaceID: spaceID,
->>>>>>> Stashed changes
       challengeID: challengeName,
     });
     const communityID = response.data?.space.challenge?.community?.id;
@@ -382,11 +374,7 @@ export class AlkemioClient {
   public async opportunityByNameID(spaceID: string, opportunityNameID: string) {
     try {
       const result = await this.privateClient.opportunity({
-<<<<<<< Updated upstream
-        hubID: spaceID,
-=======
         spaceID: spaceID,
->>>>>>> Stashed changes
         opportunityID: opportunityNameID,
       });
       if (result.data) return result.data?.space.opportunity;
@@ -398,11 +386,7 @@ export class AlkemioClient {
   async challengeByNameID(spaceNameID: string, challengeNameID: string) {
     try {
       const response = await this.privateClient.challenge({
-<<<<<<< Updated upstream
-        hubID: spaceNameID,
-=======
         spaceID: spaceNameID,
->>>>>>> Stashed changes
         challengeID: challengeNameID,
       });
 
