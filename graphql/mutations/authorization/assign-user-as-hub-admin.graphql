@@ -1,5 +1,5 @@
-mutation assignUserAsHubAdmin($membershipData: AssignHubAdminInput!) {
-  assignUserAsHubAdmin(membershipData: $membershipData) {
-    id,
+mutation assignUserAsSpaceAdmin($membershipData: AssignSpaceAdminInput!) {
+  assignUserAsSpaceAdmin(membershipData: $membershipData) {
+    id
   }
 }

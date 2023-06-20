@@ -6,21 +6,22 @@ The functions defined in `performance-test-data-population.ts` allows you to aut
   ```
   //createUsers();
   //createChallenges();
-  //createGroupSOnHub();
-  //addUsersToHubGroups();
+  //createGroupSOnSpace();
+  //addUsersToSpaceGroups();
   //addUsersToChallengePopulation();
   createPerformanceTestData();
   ```
 - Populate data to 'Dev' or 'Test' environments: specify the `authorization token` (could be taken from the web application api calls response from the browser)
 
 - Following entities could be populated:
+
   - `createUsers();` - adds `n` number of **Users** specified in parameter:
     - `let numberOfUsers = 2;`
   - `createChallenges();` - adds `n` number of **Challenges** specified in parameter:
     - `let numberOfChallenges = 1;`
-  - `createGroupSOnHub();` - creates `n` number of **Group on Hub** level
-  - `addUsersToHubGroups();` - adds `n` number of already created **Users** on specific **HubGroup** with the following parameters for groupId and userIds:
-    - `let hubGroupId = 2;`
+  - `createGroupSOnSpace();` - creates `n` number of **Group on Space** level
+  - `addUsersToSpaceGroups();` - adds `n` number of already created **Users** on specific **SpaceGroup** with the following parameters for groupId and userIds:
+    - `let spaceGroupId = 2;`
     - `let fromUserId = 1;`
     - `let toUserId = 2;`
   - `addUsersToChallengePopulation();` - adds `n` number of already created **Users** on specific **Challenege** with the following parameters for challengeId and userIds:

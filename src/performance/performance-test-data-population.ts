@@ -23,17 +23,17 @@ const numberOfUsers = 2;
 // Specify the number of Challenges to be created
 const numberOfChallenges = 1;
 
-// Specify the number of Groups to be created on Hub
-const numberOfGroupsOnHub = 1;
+// Specify the number of Groups to be created on Space
+const numberOfGroupsOnSpace = 1;
 
-// Specify the Hub Group Id to which you want to add Users
-const hubGroupId = 2;
+// Specify the Space Group Id to which you want to add Users
+const spaceGroupId = 2;
 
 // Specify the Challenge Id to which you want to add Users
 const challangeId = 1;
 
 // Specify the range of Users from - to which to be added on a Challenge or a Group
-// Utilized in functions: 'addUsersToHubGroups()' and 'addUsersToChallengePopulation()'
+// Utilized in functions: 'addUsersToSpaceGroups()' and 'addUsersToChallengePopulation()'
 const fromUserId = 1;
 const toUserId = 2;
 
@@ -121,11 +121,11 @@ export const createChallangeMutation = async (challengeName: string) => {
   return await graphqlRequest(requestParams);
 };
 
-export const createGroupOnHubMutation = async (testGroup: string) => {
+export const createGroupOnSpaceMutation = async (testGroup: string) => {
   const requestParams = {
-    operationName: 'CreateGroupOnHub',
-    query: `mutation CreateGroupOnHub($groupName: String!) {
-          createGroupOnHub(groupName: $groupName) {
+    operationName: 'CreateGroupOnSpace',
+    query: `mutation CreateGroupOnSpace($groupName: String!) {
+          createGroupOnSpace(groupName: $groupName) {
             name,
             id,
           }
@@ -275,21 +275,21 @@ const createPerformanceTestData = async () => {
   }
 };
 
-// This function creates Hub Groups
-const createGroupSOnHub = async () => {
-  for (let i = 1; i <= numberOfGroupsOnHub; i++) {
+// This function creates Space Groups
+const createGroupSOnSpace = async () => {
+  for (let i = 1; i <= numberOfGroupsOnSpace; i++) {
     groupName = 'groupName ' + ID().toString();
-    const response = await createGroupOnHubMutation(groupName);
+    const response = await createGroupOnSpaceMutation(groupName);
     console.log(
-      `Hub Group with name: ${response.body.data.createGroupOnHub.name} and id: ${response.body.data.createGroupOnHub.id} is created`
+      `Space Group with name: ${response.body.data.createGroupOnSpace.name} and id: ${response.body.data.createGroupOnSpace.id} is created`
     );
   }
 };
 
-// This function adds the Users to a HubGroup with known groupId
-const addUsersToHubGroups = async () => {
+// This function adds the Users to a SpaceGroup with known groupId
+const addUsersToSpaceGroups = async () => {
   for (let i = fromUserId; i <= toUserId; i++) {
-    const response = await addUserToGroupMutation([i], hubGroupId);
+    const response = await addUserToGroupMutation([i], spaceGroupId);
     const responseUserAddedToGroup = response.body.data.addUserToGroup;
     console.log(
       `User with id: '${[i]}' is added to Group: '${responseUserAddedToGroup}'`
@@ -316,7 +316,7 @@ const addUsersToChallengePopulation = async () => {
 
 //createUsers();
 //createChallenges();
-//createGroupSOnHub();
-//addUsersToHubGroups();
+//createGroupSOnSpace();
+//addUsersToSpaceGroups();
 //addUsersToChallengePopulation();
 createPerformanceTestData();

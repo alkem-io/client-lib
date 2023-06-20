@@ -6,13 +6,13 @@ import semver from 'semver';
 import { AlkemioClientConfig } from './config/alkemio-client-config';
 import { getSdk, InputMaybe, Sdk } from './generated/graphql';
 import {
-  CreateChallengeOnHubInput,
-  UpdateHubInput,
+  CreateChallengeOnSpaceInput,
+  UpdateSpaceInput,
   UpdateChallengeInput,
   UpdateOrganizationInput,
   CreateUserInput,
   UpdateReferenceInput,
-  CreateHubInput,
+  CreateSpaceInput,
   CreateOpportunityInput,
   UpdateOpportunityInput,
   CreateChallengeOnChallengeInput,
@@ -188,17 +188,17 @@ export class AlkemioClient {
     const response = await this.privateClient.space({
       id: spaceID,
     });
-    return response.data?.hub;
+    return response.data?.space;
   }
 
-  public async createSpace(spaceData: CreateHubInput) {
+  public async createSpace(spaceData: CreateSpaceInput) {
     const result = await this.privateClient.createSpace({
       spaceData: spaceData,
     });
-    return result.data?.createHub;
+    return result.data?.createSpace;
   }
 
-  public async createChallenge(challenge: CreateChallengeOnHubInput) {
+  public async createChallenge(challenge: CreateChallengeOnSpaceInput) {
     const { data } = await this.privateClient.createChallenge({
       challengeData: challenge,
     });
@@ -356,10 +356,10 @@ export class AlkemioClient {
     userID: string
   ) {
     const response = await this.privateClient.challenge({
-      hubID: spaceID,
+      spaceID: spaceID,
       challengeID: challengeName,
     });
-    const communityID = response.data?.hub.challenge?.community?.id;
+    const communityID = response.data?.space.challenge?.community?.id;
 
     if (!response || !communityID) return;
 
@@ -374,10 +374,10 @@ export class AlkemioClient {
   public async opportunityByNameID(spaceID: string, opportunityNameID: string) {
     try {
       const result = await this.privateClient.opportunity({
-        hubID: spaceID,
+        spaceID: spaceID,
         opportunityID: opportunityNameID,
       });
-      if (result.data) return result.data?.hub.opportunity;
+      if (result.data) return result.data?.space.opportunity;
     } catch (error) {
       return;
     }
@@ -386,12 +386,12 @@ export class AlkemioClient {
   async challengeByNameID(spaceNameID: string, challengeNameID: string) {
     try {
       const response = await this.privateClient.challenge({
-        hubID: spaceNameID,
+        spaceID: spaceNameID,
         challengeID: challengeNameID,
       });
 
       if (!response) return;
-      return response.data?.hub.challenge;
+      return response.data?.space.challenge;
     } catch (error) {
       return;
     }
@@ -445,12 +445,12 @@ export class AlkemioClient {
     });
   }
 
-  async updateSpace(spaceData: UpdateHubInput) {
+  async updateSpace(spaceData: UpdateSpaceInput) {
     const { data } = await this.privateClient.updateSpace({
       spaceData: spaceData,
     });
 
-    return data?.updateHub;
+    return data?.updateSpace;
   }
 
   public uploadFileOnReference(path: PathLike, referenceID: string) {
@@ -691,10 +691,10 @@ export class AlkemioClient {
 
   public async challenges(spaceID: string) {
     const { data } = await this.privateClient.challenges({
-      hubID: spaceID,
+      spaceID: spaceID,
     });
 
-    return data?.hub.challenges;
+    return data?.space.challenges;
   }
 
   public async updateChallenge(challenge: UpdateChallengeInput) {
@@ -731,10 +731,10 @@ export class AlkemioClient {
 
   public async groups(spaceID: string) {
     const { data } = await this.privateClient.groups({
-      hubID: spaceID,
+      spaceID: spaceID,
     });
 
-    return data?.hub.community?.groups;
+    return data?.space.community?.groups;
   }
 
   public async groupByName(spaceID: string, name: string) {
@@ -778,15 +778,15 @@ export class AlkemioClient {
   public async spaces() {
     const { data } = await this.privateClient.spaces();
 
-    return data?.hubs;
+    return data?.spaces;
   }
 
   public async opportunities(spaceID: string) {
     const { data } = await this.privateClient.opportunities({
-      hubID: spaceID,
+      spaceID: spaceID,
     });
 
-    return data?.hub.opportunities;
+    return data?.space.opportunities;
   }
 
   async assignOrganizationAsCommunityLead(

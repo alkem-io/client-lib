@@ -1,5 +1,5 @@
 query spaces {
-  hubs {
+  spaces {
     id
     nameID
     profile {
