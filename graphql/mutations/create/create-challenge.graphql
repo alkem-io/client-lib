@@ -1,4 +1,4 @@
-mutation createChallenge($challengeData: CreateChallengeOnHubInput!) {
+mutation createChallenge($challengeData: CreateChallengeOnSpaceInput!) {
   createChallenge(challengeData: $challengeData) {
     id
     nameID

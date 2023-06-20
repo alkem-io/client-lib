@@ -1,5 +1,5 @@
-query hostInfo($hubID: UUID_NAMEID!) {
-  hub(ID: $hubID) {
+query hostInfo($spaceID: UUID_NAMEID!) {
+  space(ID: $spaceID) {
     host {
       id
       nameID
@@ -8,8 +8,8 @@ query hostInfo($hubID: UUID_NAMEID!) {
         displayName
         tagsets {
           id
-         name
-         tags
+          name
+          tags
         }
       }
     }

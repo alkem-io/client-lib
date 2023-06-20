@@ -1,5 +1,5 @@
-mutation createSpace($spaceData: CreateHubInput!) {
-  createHub(hubData: $spaceData) {
+mutation createSpace($spaceData: CreateSpaceInput!) {
+  createSpace(spaceData: $spaceData) {
     id
     nameID
     profile {
