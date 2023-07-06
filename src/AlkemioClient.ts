@@ -114,7 +114,7 @@ export class AlkemioClient {
       configuration.data?.configuration.authentication.providers[0].config
         .kratosPublicBaseURL;
 
-    return endpoint ?? 'http://localhost:3000/identity/ory/kratos/public/';
+    return endpoint ?? 'http://localhost:3000/ory/kratos/public/';
   }
 
   public async featureFlags() {

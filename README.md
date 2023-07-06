@@ -34,7 +34,7 @@ The set of wrapper calls provided is based on needs to date; feel free to augmen
 The following environment variables are used to specify the api endpoint and authentication parameters:
 
 * API_ENDPOINT_PRIVATE_GRAPHQL=http://localhost:3000/api/private/non-interactive/graphql
-* AUTH_ORY_KRATOS_PUBLIC_BASE_URL=http://localhost:3000/identity/ory/kratos/public
+* AUTH_ORY_KRATOS_PUBLIC_BASE_URL=http://localhost:3000/ory/kratos/public
 * AUTH_ADMIN_EMAIL=admin@alkem.io
 * AUTH_ADMIN_PASSWORD=changeMe
 *
