@@ -10568,8 +10568,6 @@ export type ChallengeQuery = {
             id: string;
             displayName?: string | undefined;
             memberUsers?: Array<{ nameID: string }> | undefined;
-            usersInRole?: Array<{ nameID: string }> | undefined;
-            organizationsInRole?: Array<{ nameID: string }> | undefined;
             memberOrganizations?: Array<{ nameID: string }> | undefined;
             leadOrganizations?: Array<{ nameID: string }> | undefined;
             leadUsers?: Array<{ nameID: string }> | undefined;
@@ -11613,15 +11611,6 @@ export const ChallengeDocument = gql`
           id
           displayName
           memberUsers {
-            nameID
-          }
-          usersInRole(role: LEAD) {
-            nameID
-          }
-          organizationsInRole(role: LEAD) {
-            nameID
-          }
-          organizationsInRole(role: LEAD) {
             nameID
           }
           memberOrganizations: organizationsInRole(role: MEMBER) {

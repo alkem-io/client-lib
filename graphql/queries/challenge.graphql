@@ -12,15 +12,6 @@ query challenge($spaceID: UUID_NAMEID!, $challengeID: UUID_NAMEID!) {
         memberUsers {
           nameID
         }
-        usersInRole(role: LEAD) {
-          nameID
-        }
-        organizationsInRole(role: LEAD) {
-          nameID
-        }
-        organizationsInRole(role: LEAD) {
-          nameID
-        }
         memberOrganizations: organizationsInRole(role:MEMBER ) {
           nameID
         }
