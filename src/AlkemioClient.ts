@@ -798,7 +798,7 @@ export class AlkemioClient {
   ) {
     const { data } = await this.privateClient.assignCommunityRoleToOrganization(
       {
-        input: { communityID, organizationID, role: CommunityRole.Member },
+        input: { communityID, organizationID, role: CommunityRole.Lead },
       }
     );
 
@@ -812,7 +812,7 @@ export class AlkemioClient {
     const { data } = await this.privateClient.assignCommunityRoleToOrganization(
       {
         input: {
-          role: CommunityRole.Lead,
+          role: CommunityRole.Member,
           organizationID: organizationID,
           communityID: communityID,
         },
