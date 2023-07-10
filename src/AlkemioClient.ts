@@ -4,7 +4,7 @@ import { GraphQLClient } from 'graphql-request';
 import { FileUpload } from 'graphql-upload';
 import semver from 'semver';
 import { AlkemioClientConfig } from './config/alkemio-client-config';
-import { getSdk, InputMaybe, Sdk } from './generated/graphql';
+import { CommunityRole, getSdk, InputMaybe, Sdk } from './generated/graphql';
 import {
   CreateChallengeOnSpaceInput,
   UpdateSpaceInput,
@@ -363,8 +363,9 @@ export class AlkemioClient {
 
     if (!response || !communityID) return;
 
-    return await this.privateClient.assignUserToCommunity({
+    return await this.privateClient.assignCommunityRoleToUser({
       input: {
+        role: CommunityRole.Member,
         userID: userID,
         communityID: communityID,
       },
@@ -423,10 +424,11 @@ export class AlkemioClient {
 
     if (!communityID) return;
 
-    return await this.privateClient.assignUserToCommunity({
+    return await this.privateClient.assignCommunityRoleToUser({
       input: {
+        role: CommunityRole.Member,
         userID: userID,
-        communityID,
+        communityID: communityID,
       },
     });
   }
@@ -437,10 +439,11 @@ export class AlkemioClient {
 
     if (!spaceInfo || !communityID) return;
 
-    return await this.privateClient.assignUserToCommunity({
+    return await this.privateClient.assignCommunityRoleToUser({
       input: {
+        role: CommunityRole.Member,
         userID: userID,
-        communityID,
+        communityID: communityID,
       },
     });
   }
@@ -793,38 +796,50 @@ export class AlkemioClient {
     communityID: string,
     organizationID: string
   ) {
-    const { data } = await this.privateClient.assignOrgAsLead({
-      input: { communityID, organizationID },
-    });
+    const { data } = await this.privateClient.assignCommunityRoleToOrganization(
+      {
+        input: { communityID, organizationID, role: CommunityRole.Member },
+      }
+    );
 
-    return data?.assignOrganizationAsCommunityLead;
+    return data?.assignCommunityRoleToOrganization;
   }
 
   async assignOrganizationAsCommunityMember(
     communityID: string,
     organizationID: string
   ) {
-    const { data } = await this.privateClient.assignOrgAsMember({
-      input: { communityID, organizationID },
-    });
+    const { data } = await this.privateClient.assignCommunityRoleToOrganization(
+      {
+        input: {
+          role: CommunityRole.Lead,
+          organizationID: organizationID,
+          communityID: communityID,
+        },
+      }
+    );
 
-    return data?.assignOrganizationAsCommunityMember;
+    return data?.assignCommunityRoleToOrganization;
   }
 
   async assignUserAsCommunityLead(communityID: string, userID: string) {
-    const { data } = await this.privateClient.assignUserAsCommunityLead({
-      input: { communityID, userID },
+    const { data } = await this.privateClient.assignCommunityRoleToUser({
+      input: {
+        role: CommunityRole.Lead,
+        userID: userID,
+        communityID: communityID,
+      },
     });
 
-    return data?.assignUserAsCommunityLead;
+    return data?.assignCommunityRoleToUser;
   }
 
   async assignUserAsCommunityMember(communityID: string, userID: string) {
-    const { data } = await this.privateClient.assignUserToCommunity({
-      input: { communityID, userID },
+    const { data } = await this.privateClient.assignCommunityRoleToUser({
+      input: { communityID, userID, role: CommunityRole.Member },
     });
 
-    return data?.assignUserAsCommunityMember;
+    return data?.assignCommunityRoleToUser;
   }
 
   async addUserToCommunity(userID: string, communityID?: string) {
@@ -833,14 +848,15 @@ export class AlkemioClient {
       throw new Error(`Unable to locate community: ${communityID}`);
     const cID = communityID;
 
-    const { data } = await this.privateClient.assignUserToCommunity({
+    const { data } = await this.privateClient.assignCommunityRoleToUser({
       input: {
+        role: CommunityRole.Member,
         userID: uID,
         communityID: cID,
       },
     });
 
-    return data?.assignUserAsCommunityMember;
+    return data?.assignCommunityRoleToUser;
   }
 
   async updateReferencesOnSpace(
