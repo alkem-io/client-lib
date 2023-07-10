@@ -15,13 +15,13 @@ query space($id: UUID_NAMEID!) {
       memberUsers {
         nameID
       }
-      memberOrganizations {
+      memberOrganizations: organizationsInRole(role:MEMBER ) {
         nameID
       }
-      leadUsers {
+      leadOrganizations: organizationsInRole(role:LEAD ) {
         nameID
       }
-      leadOrganizations {
+      leadUsers: usersInRole(role:LEAD) {
         nameID
       }
     }

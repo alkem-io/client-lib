@@ -1,5 +1,0 @@
-mutation assignUserAsChallengeAdmin($membershipData: AssignChallengeAdminInput!) {
-  assignUserAsChallengeAdmin(membershipData: $membershipData) {
-    id,
-  }
-}

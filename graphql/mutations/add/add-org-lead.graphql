@@ -1,5 +1,0 @@
-mutation assignOrgAsLead($input: AssignCommunityLeadOrganizationInput!) {
-    assignOrganizationAsCommunityLead(leadershipData: $input) {
-        id
-    }
-}

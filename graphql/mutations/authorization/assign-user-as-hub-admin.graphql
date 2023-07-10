@@ -1,5 +1,0 @@
-mutation assignUserAsSpaceAdmin($membershipData: AssignSpaceAdminInput!) {
-  assignUserAsSpaceAdmin(membershipData: $membershipData) {
-    id
-  }
-}
