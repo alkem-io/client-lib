@@ -32,8 +32,12 @@ fragment OpportunityProfile on Opportunity {
       uri
     }
   }
-  lifecycle {
-    state
+  innovationFlow {
+    id
+    lifecycle {
+      id
+      state
+    }
   }
   context {
     vision

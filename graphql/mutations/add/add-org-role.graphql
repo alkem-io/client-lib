@@ -1,0 +1,5 @@
+mutation assignCommunityRoleToOrganization($input: AssignCommunityRoleToOrganizationInput!) {
+    assignCommunityRoleToOrganization (roleData: $input) {
+        id
+    }
+}
