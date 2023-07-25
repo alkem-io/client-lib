@@ -1,10 +1,10 @@
 query metadata {
   platform {
     metadata {
-    services {
-      name
-      version
+      services {
+        name
+        version
+      }
     }
-  }
   }
 }
