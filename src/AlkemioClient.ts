@@ -111,8 +111,8 @@ export class AlkemioClient {
   public async getKratosPublicApiEndpoint(): Promise<string> {
     const configuration = await this.privateClient.configuration();
     const endpoint =
-      configuration.data?.configuration.authentication.providers[0].config
-        .kratosPublicBaseURL;
+      configuration.data?.platform.configuration.authentication.providers[0]
+        .config.kratosPublicBaseURL;
 
     return endpoint ?? 'http://localhost:3000/ory/kratos/public/';
   }
@@ -120,7 +120,7 @@ export class AlkemioClient {
   public async featureFlags() {
     const { data } = await this.privateClient.featureFlags();
 
-    return data?.configuration.platform.featureFlags;
+    return data?.platform.configuration.platform.featureFlags;
   }
 
   public async validateConnection() {
@@ -157,7 +157,7 @@ export class AlkemioClient {
         `Unable to query meta data from: ${this.config.apiEndpointPrivateGraphql}`
       );
     }
-    const serverMetaData = data?.metadata.services.find(
+    const serverMetaData = data?.platform.metadata.services.find(
       service => service.name === 'alkemio-server'
     );
     if (!serverMetaData) throw new Error('Unable to locate server meta data');

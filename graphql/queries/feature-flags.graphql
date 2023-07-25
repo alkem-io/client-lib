@@ -1,12 +1,11 @@
 query featureFlags {
-  configuration
-  {
-    platform
-    {
-      featureFlags
-      {
-        name
-        enabled
+  platform {
+    configuration {
+      platform {
+        featureFlags {
+          name
+          enabled
+        }
       }
     }
   }
