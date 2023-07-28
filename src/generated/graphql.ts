@@ -347,6 +347,11 @@ export type ActorGroup = {
   name: Scalars['String'];
 };
 
+export type AdminInnovationFlowSynchronizeStatesInput = {
+  /** ID of the Innovation Flow */
+  innovationFlowID: Scalars['UUID'];
+};
+
 export type Agent = {
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
@@ -666,7 +671,7 @@ export type Callout = {
   visibility: CalloutVisibility;
   /** The whiteboard template associated with this Callout. */
   whiteboardTemplate?: Maybe<WhiteboardTemplate>;
-  /** The Whiteboardes associated with this Callout. */
+  /** The Whiteboards associated with this Callout. */
   whiteboards?: Maybe<Array<Whiteboard>>;
 };
 
@@ -790,6 +795,7 @@ export type CollaborationCalloutsArgs = {
   limit?: InputMaybe<Scalars['Float']>;
   shuffle?: InputMaybe<Scalars['Boolean']>;
   sortByActivity?: InputMaybe<Scalars['Boolean']>;
+  tagsets?: InputMaybe<Array<TagsetArgs>>;
 };
 
 export type Communication = {
@@ -1298,6 +1304,7 @@ export type CreateProfileInput = {
   referencesData?: InputMaybe<Array<CreateReferenceInput>>;
   /** A memorable short description for this entity. */
   tagline?: InputMaybe<Scalars['String']>;
+  tagsets?: InputMaybe<Array<CreateTagsetInput>>;
 };
 
 export type CreateProjectInput = {
@@ -1337,6 +1344,12 @@ export type CreateSpaceInput = {
   nameID: Scalars['NameID'];
   profileData: CreateProfileInput;
   tags?: InputMaybe<Array<Scalars['String']>>;
+};
+
+export type CreateTagsetInput = {
+  name: Scalars['String'];
+  tags?: InputMaybe<Array<Scalars['String']>>;
+  type?: InputMaybe<TagsetType>;
 };
 
 export type CreateTagsetOnProfileInput = {
@@ -1827,7 +1840,7 @@ export type Library = {
   id: Scalars['UUID'];
   /** A single Innovation Pack */
   innovationPack?: Maybe<InnovationPack>;
-  /** Platform level library. */
+  /** The Innovation Packs in the platform Innovation Library. */
   innovationPacks: Array<InnovationPack>;
   /** The StorageBucket with documents in use by this User */
   storageBucket?: Maybe<StorageBucket>;
@@ -1861,6 +1874,29 @@ export type Location = {
   id: Scalars['UUID'];
   postalCode: Scalars['String'];
   stateOrProvince: Scalars['String'];
+};
+
+export type MeQueryResults = {
+  /** The applications of the current authenticated user */
+  applications: Array<Application>;
+  /** The invitations of the current authenticated user */
+  invitations: Array<Invitation>;
+  /** The applications of the current authenticated user */
+  spaceMemberships: Array<Space>;
+  /** The current authenticated User;  null if not yet registered on the platform */
+  user?: Maybe<User>;
+};
+
+export type MeQueryResultsApplicationsArgs = {
+  states?: InputMaybe<Array<Scalars['String']>>;
+};
+
+export type MeQueryResultsInvitationsArgs = {
+  states?: InputMaybe<Array<Scalars['String']>>;
+};
+
+export type MeQueryResultsSpaceMembershipsArgs = {
+  visibilities?: InputMaybe<Array<SpaceVisibility>>;
 };
 
 /** A message that was sent either as an Update or as part of a Discussion. */
@@ -1915,6 +1951,8 @@ export type Mutation = {
   adminCommunicationRemoveOrphanedRoom: Scalars['Boolean'];
   /** Allow updating the rule for joining rooms: public or invite. */
   adminCommunicationUpdateRoomsJoinRule: Scalars['Boolean'];
+  /** Updates the States tagset to be synchronized with the Lifecycle states. */
+  adminInnovationFlowSynchronizeStates: Tagset;
   /** Migrate all ipfs links to use new storage access api */
   adminStorageMigrateIpfsUrls: Scalars['Boolean'];
   /** Apply to join the specified Community as a member. */
@@ -2211,6 +2249,10 @@ export type MutationAdminCommunicationRemoveOrphanedRoomArgs = {
 
 export type MutationAdminCommunicationUpdateRoomsJoinRuleArgs = {
   changeRoomAccessData: CommunicationAdminUpdateRoomsJoinRuleInput;
+};
+
+export type MutationAdminInnovationFlowSynchronizeStatesArgs = {
+  innovationFlowData: AdminInnovationFlowSynchronizeStatesInput;
 };
 
 export type MutationApplyForCommunityMembershipArgs = {
@@ -2914,6 +2956,8 @@ export type Platform = {
   authorization?: Maybe<Authorization>;
   /** The Communications for the platform */
   communication: Communication;
+  /** Alkemio configuration. Provides configuration to external services in the Alkemio ecosystem. */
+  configuration: Config;
   /** The ID of the entity */
   id: Scalars['UUID'];
   /** Details about an Innovation Hubs on the platform. If the arguments are omitted, the current Innovation Hub you are in will be returned. */
@@ -2922,8 +2966,10 @@ export type Platform = {
   innovationHubs: Array<InnovationHub>;
   /** The Innovation Library for the platform */
   library: Library;
+  /** Alkemio Services Metadata. */
+  metadata: Metadata;
   /** The StorageBucket with documents in use by Users + Organizations on the Platform. */
-  storageBucket?: Maybe<StorageBucket>;
+  storageBucket: StorageBucket;
 };
 
 export type PlatformInnovationHubArgs = {
@@ -3150,24 +3196,16 @@ export type Query = {
   adminCommunicationMembership: CommunicationAdminMembershipResult;
   /** Usage of the messaging platform that are not tied to the domain model. */
   adminCommunicationOrphanedUsage: CommunicationAdminOrphanedUsageResult;
-  /** The authorization policy for the platform */
-  authorization: Authorization;
   /** A specific Collaboration entity. */
   collaboration: Collaboration;
   /** A specific Community entity. */
   community: Community;
-  /** Alkemio configuration. Provides configuration to external services in the Alkemio ecosystem. */
-  configuration: Config;
   /** A specific Context entity. */
   context: Context;
   /** Get supported credential metadata */
   getSupportedVerifiedCredentialMetadata: Array<CredentialMetadataOutput>;
-  /** The currently logged in user */
-  me: User;
-  /** Check if the currently logged in user has a User profile */
-  meHasProfile: Scalars['Boolean'];
-  /** Alkemio Services Metadata */
-  metadata: Metadata;
+  /** Information about the current authenticated user */
+  me: MeQueryResults;
   /** A particular Organization */
   organization: Organization;
   /** The Organizations on this platform */
@@ -3949,6 +3987,13 @@ export type Tagset = {
   type: TagsetType;
 };
 
+export type TagsetArgs = {
+  /** Return only Callouts that match one of the tagsets and any of the tags in them. */
+  name: Scalars['String'];
+  /** A list of tags to include. */
+  tags: Array<Scalars['String']>;
+};
+
 export type TagsetTemplate = {
   allowedValues: Array<Scalars['String']>;
   /** For Tagsets of type SELECT_ONE, the default selected value. */
@@ -4180,6 +4225,8 @@ export type UpdateInnovationFlowInput = {
   innovationFlowID: Scalars['UUID'];
   /** The Profile of this entity. */
   profileData?: InputMaybe<UpdateProfileInput>;
+  /** The states on this InnovationFlow that should be selectable. */
+  visibleStates?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export type UpdateInnovationFlowLifecycleTemplateInput = {
@@ -4763,6 +4810,7 @@ export type ResolversTypes = {
   ActivityLogInput: SchemaTypes.ActivityLogInput;
   Actor: ResolverTypeWrapper<SchemaTypes.Actor>;
   ActorGroup: ResolverTypeWrapper<SchemaTypes.ActorGroup>;
+  AdminInnovationFlowSynchronizeStatesInput: SchemaTypes.AdminInnovationFlowSynchronizeStatesInput;
   Agent: ResolverTypeWrapper<SchemaTypes.Agent>;
   AgentBeginVerifiedCredentialOfferOutput: ResolverTypeWrapper<SchemaTypes.AgentBeginVerifiedCredentialOfferOutput>;
   AgentBeginVerifiedCredentialRequestOutput: ResolverTypeWrapper<SchemaTypes.AgentBeginVerifiedCredentialRequestOutput>;
@@ -4859,6 +4907,7 @@ export type ResolversTypes = {
   CreateReferenceOnProfileInput: SchemaTypes.CreateReferenceOnProfileInput;
   CreateRelationOnCollaborationInput: SchemaTypes.CreateRelationOnCollaborationInput;
   CreateSpaceInput: SchemaTypes.CreateSpaceInput;
+  CreateTagsetInput: SchemaTypes.CreateTagsetInput;
   CreateTagsetOnProfileInput: SchemaTypes.CreateTagsetOnProfileInput;
   CreateUserGroupInput: SchemaTypes.CreateUserGroupInput;
   CreateUserInput: SchemaTypes.CreateUserInput;
@@ -4933,6 +4982,7 @@ export type ResolversTypes = {
   >;
   Location: ResolverTypeWrapper<SchemaTypes.Location>;
   Markdown: ResolverTypeWrapper<SchemaTypes.Scalars['Markdown']>;
+  MeQueryResults: ResolverTypeWrapper<SchemaTypes.MeQueryResults>;
   Message: ResolverTypeWrapper<SchemaTypes.Message>;
   MessageID: ResolverTypeWrapper<SchemaTypes.Scalars['MessageID']>;
   Metadata: ResolverTypeWrapper<SchemaTypes.Metadata>;
@@ -5032,6 +5082,7 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<SchemaTypes.Scalars['String']>;
   Subscription: ResolverTypeWrapper<{}>;
   Tagset: ResolverTypeWrapper<SchemaTypes.Tagset>;
+  TagsetArgs: SchemaTypes.TagsetArgs;
   TagsetTemplate: ResolverTypeWrapper<SchemaTypes.TagsetTemplate>;
   TagsetType: SchemaTypes.TagsetType;
   Template: ResolverTypeWrapper<SchemaTypes.Template>;
@@ -5134,6 +5185,7 @@ export type ResolversParentTypes = {
   ActivityLogInput: SchemaTypes.ActivityLogInput;
   Actor: SchemaTypes.Actor;
   ActorGroup: SchemaTypes.ActorGroup;
+  AdminInnovationFlowSynchronizeStatesInput: SchemaTypes.AdminInnovationFlowSynchronizeStatesInput;
   Agent: SchemaTypes.Agent;
   AgentBeginVerifiedCredentialOfferOutput: SchemaTypes.AgentBeginVerifiedCredentialOfferOutput;
   AgentBeginVerifiedCredentialRequestOutput: SchemaTypes.AgentBeginVerifiedCredentialRequestOutput;
@@ -5220,6 +5272,7 @@ export type ResolversParentTypes = {
   CreateReferenceOnProfileInput: SchemaTypes.CreateReferenceOnProfileInput;
   CreateRelationOnCollaborationInput: SchemaTypes.CreateRelationOnCollaborationInput;
   CreateSpaceInput: SchemaTypes.CreateSpaceInput;
+  CreateTagsetInput: SchemaTypes.CreateTagsetInput;
   CreateTagsetOnProfileInput: SchemaTypes.CreateTagsetOnProfileInput;
   CreateUserGroupInput: SchemaTypes.CreateUserGroupInput;
   CreateUserInput: SchemaTypes.CreateUserInput;
@@ -5291,6 +5344,7 @@ export type ResolversParentTypes = {
   LifecycleDefinition: SchemaTypes.Scalars['LifecycleDefinition'];
   Location: SchemaTypes.Location;
   Markdown: SchemaTypes.Scalars['Markdown'];
+  MeQueryResults: SchemaTypes.MeQueryResults;
   Message: SchemaTypes.Message;
   MessageID: SchemaTypes.Scalars['MessageID'];
   Metadata: SchemaTypes.Metadata;
@@ -5381,6 +5435,7 @@ export type ResolversParentTypes = {
   String: SchemaTypes.Scalars['String'];
   Subscription: {};
   Tagset: SchemaTypes.Tagset;
+  TagsetArgs: SchemaTypes.TagsetArgs;
   TagsetTemplate: SchemaTypes.TagsetTemplate;
   Template: SchemaTypes.Template;
   TemplatesSet: SchemaTypes.TemplatesSet;
@@ -7114,6 +7169,36 @@ export interface MarkdownScalarConfig
   name: 'Markdown';
 }
 
+export type MeQueryResultsResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['MeQueryResults'] = ResolversParentTypes['MeQueryResults']
+> = {
+  applications?: Resolver<
+    Array<ResolversTypes['Application']>,
+    ParentType,
+    ContextType,
+    Partial<SchemaTypes.MeQueryResultsApplicationsArgs>
+  >;
+  invitations?: Resolver<
+    Array<ResolversTypes['Invitation']>,
+    ParentType,
+    ContextType,
+    Partial<SchemaTypes.MeQueryResultsInvitationsArgs>
+  >;
+  spaceMemberships?: Resolver<
+    Array<ResolversTypes['Space']>,
+    ParentType,
+    ContextType,
+    Partial<SchemaTypes.MeQueryResultsSpaceMembershipsArgs>
+  >;
+  user?: Resolver<
+    SchemaTypes.Maybe<ResolversTypes['User']>,
+    ParentType,
+    ContextType
+  >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MessageResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['Message'] = ResolversParentTypes['Message']
@@ -7195,6 +7280,15 @@ export type MutationResolvers<
     RequireFields<
       SchemaTypes.MutationAdminCommunicationUpdateRoomsJoinRuleArgs,
       'changeRoomAccessData'
+    >
+  >;
+  adminInnovationFlowSynchronizeStates?: Resolver<
+    ResolversTypes['Tagset'],
+    ParentType,
+    ContextType,
+    RequireFields<
+      SchemaTypes.MutationAdminInnovationFlowSynchronizeStatesArgs,
+      'innovationFlowData'
     >
   >;
   adminStorageMigrateIpfsUrls?: Resolver<
@@ -8499,6 +8593,7 @@ export type PlatformResolvers<
     ParentType,
     ContextType
   >;
+  configuration?: Resolver<ResolversTypes['Config'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   innovationHub?: Resolver<
     SchemaTypes.Maybe<ResolversTypes['InnovationHub']>,
@@ -8512,8 +8607,9 @@ export type PlatformResolvers<
     ContextType
   >;
   library?: Resolver<ResolversTypes['Library'], ParentType, ContextType>;
+  metadata?: Resolver<ResolversTypes['Metadata'], ParentType, ContextType>;
   storageBucket?: Resolver<
-    SchemaTypes.Maybe<ResolversTypes['StorageBucket']>,
+    ResolversTypes['StorageBucket'],
     ParentType,
     ContextType
   >;
@@ -8744,11 +8840,6 @@ export type QueryResolvers<
     ParentType,
     ContextType
   >;
-  authorization?: Resolver<
-    ResolversTypes['Authorization'],
-    ParentType,
-    ContextType
-  >;
   collaboration?: Resolver<
     ResolversTypes['Collaboration'],
     ParentType,
@@ -8761,7 +8852,6 @@ export type QueryResolvers<
     ContextType,
     RequireFields<SchemaTypes.QueryCommunityArgs, 'ID'>
   >;
-  configuration?: Resolver<ResolversTypes['Config'], ParentType, ContextType>;
   context?: Resolver<
     ResolversTypes['Context'],
     ParentType,
@@ -8773,9 +8863,7 @@ export type QueryResolvers<
     ParentType,
     ContextType
   >;
-  me?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  meHasProfile?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  metadata?: Resolver<ResolversTypes['Metadata'], ParentType, ContextType>;
+  me?: Resolver<ResolversTypes['MeQueryResults'], ParentType, ContextType>;
   organization?: Resolver<
     ResolversTypes['Organization'],
     ParentType,
@@ -9982,6 +10070,7 @@ export type Resolvers<ContextType = any> = {
   LifecycleDefinition?: GraphQLScalarType;
   Location?: LocationResolvers<ContextType>;
   Markdown?: GraphQLScalarType;
+  MeQueryResults?: MeQueryResultsResolvers<ContextType>;
   Message?: MessageResolvers<ContextType>;
   MessageID?: GraphQLScalarType;
   Metadata?: MetadataResolvers<ContextType>;
@@ -10618,19 +10707,21 @@ export type ConfigurationQueryVariables = SchemaTypes.Exact<{
 }>;
 
 export type ConfigurationQuery = {
-  configuration: {
-    authentication: {
-      providers: Array<{
-        name: string;
-        label: string;
-        icon: string;
-        enabled: boolean;
-        config: {
-          __typename: 'OryConfig';
-          issuer: string;
-          kratosPublicBaseURL: string;
-        };
-      }>;
+  platform: {
+    configuration: {
+      authentication: {
+        providers: Array<{
+          name: string;
+          label: string;
+          icon: string;
+          enabled: boolean;
+          config: {
+            __typename: 'OryConfig';
+            issuer: string;
+            kratosPublicBaseURL: string;
+          };
+        }>;
+      };
     };
   };
 };
@@ -10640,8 +10731,10 @@ export type FeatureFlagsQueryVariables = SchemaTypes.Exact<{
 }>;
 
 export type FeatureFlagsQuery = {
-  configuration: {
-    platform: { featureFlags: Array<{ name: string; enabled: boolean }> };
+  platform: {
+    configuration: {
+      platform: { featureFlags: Array<{ name: string; enabled: boolean }> };
+    };
   };
 };
 
@@ -10684,11 +10777,13 @@ export type MetadataQueryVariables = SchemaTypes.Exact<{
 }>;
 
 export type MetadataQuery = {
-  metadata: {
-    services: Array<{
-      name?: string | undefined;
-      version?: string | undefined;
-    }>;
+  platform: {
+    metadata: {
+      services: Array<{
+        name?: string | undefined;
+        version?: string | undefined;
+      }>;
+    };
   };
 };
 
@@ -11664,18 +11759,20 @@ export const ChallengesDocument = gql`
 `;
 export const ConfigurationDocument = gql`
   query configuration {
-    configuration {
-      authentication {
-        providers {
-          name
-          label
-          icon
-          enabled
-          config {
-            __typename
-            ... on OryConfig {
-              issuer
-              kratosPublicBaseURL
+    platform {
+      configuration {
+        authentication {
+          providers {
+            name
+            label
+            icon
+            enabled
+            config {
+              __typename
+              ... on OryConfig {
+                issuer
+                kratosPublicBaseURL
+              }
             }
           }
         }
@@ -11685,11 +11782,13 @@ export const ConfigurationDocument = gql`
 `;
 export const FeatureFlagsDocument = gql`
   query featureFlags {
-    configuration {
-      platform {
-        featureFlags {
-          name
-          enabled
+    platform {
+      configuration {
+        platform {
+          featureFlags {
+            name
+            enabled
+          }
         }
       }
     }
@@ -11728,10 +11827,12 @@ export const HostInfoDocument = gql`
 `;
 export const MetadataDocument = gql`
   query metadata {
-    metadata {
-      services {
-        name
-        version
+    platform {
+      metadata {
+        services {
+          name
+          version
+        }
       }
     }
   }
