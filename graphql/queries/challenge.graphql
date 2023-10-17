@@ -8,7 +8,6 @@ query challenge($spaceID: UUID_NAMEID!, $challengeID: UUID_NAMEID!) {
       }
       community {
         id
-        displayName
         memberUsers {
           nameID
         }
