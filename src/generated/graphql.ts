@@ -625,6 +625,7 @@ export enum AuthorizationPrivilege {
   FileUpload = 'FILE_UPLOAD',
   Grant = 'GRANT',
   GrantGlobalAdmins = 'GRANT_GLOBAL_ADMINS',
+  MoveContribution = 'MOVE_CONTRIBUTION',
   MovePost = 'MOVE_POST',
   PlatformAdmin = 'PLATFORM_ADMIN',
   Read = 'READ',
@@ -878,8 +879,8 @@ export type Challenge = {
   profile: Profile;
   /** The ID of the containing Space. */
   spaceID: Scalars['String'];
-  /** The StorageBucket with documents in use by this Challenge */
-  storageBucket?: Maybe<StorageBucket>;
+  /** The StorageAggregator in use by this Challenge */
+  storageAggregator?: Maybe<StorageAggregator>;
 };
 
 export type ChallengeOpportunitiesArgs = {
@@ -2019,8 +2020,8 @@ export type Library = {
   innovationPack?: Maybe<InnovationPack>;
   /** The Innovation Packs in the platform Innovation Library. */
   innovationPacks: Array<InnovationPack>;
-  /** The StorageBucket with documents in use by this User */
-  storageBucket?: Maybe<StorageBucket>;
+  /** The StorageAggregator for storage used by this Library */
+  storageAggregator?: Maybe<StorageAggregator>;
 };
 
 export type LibraryInnovationPackArgs = {
@@ -2237,11 +2238,11 @@ export enum MimeType {
   Xpng = 'XPNG',
 }
 
-export type MovePostInput = {
-  /** ID of the Callout to move the Post to. */
+export type MoveCalloutContributionInput = {
+  /** ID of the Callout to move the Contribution to. */
   calloutID: Scalars['UUID'];
-  /** ID of the Post to move. */
-  postID: Scalars['UUID'];
+  /** ID of the Contribution to move. */
+  contributionID: Scalars['UUID'];
 };
 
 export type Mutation = {
@@ -2427,8 +2428,8 @@ export type Mutation = {
   joinCommunity: Community;
   /** Sends a message on the specified User`s behalf and returns the room id */
   messageUser: Scalars['String'];
-  /** Moves the specified Post to another Callout. */
-  movePostToCallout: Post;
+  /** Moves the specified Contribution to another Callout. */
+  moveContributionToCallout: CalloutContribution;
   /** Removes an Organization from a Role in the specified Community. */
   removeCommunityRoleFromOrganization: Organization;
   /** Removes a User from a Role in the specified Community. */
@@ -2892,8 +2893,8 @@ export type MutationMessageUserArgs = {
   messageData: UserSendMessageInput;
 };
 
-export type MutationMovePostToCalloutArgs = {
-  movePostData: MovePostInput;
+export type MutationMoveContributionToCalloutArgs = {
+  moveContributionData: MoveCalloutContributionInput;
 };
 
 export type MutationRemoveCommunityRoleFromOrganizationArgs = {
@@ -3205,8 +3206,8 @@ export type Organization = Groupable & {
   preferences: Array<Preference>;
   /** The profile for this organization. */
   profile: Profile;
-  /** The StorageBucket with documents in use by this Organization */
-  storageBucket?: Maybe<StorageBucket>;
+  /** The StorageAggregator for managing storage buckets in use by this Organization */
+  storageAggregator?: Maybe<StorageAggregator>;
   verification: OrganizationVerification;
   /** Organization website */
   website?: Maybe<Scalars['String']>;
@@ -3309,8 +3310,8 @@ export type Platform = {
   library: Library;
   /** Alkemio Services Metadata. */
   metadata: Metadata;
-  /** The StorageBucket with documents in use by Users + Organizations on the Platform. */
-  storageBucket: StorageBucket;
+  /** The StorageAggregator with documents in use by Users + Organizations on the Platform. */
+  storageAggregator: StorageAggregator;
 };
 
 export type PlatformInnovationHubArgs = {
@@ -3364,8 +3365,6 @@ export type PlatformLocations = {
 export type Post = {
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
-  /** The parent Callout of the Post */
-  callout?: Maybe<Callout>;
   /** The comments on this Post. */
   comments: Room;
   /** The user that created this Post */
@@ -3520,7 +3519,6 @@ export type ProfileCredentialVerified = {
 
 export enum ProfileType {
   CalendarEvent = 'CALENDAR_EVENT',
-  Callout = 'CALLOUT',
   CalloutFraming = 'CALLOUT_FRAMING',
   CalloutTemplate = 'CALLOUT_TEMPLATE',
   Challenge = 'CHALLENGE',
@@ -3786,8 +3784,8 @@ export type RelayPaginatedSpace = {
   project: Project;
   /** All projects within this space */
   projects: Array<Project>;
-  /** The StorageBucket with documents in use by this Space */
-  storageBucket?: Maybe<StorageBucket>;
+  /** The StorageAggregator in use by this Space */
+  storageAggregator?: Maybe<StorageAggregator>;
   /** The templates in use by this Space */
   templates?: Maybe<TemplatesSet>;
   /** Visibility of the Space. */
@@ -3867,6 +3865,8 @@ export type RelayPaginatedUser = {
   preferences: Array<Preference>;
   /** The Profile for this User. */
   profile: Profile;
+  /** The StorageAggregator for managing storage buckets in use by this User */
+  storageAggregator?: Maybe<StorageAggregator>;
 };
 
 export type RelayPaginatedUserEdge = {
@@ -4277,8 +4277,8 @@ export type Space = {
   project: Project;
   /** All projects within this space */
   projects: Array<Project>;
-  /** The StorageBucket with documents in use by this Space */
-  storageBucket?: Maybe<StorageBucket>;
+  /** The StorageAggregator in use by this Space */
+  storageAggregator?: Maybe<StorageAggregator>;
   /** The templates in use by this Space */
   templates?: Maybe<TemplatesSet>;
   /** Visibility of the Space. */
@@ -4340,13 +4340,37 @@ export enum SpaceVisibility {
   Demo = 'DEMO',
 }
 
+export type StorageAggregator = {
+  /** The authorization rules for the entity */
+  authorization?: Maybe<Authorization>;
+  /** The Storage Bucket for files directly on this Storage Aggregator (legacy). */
+  directStorageBucket: StorageBucket;
+  /** The ID of the entity */
+  id: Scalars['UUID'];
+  /** The key information about the entity using this StorageAggregator, if any. */
+  parentEntity?: Maybe<StorageAggregatorParent>;
+  /** The aggregate size of all StorageBuckets for this StorageAggregator. */
+  size: Scalars['Float'];
+  /** The list of child storageAggregators for this StorageAggregator. */
+  storageAggregators: Array<StorageAggregator>;
+  /** The Storage Buckets that are being managed via this StorageAggregators. */
+  storageBuckets: Array<StorageBucket>;
+};
+
+export type StorageAggregatorParent = {
+  /** The display name. */
+  displayName: Scalars['String'];
+  /** The UUID of the parent entity. */
+  id: Scalars['UUID'];
+  /** The URL that can be used to access the parent entity. */
+  url: Scalars['String'];
+};
+
 export type StorageBucket = {
   /** Mime types allowed to be stored on this StorageBucket. */
   allowedMimeTypes: Array<Scalars['String']>;
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
-  /** The list of child entries for this StorageBucket. */
-  childStorage: Array<StorageBucket>;
   /** A single Document */
   document?: Maybe<Document>;
   /** The list of Documents for this StorageBucket. */
@@ -4988,6 +5012,8 @@ export type User = {
   preferences: Array<Preference>;
   /** The Profile for this User. */
   profile: Profile;
+  /** The StorageAggregator for managing storage buckets in use by this User */
+  storageAggregator?: Maybe<StorageAggregator>;
 };
 
 export type UserAuthorizationPrivilegesInput = {
@@ -5531,7 +5557,7 @@ export type ResolversTypes = {
   MessageID: ResolverTypeWrapper<SchemaTypes.Scalars['MessageID']>;
   Metadata: ResolverTypeWrapper<SchemaTypes.Metadata>;
   MimeType: SchemaTypes.MimeType;
-  MovePostInput: SchemaTypes.MovePostInput;
+  MoveCalloutContributionInput: SchemaTypes.MoveCalloutContributionInput;
   Mutation: ResolverTypeWrapper<{}>;
   MutationType: SchemaTypes.MutationType;
   NVP: ResolverTypeWrapper<SchemaTypes.Nvp>;
@@ -5626,6 +5652,8 @@ export type ResolversTypes = {
   SpaceFilterInput: SchemaTypes.SpaceFilterInput;
   SpacePreferenceType: SchemaTypes.SpacePreferenceType;
   SpaceVisibility: SchemaTypes.SpaceVisibility;
+  StorageAggregator: ResolverTypeWrapper<SchemaTypes.StorageAggregator>;
+  StorageAggregatorParent: ResolverTypeWrapper<SchemaTypes.StorageAggregatorParent>;
   StorageBucket: ResolverTypeWrapper<SchemaTypes.StorageBucket>;
   StorageBucketParent: ResolverTypeWrapper<SchemaTypes.StorageBucketParent>;
   StorageBucketUploadFileInput: SchemaTypes.StorageBucketUploadFileInput;
@@ -5927,7 +5955,7 @@ export type ResolversParentTypes = {
   Message: SchemaTypes.Message;
   MessageID: SchemaTypes.Scalars['MessageID'];
   Metadata: SchemaTypes.Metadata;
-  MovePostInput: SchemaTypes.MovePostInput;
+  MoveCalloutContributionInput: SchemaTypes.MoveCalloutContributionInput;
   Mutation: {};
   NVP: SchemaTypes.Nvp;
   NameID: SchemaTypes.Scalars['NameID'];
@@ -6012,6 +6040,8 @@ export type ResolversParentTypes = {
   Space: SchemaTypes.Space;
   SpaceAuthorizationResetInput: SchemaTypes.SpaceAuthorizationResetInput;
   SpaceFilterInput: SchemaTypes.SpaceFilterInput;
+  StorageAggregator: SchemaTypes.StorageAggregator;
+  StorageAggregatorParent: SchemaTypes.StorageAggregatorParent;
   StorageBucket: SchemaTypes.StorageBucket;
   StorageBucketParent: SchemaTypes.StorageBucketParent;
   StorageBucketUploadFileInput: SchemaTypes.StorageBucketUploadFileInput;
@@ -6989,8 +7019,8 @@ export type ChallengeResolvers<
   >;
   profile?: Resolver<ResolversTypes['Profile'], ParentType, ContextType>;
   spaceID?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  storageBucket?: Resolver<
-    SchemaTypes.Maybe<ResolversTypes['StorageBucket']>,
+  storageAggregator?: Resolver<
+    SchemaTypes.Maybe<ResolversTypes['StorageAggregator']>,
     ParentType,
     ContextType
   >;
@@ -7870,8 +7900,8 @@ export type LibraryResolvers<
     ParentType,
     ContextType
   >;
-  storageBucket?: Resolver<
-    SchemaTypes.Maybe<ResolversTypes['StorageBucket']>,
+  storageAggregator?: Resolver<
+    SchemaTypes.Maybe<ResolversTypes['StorageAggregator']>,
     ParentType,
     ContextType
   >;
@@ -8808,11 +8838,14 @@ export type MutationResolvers<
     ContextType,
     RequireFields<SchemaTypes.MutationMessageUserArgs, 'messageData'>
   >;
-  movePostToCallout?: Resolver<
-    ResolversTypes['Post'],
+  moveContributionToCallout?: Resolver<
+    ResolversTypes['CalloutContribution'],
     ParentType,
     ContextType,
-    RequireFields<SchemaTypes.MutationMovePostToCalloutArgs, 'movePostData'>
+    RequireFields<
+      SchemaTypes.MutationMoveContributionToCalloutArgs,
+      'moveContributionData'
+    >
   >;
   removeCommunityRoleFromOrganization?: Resolver<
     ResolversTypes['Organization'],
@@ -9413,8 +9446,8 @@ export type OrganizationResolvers<
     ContextType
   >;
   profile?: Resolver<ResolversTypes['Profile'], ParentType, ContextType>;
-  storageBucket?: Resolver<
-    SchemaTypes.Maybe<ResolversTypes['StorageBucket']>,
+  storageAggregator?: Resolver<
+    SchemaTypes.Maybe<ResolversTypes['StorageAggregator']>,
     ParentType,
     ContextType
   >;
@@ -9546,8 +9579,8 @@ export type PlatformResolvers<
   >;
   library?: Resolver<ResolversTypes['Library'], ParentType, ContextType>;
   metadata?: Resolver<ResolversTypes['Metadata'], ParentType, ContextType>;
-  storageBucket?: Resolver<
-    ResolversTypes['StorageBucket'],
+  storageAggregator?: Resolver<
+    ResolversTypes['StorageAggregator'],
     ParentType,
     ContextType
   >;
@@ -9595,11 +9628,6 @@ export type PostResolvers<
 > = {
   authorization?: Resolver<
     SchemaTypes.Maybe<ResolversTypes['Authorization']>,
-    ParentType,
-    ContextType
-  >;
-  callout?: Resolver<
-    SchemaTypes.Maybe<ResolversTypes['Callout']>,
     ParentType,
     ContextType
   >;
@@ -10066,8 +10094,8 @@ export type RelayPaginatedSpaceResolvers<
     ParentType,
     ContextType
   >;
-  storageBucket?: Resolver<
-    SchemaTypes.Maybe<ResolversTypes['StorageBucket']>,
+  storageAggregator?: Resolver<
+    SchemaTypes.Maybe<ResolversTypes['StorageAggregator']>,
     ParentType,
     ContextType
   >;
@@ -10158,6 +10186,11 @@ export type RelayPaginatedUserResolvers<
     ContextType
   >;
   profile?: Resolver<ResolversTypes['Profile'], ParentType, ContextType>;
+  storageAggregator?: Resolver<
+    SchemaTypes.Maybe<ResolversTypes['StorageAggregator']>,
+    ParentType,
+    ContextType
+  >;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -10591,8 +10624,8 @@ export type SpaceResolvers<
     ParentType,
     ContextType
   >;
-  storageBucket?: Resolver<
-    SchemaTypes.Maybe<ResolversTypes['StorageBucket']>,
+  storageAggregator?: Resolver<
+    SchemaTypes.Maybe<ResolversTypes['StorageAggregator']>,
     ParentType,
     ContextType
   >;
@@ -10609,6 +10642,50 @@ export type SpaceResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type StorageAggregatorResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['StorageAggregator'] = ResolversParentTypes['StorageAggregator']
+> = {
+  authorization?: Resolver<
+    SchemaTypes.Maybe<ResolversTypes['Authorization']>,
+    ParentType,
+    ContextType
+  >;
+  directStorageBucket?: Resolver<
+    ResolversTypes['StorageBucket'],
+    ParentType,
+    ContextType
+  >;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  parentEntity?: Resolver<
+    SchemaTypes.Maybe<ResolversTypes['StorageAggregatorParent']>,
+    ParentType,
+    ContextType
+  >;
+  size?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  storageAggregators?: Resolver<
+    Array<ResolversTypes['StorageAggregator']>,
+    ParentType,
+    ContextType
+  >;
+  storageBuckets?: Resolver<
+    Array<ResolversTypes['StorageBucket']>,
+    ParentType,
+    ContextType
+  >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type StorageAggregatorParentResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['StorageAggregatorParent'] = ResolversParentTypes['StorageAggregatorParent']
+> = {
+  displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type StorageBucketResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['StorageBucket'] = ResolversParentTypes['StorageBucket']
@@ -10620,11 +10697,6 @@ export type StorageBucketResolvers<
   >;
   authorization?: Resolver<
     SchemaTypes.Maybe<ResolversTypes['Authorization']>,
-    ParentType,
-    ContextType
-  >;
-  childStorage?: Resolver<
-    Array<ResolversTypes['StorageBucket']>,
     ParentType,
     ContextType
   >;
@@ -10933,6 +11005,11 @@ export type UserResolvers<
     ContextType
   >;
   profile?: Resolver<ResolversTypes['Profile'], ParentType, ContextType>;
+  storageAggregator?: Resolver<
+    SchemaTypes.Maybe<ResolversTypes['StorageAggregator']>,
+    ParentType,
+    ContextType
+  >;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -11282,6 +11359,8 @@ export type Resolvers<ContextType = any> = {
   ServiceMetadata?: ServiceMetadataResolvers<ContextType>;
   Source?: SourceResolvers<ContextType>;
   Space?: SpaceResolvers<ContextType>;
+  StorageAggregator?: StorageAggregatorResolvers<ContextType>;
+  StorageAggregatorParent?: StorageAggregatorParentResolvers<ContextType>;
   StorageBucket?: StorageBucketResolvers<ContextType>;
   StorageBucketParent?: StorageBucketParentResolvers<ContextType>;
   StorageConfig?: StorageConfigResolvers<ContextType>;
