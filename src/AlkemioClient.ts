@@ -17,7 +17,7 @@ import {
   UpdateOpportunityInput,
   CreateChallengeOnChallengeInput,
   AuthorizationCredential,
-  CreatePostOnCalloutInput,
+  CreateContributionOnCalloutInput,
   CreateCalloutOnCollaborationInput,
   CalloutType,
   CalloutState,
@@ -575,21 +575,23 @@ export class AlkemioClient {
     description: string,
     tags?: string[]
   ) {
-    const postData: CreatePostOnCalloutInput = {
-      type,
+    const contributionData: CreateContributionOnCalloutInput = {
       calloutID,
-      nameID,
-      profileData: {
-        description,
-        displayName,
+      post: {
+        nameID,
+        profileData: {
+          description,
+          displayName,
+        },
+        tags: tags,
+        type: type,
       },
-      tags: tags,
     };
-    const { data } = await this.privateClient.createPostOnCallout({
-      postData,
+    const { data } = await this.privateClient.createContributionOnCallout({
+      contributionData: contributionData,
     });
 
-    return data?.createPostOnCallout;
+    return data?.createContributionOnCallout;
   }
 
   // Create a callout for the given collaboration
@@ -603,8 +605,12 @@ export class AlkemioClient {
     const calloutData: CreateCalloutOnCollaborationInput = {
       collaborationID,
       type,
-      state,
-      profile: { displayName, description },
+      contributionPolicy: {
+        state,
+      },
+      framing: {
+        profile: { displayName, description },
+      },
     };
     const { data } = await this.privateClient.createCalloutOnCollaboration({
       calloutData,
@@ -623,7 +629,6 @@ export class AlkemioClient {
     if (!communityID) return;
     const { data } = await this.privateClient.createGroupOnCommunity({
       groupData: {
-        name: groupName,
         parentID: communityID,
         profileData: {
           description: groupDesc,

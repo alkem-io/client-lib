@@ -12,7 +12,6 @@ query opportunity($spaceID: UUID_NAMEID!, $opportunityID: UUID_NAMEID!) {
       }
       community {
         id
-        displayName
         memberUsers {
           nameID
         }

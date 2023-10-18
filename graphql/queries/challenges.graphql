@@ -12,7 +12,6 @@ query challenges($spaceID: UUID_NAMEID!) {
       }
       community {
         id
-        displayName
       }
       collaboration {
         id

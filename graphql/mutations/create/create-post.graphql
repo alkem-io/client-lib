@@ -1,16 +1,20 @@
-mutation createPostOnCallout($postData: CreatePostOnCalloutInput!) {
-  createPostOnCallout(postData: $postData) {
+mutation createContributionOnCallout(
+  $contributionData: CreateContributionOnCalloutInput!
+) {
+  createContributionOnCallout(contributionData: $contributionData) {
     id
-    nameID
-    profile {
-      id
-      displayName
-      tagset {
-        tags
-      }
-      description
-      visuals {
+    post {
+      nameID
+      profile {
         id
+        displayName
+        tagset {
+          tags
+        }
+        description
+        visuals {
+          id
+        }
       }
     }
   }
