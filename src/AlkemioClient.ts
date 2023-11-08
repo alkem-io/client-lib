@@ -120,7 +120,7 @@ export class AlkemioClient {
   public async featureFlags() {
     const { data } = await this.privateClient.featureFlags();
 
-    return data?.platform.configuration.platform.featureFlags;
+    return data?.platform.configuration.featureFlags;
   }
 
   public async validateConnection() {
