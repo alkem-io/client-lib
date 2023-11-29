@@ -1,0 +1,6 @@
+mutation uploadFileOnStorageBucket(
+  $file: Upload!
+  $uploadData: StorageBucketUploadFileInput!
+) {
+  uploadFileOnStorageBucket(file: $file, uploadData: $uploadData)
+}

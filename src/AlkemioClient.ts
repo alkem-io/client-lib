@@ -488,6 +488,22 @@ export class AlkemioClient {
       );
   }
 
+  public uploadFileOnStorageBucket(path: PathLike, storageBucketID: string) {
+    if (!existsSync(path)) {
+      throw new Error(`File at '${path}' does not exist`);
+    }
+
+    return this.privateClient
+      .uploadFileOnStorageBucket({
+        file: createReadStream(path) as unknown as FileUpload,
+        uploadData: { storageBucketId: storageBucketID },
+      })
+      .then(
+        toGraphQLResponse<SchemaTypes.UploadFileOnStorageBucketMutation>,
+        toGraphQLResponse<SchemaTypes.UploadFileOnStorageBucketMutation>
+      );
+  }
+
   async createRelationOnCollaboration(
     collaborationID: string,
     type: string,

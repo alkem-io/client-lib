@@ -428,15 +428,6 @@ export type AdminInnovationFlowSynchronizeStatesInput = {
   innovationFlowID: Scalars['UUID'];
 };
 
-export type AdminWhiteboardFilesResult = {
-  /** Errors */
-  errors: Array<Scalars['String']>;
-  /** Successes */
-  results: Array<Scalars['String']>;
-  /** Warnings */
-  warns: Array<Scalars['String']>;
-};
-
 export type Agent = {
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
@@ -665,6 +656,7 @@ export enum AuthorizationPrivilege {
   Read = 'READ',
   ReadUsers = 'READ_USERS',
   ReadUserPii = 'READ_USER_PII',
+  SaveAsTemplate = 'SAVE_AS_TEMPLATE',
   Update = 'UPDATE',
   UpdateCalloutPublisher = 'UPDATE_CALLOUT_PUBLISHER',
   UpdateContent = 'UPDATE_CONTENT',
@@ -1375,10 +1367,10 @@ export type CreateCalloutOnCollaborationInput = {
 };
 
 export type CreateCalloutTemplateOnTemplatesSetInput = {
+  contributionDefaults: CreateCalloutContributionDefaultsInput;
+  contributionPolicy: CreateCalloutContributionPolicyInput;
   framing: CreateCalloutFramingInput;
   profile: CreateProfileInput;
-  responseDefaults: CreateCalloutContributionDefaultsInput;
-  responsePolicy: CreateCalloutContributionPolicyInput;
   tags?: InputMaybe<Array<Scalars['String']>>;
   templatesSetID: Scalars['UUID'];
   /** Callout type. */
@@ -1905,6 +1897,14 @@ export type GrantAuthorizationCredentialInput = {
   userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
+export type GrantOrganizationAuthorizationCredentialInput = {
+  /** The Organization to whom the credential is being granted. */
+  organizationID: Scalars['UUID'];
+  /** The resource to which this credential is tied. */
+  resourceID?: InputMaybe<Scalars['UUID']>;
+  type: AuthorizationCredential;
+};
+
 export type Groupable = {
   /** The groups contained by this entity. */
   groups?: Maybe<Array<UserGroup>>;
@@ -2143,6 +2143,10 @@ export type Location = {
 export type LookupQueryResults = {
   /** Lookup the specified Application */
   application?: Maybe<Application>;
+  /** Lookup the specified Authorization Policy */
+  authorizationPolicy?: Maybe<Authorization>;
+  /** The privileges granted to the specified user based on this Authorization Policy. */
+  authorizationPrivilegesForUser?: Maybe<Array<AuthorizationPrivilege>>;
   /** Lookup the specified Calendar */
   calendar?: Maybe<Calendar>;
   /** Lookup the specified CalendarEvent */
@@ -2187,6 +2191,15 @@ export type LookupQueryResults = {
 
 export type LookupQueryResultsApplicationArgs = {
   ID: Scalars['UUID'];
+};
+
+export type LookupQueryResultsAuthorizationPolicyArgs = {
+  ID: Scalars['UUID'];
+};
+
+export type LookupQueryResultsAuthorizationPrivilegesForUserArgs = {
+  authorizationID: Scalars['UUID'];
+  userID: Scalars['UUID'];
 };
 
 export type LookupQueryResultsCalendarArgs = {
@@ -2354,8 +2367,6 @@ export type Mutation = {
   adminCommunicationUpdateRoomsJoinRule: Scalars['Boolean'];
   /** Updates the States tagset to be synchronized with the Lifecycle states. */
   adminInnovationFlowSynchronizeStates: Tagset;
-  /** Uploads the files from the Whiteboard content into the StorageBucket of that Whiteboard. */
-  adminUploadFilesFromContentToStorageBucket: AdminWhiteboardFilesResult;
   /** Apply to join the specified Community as a member. */
   applyForCommunityMembership: Application;
   /** Assigns an Organization a Role in the specified Community. */
@@ -2518,6 +2529,8 @@ export type Mutation = {
   eventOnProject: Project;
   /** Trigger an event on the Organization Verification. */
   eventOnWhiteboardCheckout: WhiteboardCheckout;
+  /** Grants an authorization credential to an Organization. */
+  grantCredentialToOrganization: Organization;
   /** Grants an authorization credential to a User. */
   grantCredentialToUser: User;
   /** Resets the interaction with the chat engine. */
@@ -2556,6 +2569,8 @@ export type Mutation = {
   removeUserFromOrganization: Organization;
   /** Resets the interaction with the chat engine. */
   resetChatGuidance: Scalars['Boolean'];
+  /** Removes an authorization credential from an Organization. */
+  revokeCredentialFromOrganization: Organization;
   /** Removes an authorization credential from a User. */
   revokeCredentialFromUser: User;
   /** Sends a reply to a message from the specified Room. */
@@ -2983,6 +2998,10 @@ export type MutationEventOnWhiteboardCheckoutArgs = {
   whiteboardCheckoutEventData: WhiteboardCheckoutEventInput;
 };
 
+export type MutationGrantCredentialToOrganizationArgs = {
+  grantCredentialData: GrantOrganizationAuthorizationCredentialInput;
+};
+
 export type MutationGrantCredentialToUserArgs = {
   grantCredentialData: GrantAuthorizationCredentialInput;
 };
@@ -3049,6 +3068,10 @@ export type MutationRemoveUserFromGroupArgs = {
 
 export type MutationRemoveUserFromOrganizationArgs = {
   membershipData: RemoveOrganizationAssociateInput;
+};
+
+export type MutationRevokeCredentialFromOrganizationArgs = {
+  revokeCredentialData: RevokeOrganizationAuthorizationCredentialInput;
 };
 
 export type MutationRevokeCredentialFromUserArgs = {
@@ -4109,6 +4132,14 @@ export type RevokeAuthorizationCredentialInput = {
   userID: Scalars['UUID_NAMEID_EMAIL'];
 };
 
+export type RevokeOrganizationAuthorizationCredentialInput = {
+  /** The Organization from whom the credential is being removed. */
+  organizationID: Scalars['UUID'];
+  /** The resource to which access is being removed. */
+  resourceID?: InputMaybe<Scalars['UUID']>;
+  type: AuthorizationCredential;
+};
+
 export type RolesOrganizationInput = {
   /** Return membership in Spaces matching the provided filter. */
   filter?: InputMaybe<SpaceFilterInput>;
@@ -4850,11 +4881,11 @@ export type UpdateCalloutPublishInfoInput = {
 
 export type UpdateCalloutTemplateInput = {
   ID: Scalars['UUID'];
+  contributionDefaults?: InputMaybe<UpdateCalloutContributionDefaultsInput>;
+  contributionPolicy?: InputMaybe<UpdateCalloutContributionPolicyInput>;
   framing?: InputMaybe<UpdateCalloutFramingInput>;
   /** The Profile of the Template. */
   profile?: InputMaybe<UpdateProfileInput>;
-  responseDefaults?: InputMaybe<UpdateCalloutContributionDefaultsInput>;
-  responsePolicy?: InputMaybe<UpdateCalloutContributionPolicyInput>;
 };
 
 export type UpdateCalloutVisibilityInput = {
@@ -5600,7 +5631,6 @@ export type ResolversTypes = {
   Actor: ResolverTypeWrapper<SchemaTypes.Actor>;
   ActorGroup: ResolverTypeWrapper<SchemaTypes.ActorGroup>;
   AdminInnovationFlowSynchronizeStatesInput: SchemaTypes.AdminInnovationFlowSynchronizeStatesInput;
-  AdminWhiteboardFilesResult: ResolverTypeWrapper<SchemaTypes.AdminWhiteboardFilesResult>;
   Agent: ResolverTypeWrapper<SchemaTypes.Agent>;
   AgentBeginVerifiedCredentialOfferOutput: ResolverTypeWrapper<SchemaTypes.AgentBeginVerifiedCredentialOfferOutput>;
   AgentBeginVerifiedCredentialRequestOutput: ResolverTypeWrapper<SchemaTypes.AgentBeginVerifiedCredentialRequestOutput>;
@@ -5766,6 +5796,7 @@ export type ResolversTypes = {
   FormQuestion: ResolverTypeWrapper<SchemaTypes.FormQuestion>;
   Geo: ResolverTypeWrapper<SchemaTypes.Geo>;
   GrantAuthorizationCredentialInput: SchemaTypes.GrantAuthorizationCredentialInput;
+  GrantOrganizationAuthorizationCredentialInput: SchemaTypes.GrantOrganizationAuthorizationCredentialInput;
   Groupable: ResolversTypes['Community'] | ResolversTypes['Organization'];
   ISearchResults: ResolverTypeWrapper<SchemaTypes.ISearchResults>;
   InnovationFlow: ResolverTypeWrapper<SchemaTypes.InnovationFlow>;
@@ -5861,6 +5892,7 @@ export type ResolversTypes = {
   RemoveOrganizationOwnerInput: SchemaTypes.RemoveOrganizationOwnerInput;
   RemoveUserGroupMemberInput: SchemaTypes.RemoveUserGroupMemberInput;
   RevokeAuthorizationCredentialInput: SchemaTypes.RevokeAuthorizationCredentialInput;
+  RevokeOrganizationAuthorizationCredentialInput: SchemaTypes.RevokeOrganizationAuthorizationCredentialInput;
   RolesOrganizationInput: SchemaTypes.RolesOrganizationInput;
   RolesResult: ResolverTypeWrapper<SchemaTypes.RolesResult>;
   RolesResultCommunity: ResolverTypeWrapper<SchemaTypes.RolesResultCommunity>;
@@ -6036,7 +6068,6 @@ export type ResolversParentTypes = {
   Actor: SchemaTypes.Actor;
   ActorGroup: SchemaTypes.ActorGroup;
   AdminInnovationFlowSynchronizeStatesInput: SchemaTypes.AdminInnovationFlowSynchronizeStatesInput;
-  AdminWhiteboardFilesResult: SchemaTypes.AdminWhiteboardFilesResult;
   Agent: SchemaTypes.Agent;
   AgentBeginVerifiedCredentialOfferOutput: SchemaTypes.AgentBeginVerifiedCredentialOfferOutput;
   AgentBeginVerifiedCredentialRequestOutput: SchemaTypes.AgentBeginVerifiedCredentialRequestOutput;
@@ -6188,6 +6219,7 @@ export type ResolversParentTypes = {
   FormQuestion: SchemaTypes.FormQuestion;
   Geo: SchemaTypes.Geo;
   GrantAuthorizationCredentialInput: SchemaTypes.GrantAuthorizationCredentialInput;
+  GrantOrganizationAuthorizationCredentialInput: SchemaTypes.GrantOrganizationAuthorizationCredentialInput;
   Groupable:
     | ResolversParentTypes['Community']
     | ResolversParentTypes['Organization'];
@@ -6271,6 +6303,7 @@ export type ResolversParentTypes = {
   RemoveOrganizationOwnerInput: SchemaTypes.RemoveOrganizationOwnerInput;
   RemoveUserGroupMemberInput: SchemaTypes.RemoveUserGroupMemberInput;
   RevokeAuthorizationCredentialInput: SchemaTypes.RevokeAuthorizationCredentialInput;
+  RevokeOrganizationAuthorizationCredentialInput: SchemaTypes.RevokeOrganizationAuthorizationCredentialInput;
   RolesOrganizationInput: SchemaTypes.RolesOrganizationInput;
   RolesResult: SchemaTypes.RolesResult;
   RolesResultCommunity: SchemaTypes.RolesResultCommunity;
@@ -6764,16 +6797,6 @@ export type ActorGroupResolvers<
   >;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type AdminWhiteboardFilesResultResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['AdminWhiteboardFilesResult'] = ResolversParentTypes['AdminWhiteboardFilesResult']
-> = {
-  errors?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
-  results?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
-  warns?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -8326,6 +8349,21 @@ export type LookupQueryResultsResolvers<
     ContextType,
     RequireFields<SchemaTypes.LookupQueryResultsApplicationArgs, 'ID'>
   >;
+  authorizationPolicy?: Resolver<
+    SchemaTypes.Maybe<ResolversTypes['Authorization']>,
+    ParentType,
+    ContextType,
+    RequireFields<SchemaTypes.LookupQueryResultsAuthorizationPolicyArgs, 'ID'>
+  >;
+  authorizationPrivilegesForUser?: Resolver<
+    SchemaTypes.Maybe<Array<ResolversTypes['AuthorizationPrivilege']>>,
+    ParentType,
+    ContextType,
+    RequireFields<
+      SchemaTypes.LookupQueryResultsAuthorizationPrivilegesForUserArgs,
+      'authorizationID' | 'userID'
+    >
+  >;
   calendar?: Resolver<
     SchemaTypes.Maybe<ResolversTypes['Calendar']>,
     ParentType,
@@ -8584,11 +8622,6 @@ export type MutationResolvers<
       SchemaTypes.MutationAdminInnovationFlowSynchronizeStatesArgs,
       'innovationFlowData'
     >
-  >;
-  adminUploadFilesFromContentToStorageBucket?: Resolver<
-    ResolversTypes['AdminWhiteboardFilesResult'],
-    ParentType,
-    ContextType
   >;
   applyForCommunityMembership?: Resolver<
     ResolversTypes['Application'],
@@ -9180,6 +9213,15 @@ export type MutationResolvers<
       'whiteboardCheckoutEventData'
     >
   >;
+  grantCredentialToOrganization?: Resolver<
+    ResolversTypes['Organization'],
+    ParentType,
+    ContextType,
+    RequireFields<
+      SchemaTypes.MutationGrantCredentialToOrganizationArgs,
+      'grantCredentialData'
+    >
+  >;
   grantCredentialToUser?: Resolver<
     ResolversTypes['User'],
     ParentType,
@@ -9326,6 +9368,15 @@ export type MutationResolvers<
     ResolversTypes['Boolean'],
     ParentType,
     ContextType
+  >;
+  revokeCredentialFromOrganization?: Resolver<
+    ResolversTypes['Organization'],
+    ParentType,
+    ContextType,
+    RequireFields<
+      SchemaTypes.MutationRevokeCredentialFromOrganizationArgs,
+      'revokeCredentialData'
+    >
   >;
   revokeCredentialFromUser?: Resolver<
     ResolversTypes['User'],
@@ -11733,7 +11784,6 @@ export type Resolvers<ContextType = any> = {
   ActivityLogEntryUpdateSent?: ActivityLogEntryUpdateSentResolvers<ContextType>;
   Actor?: ActorResolvers<ContextType>;
   ActorGroup?: ActorGroupResolvers<ContextType>;
-  AdminWhiteboardFilesResult?: AdminWhiteboardFilesResultResolvers<ContextType>;
   Agent?: AgentResolvers<ContextType>;
   AgentBeginVerifiedCredentialOfferOutput?: AgentBeginVerifiedCredentialOfferOutputResolvers<ContextType>;
   AgentBeginVerifiedCredentialRequestOutput?: AgentBeginVerifiedCredentialRequestOutputResolvers<ContextType>;
@@ -12384,6 +12434,15 @@ export type UploadFileOnReferenceMutation = {
     name: string;
     uri: string;
   };
+};
+
+export type UploadFileOnStorageBucketMutationVariables = SchemaTypes.Exact<{
+  file: SchemaTypes.Scalars['Upload'];
+  uploadData: SchemaTypes.StorageBucketUploadFileInput;
+}>;
+
+export type UploadFileOnStorageBucketMutation = {
+  uploadFileOnStorageBucket: string;
 };
 
 export type UploadImageOnVisualMutationVariables = SchemaTypes.Exact<{
@@ -13437,6 +13496,14 @@ export const UploadFileOnReferenceDocument = gql`
     }
   }
 `;
+export const UploadFileOnStorageBucketDocument = gql`
+  mutation uploadFileOnStorageBucket(
+    $file: Upload!
+    $uploadData: StorageBucketUploadFileInput!
+  ) {
+    uploadFileOnStorageBucket(file: $file, uploadData: $uploadData)
+  }
+`;
 export const UploadImageOnVisualDocument = gql`
   mutation uploadImageOnVisual(
     $file: Upload!
@@ -13880,6 +13947,9 @@ const UpdateSpaceDocumentString = print(UpdateSpaceDocument);
 const UpdateVisualDocumentString = print(UpdateVisualDocument);
 const UploadFileOnReferenceDocumentString = print(
   UploadFileOnReferenceDocument
+);
+const UploadFileOnStorageBucketDocumentString = print(
+  UploadFileOnStorageBucketDocument
 );
 const UploadImageOnVisualDocumentString = print(UploadImageOnVisualDocument);
 const ChallengeDocumentString = print(ChallengeDocument);
@@ -14585,6 +14655,26 @@ export function getSdk(
             { ...requestHeaders, ...wrappedRequestHeaders }
           ),
         'uploadFileOnReference',
+        'mutation'
+      );
+    },
+    uploadFileOnStorageBucket(
+      variables: SchemaTypes.UploadFileOnStorageBucketMutationVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<{
+      data: SchemaTypes.UploadFileOnStorageBucketMutation;
+      extensions?: any;
+      headers: Dom.Headers;
+      status: number;
+    }> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.rawRequest<SchemaTypes.UploadFileOnStorageBucketMutation>(
+            UploadFileOnStorageBucketDocumentString,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'uploadFileOnStorageBucket',
         'mutation'
       );
     },
