@@ -1,0 +1,13 @@
+mutation uploadFileOnLink(
+  $file: Upload!
+  $uploadData: StorageBucketUploadFileOnLinkInput!
+) {
+  uploadFileOnLink(file: $file, uploadData: $uploadData) {
+    id
+    uri
+    profile {
+      displayName
+      description
+    }
+  }
+}

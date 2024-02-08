@@ -92,8 +92,6 @@ export type ActivityFeed = {
 export type ActivityFeedQueryArgs = {
   /** Returns only events that the current user triggered; Includes all by default. */
   myActivity?: InputMaybe<Scalars['Boolean']>;
-  /** Pagination options. */
-  pagination?: InputMaybe<PaginationInput>;
   /** Activity from which Spaces to include; Includes all by default. */
   roles?: InputMaybe<Array<ActivityFeedRoles>>;
   /** Activity from which Spaces to include; Includes all by default. */
@@ -118,6 +116,8 @@ export type ActivityLogEntry = {
   /** The text details for this Activity. */
   description: Scalars['String'];
   id: Scalars['UUID'];
+  /** The journey where the activity happened */
+  journey?: Maybe<Journey>;
   /** The display name of the parent */
   parentDisplayName: Scalars['String'];
   /** The nameID of the parent */
@@ -142,6 +142,8 @@ export type ActivityLogEntryCalendarEventCreated = ActivityLogEntry & {
   /** The text details for this Activity. */
   description: Scalars['String'];
   id: Scalars['UUID'];
+  /** The journey where the activity happened */
+  journey?: Maybe<Journey>;
   /** The display name of the parent */
   parentDisplayName: Scalars['String'];
   /** The nameID of the parent */
@@ -164,6 +166,8 @@ export type ActivityLogEntryCalloutDiscussionComment = ActivityLogEntry & {
   /** The text details for this Activity. */
   description: Scalars['String'];
   id: Scalars['UUID'];
+  /** The journey where the activity happened */
+  journey?: Maybe<Journey>;
   /** The display name of the parent */
   parentDisplayName: Scalars['String'];
   /** The nameID of the parent */
@@ -186,6 +190,8 @@ export type ActivityLogEntryCalloutLinkCreated = ActivityLogEntry & {
   /** The text details for this Activity. */
   description: Scalars['String'];
   id: Scalars['UUID'];
+  /** The journey where the activity happened */
+  journey?: Maybe<Journey>;
   /** The display name of the parent */
   parentDisplayName: Scalars['String'];
   /** The nameID of the parent */
@@ -210,6 +216,8 @@ export type ActivityLogEntryCalloutPostComment = ActivityLogEntry & {
   /** The text details for this Activity. */
   description: Scalars['String'];
   id: Scalars['UUID'];
+  /** The journey where the activity happened */
+  journey?: Maybe<Journey>;
   /** The display name of the parent */
   parentDisplayName: Scalars['String'];
   /** The nameID of the parent */
@@ -234,6 +242,8 @@ export type ActivityLogEntryCalloutPostCreated = ActivityLogEntry & {
   /** The text details for this Activity. */
   description: Scalars['String'];
   id: Scalars['UUID'];
+  /** The journey where the activity happened */
+  journey?: Maybe<Journey>;
   /** The display name of the parent */
   parentDisplayName: Scalars['String'];
   /** The nameID of the parent */
@@ -258,6 +268,8 @@ export type ActivityLogEntryCalloutPublished = ActivityLogEntry & {
   /** The text details for this Activity. */
   description: Scalars['String'];
   id: Scalars['UUID'];
+  /** The journey where the activity happened */
+  journey?: Maybe<Journey>;
   /** The display name of the parent */
   parentDisplayName: Scalars['String'];
   /** The nameID of the parent */
@@ -280,6 +292,8 @@ export type ActivityLogEntryCalloutWhiteboardCreated = ActivityLogEntry & {
   /** The text details for this Activity. */
   description: Scalars['String'];
   id: Scalars['UUID'];
+  /** The journey where the activity happened */
+  journey?: Maybe<Journey>;
   /** The display name of the parent */
   parentDisplayName: Scalars['String'];
   /** The nameID of the parent */
@@ -304,6 +318,8 @@ export type ActivityLogEntryChallengeCreated = ActivityLogEntry & {
   /** The text details for this Activity. */
   description: Scalars['String'];
   id: Scalars['UUID'];
+  /** The journey where the activity happened */
+  journey?: Maybe<Journey>;
   /** The display name of the parent */
   parentDisplayName: Scalars['String'];
   /** The nameID of the parent */
@@ -328,6 +344,8 @@ export type ActivityLogEntryMemberJoined = ActivityLogEntry & {
   /** The text details for this Activity. */
   description: Scalars['String'];
   id: Scalars['UUID'];
+  /** The journey where the activity happened */
+  journey?: Maybe<Journey>;
   /** The display name of the parent */
   parentDisplayName: Scalars['String'];
   /** The nameID of the parent */
@@ -350,6 +368,8 @@ export type ActivityLogEntryOpportunityCreated = ActivityLogEntry & {
   /** The text details for this Activity. */
   description: Scalars['String'];
   id: Scalars['UUID'];
+  /** The journey where the activity happened */
+  journey?: Maybe<Journey>;
   /** The Opportunity that was created. */
   opportunity: Opportunity;
   /** The display name of the parent */
@@ -372,6 +392,8 @@ export type ActivityLogEntryUpdateSent = ActivityLogEntry & {
   /** The text details for this Activity. */
   description: Scalars['String'];
   id: Scalars['UUID'];
+  /** The journey where the activity happened */
+  journey?: Maybe<Journey>;
   /** The Message that been sent to this Community. */
   message: Scalars['String'];
   /** The display name of the parent */
@@ -621,6 +643,7 @@ export type AuthorizationPolicyRuleVerifiedCredential = {
 };
 
 export enum AuthorizationPrivilege {
+  AccessDashboardRefresh = 'ACCESS_DASHBOARD_REFRESH',
   AccessInteractiveGuidance = 'ACCESS_INTERACTIVE_GUIDANCE',
   Admin = 'ADMIN',
   AuthorizationReset = 'AUTHORIZATION_RESET',
@@ -769,7 +792,7 @@ export type CalloutContribution = {
   /** The ID of the entity */
   id: Scalars['UUID'];
   /** The Link that was contributed. */
-  link?: Maybe<Reference>;
+  link?: Maybe<Link>;
   /** The Post that was contributed. */
   post?: Maybe<Post>;
   /** The Whiteboard that was contributed. */
@@ -1008,6 +1031,10 @@ export type Communication = {
 
 export type CommunicationDiscussionArgs = {
   ID: Scalars['String'];
+};
+
+export type CommunicationDiscussionsArgs = {
+  queryData?: InputMaybe<DiscussionsInput>;
 };
 
 export type CommunicationAdminEnsureAccessInput = {
@@ -1412,7 +1439,7 @@ export type CreateContextInput = {
 
 export type CreateContributionOnCalloutInput = {
   calloutID: Scalars['UUID'];
-  link?: InputMaybe<CreateReferenceInput>;
+  link?: InputMaybe<CreateLinkInput>;
   post?: InputMaybe<CreatePostInput>;
   whiteboard?: InputMaybe<CreateWhiteboardInput>;
 };
@@ -1469,6 +1496,11 @@ export type CreateInvitationExternalUserOnCommunityInput = {
   firstName?: InputMaybe<Scalars['String']>;
   lastName?: InputMaybe<Scalars['String']>;
   welcomeMessage?: InputMaybe<Scalars['String']>;
+};
+
+export type CreateLinkInput = {
+  profile: CreateProfileInput;
+  uri?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateLocationInput = {
@@ -1722,6 +1754,10 @@ export type DeleteInvitationInput = {
   ID: Scalars['UUID'];
 };
 
+export type DeleteLinkInput = {
+  ID: Scalars['UUID'];
+};
+
 export type DeleteOpportunityInput = {
   ID: Scalars['UUID'];
 };
@@ -1814,6 +1850,18 @@ export enum DiscussionCategory {
   PlatformFunctionalities = 'PLATFORM_FUNCTIONALITIES',
   Questions = 'QUESTIONS',
   Sharing = 'SHARING',
+}
+
+export type DiscussionsInput = {
+  /** The number of Discussion entries to return; if omitted return all Discussions. */
+  limit?: InputMaybe<Scalars['Float']>;
+  /** The sort order of the Discussions to return. */
+  orderBy?: InputMaybe<DiscussionsOrderBy>;
+};
+
+export enum DiscussionsOrderBy {
+  DiscussionsCreatedateAsc = 'DISCUSSIONS_CREATEDATE_ASC',
+  DiscussionsCreatedateDesc = 'DISCUSSIONS_CREATEDATE_DESC',
 }
 
 export type Document = {
@@ -2001,6 +2049,19 @@ export type InnovationPack = {
   templates?: Maybe<TemplatesSet>;
 };
 
+export type InnovationPacksInput = {
+  /** The number of Discussion entries to return; if omitted return all InnovationPacks. */
+  limit?: InputMaybe<Scalars['Float']>;
+  /** The sort order of the InnovationPacks to return. Defaults to number of templates Descending. */
+  orderBy?: InputMaybe<InnovationPacksOrderBy>;
+};
+
+export enum InnovationPacksOrderBy {
+  NumberOfTemplatesAsc = 'NUMBER_OF_TEMPLATES_ASC',
+  NumberOfTemplatesDesc = 'NUMBER_OF_TEMPLATES_DESC',
+  Random = 'RANDOM',
+}
+
 export type Invitation = {
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
@@ -2091,6 +2152,10 @@ export type LibraryInnovationPackArgs = {
   ID: Scalars['UUID_NAMEID'];
 };
 
+export type LibraryInnovationPacksArgs = {
+  queryData?: InputMaybe<InnovationPacksInput>;
+};
+
 export type License = {
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
@@ -2127,6 +2192,17 @@ export type Lifecycle = {
   stateIsFinal: Scalars['Boolean'];
   /** The Lifecycle template name. */
   templateName?: Maybe<Scalars['String']>;
+};
+
+export type Link = {
+  /** The authorization rules for the entity */
+  authorization?: Maybe<Authorization>;
+  /** The ID of the entity */
+  id: Scalars['UUID'];
+  /** The Profile for framing the associated Link Contribution. */
+  profile: Profile;
+  /** URI of the Link */
+  uri: Scalars['String'];
 };
 
 export type Location = {
@@ -2306,9 +2382,7 @@ export type MeQueryResultsInvitationsArgs = {
 };
 
 export type MeQueryResultsMyJourneysArgs = {
-  filter?: InputMaybe<SpaceFilterInput>;
   limit?: InputMaybe<Scalars['Float']>;
-  types?: InputMaybe<Array<ActivityEventType>>;
 };
 
 export type MeQueryResultsSpaceMembershipsArgs = {
@@ -2487,6 +2561,8 @@ export type Mutation = {
   deleteInvitation: Invitation;
   /** Removes the specified User invitationExternal. */
   deleteInvitationExternal: InvitationExternal;
+  /** Deletes the specified Link. */
+  deleteLink: Link;
   /** Deletes the specified Opportunity. */
   deleteOpportunity: Opportunity;
   /** Deletes the specified Organization. */
@@ -2619,6 +2695,8 @@ export type Mutation = {
   updateInnovationHub: InnovationHub;
   /** Updates the InnovationPack. */
   updateInnovationPack: InnovationPack;
+  /** Updates the specified Link. */
+  updateLink: Link;
   /** Updates the specified Opportunity. */
   updateOpportunity: Opportunity;
   /** Updates the specified Organization. */
@@ -2661,6 +2739,8 @@ export type Mutation = {
   updateWhiteboardRt: WhiteboardRt;
   /** Updates the specified WhiteboardTemplate. */
   updateWhiteboardTemplate: WhiteboardTemplate;
+  /** Create a new Document on the Storage and return the value as part of the returned Link. */
+  uploadFileOnLink: Link;
   /** Create a new Document on the Storage and return the value as part of the returned Reference. */
   uploadFileOnReference: Reference;
   /** Create a new Document on the Storage and return the public Url. */
@@ -2912,6 +2992,10 @@ export type MutationDeleteInvitationArgs = {
 
 export type MutationDeleteInvitationExternalArgs = {
   deleteData: DeleteInvitationExternalInput;
+};
+
+export type MutationDeleteLinkArgs = {
+  deleteData: DeleteLinkInput;
 };
 
 export type MutationDeleteOpportunityArgs = {
@@ -3170,6 +3254,10 @@ export type MutationUpdateInnovationPackArgs = {
   innovationPackData: UpdateInnovationPackInput;
 };
 
+export type MutationUpdateLinkArgs = {
+  linkData: UpdateLinkInput;
+};
+
 export type MutationUpdateOpportunityArgs = {
   opportunityData: UpdateOpportunityInput;
 };
@@ -3252,6 +3340,11 @@ export type MutationUpdateWhiteboardRtArgs = {
 
 export type MutationUpdateWhiteboardTemplateArgs = {
   whiteboardTemplateInput: UpdateWhiteboardTemplateInput;
+};
+
+export type MutationUploadFileOnLinkArgs = {
+  file: Scalars['Upload'];
+  uploadData: StorageBucketUploadFileOnLinkInput;
 };
 
 export type MutationUploadFileOnReferenceArgs = {
@@ -3444,17 +3537,6 @@ export type PaginatedUsers = {
   users: Array<User>;
 };
 
-export type PaginationInput = {
-  /** A pivot cursor after which items are selected */
-  after?: InputMaybe<Scalars['UUID']>;
-  /** A pivot cursor before which items are selected */
-  before?: InputMaybe<Scalars['UUID']>;
-  /** Amount of items after the cursor */
-  first?: InputMaybe<Scalars['Int']>;
-  /** Amount of items before the cursor */
-  last?: InputMaybe<Scalars['Int']>;
-};
-
 export type Platform = {
   /** The authorization rules for the entity */
   authorization?: Maybe<Authorization>;
@@ -3504,6 +3586,8 @@ export type PlatformLocations = {
   about: Scalars['String'];
   /** URL where users can get tips and tricks */
   aup: Scalars['String'];
+  /** URL to the blog of the platform */
+  blog: Scalars['String'];
   /** URL where users can see the community forum */
   community: Scalars['String'];
   /** Main domain of the environment */
@@ -3522,6 +3606,8 @@ export type PlatformLocations = {
   innovationLibrary: Scalars['String'];
   /** URL to a page about the collaboration tools */
   inspiration: Scalars['String'];
+  /** URL to the landing page of the platform */
+  landing: Scalars['String'];
   /** URL where new users can get onboarding help */
   newuser: Scalars['String'];
   /** URL for the link Opensource in the HomePage of the application */
@@ -3700,6 +3786,7 @@ export enum ProfileType {
   CalloutFraming = 'CALLOUT_FRAMING',
   CalloutTemplate = 'CALLOUT_TEMPLATE',
   Challenge = 'CHALLENGE',
+  ContributionLink = 'CONTRIBUTION_LINK',
   Discussion = 'DISCUSSION',
   InnovationFlow = 'INNOVATION_FLOW',
   InnovationFlowTemplate = 'INNOVATION_FLOW_TEMPLATE',
@@ -3791,7 +3878,11 @@ export type Query = {
 };
 
 export type QueryActivityFeedArgs = {
+  after?: InputMaybe<Scalars['UUID']>;
   args?: InputMaybe<ActivityFeedQueryArgs>;
+  before?: InputMaybe<Scalars['UUID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 export type QueryActivityLogOnCollaborationArgs = {
@@ -4623,6 +4714,10 @@ export type StorageBucketUploadFileInput = {
   storageBucketId: Scalars['String'];
 };
 
+export type StorageBucketUploadFileOnLinkInput = {
+  linkID: Scalars['String'];
+};
+
 export type StorageBucketUploadFileOnReferenceInput = {
   referenceID: Scalars['String'];
 };
@@ -4774,16 +4869,22 @@ export type TemplatesSet = {
   innovationFlowTemplate?: Maybe<InnovationFlowTemplate>;
   /** The InnovationFlowTemplates in this TemplatesSet. */
   innovationFlowTemplates: Array<InnovationFlowTemplate>;
+  /** The total number of InnovationFlowTemplates in this TemplatesSet. */
+  innovationFlowTemplatesCount: Scalars['Float'];
   /** The policy for this TemplatesSet. */
   policy?: Maybe<TemplatesSetPolicy>;
   /** A single PostTemplate */
   postTemplate?: Maybe<PostTemplate>;
   /** The PostTemplates in this TemplatesSet. */
   postTemplates: Array<PostTemplate>;
+  /** The total number of PostTemplates in this TemplatesSet. */
+  postTemplatesCount: Scalars['Float'];
   /** A single WhiteboardTemplate */
   whiteboardTemplate?: Maybe<WhiteboardTemplate>;
   /** The WhiteboardTemplates in this TemplatesSet. */
   whiteboardTemplates: Array<WhiteboardTemplate>;
+  /** The total number of WhiteboardTemplates in this TemplatesSet. */
+  whiteboardTemplatesCount: Scalars['Float'];
 };
 
 export type TemplatesSetInnovationFlowTemplateArgs = {
@@ -5033,6 +5134,13 @@ export type UpdateLicenseInput = {
   featureFlags?: InputMaybe<Array<UpdateFeatureFlagInput>>;
   /** Visibility of the Space. */
   visibility?: InputMaybe<SpaceVisibility>;
+};
+
+export type UpdateLinkInput = {
+  ID: Scalars['UUID'];
+  /** The Profile of the Link. */
+  profile?: InputMaybe<UpdateProfileInput>;
+  uri?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateLocationInput = {
@@ -5731,6 +5839,7 @@ export type ResolversTypes = {
   CreateInnovationPackOnLibraryInput: SchemaTypes.CreateInnovationPackOnLibraryInput;
   CreateInvitationExistingUserOnCommunityInput: SchemaTypes.CreateInvitationExistingUserOnCommunityInput;
   CreateInvitationExternalUserOnCommunityInput: SchemaTypes.CreateInvitationExternalUserOnCommunityInput;
+  CreateLinkInput: SchemaTypes.CreateLinkInput;
   CreateLocationInput: SchemaTypes.CreateLocationInput;
   CreateNVPInput: SchemaTypes.CreateNvpInput;
   CreateOpportunityInput: SchemaTypes.CreateOpportunityInput;
@@ -5770,6 +5879,7 @@ export type ResolversTypes = {
   DeleteInnovationPackInput: SchemaTypes.DeleteInnovationPackInput;
   DeleteInvitationExternalInput: SchemaTypes.DeleteInvitationExternalInput;
   DeleteInvitationInput: SchemaTypes.DeleteInvitationInput;
+  DeleteLinkInput: SchemaTypes.DeleteLinkInput;
   DeleteOpportunityInput: SchemaTypes.DeleteOpportunityInput;
   DeleteOrganizationInput: SchemaTypes.DeleteOrganizationInput;
   DeletePostInput: SchemaTypes.DeletePostInput;
@@ -5786,6 +5896,8 @@ export type ResolversTypes = {
   DirectRoom: ResolverTypeWrapper<SchemaTypes.DirectRoom>;
   Discussion: ResolverTypeWrapper<SchemaTypes.Discussion>;
   DiscussionCategory: SchemaTypes.DiscussionCategory;
+  DiscussionsInput: SchemaTypes.DiscussionsInput;
+  DiscussionsOrderBy: SchemaTypes.DiscussionsOrderBy;
   Document: ResolverTypeWrapper<SchemaTypes.Document>;
   EcosystemModel: ResolverTypeWrapper<SchemaTypes.EcosystemModel>;
   Emoji: ResolverTypeWrapper<SchemaTypes.Scalars['Emoji']>;
@@ -5806,6 +5918,8 @@ export type ResolversTypes = {
   InnovationHub: ResolverTypeWrapper<SchemaTypes.InnovationHub>;
   InnovationHubType: SchemaTypes.InnovationHubType;
   InnovationPack: ResolverTypeWrapper<SchemaTypes.InnovationPack>;
+  InnovationPacksInput: SchemaTypes.InnovationPacksInput;
+  InnovationPacksOrderBy: SchemaTypes.InnovationPacksOrderBy;
   Int: ResolverTypeWrapper<SchemaTypes.Scalars['Int']>;
   Invitation: ResolverTypeWrapper<SchemaTypes.Invitation>;
   InvitationEventInput: SchemaTypes.InvitationEventInput;
@@ -5825,6 +5939,7 @@ export type ResolversTypes = {
   LifecycleDefinition: ResolverTypeWrapper<
     SchemaTypes.Scalars['LifecycleDefinition']
   >;
+  Link: ResolverTypeWrapper<SchemaTypes.Link>;
   Location: ResolverTypeWrapper<SchemaTypes.Location>;
   LookupQueryResults: ResolverTypeWrapper<SchemaTypes.LookupQueryResults>;
   Markdown: ResolverTypeWrapper<SchemaTypes.Scalars['Markdown']>;
@@ -5854,7 +5969,6 @@ export type ResolversTypes = {
   PaginatedOrganization: ResolverTypeWrapper<SchemaTypes.PaginatedOrganization>;
   PaginatedSpaces: ResolverTypeWrapper<SchemaTypes.PaginatedSpaces>;
   PaginatedUsers: ResolverTypeWrapper<SchemaTypes.PaginatedUsers>;
-  PaginationInput: SchemaTypes.PaginationInput;
   Platform: ResolverTypeWrapper<SchemaTypes.Platform>;
   PlatformFeatureFlag: ResolverTypeWrapper<SchemaTypes.PlatformFeatureFlag>;
   PlatformFeatureFlagName: SchemaTypes.PlatformFeatureFlagName;
@@ -5939,6 +6053,7 @@ export type ResolversTypes = {
   StorageBucket: ResolverTypeWrapper<SchemaTypes.StorageBucket>;
   StorageBucketParent: ResolverTypeWrapper<SchemaTypes.StorageBucketParent>;
   StorageBucketUploadFileInput: SchemaTypes.StorageBucketUploadFileInput;
+  StorageBucketUploadFileOnLinkInput: SchemaTypes.StorageBucketUploadFileOnLinkInput;
   StorageBucketUploadFileOnReferenceInput: SchemaTypes.StorageBucketUploadFileOnReferenceInput;
   StorageConfig: ResolverTypeWrapper<SchemaTypes.StorageConfig>;
   String: ResolverTypeWrapper<SchemaTypes.Scalars['String']>;
@@ -5985,6 +6100,7 @@ export type ResolversTypes = {
   UpdateInnovationHubInput: SchemaTypes.UpdateInnovationHubInput;
   UpdateInnovationPackInput: SchemaTypes.UpdateInnovationPackInput;
   UpdateLicenseInput: SchemaTypes.UpdateLicenseInput;
+  UpdateLinkInput: SchemaTypes.UpdateLinkInput;
   UpdateLocationInput: SchemaTypes.UpdateLocationInput;
   UpdateOpportunityInput: SchemaTypes.UpdateOpportunityInput;
   UpdateOrganizationInput: SchemaTypes.UpdateOrganizationInput;
@@ -6155,6 +6271,7 @@ export type ResolversParentTypes = {
   CreateInnovationPackOnLibraryInput: SchemaTypes.CreateInnovationPackOnLibraryInput;
   CreateInvitationExistingUserOnCommunityInput: SchemaTypes.CreateInvitationExistingUserOnCommunityInput;
   CreateInvitationExternalUserOnCommunityInput: SchemaTypes.CreateInvitationExternalUserOnCommunityInput;
+  CreateLinkInput: SchemaTypes.CreateLinkInput;
   CreateLocationInput: SchemaTypes.CreateLocationInput;
   CreateNVPInput: SchemaTypes.CreateNvpInput;
   CreateOpportunityInput: SchemaTypes.CreateOpportunityInput;
@@ -6194,6 +6311,7 @@ export type ResolversParentTypes = {
   DeleteInnovationPackInput: SchemaTypes.DeleteInnovationPackInput;
   DeleteInvitationExternalInput: SchemaTypes.DeleteInvitationExternalInput;
   DeleteInvitationInput: SchemaTypes.DeleteInvitationInput;
+  DeleteLinkInput: SchemaTypes.DeleteLinkInput;
   DeleteOpportunityInput: SchemaTypes.DeleteOpportunityInput;
   DeleteOrganizationInput: SchemaTypes.DeleteOrganizationInput;
   DeletePostInput: SchemaTypes.DeletePostInput;
@@ -6209,6 +6327,7 @@ export type ResolversParentTypes = {
   DeleteWhiteboardTemplateInput: SchemaTypes.DeleteWhiteboardTemplateInput;
   DirectRoom: SchemaTypes.DirectRoom;
   Discussion: SchemaTypes.Discussion;
+  DiscussionsInput: SchemaTypes.DiscussionsInput;
   Document: SchemaTypes.Document;
   EcosystemModel: SchemaTypes.EcosystemModel;
   Emoji: SchemaTypes.Scalars['Emoji'];
@@ -6229,6 +6348,7 @@ export type ResolversParentTypes = {
   InnovationFlowTemplate: SchemaTypes.InnovationFlowTemplate;
   InnovationHub: SchemaTypes.InnovationHub;
   InnovationPack: SchemaTypes.InnovationPack;
+  InnovationPacksInput: SchemaTypes.InnovationPacksInput;
   Int: SchemaTypes.Scalars['Int'];
   Invitation: SchemaTypes.Invitation;
   InvitationEventInput: SchemaTypes.InvitationEventInput;
@@ -6245,6 +6365,7 @@ export type ResolversParentTypes = {
   LicenseFeatureFlag: SchemaTypes.LicenseFeatureFlag;
   Lifecycle: SchemaTypes.Lifecycle;
   LifecycleDefinition: SchemaTypes.Scalars['LifecycleDefinition'];
+  Link: SchemaTypes.Link;
   Location: SchemaTypes.Location;
   LookupQueryResults: SchemaTypes.LookupQueryResults;
   Markdown: SchemaTypes.Scalars['Markdown'];
@@ -6269,7 +6390,6 @@ export type ResolversParentTypes = {
   PaginatedOrganization: SchemaTypes.PaginatedOrganization;
   PaginatedSpaces: SchemaTypes.PaginatedSpaces;
   PaginatedUsers: SchemaTypes.PaginatedUsers;
-  PaginationInput: SchemaTypes.PaginationInput;
   Platform: SchemaTypes.Platform;
   PlatformFeatureFlag: SchemaTypes.PlatformFeatureFlag;
   PlatformLocations: SchemaTypes.PlatformLocations;
@@ -6346,6 +6466,7 @@ export type ResolversParentTypes = {
   StorageBucket: SchemaTypes.StorageBucket;
   StorageBucketParent: SchemaTypes.StorageBucketParent;
   StorageBucketUploadFileInput: SchemaTypes.StorageBucketUploadFileInput;
+  StorageBucketUploadFileOnLinkInput: SchemaTypes.StorageBucketUploadFileOnLinkInput;
   StorageBucketUploadFileOnReferenceInput: SchemaTypes.StorageBucketUploadFileOnReferenceInput;
   StorageConfig: SchemaTypes.StorageConfig;
   String: SchemaTypes.Scalars['String'];
@@ -6387,6 +6508,7 @@ export type ResolversParentTypes = {
   UpdateInnovationHubInput: SchemaTypes.UpdateInnovationHubInput;
   UpdateInnovationPackInput: SchemaTypes.UpdateInnovationPackInput;
   UpdateLicenseInput: SchemaTypes.UpdateLicenseInput;
+  UpdateLinkInput: SchemaTypes.UpdateLinkInput;
   UpdateLocationInput: SchemaTypes.UpdateLocationInput;
   UpdateOpportunityInput: SchemaTypes.UpdateOpportunityInput;
   UpdateOrganizationInput: SchemaTypes.UpdateOrganizationInput;
@@ -6490,6 +6612,11 @@ export type ActivityLogEntryResolvers<
   createdDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  journey?: Resolver<
+    SchemaTypes.Maybe<ResolversTypes['Journey']>,
+    ParentType,
+    ContextType
+  >;
   parentDisplayName?: Resolver<
     ResolversTypes['String'],
     ParentType,
@@ -6515,6 +6642,11 @@ export type ActivityLogEntryCalendarEventCreatedResolvers<
   createdDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  journey?: Resolver<
+    SchemaTypes.Maybe<ResolversTypes['Journey']>,
+    ParentType,
+    ContextType
+  >;
   parentDisplayName?: Resolver<
     ResolversTypes['String'],
     ParentType,
@@ -6536,6 +6668,11 @@ export type ActivityLogEntryCalloutDiscussionCommentResolvers<
   createdDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  journey?: Resolver<
+    SchemaTypes.Maybe<ResolversTypes['Journey']>,
+    ParentType,
+    ContextType
+  >;
   parentDisplayName?: Resolver<
     ResolversTypes['String'],
     ParentType,
@@ -6557,6 +6694,11 @@ export type ActivityLogEntryCalloutLinkCreatedResolvers<
   createdDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  journey?: Resolver<
+    SchemaTypes.Maybe<ResolversTypes['Journey']>,
+    ParentType,
+    ContextType
+  >;
   parentDisplayName?: Resolver<
     ResolversTypes['String'],
     ParentType,
@@ -6579,6 +6721,11 @@ export type ActivityLogEntryCalloutPostCommentResolvers<
   createdDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  journey?: Resolver<
+    SchemaTypes.Maybe<ResolversTypes['Journey']>,
+    ParentType,
+    ContextType
+  >;
   parentDisplayName?: Resolver<
     ResolversTypes['String'],
     ParentType,
@@ -6601,6 +6748,11 @@ export type ActivityLogEntryCalloutPostCreatedResolvers<
   createdDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  journey?: Resolver<
+    SchemaTypes.Maybe<ResolversTypes['Journey']>,
+    ParentType,
+    ContextType
+  >;
   parentDisplayName?: Resolver<
     ResolversTypes['String'],
     ParentType,
@@ -6623,6 +6775,11 @@ export type ActivityLogEntryCalloutPublishedResolvers<
   createdDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  journey?: Resolver<
+    SchemaTypes.Maybe<ResolversTypes['Journey']>,
+    ParentType,
+    ContextType
+  >;
   parentDisplayName?: Resolver<
     ResolversTypes['String'],
     ParentType,
@@ -6644,6 +6801,11 @@ export type ActivityLogEntryCalloutWhiteboardCreatedResolvers<
   createdDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  journey?: Resolver<
+    SchemaTypes.Maybe<ResolversTypes['Journey']>,
+    ParentType,
+    ContextType
+  >;
   parentDisplayName?: Resolver<
     ResolversTypes['String'],
     ParentType,
@@ -6666,6 +6828,11 @@ export type ActivityLogEntryChallengeCreatedResolvers<
   createdDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  journey?: Resolver<
+    SchemaTypes.Maybe<ResolversTypes['Journey']>,
+    ParentType,
+    ContextType
+  >;
   parentDisplayName?: Resolver<
     ResolversTypes['String'],
     ParentType,
@@ -6688,6 +6855,11 @@ export type ActivityLogEntryMemberJoinedResolvers<
   createdDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  journey?: Resolver<
+    SchemaTypes.Maybe<ResolversTypes['Journey']>,
+    ParentType,
+    ContextType
+  >;
   parentDisplayName?: Resolver<
     ResolversTypes['String'],
     ParentType,
@@ -6709,6 +6881,11 @@ export type ActivityLogEntryOpportunityCreatedResolvers<
   createdDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  journey?: Resolver<
+    SchemaTypes.Maybe<ResolversTypes['Journey']>,
+    ParentType,
+    ContextType
+  >;
   opportunity?: Resolver<
     ResolversTypes['Opportunity'],
     ParentType,
@@ -6734,6 +6911,11 @@ export type ActivityLogEntryUpdateSentResolvers<
   createdDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  journey?: Resolver<
+    SchemaTypes.Maybe<ResolversTypes['Journey']>,
+    ParentType,
+    ContextType
+  >;
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   parentDisplayName?: Resolver<
     ResolversTypes['String'],
@@ -7171,7 +7353,7 @@ export type CalloutContributionResolvers<
   >;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   link?: Resolver<
-    SchemaTypes.Maybe<ResolversTypes['Reference']>,
+    SchemaTypes.Maybe<ResolversTypes['Link']>,
     ParentType,
     ContextType
   >;
@@ -7444,7 +7626,8 @@ export type CommunicationResolvers<
   discussions?: Resolver<
     SchemaTypes.Maybe<Array<ResolversTypes['Discussion']>>,
     ParentType,
-    ContextType
+    ContextType,
+    Partial<SchemaTypes.CommunicationDiscussionsArgs>
   >;
   id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
   updates?: Resolver<ResolversTypes['Room'], ParentType, ContextType>;
@@ -8245,7 +8428,8 @@ export type LibraryResolvers<
   innovationPacks?: Resolver<
     Array<ResolversTypes['InnovationPack']>,
     ParentType,
-    ContextType
+    ContextType,
+    Partial<SchemaTypes.LibraryInnovationPacksArgs>
   >;
   storageAggregator?: Resolver<
     SchemaTypes.Maybe<ResolversTypes['StorageAggregator']>,
@@ -8324,6 +8508,21 @@ export interface LifecycleDefinitionScalarConfig
   extends GraphQLScalarTypeConfig<ResolversTypes['LifecycleDefinition'], any> {
   name: 'LifecycleDefinition';
 }
+
+export type LinkResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['Link'] = ResolversParentTypes['Link']
+> = {
+  authorization?: Resolver<
+    SchemaTypes.Maybe<ResolversTypes['Authorization']>,
+    ParentType,
+    ContextType
+  >;
+  id?: Resolver<ResolversTypes['UUID'], ParentType, ContextType>;
+  profile?: Resolver<ResolversTypes['Profile'], ParentType, ContextType>;
+  uri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
 
 export type LocationResolvers<
   ContextType = any,
@@ -9066,6 +9265,12 @@ export type MutationResolvers<
       'deleteData'
     >
   >;
+  deleteLink?: Resolver<
+    ResolversTypes['Link'],
+    ParentType,
+    ContextType,
+    RequireFields<SchemaTypes.MutationDeleteLinkArgs, 'deleteData'>
+  >;
   deleteOpportunity?: Resolver<
     ResolversTypes['Opportunity'],
     ParentType,
@@ -9561,6 +9766,12 @@ export type MutationResolvers<
       'innovationPackData'
     >
   >;
+  updateLink?: Resolver<
+    ResolversTypes['Link'],
+    ParentType,
+    ContextType,
+    RequireFields<SchemaTypes.MutationUpdateLinkArgs, 'linkData'>
+  >;
   updateOpportunity?: Resolver<
     ResolversTypes['Opportunity'],
     ParentType,
@@ -9712,6 +9923,15 @@ export type MutationResolvers<
     RequireFields<
       SchemaTypes.MutationUpdateWhiteboardTemplateArgs,
       'whiteboardTemplateInput'
+    >
+  >;
+  uploadFileOnLink?: Resolver<
+    ResolversTypes['Link'],
+    ParentType,
+    ContextType,
+    RequireFields<
+      SchemaTypes.MutationUploadFileOnLinkArgs,
+      'file' | 'uploadData'
     >
   >;
   uploadFileOnReference?: Resolver<
@@ -10075,6 +10295,7 @@ export type PlatformLocationsResolvers<
 > = {
   about?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   aup?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  blog?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   community?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   domain?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   environment?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -10088,6 +10309,7 @@ export type PlatformLocationsResolvers<
     ContextType
   >;
   inspiration?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  landing?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   newuser?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   opensource?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   privacy?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -11437,6 +11659,11 @@ export type TemplatesSetResolvers<
     ParentType,
     ContextType
   >;
+  innovationFlowTemplatesCount?: Resolver<
+    ResolversTypes['Float'],
+    ParentType,
+    ContextType
+  >;
   policy?: Resolver<
     SchemaTypes.Maybe<ResolversTypes['TemplatesSetPolicy']>,
     ParentType,
@@ -11453,6 +11680,11 @@ export type TemplatesSetResolvers<
     ParentType,
     ContextType
   >;
+  postTemplatesCount?: Resolver<
+    ResolversTypes['Float'],
+    ParentType,
+    ContextType
+  >;
   whiteboardTemplate?: Resolver<
     SchemaTypes.Maybe<ResolversTypes['WhiteboardTemplate']>,
     ParentType,
@@ -11461,6 +11693,11 @@ export type TemplatesSetResolvers<
   >;
   whiteboardTemplates?: Resolver<
     Array<ResolversTypes['WhiteboardTemplate']>,
+    ParentType,
+    ContextType
+  >;
+  whiteboardTemplatesCount?: Resolver<
+    ResolversTypes['Float'],
     ParentType,
     ContextType
   >;
@@ -11854,6 +12091,7 @@ export type Resolvers<ContextType = any> = {
   LicenseFeatureFlag?: LicenseFeatureFlagResolvers<ContextType>;
   Lifecycle?: LifecycleResolvers<ContextType>;
   LifecycleDefinition?: GraphQLScalarType;
+  Link?: LinkResolvers<ContextType>;
   Location?: LocationResolvers<ContextType>;
   LookupQueryResults?: LookupQueryResultsResolvers<ContextType>;
   Markdown?: GraphQLScalarType;
@@ -12421,6 +12659,19 @@ export type UpdateVisualMutationVariables = SchemaTypes.Exact<{
 }>;
 
 export type UpdateVisualMutation = { updateVisual: { id: string } };
+
+export type UploadFileOnLinkMutationVariables = SchemaTypes.Exact<{
+  file: SchemaTypes.Scalars['Upload'];
+  uploadData: SchemaTypes.StorageBucketUploadFileOnLinkInput;
+}>;
+
+export type UploadFileOnLinkMutation = {
+  uploadFileOnLink: {
+    id: string;
+    uri: string;
+    profile: { displayName: string; description?: any | undefined };
+  };
+};
 
 export type UploadFileOnReferenceMutationVariables = SchemaTypes.Exact<{
   file: SchemaTypes.Scalars['Upload'];
@@ -13483,6 +13734,21 @@ export const UpdateVisualDocument = gql`
     }
   }
 `;
+export const UploadFileOnLinkDocument = gql`
+  mutation uploadFileOnLink(
+    $file: Upload!
+    $uploadData: StorageBucketUploadFileOnLinkInput!
+  ) {
+    uploadFileOnLink(file: $file, uploadData: $uploadData) {
+      id
+      uri
+      profile {
+        displayName
+        description
+      }
+    }
+  }
+`;
 export const UploadFileOnReferenceDocument = gql`
   mutation uploadFileOnReference(
     $file: Upload!
@@ -13945,6 +14211,7 @@ const UpdateOrganizationDocumentString = print(UpdateOrganizationDocument);
 const UpdateProfileDocumentString = print(UpdateProfileDocument);
 const UpdateSpaceDocumentString = print(UpdateSpaceDocument);
 const UpdateVisualDocumentString = print(UpdateVisualDocument);
+const UploadFileOnLinkDocumentString = print(UploadFileOnLinkDocument);
 const UploadFileOnReferenceDocumentString = print(
   UploadFileOnReferenceDocument
 );
@@ -14635,6 +14902,26 @@ export function getSdk(
             { ...requestHeaders, ...wrappedRequestHeaders }
           ),
         'updateVisual',
+        'mutation'
+      );
+    },
+    uploadFileOnLink(
+      variables: SchemaTypes.UploadFileOnLinkMutationVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<{
+      data: SchemaTypes.UploadFileOnLinkMutation;
+      extensions?: any;
+      headers: Dom.Headers;
+      status: number;
+    }> {
+      return withWrapper(
+        wrappedRequestHeaders =>
+          client.rawRequest<SchemaTypes.UploadFileOnLinkMutation>(
+            UploadFileOnLinkDocumentString,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'uploadFileOnLink',
         'mutation'
       );
     },
