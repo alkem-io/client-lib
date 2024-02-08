@@ -472,6 +472,22 @@ export class AlkemioClient {
       );
   }
 
+  public uploadFileOnLink(path: PathLike, linkID: string) {
+    if (!existsSync(path)) {
+      throw new Error(`File at '${path}' does not exist`);
+    }
+
+    return this.privateClient
+      .uploadFileOnLink({
+        file: createReadStream(path) as unknown as FileUpload,
+        uploadData: { linkID },
+      })
+      .then(
+        toGraphQLResponse<SchemaTypes.UploadFileOnLinkMutation>,
+        toGraphQLResponse<SchemaTypes.UploadFileOnLinkMutation>
+      );
+  }
+
   public uploadImageOnVisual(path: PathLike, visualID: string) {
     if (!existsSync(path)) {
       throw new Error(`Image at '${path}' does not exist`);
