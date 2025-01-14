@@ -658,9 +658,13 @@ export class AlkemioClient {
       includeSettings,
     };
 
+    const response = await this.privateClient.usersForNotification(payload);
+    if (!response || !response.data) {
+      throw new Error('Failed to retrieve users for notification');
+    }
     const {
       data: { usersWithAuthorizationCredential },
-    } = await this.privateClient.usersForNotification(payload);
+    } = response;
 
     return usersWithAuthorizationCredential;
   }
