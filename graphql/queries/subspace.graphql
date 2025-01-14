@@ -8,25 +8,18 @@ query subspace($spaceID: UUID_NAMEID!, $subspaceID: UUID_NAMEID!) {
       }
       community {
         id
-        memberUsers {
-          nameID
-        }
-        memberOrganizations: organizationsInRole(role:MEMBER ) {
-          nameID
-        }
-        leadOrganizations: organizationsInRole(role:LEAD ) {
-          nameID
-        }
-        leadUsers: usersInRole(role:LEAD) {
-          nameID
+        roleSet {
+          id
         }
       }
       collaboration {
         id
-        callouts {
+        calloutsSet {
           id
-          nameID
-          type
+          callouts {
+            nameID
+            type
+          }
         }
       }
       context {
