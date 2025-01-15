@@ -4,25 +4,11 @@ query space($id: UUID_NAMEID!) {
     nameID
     account {
       id
-      library {
-        innovationFlowTemplates {
-          id
-        }
-      }
     }
     community {
       id
-      memberUsers {
-        nameID
-      }
-      memberOrganizations: organizationsInRole(role:MEMBER ) {
-        nameID
-      }
-      leadOrganizations: organizationsInRole(role:LEAD ) {
-        nameID
-      }
-      leadUsers: usersInRole(role:LEAD) {
-        nameID
+      roleSet {
+        id
       }
     }
     profile {

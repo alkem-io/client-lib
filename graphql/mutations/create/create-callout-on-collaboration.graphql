@@ -1,7 +1,7 @@
-mutation createCalloutOnCollaboration(
-  $calloutData: CreateCalloutOnCollaborationInput!
+mutation createCallout(
+  $calloutData: CreateCalloutOnCalloutsSetInput!
 ) {
-  createCalloutOnCollaboration(calloutData: $calloutData) {
+  createCallout(calloutData: $calloutData) {
     id
     nameID
     type
