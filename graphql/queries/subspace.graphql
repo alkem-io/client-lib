@@ -1,29 +1,31 @@
-query subspace($spaceID: UUID_NAMEID!, $subspaceID: UUID_NAMEID!) {
-  space(ID: $spaceID) {
-    subspace(ID: $subspaceID) {
-      nameID
-      id
-      profile {
-        displayName
-      }
-      community {
+query subspace($spaceID: UUID!, $subspaceNameID: NameID!) {
+  lookup {
+    space(ID: $spaceID) {
+      subspaceByNameID(NAMEID: $subspaceNameID) {
+        nameID
         id
-        roleSet {
-          id
+        profile {
+          displayName
         }
-      }
-      collaboration {
-        id
-        calloutsSet {
+        community {
           id
-          callouts {
-            nameID
-            type
+          roleSet {
+            id
           }
         }
-      }
-      context {
-        id
+        collaboration {
+          id
+          calloutsSet {
+            id
+            callouts {
+              nameID
+              type
+            }
+          }
+        }
+        context {
+          id
+        }
       }
     }
   }

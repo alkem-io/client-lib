@@ -1,35 +1,37 @@
-query space($id: UUID_NAMEID!) {
-  space(ID: $id) {
-    id
-    nameID
-    account {
+query space($id: UUID!) {
+  lookup {
+    space(ID: $id) {
       id
-    }
-    community {
-      id
-      roleSet {
+      nameID
+      account {
         id
       }
-    }
-    profile {
-      id
-      displayName
-      visuals {
-        name
+      community {
+        id
+        roleSet {
+          id
+        }
+      }
+      profile {
+        id
+        displayName
+        visuals {
+          name
+          id
+        }
+        references {
+          id
+          name
+          description
+          uri
+        }
+      }
+      context {
         id
       }
-      references {
+      collaboration {
         id
-        name
-        description
-        uri
       }
-    }
-    context {
-      id
-    }
-    collaboration {
-      id
     }
   }
 }

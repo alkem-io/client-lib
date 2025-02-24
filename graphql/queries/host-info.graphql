@@ -1,17 +1,19 @@
-query hostInfo($spaceID: UUID_NAMEID!) {
-  space(ID: $spaceID) {
-    account {
-      id
-      host {
+query hostInfo($spaceID: UUID!) {
+  lookup {
+    space(ID: $spaceID) {
+      account {
         id
-        nameID
-        profile {
+        host {
           id
-          displayName
-          tagsets {
+          nameID
+          profile {
             id
-            name
-            tags
+            displayName
+            tagsets {
+              id
+              name
+              tags
+            }
           }
         }
       }
