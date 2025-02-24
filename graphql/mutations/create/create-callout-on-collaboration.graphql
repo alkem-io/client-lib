@@ -1,7 +1,7 @@
 mutation createCallout(
   $calloutData: CreateCalloutOnCalloutsSetInput!
 ) {
-  createCallout(calloutData: $calloutData) {
+  createCalloutOnCalloutsSet(calloutData: $calloutData) {
     id
     nameID
     type

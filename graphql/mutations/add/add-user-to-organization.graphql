@@ -1,5 +1,5 @@
-mutation assignUserToOrganization($input: AssignOrganizationRoleToUserInput!) {
-  assignOrganizationRoleToUser(membershipData: $input) {
+mutation assignUserToOrganization($roleData: AssignRoleOnRoleSetToUserInput!) {
+  assignRoleToUser(roleData: $roleData) {
     id
     profile {
       id

@@ -1,4 +1,4 @@
-query organization($id: UUID_NAMEID!) {
+query organization($id: UUID!) {
   organization(ID: $id) {
     id
     nameID

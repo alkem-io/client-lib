@@ -1,20 +1,22 @@
-query subspaces($spaceID: UUID_NAMEID!) {
-  space(ID: $spaceID) {
-    subspaces {
-      id
-      nameID
-      profile {
-        displayName
-        visuals {
-          name
+query subspaces($spaceID: UUID!) {
+  lookup {
+    space(ID: $spaceID) {
+      subspaces {
+        id
+        nameID
+        profile {
+          displayName
+          visuals {
+            name
+            id
+          }
+        }
+        community {
           id
         }
-      }
-      community {
-        id
-      }
-      collaboration {
-        id
+        collaboration {
+          id
+        }
       }
     }
   }

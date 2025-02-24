@@ -5,16 +5,13 @@ import { FileUpload } from 'graphql-upload';
 import semver from 'semver';
 import { AlkemioClientConfig } from './config/alkemio-client-config';
 import {
-  CommunityRoleType,
-  CreateCalloutData,
   CreateCalloutOnCalloutsSetInput,
   CreateSpaceOnAccountInput,
   CreateSubspaceInput,
   getSdk,
   InputMaybe,
+  RoleName,
   Sdk,
-} from './generated/graphql';
-import {
   UpdateSpaceInput,
   UpdateOrganizationInput,
   CreateUserInput,
@@ -195,7 +192,7 @@ export class AlkemioClient {
     const response = await this.privateClient.space({
       id: spaceID,
     });
-    return response.data?.space;
+    return response.data?.lookup.space;
   }
 
   public async createSpace(spaceData: CreateSpaceOnAccountInput) {
@@ -324,20 +321,17 @@ export class AlkemioClient {
 
   async addUserToOrganization(
     userID: string,
-    organizationID: string
+    organizationRoleSetID: string
   ): Promise<boolean> {
-    const uID = userID;
-    const gID = organizationID;
-
     const { data } = await this.privateClient.assignUserToOrganization({
-      input: {
-        userID: uID,
-        organizationID: gID,
-        role: SchemaTypes.OrganizationRole.Associate,
+      roleData: {
+        contributorID: userID,
+        roleSetID: organizationRoleSetID,
+        role: SchemaTypes.RoleName.Associate,
       },
     });
 
-    return !!data?.assignOrganizationRoleToUser;
+    return !!data?.assignRoleToUser;
   }
 
   async addUserToSubspace(
@@ -346,31 +340,32 @@ export class AlkemioClient {
     userID: string
   ) {
     const response = await this.privateClient.subspace({
-      spaceID: spaceID,
-      subspaceID: subspaceNameID,
+      spaceID,
+      subspaceNameID,
     });
-    const roleSetID = response.data?.space.subspace?.community?.roleSet?.id;
+    const roleSetID =
+      response.data?.lookup.space?.subspaceByNameID?.community?.roleSet?.id;
 
     if (!response || !roleSetID) return;
 
     return await this.privateClient.assignRoleToUser({
       input: {
-        role: CommunityRoleType.Member,
+        role: RoleName.Member,
         contributorID: userID,
         roleSetID,
       },
     });
   }
 
-  async subspaceByNameID(spaceNameID: string, subspaceNameID: string) {
+  async subspaceByNameID(spaceID: string, subspaceNameID: string) {
     try {
       const response = await this.privateClient.subspace({
-        spaceID: spaceNameID,
-        subspaceID: subspaceNameID,
+        spaceID,
+        subspaceNameID,
       });
 
       if (!response) return;
-      return response.data?.space.subspace;
+      return response.data?.lookup.space?.subspaceByNameID;
     } catch (error) {
       return;
     }
@@ -397,7 +392,7 @@ export class AlkemioClient {
 
     return await this.privateClient.assignRoleToUser({
       input: {
-        role: CommunityRoleType.Member,
+        role: RoleName.Member,
         contributorID: userID,
         roleSetID,
       },
@@ -536,7 +531,7 @@ export class AlkemioClient {
       calloutData,
     });
 
-    return data?.createCallout;
+    return data?.createCalloutOnCalloutsSet;
   }
 
   public async createOrganization(displayName: string, nameID: string) {
@@ -591,7 +586,7 @@ export class AlkemioClient {
       spaceID: spaceID,
     });
 
-    return data?.space.subspaces;
+    return data?.lookup.space?.subspaces;
   }
 
   public async updateOrganization(organization: UpdateOrganizationInput) {
@@ -683,7 +678,7 @@ export class AlkemioClient {
       input: {
         roleSetID,
         contributorID: organizationID,
-        role: CommunityRoleType.Lead,
+        role: RoleName.Lead,
       },
     });
 
@@ -696,7 +691,7 @@ export class AlkemioClient {
   ) {
     const { data } = await this.privateClient.assignRoleToOrganization({
       input: {
-        role: CommunityRoleType.Member,
+        role: RoleName.Member,
         contributorID: organizationID,
         roleSetID,
       },
@@ -708,7 +703,7 @@ export class AlkemioClient {
   async assignUserAsCommunityLead(roleSetID: string, userID: string) {
     const { data } = await this.privateClient.assignRoleToUser({
       input: {
-        role: CommunityRoleType.Lead,
+        role: RoleName.Lead,
         contributorID: userID,
         roleSetID,
       },
@@ -722,7 +717,7 @@ export class AlkemioClient {
       input: {
         roleSetID,
         contributorID: userID,
-        role: CommunityRoleType.Member,
+        role: RoleName.Member,
       },
     });
 
@@ -732,7 +727,7 @@ export class AlkemioClient {
   async addUserToCommunity(userID: string, roleSetID: string) {
     const { data } = await this.privateClient.assignRoleToUser({
       input: {
-        role: CommunityRoleType.Member,
+        role: RoleName.Member,
         contributorID: userID,
         roleSetID,
       },
