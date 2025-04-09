@@ -2,10 +2,12 @@ mutation createSubspace($subspaceData: CreateSubspaceInput!) {
   createSubspace(subspaceData: $subspaceData) {
     id
     nameID
-    profile {
-      visuals {
-        name
-        id
+    about {
+      profile {
+        visuals {
+          name
+          id
+        }
       }
     }
     community {

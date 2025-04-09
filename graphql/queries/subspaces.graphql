@@ -4,11 +4,14 @@ query subspaces($spaceID: UUID!) {
       subspaces {
         id
         nameID
-        profile {
-          displayName
-          visuals {
-            name
-            id
+        about {
+          id
+          profile {
+            displayName
+            visuals {
+              name
+              id
+            }
           }
         }
         community {

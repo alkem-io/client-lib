@@ -1,22 +1,22 @@
 fragment SpaceDetails on Space {
   id
   nameID
-  profile {
-    displayName
-    visuals {
-      name
-      id
-    }
-    tagset {
-      tags
-      id
-      name
+  about {
+    id
+    profile {
+      displayName
+      visuals {
+        name
+        id
+      }
+      tagset {
+        tags
+        id
+        name
+      }
     }
   }
   community {
-    id
-  }
-  context {
     id
   }
 }
