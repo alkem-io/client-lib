@@ -168,7 +168,7 @@ export class AlkemioClient {
     const serverVersion = serverMetaData.version;
     if (!serverVersion)
       throw new Error(
-        `Unable to retrive Alkemio server version: ${serverVersion}`
+        `Unable to retrieve Alkemio server version: ${serverVersion}`
       );
     return serverVersion;
   }
@@ -741,11 +741,11 @@ export class AlkemioClient {
     references: Omit<UpdateReferenceInput, 'ID'>[]
   ) {
     const spaceInfo = await this.spaceInfo(spaceID);
-    const profileId = spaceInfo?.profile.id;
+    const profileId = spaceInfo?.about.profile.id;
     if (!profileId) {
       throw new Error('Space context id does not exist.');
     }
-    const existingReferences = spaceInfo?.profile?.references || [];
+    const existingReferences = spaceInfo?.about.profile?.references || [];
     const newReferences = references.filter(r =>
       existingReferences.every(
         (x: { name: InputMaybe<string> }) => x.name !== r.name
@@ -768,8 +768,10 @@ export class AlkemioClient {
     if (updateRefsInput.length > 0) {
       await this.updateSpace({
         ID: spaceID,
-        profileData: {
-          references: updateRefsInput,
+        about: {
+          profile: {
+            references: updateRefsInput,
+          },
         },
       });
     }

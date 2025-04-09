@@ -9,11 +9,14 @@ mutation updateSpace($spaceData: UpdateSpaceInput!) {
     community {
       id
     }
-    profile {
-      tagline
-      visuals {
-        id
-        name
+    about {
+      id
+      profile {
+        tagline
+        visuals {
+          id
+          name
+        }
       }
     }
   }

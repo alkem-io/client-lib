@@ -12,22 +12,22 @@ query space($id: UUID!) {
           id
         }
       }
-      profile {
+      about {
         id
-        displayName
-        visuals {
-          name
+        profile {
           id
+          displayName
+          visuals {
+            name
+            id
+          }
+          references {
+            id
+            name
+            description
+            uri
+          }
         }
-        references {
-          id
-          name
-          description
-          uri
-        }
-      }
-      context {
-        id
       }
       collaboration {
         id
