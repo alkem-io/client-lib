@@ -4,6 +4,5 @@ mutation createCallout(
   createCalloutOnCalloutsSet(calloutData: $calloutData) {
     id
     nameID
-    type
   }
 }

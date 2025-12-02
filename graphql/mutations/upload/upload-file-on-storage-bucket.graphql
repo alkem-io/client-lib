@@ -2,5 +2,8 @@ mutation uploadFileOnStorageBucket(
   $file: Upload!
   $uploadData: StorageBucketUploadFileInput!
 ) {
-  uploadFileOnStorageBucket(file: $file, uploadData: $uploadData)
+  uploadFileOnStorageBucket(file: $file, uploadData: $uploadData) {
+    id
+    url
+  }
 }
