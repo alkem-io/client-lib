@@ -18,8 +18,7 @@ import {
   UpdateReferenceInput,
   AuthorizationCredential,
   CreateContributionOnCalloutInput,
-  CalloutType,
-  CalloutState,
+  CalloutContributionType,
 } from './generated/graphql';
 import { AuthInfo, CreateReferenceOnProfileInput } from 'src';
 import { KratosPublicApiClient } from './util/kratos.public.api.client';
@@ -493,6 +492,7 @@ export class AlkemioClient {
   ) {
     const contributionData: CreateContributionOnCalloutInput = {
       calloutID,
+      type: CalloutContributionType.Post,
       post: {
         nameID,
         profileData: {
@@ -513,16 +513,10 @@ export class AlkemioClient {
   async createCallout(
     calloutsSetID: string,
     displayName: string,
-    description: string,
-    type: CalloutType,
-    state: CalloutState
+    description: string
   ) {
     const calloutData: CreateCalloutOnCalloutsSetInput = {
       calloutsSetID,
-      type,
-      contributionPolicy: {
-        state,
-      },
       framing: {
         profile: { displayName, description },
       },

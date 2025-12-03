@@ -1,20 +1,9 @@
 query usersForNotification(
   $credentialsCriteriaData: UsersWithAuthorizationCredentialInput!,
-  $includePreferences: Boolean = false,
   $includeSettings: Boolean = false
 ) {
   usersWithAuthorizationCredential(credentialsCriteriaData: $credentialsCriteriaData) {
     ...UserDetails,
-    preferences @include(if: $includePreferences) {
-      definition {
-        group
-        displayName
-        description
-        valueType
-        type
-      }
-      value
-    }
     settings @include(if: $includeSettings) {
       communication {
         allowOtherUsersToSendMessages
