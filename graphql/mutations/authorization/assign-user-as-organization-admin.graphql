@@ -1,4 +1,4 @@
-mutation assignUserAsOrganizationAdmin($roleData: AssignRoleOnRoleSetToUserInput!) {
+mutation assignUserAsOrganizationAdmin($roleData: AssignRoleOnRoleSetInput!) {
   assignRoleToUser(roleData: $roleData) {
     id
   }
