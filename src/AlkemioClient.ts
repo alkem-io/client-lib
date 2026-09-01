@@ -324,7 +324,7 @@ export class AlkemioClient {
   ): Promise<boolean> {
     const { data } = await this.privateClient.assignUserToOrganization({
       roleData: {
-        contributorID: userID,
+        actorID: userID,
         roleSetID: organizationRoleSetID,
         role: SchemaTypes.RoleName.Associate,
       },
@@ -350,7 +350,7 @@ export class AlkemioClient {
     return await this.privateClient.assignRoleToUser({
       input: {
         role: RoleName.Member,
-        contributorID: userID,
+        actorID: userID,
         roleSetID,
       },
     });
@@ -392,7 +392,7 @@ export class AlkemioClient {
     return await this.privateClient.assignRoleToUser({
       input: {
         role: RoleName.Member,
-        contributorID: userID,
+        actorID: userID,
         roleSetID,
       },
     });
@@ -671,7 +671,7 @@ export class AlkemioClient {
     const { data } = await this.privateClient.assignRoleToOrganization({
       input: {
         roleSetID,
-        contributorID: organizationID,
+        actorID: organizationID,
         role: RoleName.Lead,
       },
     });
@@ -686,7 +686,7 @@ export class AlkemioClient {
     const { data } = await this.privateClient.assignRoleToOrganization({
       input: {
         role: RoleName.Member,
-        contributorID: organizationID,
+        actorID: organizationID,
         roleSetID,
       },
     });
@@ -698,7 +698,7 @@ export class AlkemioClient {
     const { data } = await this.privateClient.assignRoleToUser({
       input: {
         role: RoleName.Lead,
-        contributorID: userID,
+        actorID: userID,
         roleSetID,
       },
     });
@@ -710,7 +710,7 @@ export class AlkemioClient {
     const { data } = await this.privateClient.assignRoleToUser({
       input: {
         roleSetID,
-        contributorID: userID,
+        actorID: userID,
         role: RoleName.Member,
       },
     });
@@ -722,7 +722,7 @@ export class AlkemioClient {
     const { data } = await this.privateClient.assignRoleToUser({
       input: {
         role: RoleName.Member,
-        contributorID: userID,
+        actorID: userID,
         roleSetID,
       },
     });

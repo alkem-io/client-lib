@@ -14,11 +14,8 @@ fragment UserDetails on User {
     description
     url
   }
-  agent {
-    id
-    credentials {
-      type
-      resourceID
-    }
+  credentials {
+    type
+    resourceID
   }
 }

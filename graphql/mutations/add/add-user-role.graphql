@@ -1,4 +1,4 @@
-mutation assignRoleToUser($input: AssignRoleOnRoleSetToUserInput!) {
+mutation assignRoleToUser($input: AssignRoleOnRoleSetInput!) {
   assignRoleToUser(roleData: $input) {
     id
   }
