@@ -1,10 +1,10 @@
 <p align="center">
-    <a href="https://alkemio.foundation/" target="blank"><img src="https://alkemio.foundation/uploads/logos/alkemio-logo.svg" width="400" alt="Alkemio Logo" /></a>
+    <a href="https://alkem.io/" target="blank"><img src="https://alkemio.org/uploads/logos/alkemio-logo.svg" width="400" alt="Alkemio Logo" /></a>
 </p>
-<p align="center"><i>Enabling society to collaborate. Building a better future, together.</i></p>
+<p align="center"><i>Collaboration in the spaces between organisations</i></p>
 
 # Alkemio Client Library
-The alkemio-lib package is for working directly with the Alkemio server, primarily using the graphql based api. For more details about Alkemio please visit either the [webiste](http://alkem.io) or [repo](http://github.com/alkem-io/alkemio).
+The alkemio-lib package is for working directly with the Alkemio server, primarily using the graphql based api. For more details about Alkemio please visit either the [website](https://alkem.io) or [repo](https://github.com/alkem-io/alkemio).
 
 The key capabilities of this package include:
 * Authentication to the Alkemio platform
