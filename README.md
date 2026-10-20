@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="https://alkem.io/" target="blank"><img src="https://alkemio.org/uploads/logos/alkemio-logo.svg" width="400" alt="Alkemio Logo" /></a>
+    <a href="https://alkem.io" target="blank"><img src="https://alkem.io/logo.png" width="400" alt="Alkemio Logo" /></a>
 </p>
 <p align="center"><i>Collaboration in the spaces between organisations</i></p>
 
