@@ -4,7 +4,7 @@
 <p align="center"><i>Collaboration in the spaces between organisations</i></p>
 
 # Alkemio Client Library
-The alkemio-lib package is for working directly with the Alkemio server, primarily using the graphql based api. For more details about Alkemio please visit either the [webiste](http://alkem.io) or [repo](http://github.com/alkem-io/alkemio).
+The alkemio-lib package is for working directly with the Alkemio server, primarily using the graphql based api. For more details about Alkemio please visit either the [website](https://alkem.io) or [repo](https://github.com/alkem-io/alkemio).
 
 The key capabilities of this package include:
 * Authentication to the Alkemio platform
